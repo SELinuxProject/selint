@@ -1,0 +1,99 @@
+INSTALLING
+
+	To install, first install the following dependencies:
+
+	TODO: List dependencies
+
+	Then  run:
+
+	./configure
+	make
+	make install
+
+USAGE
+
+	selint [OPTIONS] FILE [...] 
+
+OPTIONS
+
+	-v, --version
+		Show version information and exit.
+
+	-h, --help
+		Show help menu about command line options.
+
+	-r
+		Scan recursively and check all SELinux policy files found.
+
+	-c CONFIGFILE, --config=CONFIGFILE
+		Override default config with config specified on command line.  See
+		CONFIGURATION section for config file syntax.
+
+	-m FILE
+		Specifies a modules.conf file.  If not specified, certain checks that need
+		to read this file will be skipped. 
+
+	-d CHECKID, --disable=CHECKID
+		Disable check with the given ID.
+
+	-e CHECKID, --enable=CHECKID
+		Enable check with the given ID.
+
+	-l LEVEL, --level=LEVEL
+		Only list errors with a severity level at or greater than LEVEL.  Options
+		are C (convention, S (style), W (warning), E (error), F (fatal error).  See
+		SEVERITY LEVELS for more information.
+
+CONFIGURATION
+
+	A global configuration is specified at [TODO: Global config location].  This
+	can be overridden by a user config at ~/.selint.conf, or on the command line
+	using the -c option.
+
+	Options specified on the command line override options from the config file.
+
+	See the global config file for details on config file syntax.
+
+SEVERITY LEVELS
+
+	SELint messages are assocatied with a severity level, indicating the
+	significance of the issue.  Available levels are listed below.
+
+	C (convention) - A violation of common style conventions
+	S (style) - Stylistic "code smell" that may be associated with unintended
+	behavior
+	W (warning) - Non standard policy that may result in issues such as run time
+	errors or security issues
+	E (error) - Important issues that may result in errors at compile time or
+	run time
+	F (fatal error) - Error that prevents further processing
+
+OUTPUT
+
+	SELint outputs messages in the following format:
+
+	[SEVERITY LEVEL]([LINENO]): [MESSAGE] ([ISSUE ID])
+
+	For example:
+
+	W(127): Interface from module not in optional_policy block (E-001)
+
+CHECK IDS
+
+	The following checks may be performed:
+
+	C-001: file ordering conventions (TODO: Expand using refpolicy style guide)
+	C-002: Interface missing comment
+
+	S-001: Require block used instead of interface call
+
+	W-001: Type referenced without explicit declaration
+	W-002: Type used but not required in interface
+
+	E-001: Interfaces from module not in optional_policy block
+	E-002: Bad file context format
+	E-003: Nonexistent type listed in fc file
+
+	F-001: Policy syntax error prevents further processing
+	F-002: Internal error
+	
