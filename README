@@ -16,8 +16,11 @@ USAGE
 
 OPTIONS
 
-	-v, --version
+	-V, --version
 		Show version information and exit.
+
+	-v, --verbose
+		Enable verbose output
 
 	-h, --help
 		Show help menu about command line options.
@@ -53,6 +56,10 @@ CONFIGURATION
 	Options specified on the command line override options from the config file.
 
 	See the global config file for details on config file syntax.
+
+	To eliminate a check on one line, add a comment containing a string in the
+	following format:
+	"--selint:E-003"
 
 SEVERITY LEVELS
 
