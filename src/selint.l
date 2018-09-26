@@ -32,8 +32,8 @@ ifdef { return IFDEF; }
 \' { return SINGLE_QUOTE; }
 \~ { return TILDA; }
 \* { return STAR; }
-\#.*\n { yylineno++; return COMMENT; }
-\n { printf("\n"); yylineno++; }
+^\#.*\n { yylineno++; return COMMENT; }
+(\#.*)?\n { printf("\n"); yylineno++; }
 [ \t] ; /* skip whitespace */
 . { yyerror("Invalid character"); } 
 
