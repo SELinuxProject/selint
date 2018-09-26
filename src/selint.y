@@ -10,7 +10,9 @@
 	
 }
 
+%token <string> MLS_LEVEL;
 %token <string> STRING;
+%token <string> QUOTED_STRING;
 %token <symbol> SYMBOL;
 %token <string> VERSION_NO;
 
@@ -23,8 +25,11 @@
 %token AUDIT_ALLOW;
 %token DONT_AUDIT;
 %token NEVER_ALLOW;
+%token TYPE_TRANSITION;
+%token RANGE_TRANSITION;
 %token OPTIONAL_POLICY;
 %token GEN_REQUIRE;
+%token TUNABLE_POLICY;
 %token CLASS;
 %token IFDEF;
 %token OPEN_PAREN;
@@ -38,7 +43,8 @@
 %token SINGLE_QUOTE;
 %token TILDA;
 %token STAR;
-%token POUND_SIGN;
+%token DASH;
+%token COMMENT;
 
 %%
 policy:
@@ -66,13 +72,17 @@ line:
 	|
 	rule
 	|
+	type_transition
+	|
+	range_transition
+	|
 	interface
 	|
 	optional_block
 	|
 	gen_require
 	|
-	ifdef
+	m4_call
 	|
 	COMMENT
 	;
@@ -102,14 +112,6 @@ av_type:
 	NEVER_ALLOW
 	;
 
-perms_list:
-	string_list
-	|
-	TILDA string_list
-	|
-	STAR
-	;
-
 string_list:
 	OPEN_CURLY strings CLOSE_CURLY
 	|
@@ -120,6 +122,26 @@ strings:
 	strings STRING
 	|
 	STRING
+	;
+
+perms_list:
+	string_list
+	|
+	TILDA string_list
+	|
+	STAR
+	;
+
+type_transition:
+	TYPE_TRANSITION string_list string_list COLON string_list STRING SEMICOLON
+	|
+	TYPE_TRANSITION string_list string_list COLON string_list STRING QUOTED_STRING SEMICOLON
+	;
+
+range_transition:
+	RANGE_TRANSITION string_list string_list COLON string_list mls_range SEMICOLON
+	|
+	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON
 	;
 
 interface:
@@ -134,16 +156,49 @@ gen_require:
 	GEN_REQUIRE OPEN_PAREN BACKTICK lines SINGLE_QUOTE CLOSE_PAREN
 	;
 
-ifdef:
-	IFDEF OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK lines SINGLE_QUOTE CLOSE_PAREN
+m4_call:
+	macro_name OPEN_PAREN m4_body CLOSE_PAREN
+	;
+
+macro_name:
+	IFDEF
+	|
+	TUNABLE_POLICY
+	;
+
+m4_body:
+	BACKTICK STRING SINGLE_QUOTE COMMA m4_args
+	;
+
+m4_args:
+	BACKTICK lines SINGLE_QUOTE
+	|
+	m4_args COMMA BACKTICK lines SINGLE_QUOTE
 	;
 
 args:
-	string_list
+	string_list_or_mls
 	|
-	args COMMA string_list
+	args COMMA string_list_or_mls
 	;
 
+string_list_or_mls:
+	string_list
+	|
+	mls_range
+	|
+	mls_level
+	;
+
+mls_range:
+	mls_level DASH mls_level
+	;
+
+mls_level:
+	STRING
+	|
+	MLS_LEVEL
+	;
 %%
 extern int yylineno;
 void yyerror(char* s) {
