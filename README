@@ -25,14 +25,14 @@ OPTIONS
 	-h, --help
 		Show help menu about command line options.
 
-	-r
+	-r, --recursive
 		Scan recursively and check all SELinux policy files found.
 
 	-c CONFIGFILE, --config=CONFIGFILE
 		Override default config with config specified on command line.  See
 		CONFIGURATION section for config file syntax.
 
-	-m FILE
+	-m FILE, --modules-conf=FILE
 		Specifies a modules.conf file.  If not specified, certain checks that need
 		to read this file will be skipped. 
 
