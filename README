@@ -4,7 +4,7 @@ INSTALLING
 
 	TODO: List dependencies
 
-	Then  run:
+	Then run:
 
 	./configure
 	make
@@ -16,25 +16,9 @@ USAGE
 
 OPTIONS
 
-	-V, --version
-		Show version information and exit.
-
-	-v, --verbose
-		Enable verbose output
-
-	-h, --help
-		Show help menu about command line options.
-
-	-r, --recursive
-		Scan recursively and check all SELinux policy files found.
-
 	-c CONFIGFILE, --config=CONFIGFILE
 		Override default config with config specified on command line.  See
 		CONFIGURATION section for config file syntax.
-
-	-m FILE, --modules-conf=FILE
-		Specifies a modules.conf file.  If not specified, certain checks that need
-		to read this file will be skipped. 
 
 	-d CHECKID, --disable=CHECKID
 		Disable check with the given ID.
@@ -42,10 +26,26 @@ OPTIONS
 	-e CHECKID, --enable=CHECKID
 		Enable check with the given ID.
 
+	-h, --help
+		Show help menu about command line options.
+
 	-l LEVEL, --level=LEVEL
 		Only list errors with a severity level at or greater than LEVEL.  Options
-		are C (convention, S (style), W (warning), E (error), F (fatal error).  See
+		are C (convention), S (style), W (warning), E (error), F (fatal error).  See
 		SEVERITY LEVELS for more information.
+
+	-m FILE, --modules-conf=FILE
+		Specifies a modules.conf file.  If not specified, certain checks that need
+		to read this file will be skipped. 
+
+	-r, --recursive
+		Scan recursively and check all SELinux policy files found.
+
+	-v, --verbose
+		Enable verbose output
+
+	-V, --version
+		Show version information and exit.
 
 CONFIGURATION
 
@@ -95,12 +95,11 @@ CHECK IDS
 	S-001: Require block used instead of interface call
 
 	W-001: Type referenced without explicit declaration
-	W-002: Type used but not required in interface
+	W-002: Type used but not listed in require block in interface
 
 	E-001: Interfaces from module not in optional_policy block
 	E-002: Bad file context format
 	E-003: Nonexistent type listed in fc file
 
 	F-001: Policy syntax error prevents further processing
-	F-002: Internal error
-	
+	F-002: Internal error in SELint
