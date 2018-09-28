@@ -1,11 +1,13 @@
 selint
 *.o
-y.tab.c
-y.tab.h
-lex.yy.c
+selint_parse.c
+selint_parse.h
+selint_lex.c
 Makefile
+Makefile.in
 config.*
 autoscan.log
 autom4te.cache
 configure
 *.swp
+aclocal.m4

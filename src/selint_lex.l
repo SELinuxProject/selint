@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include "y.tab.h"
+#include "selint_parse.h"
 int yylineno;
 extern void yyerror(char *);
 %}

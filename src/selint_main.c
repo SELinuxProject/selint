@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <getopt.h>
-#include "y.tab.h"
+#include "selint_parse.h"
 
 extern int yyparse();
 
