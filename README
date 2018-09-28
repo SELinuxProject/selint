@@ -1,3 +1,9 @@
+SUMMARY
+
+	SELint is a program to perform static code analysis on SELinux policy
+	source files 
+	
+
 INSTALLING
 
 	To install, first install the following dependencies:
@@ -32,11 +38,14 @@ OPTIONS
 	-l LEVEL, --level=LEVEL
 		Only list errors with a severity level at or greater than LEVEL.  Options
 		are C (convention), S (style), W (warning), E (error), F (fatal error).  See
-		SEVERITY LEVELS for more information.
+		SEVERITY LEVELS for more information.  If this option is not specified,
+		SELint will default to the level selected in the applicable config file.
 
-	-m FILE, --modules-conf=FILE
-		Specifies a modules.conf file.  If not specified, certain checks that need
-		to read this file will be skipped. 
+	-s, --source
+		Run in "source mode" to scan a policy source repository that is designed to
+		compile into a full system policy.  If this flag is not specified, SELint
+		will assume that scanned policy files are intended to be loaded into the
+		currently running system policy. 
 
 	-r, --recursive
 		Scan recursively and check all SELinux policy files found.
@@ -57,14 +66,11 @@ CONFIGURATION
 
 	See the global config file for details on config file syntax.
 
-	To eliminate a check on one line, add a comment containing a string in the
-	following format:
-	"--selint:E-003"
-
 SEVERITY LEVELS
 
 	SELint messages are assocatied with a severity level, indicating the
-	significance of the issue.  Available levels are listed below.
+	significance of the issue.  Available levels are listed below in increasing
+	order of significance.
 
 	C (convention) - A violation of common style conventions
 	S (style) - Stylistic "code smell" that may be associated with unintended
@@ -74,6 +80,12 @@ SEVERITY LEVELS
 	E (error) - Important issues that may result in errors at compile time or
 	run time
 	F (fatal error) - Error that prevents further processing
+
+SELINT EXCEPTIONS
+
+	To eliminate a check on one line, add a comment containing a string in the
+	following format:
+	"--selint:E-003"
 
 OUTPUT
 
@@ -89,7 +101,7 @@ CHECK IDS
 
 	The following checks may be performed:
 
-	C-001: file ordering conventions (TODO: Expand using refpolicy style guide)
+	C-001: Violation of refpolicy te file ordering conventions
 	C-002: Interface missing comment
 
 	S-001: Require block used instead of interface call
@@ -103,3 +115,60 @@ CHECK IDS
 
 	F-001: Policy syntax error prevents further processing
 	F-002: Internal error in SELint
+
+CHECK EXAMPLES
+
+	Here are examples of errors that will cause each possible result:
+
+	Convention:
+
+	C-001:
+
+		type foo_t;
+
+		allow foo_t self:process signal;
+	
+		type bar_t;
+
+	C-002:
+
+		interface(`foo_read_conf',`
+			...
+		')
+
+	Style:
+
+	S-001:
+
+		require {
+			type foo_t;
+		}
+
+	Warning:
+
+	W-001:
+
+		# etc_t is defined in files module
+		read_files_pattern(foo_t, etc_t, etc_t)
+
+	W-002:
+
+		interface(`foo_read_conf',`
+			read_files_pattern($1, foo_conf_t, foo_conf_t)
+		')
+
+	Error:
+
+	E-001:
+
+		# apache is set as a module in our modules.conf
+		apache_read_tmp_files(foo_t)
+
+	E-002:
+
+		/usr/bin/foo		--	gen_erquire(system_u:object_r:foo_exec_t, s0)
+
+	E-003:
+
+		# There is no type named foo_exce_t defined in our policy
+		/usr/bin/foo		--	gen_require(system_u:object_r:foo_exce_t, s0)
