@@ -6,12 +6,14 @@ AC_INIT(selint, 0.1, dburgener@tresys.com)
 AC_CONFIG_SRCDIR([src/selint_main.c])
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE(selint, 0.1)
+AM_INIT_AUTOMAKE
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_LEX
 AC_PROG_YACC
+
+AM_PATH_CHECK([0.9.0], [], [AC_MSG_ERROR([Check not found])])
 
 # Checks for libraries.
 
@@ -34,4 +36,4 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strdup])
 
 #AC_CONFIG_FILES([Makefile])
-AC_OUTPUT(Makefile src/Makefile)
+AC_OUTPUT(Makefile src/Makefile tests/Makefile)
