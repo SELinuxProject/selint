@@ -16,3 +16,10 @@ tests/check_functions.log
 tests/check_functions.trs
 tests/test-suite.log
 .deps
+depcomp
+compile
+install-sh
+missing
+test-driver
+ylwrap
+stamp-h1
