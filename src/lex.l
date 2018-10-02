@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include "selint_parse.h"
+#include "parse.h"
 int yylineno;
 extern void yyerror(char *);
 %}

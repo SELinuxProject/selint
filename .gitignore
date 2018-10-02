@@ -1,8 +1,8 @@
 selint
 *.o
-selint_parse.c
-selint_parse.h
-selint_lex.c
+parse.c
+parse.h
+lex.c
 Makefile
 Makefile.in
 config.*

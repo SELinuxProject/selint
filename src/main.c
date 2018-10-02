@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <getopt.h>
-#include "selint_parse.h"
+#include "parse.h"
 
 extern int yyparse();
 
