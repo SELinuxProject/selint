@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../src/check_parse_functions.h"
+#include "../src/parse_functions.h"
 
 #define EXAMPLE_TYPE_1 "foo_t"
 #define EXAMPLE_TYPE_2 "bar_t"
@@ -12,7 +12,7 @@ START_TEST (test_begin_parsing_te) {
 
 	struct policy_node *cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_parsing_te(cur, "example");
+	ck_assert_int_eq(SELINT_SUCCESS, begin_parsing_te(cur, "example"));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_null(cur->parent);
