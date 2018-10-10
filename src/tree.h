@@ -8,7 +8,8 @@ enum node_flavor {
 	NODE_M4_CALL,
 	NODE_OPTIONAL_POLICY,
 	NODE_M4_ARG,
-	NODE_TE_FILE
+	NODE_TE_FILE,
+	NODE_START_BLOCK
 };
 
 enum av_rule_flavor {
@@ -18,12 +19,17 @@ enum av_rule_flavor {
 	AV_RULE_NEVERALLOW
 };
 
+struct string_list {
+	char *string;
+	struct string_list *next;
+};
+
 struct av_rule {
 	enum av_rule_flavor flavor;
-	char **sources;
-	char **targets;
-	char **object_classes;
-	char **perms;
+	struct string_list *sources;
+	struct string_list *targets;
+	struct string_list *object_classes;
+	struct string_list *perms;
 };
 
 union node_data {

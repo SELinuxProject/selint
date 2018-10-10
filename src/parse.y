@@ -1,13 +1,18 @@
 %{
 	#include <stdio.h>
+	#include <string.h>
+	#include "tree.h"
+	#include "parse_functions.h"
 	int yylex(void);
 	void yyerror(char *);
+
+	struct policy_node *cur;
 %}
 
 %union {
 	char *string;
 	char symbol;
-	
+	struct string_list *sl;
 }
 
 %token <string> MLS_LEVEL;
@@ -21,6 +26,9 @@
 %token TYPEALIAS;
 %token ALIAS;
 %token ATTRIBUTE;
+%token ROLE;
+%token TYPES;
+%token ATTRIBUTE_ROLE;
 %token ALLOW;
 %token AUDIT_ALLOW;
 %token DONT_AUDIT;
@@ -32,6 +40,7 @@
 %token TUNABLE_POLICY;
 %token CLASS;
 %token IFDEF;
+%token IFNDEF;
 %token OPEN_PAREN;
 %token COMMA;
 %token CLOSE_PAREN;
@@ -44,7 +53,22 @@
 %token TILDA;
 %token STAR;
 %token DASH;
+%token AND;
+%token OR;
+%token XOR;
+%token NOT;
+%token EQUAL;
+%token NOT_EQUAL;
 %token COMMENT;
+
+%left OR
+%left XOR
+%left AND
+%right NOT
+%left EQUAL NOT_EQUAL
+
+%type<sl> string_list
+%type<sl> strings
 
 %%
 policy:
@@ -52,7 +76,7 @@ policy:
 	;
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { printf("yacc: %s %s", $3, $5); }
+	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(cur, $3); }
 	;
 
 body:
@@ -70,13 +94,13 @@ line:
 	|
 	type_alias
 	|
-	rule
+	rule { printf("Here 4r\n"); }
 	|
 	type_transition
 	|
 	range_transition
 	|
-	interface
+	interface { printf("Here 4i\n"); }
 	|
 	optional_block
 	|
@@ -88,15 +112,32 @@ line:
 	;
 
 declaration:
-	TYPE args SEMICOLON
+	type_declaration
 	|
 	ATTRIBUTE STRING SEMICOLON
 	|
 	CLASS STRING perms_list SEMICOLON
+	|
+	role_declaration
+	|
+	ATTRIBUTE_ROLE STRING SEMICOLON;
 	;
 
+type_declaration:
+	TYPE args SEMICOLON
+	|
+	TYPE string_list ALIAS string_list SEMICOLON
+	;
+
+role_declaration:
+	ROLE STRING SEMICOLON
+	|
+	ROLE STRING TYPES args SEMICOLON
+	; 
+
 type_alias:
-	TYPEALIAS string_list ALIAS string_list SEMICOLON;
+	TYPEALIAS string_list ALIAS string_list SEMICOLON
+	;
 
 rule:
 	av_type string_list string_list COLON string_list perms_list SEMICOLON
@@ -113,15 +154,18 @@ av_type:
 	;
 
 string_list:
-	OPEN_CURLY strings CLOSE_CURLY
+	OPEN_CURLY strings CLOSE_CURLY { $$ = $2; }
 	|
-	STRING
+	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; }
 	;
 
 strings:
-	strings STRING
+	strings STRING { struct string_list *cur = $1;
+			while (cur->next) { cur++;}
+			cur->next = malloc(sizeof(struct string_list));
+			cur->next->string = strdup($2); }
 	|
-	STRING
+	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; }
 	;
 
 perms_list:
@@ -146,10 +190,13 @@ range_transition:
 
 interface:
 	STRING OPEN_PAREN args CLOSE_PAREN
+	|
+	STRING OPEN_PAREN args CLOSE_PAREN SEMICOLON
 	;
 
 optional_block:
-	OPTIONAL_POLICY OPEN_PAREN BACKTICK lines SINGLE_QUOTE CLOSE_PAREN
+	OPTIONAL_POLICY OPEN_PAREN { printf("Here 1\n"); } 
+	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { printf("Here 2\n"); }
 	;
 
 gen_require:
@@ -157,17 +204,44 @@ gen_require:
 	;
 
 m4_call:
-	macro_name OPEN_PAREN m4_body CLOSE_PAREN
+	ifdef
+	|
+	tunable
 	;
 
-macro_name:
+ifdef:
+	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA m4_args CLOSE_PAREN
+	;
+
+if_or_ifn:
 	IFDEF
 	|
-	TUNABLE_POLICY
+	IFNDEF;
+
+tunable:
+	TUNABLE_POLICY OPEN_PAREN BACKTICK condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN
 	;
 
-m4_body:
-	BACKTICK STRING SINGLE_QUOTE COMMA m4_args
+condition:
+	STRING
+	|
+	NOT condition
+	|
+	condition binary_operator condition
+	|
+	OPEN_PAREN condition CLOSE_PAREN
+	;
+
+binary_operator:
+	AND
+	|
+	OR
+	|
+	XOR
+	|
+	EQUAL
+	|
+	NOT_EQUAL
 	;
 
 m4_args:
@@ -187,7 +261,7 @@ string_list_or_mls:
 	|
 	mls_range
 	|
-	mls_level
+	MLS_LEVEL
 	;
 
 mls_range:
@@ -195,9 +269,9 @@ mls_range:
 	;
 
 mls_level:
-	STRING
-	|
 	MLS_LEVEL
+	|
+	STRING
 	;
 %%
 extern int yylineno;

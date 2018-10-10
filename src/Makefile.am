@@ -1,5 +1,5 @@
 bin_PROGRAMS = selint
-selint_SOURCES = main.c lex.l parse.y tree.c tree.h selint_error.h
+selint_SOURCES = main.c lex.l parse.y tree.c tree.h selint_error.h parse_functions.c parse_functions.h
 BUILT_SOURCES = parse.h
 AM_YFLAGS = -d
 AM_CFLAGS = -Wall

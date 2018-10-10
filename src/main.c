@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <getopt.h>
+#include "tree.h"
 #include "parse.h"
 
 extern int yyparse();

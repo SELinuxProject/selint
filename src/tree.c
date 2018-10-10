@@ -13,6 +13,9 @@ enum selint_error insert_policy_node(struct policy_node *parent,
 	}
 
 	struct policy_node *to_insert = malloc(sizeof(struct policy_node));
+	if (!to_insert) {
+		return SELINT_OUT_OF_MEM;
+	}
 
 	to_insert->parent = parent;
 	to_insert->next = NULL;
@@ -75,13 +78,17 @@ enum selint_error free_policy_node(struct policy_node *to_free) {
 	return SELINT_SUCCESS;
 }
 
-void free_string_list(char **list) {
+void free_string_list(struct string_list *list) {
 	if (list == NULL) {
 		return;
 	}
-	char * cur_string = list[0];
-	while (cur_string) {
-		free(cur_string++);
+	struct string_list *cur = list;
+
+	while (cur) {
+		struct string_list *to_free = cur;
+		cur = cur->next;
+		free(to_free->string);
+		free(to_free);
 	}
 }
 
@@ -100,4 +107,5 @@ enum selint_error free_av_rule(struct av_rule *to_free) {
 
 	free(to_free);
 
-	return SELINT_SUCCESS;}
+	return SELINT_SUCCESS;
+}

@@ -1,5 +1,7 @@
 selint
 *.o
+*.log
+*.trs
 parse.c
 parse.h
 lex.c
@@ -11,9 +13,7 @@ autom4te.cache
 configure
 *.swp
 aclocal.m4
-tests/check_functions
-tests/check_functions.log
-tests/check_functions.trs
+tests/check_tree
 tests/test-suite.log
 .deps
 depcomp
