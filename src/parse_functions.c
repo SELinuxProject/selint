@@ -23,13 +23,29 @@ enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name) 
 
 enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name) {
 	//TODO: Handle attributes
-	//TODO: Insert type in hash table
+	//TODO: Insert type in hash table (Actually, it should be on the first pass
+	// after building the tree, right?)
+
+	struct policy_node *old = *cur;
 
 	(*cur)->next = malloc(sizeof(struct policy_node));
 	*cur = (*cur)->next;
 	memset(*cur, 0, sizeof(struct policy_node));
 
-	// TODO
+	(*cur)->parent = old->parent;
+	(*cur)->prev = old;
+	(*cur)->flavor = NODE_DECL;
+
+	(*cur)->data.decl = (struct declaration *) malloc(sizeof(struct declaration));
+	memset((*cur)->data.decl, 0, sizeof(struct declaration));
+
+	enum decl_flavor flavor_to_set = DECL_TYPE; // TODO: Other flavors
+
+	(*cur)->data.decl->flavor = flavor_to_set;
+
+	(*cur)->data.decl->name = strdup(name);
+
+	//TODO: (*cur)->data.decl->
 
 	return SELINT_SUCCESS;
 }

@@ -27,6 +27,32 @@ START_TEST (test_begin_parsing_te) {
 }
 END_TEST
 
+START_TEST (test_insert_declaration_type) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+
+	cur->flavor = NODE_TE_FILE;
+	cur->parent = (struct policy_node *) 0xdeadbeef;
+
+	struct policy_node *prev = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, "type", "foo_t"));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_ptr_eq(cur->parent, (void *) 0xdeadbeef);
+	ck_assert_ptr_eq(cur->prev, prev);
+	ck_assert_int_eq(cur->flavor, NODE_DECL);
+	ck_assert_ptr_nonnull((struct declation *) cur->data.decl);
+	ck_assert_int_eq(cur->data.decl->flavor, DECL_TYPE);
+	ck_assert_str_eq(cur->data.decl->name, "foo_t");
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(prev));
+
+	// TODO attributes
+	
+}
+END_TEST
+
 Suite *parse_functions_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -36,6 +62,7 @@ Suite *parse_functions_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_begin_parsing_te);
+	tcase_add_test(tc_core, test_insert_declaration_type);
 	suite_add_tcase(s, tc_core);
 
 	return s;

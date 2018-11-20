@@ -5,6 +5,7 @@
 
 enum node_flavor {
 	NODE_AV_RULE,
+	NODE_DECL,
 	NODE_M4_CALL,
 	NODE_OPTIONAL_POLICY,
 	NODE_M4_ARG,
@@ -17,6 +18,12 @@ enum av_rule_flavor {
 	AV_RULE_AUDITALLOW,
 	AV_RULE_DONTAUDIT,
 	AV_RULE_NEVERALLOW
+};
+
+enum decl_flavor {
+	DECL_TYPE,
+	DECL_ATTRIBUTE,
+	DECL_ROLE
 };
 
 struct string_list {
@@ -32,8 +39,15 @@ struct av_rule {
 	struct string_list *perms;
 };
 
+struct declaration {
+	enum decl_flavor flavor;
+	char *name;
+	struct string_list attrs;
+};
+
 union node_data {
 	struct av_rule *av;
+	struct declaration *decl;
 	char *m4_name;
 	char *string;
 };
