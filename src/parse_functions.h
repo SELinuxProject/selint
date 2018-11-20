@@ -45,7 +45,7 @@ enum selint_error insert_av_rule(struct policy_node **cur, char *flavor, struct 
 /**********************************
  * begin_optional_policy
  * Add an optional policy node at the next node in the tree.  Create its first child
- * with the name of that node.  Set cur to the child node. Allocate all memory for
+ * as the start of the block.  Set cur to the child node. Allocate all memory for
  * both nodes.
  * cur (in, out) - The current spot in the tree.  Will be updated to point to the
  * first child of the optional_policy node

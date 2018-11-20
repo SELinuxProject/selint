@@ -53,6 +53,30 @@ START_TEST (test_insert_declaration_type) {
 }
 END_TEST
 
+START_TEST (test_begin_optional_policy) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	cur->flavor = NODE_TE_FILE;
+
+	struct policy_node *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_ptr_nonnull(cur->parent);
+	ck_assert_ptr_eq(cur->parent->prev, head);
+	ck_assert_int_eq(cur->flavor, NODE_START_BLOCK);
+	ck_assert_int_eq(cur->parent->flavor, NODE_OPTIONAL_POLICY);
+	ck_assert_ptr_eq(cur->parent->first_child, cur);
+	ck_assert_ptr_null(cur->next);
+	ck_assert_ptr_null(cur->prev);
+	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_null(cur->parent->next);
+}
+END_TEST
+
 Suite *parse_functions_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -63,6 +87,7 @@ Suite *parse_functions_suite(void) {
 
 	tcase_add_test(tc_core, test_begin_parsing_te);
 	tcase_add_test(tc_core, test_insert_declaration_type);
+	tcase_add_test(tc_core, test_begin_optional_policy);
 	suite_add_tcase(s, tc_core);
 
 	return s;
