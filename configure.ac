@@ -35,5 +35,14 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strdup])
 
+AC_ARG_ENABLE([gcov],
+  [AS_HELP_STRING([--enable-gcov],
+    [use Gcov to test the test suite])],
+    [enable_gcov=${enableval}],
+    [])
+
+AM_CONDITIONAL([COND_GCOV],[ test "x$enable_gcov" "=" "xyes" ])
+
 #AC_CONFIG_FILES([Makefile])
 AC_OUTPUT(Makefile src/Makefile tests/Makefile)
+
