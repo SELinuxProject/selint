@@ -5,18 +5,18 @@
 #include "selint_error.h"
 #include "tree.h"
 
-enum selint_error begin_parsing_te(struct policy_node *cur, char *module_name) {
+enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name) {
 	
-	cur = malloc(sizeof(struct policy_node));
-	if (!cur) {
+	*cur = malloc(sizeof(struct policy_node));
+	if (!*cur) {
 		return SELINT_OUT_OF_MEM;
 	}
 
-	memset(cur, 0, sizeof(struct policy_node));
+	memset(*cur, 0, sizeof(struct policy_node));
 
-	cur->flavor = NODE_TE_FILE;
+	(*cur)->flavor = NODE_TE_FILE;
 
-	cur->data.string = strdup("example");
+	(*cur)->data.string = strdup("example");
 
 	return SELINT_SUCCESS;
 }

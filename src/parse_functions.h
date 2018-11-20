@@ -4,7 +4,7 @@
 #include "selint_error.h"
 #include "tree.h"
 
-enum selint_error begin_parsing_te(struct policy_node *cur, char *module_name);
+enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name);
 
 enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name); // TODO: Some declarations take things like attribute lists
 
