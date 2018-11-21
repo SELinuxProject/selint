@@ -6,6 +6,8 @@
 int yylineno;
 extern void yyerror(char *);
 %}
+%option nounput
+%option noinput
 %%
 policy_module { printf("policy_module"); return POLICY_MODULE; }
 type { printf("type"); return TYPE; }
