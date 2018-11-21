@@ -69,7 +69,7 @@ struct av_rule_data * make_example_av_rule() {
 
 }
 
-START_TEST (test_insert_policy_node_child_av_rule) {
+START_TEST (test_insert_policy_node_child) {
 
 	struct policy_node parent_node;
 	parent_node.parent = NULL;
@@ -83,6 +83,7 @@ START_TEST (test_insert_policy_node_child_av_rule) {
 
 	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(&parent_node, NODE_AV_RULE, av_data));
 
+	ck_assert_ptr_null(parent_node.next);
 	ck_assert_ptr_nonnull(parent_node.first_child);
 	ck_assert_ptr_eq(parent_node.first_child->data, av_data);
 	ck_assert_int_eq(parent_node.first_child->flavor, NODE_AV_RULE);
@@ -92,6 +93,31 @@ START_TEST (test_insert_policy_node_child_av_rule) {
 }
 END_TEST
 
+START_TEST (test_insert_policy_node_next) {
+
+	struct policy_node prev_node;
+	prev_node.parent = NULL;
+	prev_node.next = NULL;
+	prev_node.prev = NULL;
+	prev_node.first_child = NULL;
+	prev_node.flavor = NODE_TE_FILE;
+	prev_node.data = NULL;
+
+	struct av_rule_data *av_data = make_example_av_rule();
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_next(&prev_node, NODE_AV_RULE, av_data));
+
+	ck_assert_ptr_null(prev_node.first_child);
+	ck_assert_ptr_nonnull(prev_node.next);
+	ck_assert_ptr_eq(prev_node.next->data, av_data);
+	ck_assert_int_eq(prev_node.next->flavor, NODE_AV_RULE);
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(prev_node.next));
+
+}
+END_TEST
+
+
 Suite *tree_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -100,7 +126,8 @@ Suite *tree_suite(void) {
 
 	tc_core = tcase_create("Core");
 
-	tcase_add_test(tc_core, test_insert_policy_node_child_av_rule);
+	tcase_add_test(tc_core, test_insert_policy_node_child);
+	tcase_add_test(tc_core, test_insert_policy_node_next);
 	suite_add_tcase(s, tc_core);
 
 	return s;
