@@ -1,8 +1,11 @@
 #ifndef PARSING_FUNCTIONS_H
 #define PARSING_FUNCTIONS_H
 
+#include <uthash.h>
+
 #include "selint_error.h"
 #include "tree.h"
+#include "maps.h"
 
 /**********************************
  * begin_parsing_te
@@ -11,8 +14,18 @@
  * module_name (in) - The name of the policy module
  *
  * Returns - SELINT error code
- * ********************************/
+ **********************************/
 enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name);
+
+/**********************************
+ * Set the name of the current module to mn
+ **********************************/
+void set_current_module_name(char *mn);
+
+/**********************************
+ * Return the name of the current module
+ **********************************/
+char *get_current_module_name();
 
 /**********************************
  * insert_declaration
@@ -53,5 +66,11 @@ enum selint_error insert_av_rule(struct policy_node **cur, char *flavor, struct 
  * Returns - SELINT error code
  **********************************/
 enum selint_error begin_optional_policy(struct policy_node **cur);
+
+/**********************************
+ * cleanup_parsing
+ * Call after all parsing is done to free up memory
+ **********************************/
+void cleanup_parsing();
 
 #endif

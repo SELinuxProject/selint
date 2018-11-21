@@ -5,10 +5,16 @@ if COND_GCOV
 EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
 endif
 
+MAPS_HEADS=$(top_builddir)/src/maps.h
+MAPS_OBJS=$(top_builddir)/src/maps.o
 TREE_HEADS=$(top_builddir)/src/tree.h
 TREE_OBJS=$(top_builddir)/src/tree.o
-PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${TREE_HEADS}
-PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TREE_OBJS}
+PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${TREE_HEADS} ${MAPS_HEADS}
+PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TREE_OBJS} ${MAPS_OBJS}
+
+check_maps_SOURCES = check_maps.c ${MAPS_HEADS}
+check_maps_CFLAGS = @CHECK_CFLAGS ${EXTRA_CFLAGS}
+check_maps_LDADD = @CHECK_LIBS@ ${MAPS_OBJS}
 
 check_tree_SOURCES = check_tree.c ${TREE_HEADS} $(top_buildddir)/src/selint_error.h
 check_tree_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}

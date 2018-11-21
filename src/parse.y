@@ -124,9 +124,11 @@ declaration:
 	;
 
 type_declaration:
-	TYPE args SEMICOLON
+	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); }
 	|
-	TYPE string_list ALIAS string_list SEMICOLON
+	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); } // TODO: attrs
+	|
+	TYPE STRING ALIAS string_list SEMICOLON
 	;
 
 role_declaration:

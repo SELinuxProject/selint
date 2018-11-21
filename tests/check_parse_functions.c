@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "../src/parse_functions.h"
+#include "../src/maps.h"
 
 #define EXAMPLE_TYPE_1 "foo_t"
 #define EXAMPLE_TYPE_2 "bar_t"
@@ -21,8 +22,11 @@ START_TEST (test_begin_parsing_te) {
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
 	ck_assert_str_eq(cur->data, "example");
+	ck_assert_str_eq(get_current_module_name(), "example");
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(cur));
+
+	cleanup_parsing();
 
 }
 END_TEST
@@ -35,6 +39,8 @@ START_TEST (test_insert_declaration_type) {
 	cur->parent = (struct policy_node *) 0xdeadbeef;
 
 	struct policy_node *prev = cur;
+
+	set_current_module_name("test");
 
 	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, "type", "foo_t"));
 
@@ -49,7 +55,12 @@ START_TEST (test_insert_declaration_type) {
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(prev));
 
 	// TODO attributes
-	
+
+	char *mn = look_up_in_type_map("foo_t");
+
+	ck_assert_ptr_nonnull(mn);
+
+	cleanup_parsing();	
 }
 END_TEST
 
@@ -74,6 +85,8 @@ START_TEST (test_begin_optional_policy) {
 	ck_assert_ptr_null(cur->prev);
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_ptr_null(cur->parent->next);
+
+	cleanup_parsing();
 }
 END_TEST
 

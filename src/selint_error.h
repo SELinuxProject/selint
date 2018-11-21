@@ -4,7 +4,8 @@
 enum selint_error {
 	SELINT_SUCCESS,
 	SELINT_BAD_ARG,
-	SELINT_OUT_OF_MEM
+	SELINT_OUT_OF_MEM,
+	SELINT_NO_MOD_NAME
 };
 
 #endif

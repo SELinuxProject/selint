@@ -117,7 +117,6 @@ START_TEST (test_insert_policy_node_next) {
 }
 END_TEST
 
-
 Suite *tree_suite(void) {
 	Suite *s;
 	TCase *tc_core;

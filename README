@@ -8,7 +8,7 @@ INSTALLING
 
 	To install, first install the following dependencies:
 
-	TODO: List dependencies
+	uthash-devel
 
 	Then run:
 
