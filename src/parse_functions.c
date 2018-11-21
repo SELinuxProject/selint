@@ -16,7 +16,7 @@ enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name) 
 
 	(*cur)->flavor = NODE_TE_FILE;
 
-	(*cur)->data.string = strdup("example");
+	(*cur)->data = strdup(module_name);
 
 	return SELINT_SUCCESS;
 }
@@ -26,35 +26,25 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 	//TODO: Insert type in hash table (Actually, it should be on the first pass
 	// after building the tree, right?)
 
-	struct policy_node *old = *cur;
-
-	(*cur)->next = malloc(sizeof(struct policy_node));
-	if (!*cur) {
+	struct declaration_data *data = (struct declaration_data *) malloc(sizeof(struct declaration_data));
+	if (!data) {
 		return SELINT_OUT_OF_MEM;
 	}
 
-
-	*cur = (*cur)->next;
-	memset(*cur, 0, sizeof(struct policy_node));
-
-	(*cur)->parent = old->parent;
-	(*cur)->prev = old;
-	(*cur)->flavor = NODE_DECL;
-
-	(*cur)->data.decl = (struct declaration *) malloc(sizeof(struct declaration));
-	if (!(*cur)->data.decl) {
-		return SELINT_OUT_OF_MEM;
-	}
-
-	memset((*cur)->data.decl, 0, sizeof(struct declaration));
+	memset(data, 0, sizeof(struct declaration_data));
 
 	enum decl_flavor flavor_to_set = DECL_TYPE; // TODO: Other flavors
+	data->flavor = flavor_to_set;
+	data->name = strdup(name);
 
-	(*cur)->data.decl->flavor = flavor_to_set;
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_DECL, data);
 
-	(*cur)->data.decl->name = strdup(name);
+	if (ret != SELINT_SUCCESS) {
+		free(data);
+		return ret;
+	}
 
-	//TODO: (*cur)->data.decl->
+	*cur = (*cur)->next;
 
 	return SELINT_SUCCESS;
 }
@@ -65,29 +55,23 @@ enum selint_error insert_av_rule(struct policy_node **cur, char *flavor, struct 
 
 
 enum selint_error begin_optional_policy(struct policy_node **cur) {
-	struct policy_node *old = *cur;
 
-	(*cur)->next = malloc(sizeof(struct policy_node));
-	if (!*cur) {
-		return SELINT_OUT_OF_MEM;
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_OPTIONAL_POLICY, NULL);
+
+	if (ret != SELINT_SUCCESS) {
+		return ret;
 	}
 
 	*cur = (*cur)->next;
-	memset(*cur, 0, sizeof(struct policy_node));
 
-	(*cur)->parent = old->parent;
-	(*cur)->prev = old;
-	(*cur)->flavor = NODE_OPTIONAL_POLICY;
-
-	(*cur)->first_child = malloc(sizeof(struct policy_node));
-	if (!*cur) {
-		return SELINT_OUT_OF_MEM;
+	ret = insert_policy_node_child(*cur, NODE_START_BLOCK, NULL);
+	if (ret != SELINT_SUCCESS) {
+		*cur = (*cur)->prev;
+		free_policy_node(*cur);
+		return ret;
 	}
-	memset((*cur)->first_child, 0, sizeof(struct policy_node));
-	(*cur)->first_child->parent = *cur;
 
 	*cur = (*cur)->first_child;
-	(*cur)->flavor = NODE_START_BLOCK;
 
 	return SELINT_SUCCESS;
 }

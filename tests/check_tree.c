@@ -8,10 +8,10 @@
 #define EXAMPLE_TYPE_2 "bar_t"
 #define EXAMPLE_TYPE_3 "baz_t"
 
-struct av_rule * make_example_av_rule() {
+struct av_rule_data * make_example_av_rule() {
 
 	// allow foo_t { bar_t baz_t }:file { read write getattr };
-	struct av_rule *av_rule_data = malloc(sizeof(struct av_rule));
+	struct av_rule_data *av_rule_data = malloc(sizeof(struct av_rule_data));
 
 	av_rule_data->flavor = AV_RULE_ALLOW;
 
@@ -69,7 +69,7 @@ struct av_rule * make_example_av_rule() {
 
 }
 
-START_TEST (test_insert_policy_node_av_rule) {
+START_TEST (test_insert_policy_node_child_av_rule) {
 
 	struct policy_node parent_node;
 	parent_node.parent = NULL;
@@ -77,15 +77,14 @@ START_TEST (test_insert_policy_node_av_rule) {
 	parent_node.prev = NULL;
 	parent_node.first_child = NULL;
 	parent_node.flavor = NODE_TE_FILE;
-	parent_node.data.av = NULL;
+	parent_node.data = NULL;
 
-	union node_data av_data;
-	av_data.av = make_example_av_rule();
+	struct av_rule_data *av_data = make_example_av_rule();
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node(&parent_node, NODE_AV_RULE, av_data));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(&parent_node, NODE_AV_RULE, av_data));
 
 	ck_assert_ptr_nonnull(parent_node.first_child);
-	ck_assert_ptr_eq(parent_node.first_child->data.av, av_data.av);
+	ck_assert_ptr_eq(parent_node.first_child->data, av_data);
 	ck_assert_int_eq(parent_node.first_child->flavor, NODE_AV_RULE);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(parent_node.first_child));
@@ -101,7 +100,7 @@ Suite *tree_suite(void) {
 
 	tc_core = tcase_create("Core");
 
-	tcase_add_test(tc_core, test_insert_policy_node_av_rule);
+	tcase_add_test(tc_core, test_insert_policy_node_child_av_rule);
 	suite_add_tcase(s, tc_core);
 
 	return s;

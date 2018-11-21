@@ -4,11 +4,11 @@
 #include "tree.h"
 #include "selint_error.h"
 
-enum selint_error insert_policy_node(struct policy_node *parent,
+enum selint_error insert_policy_node_child(struct policy_node *parent,
 				enum node_flavor flavor,
-				union node_data data) {
+				void *data) {
 
-	if (parent == NULL || ( (data.av == NULL) && (data.m4_name == NULL) && (data.string == NULL) )) {
+	if (parent == NULL) {
 		return SELINT_BAD_ARG;
 	}
 
@@ -42,6 +42,31 @@ enum selint_error insert_policy_node(struct policy_node *parent,
 	return SELINT_SUCCESS;
 } 
 
+enum selint_error insert_policy_node_next(struct policy_node *prev,
+				enum node_flavor flavor,
+				void *data) {
+
+	if (prev == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	struct policy_node *to_insert = malloc(sizeof(struct policy_node));
+	if (!to_insert) {
+		return SELINT_OUT_OF_MEM;
+	}
+
+	prev->next = to_insert;
+
+	to_insert->parent = prev->parent;
+	to_insert->next = NULL;
+	to_insert->first_child = NULL;
+	to_insert->flavor = flavor;
+	to_insert->data = data;
+	to_insert->prev = prev;
+
+	return SELINT_SUCCESS;
+}
+
 enum selint_error free_policy_node(struct policy_node *to_free) {
 	if (to_free == NULL) {
 		return SELINT_BAD_ARG;
@@ -49,14 +74,14 @@ enum selint_error free_policy_node(struct policy_node *to_free) {
 
 	switch (to_free->flavor) {
 		case NODE_AV_RULE:
-			free_av_rule(to_free->data.av);
+			free_av_rule_data(to_free->data);
 			break;
-		case NODE_M4_CALL:
-			free(to_free->data.m4_name);
+		case NODE_DECL:
+			free_declaration_data(to_free->data);
 			break;
 		default:
-			if (to_free->data.string != NULL) {
-				free(to_free->data.string);
+			if (to_free->data != NULL) {
+				free(to_free->data);
 			}
 			break;
 	}
@@ -92,7 +117,7 @@ void free_string_list(struct string_list *list) {
 	}
 }
 
-enum selint_error free_av_rule(struct av_rule *to_free) {
+enum selint_error free_av_rule_data(struct av_rule_data *to_free) {
 
 	if (to_free == NULL) {
 		return SELINT_BAD_ARG;
@@ -104,6 +129,19 @@ enum selint_error free_av_rule(struct av_rule *to_free) {
 	free_string_list(to_free->perms);
 
 	to_free->sources = to_free->targets = to_free->object_classes = to_free->perms = NULL;
+
+	free(to_free);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error free_declaration_data(struct declaration_data *to_free) {
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	free_string_list(to_free->attrs);
+	free(to_free->name);
 
 	free(to_free);
 

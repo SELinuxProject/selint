@@ -31,7 +31,7 @@ struct string_list {
 	struct string_list *next;
 };
 
-struct av_rule {
+struct av_rule_data {
 	enum av_rule_flavor flavor;
 	struct string_list *sources;
 	struct string_list *targets;
@@ -39,17 +39,10 @@ struct av_rule {
 	struct string_list *perms;
 };
 
-struct declaration {
+struct declaration_data {
 	enum decl_flavor flavor;
 	char *name;
-	struct string_list attrs;
-};
-
-union node_data {
-	struct av_rule *av;
-	struct declaration *decl;
-	char *m4_name;
-	char *string;
+	struct string_list *attrs;
 };
 
 struct policy_node {
@@ -58,13 +51,17 @@ struct policy_node {
 	struct policy_node *prev;
 	struct policy_node *first_child;
 	enum node_flavor flavor;
-	union node_data data;
+	void *data;
 };
 
-enum selint_error insert_policy_node(struct policy_node *parent, enum node_flavor flavor, union node_data data); 
+enum selint_error insert_policy_node_child(struct policy_node *parent, enum node_flavor flavor, void *data); 
+
+enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_flavor flavor, void *data); 
 
 enum selint_error free_policy_node(struct policy_node *to_free);
 
-enum selint_error free_av_rule(struct av_rule *to_free);
+enum selint_error free_av_rule_data(struct av_rule_data *to_free);
+
+enum selint_error free_declaration_data(struct declaration_data *to_free);
 
 #endif

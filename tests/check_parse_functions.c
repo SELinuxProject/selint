@@ -20,7 +20,7 @@ START_TEST (test_begin_parsing_te) {
 	ck_assert_ptr_null(cur->prev);
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
-	ck_assert_str_eq(cur->data.string, "example");
+	ck_assert_str_eq(cur->data, "example");
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(cur));
 
@@ -42,9 +42,9 @@ START_TEST (test_insert_declaration_type) {
 	ck_assert_ptr_eq(cur->parent, (void *) 0xdeadbeef);
 	ck_assert_ptr_eq(cur->prev, prev);
 	ck_assert_int_eq(cur->flavor, NODE_DECL);
-	ck_assert_ptr_nonnull((struct declation *) cur->data.decl);
-	ck_assert_int_eq(cur->data.decl->flavor, DECL_TYPE);
-	ck_assert_str_eq(cur->data.decl->name, "foo_t");
+	ck_assert_ptr_nonnull((struct declation *) cur->data);
+	ck_assert_int_eq(((struct declaration_data *)cur->data)->flavor, DECL_TYPE);
+	ck_assert_str_eq(((struct declaration_data *)cur->data)->name, "foo_t");
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(prev));
 
