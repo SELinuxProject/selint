@@ -71,7 +71,24 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_av_rule(struct policy_node **cur, char *flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms) {
+enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms) {
+
+	struct av_rule_data *av_data = malloc(sizeof(struct av_rule_data));
+
+	av_data->flavor = flavor;
+	av_data->sources = sources;
+	av_data->targets = targets;
+	av_data->object_classes = object_classes;
+	av_data->perms = perms;
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_AV_RULE, av_data);
+	if ( ret != SELINT_SUCCESS) {
+		free_av_rule_data(av_data);
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+
 	return SELINT_SUCCESS;
 }
 
@@ -95,6 +112,11 @@ enum selint_error begin_optional_policy(struct policy_node **cur) {
 
 	*cur = (*cur)->first_child;
 
+	return SELINT_SUCCESS;
+}
+
+enum selint_error end_optional_policy(struct policy_node **cur) {
+	*cur = (*cur)->parent;
 	return SELINT_SUCCESS;
 }
 

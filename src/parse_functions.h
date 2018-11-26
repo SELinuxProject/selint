@@ -53,7 +53,7 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_av_rule(struct policy_node **cur, char *flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms);
+enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms);
 
 /**********************************
  * begin_optional_policy
@@ -66,6 +66,16 @@ enum selint_error insert_av_rule(struct policy_node **cur, char *flavor, struct 
  * Returns - SELINT error code
  **********************************/
 enum selint_error begin_optional_policy(struct policy_node **cur);
+
+/**********************************
+ * end_optional_policy
+ * Complete the optional policy block by moving cur back up to the parent level
+ * cur (in, out) - The current spot in the tree.  Will be updated to point to the
+ * parent optional policy node
+ *
+ * Returns - SELINT error code
+ **********************************/
+enum selint_error end_optional_policy(struct policy_node **cur);
 
 /**********************************
  * cleanup_parsing

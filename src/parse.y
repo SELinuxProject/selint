@@ -6,6 +6,8 @@
 	int yylex(void);
 	void yyerror(char *);
 
+	extern struct policy_node *ast;
+
 	struct policy_node *cur;
 %}
 
@@ -13,6 +15,7 @@
 	char *string;
 	char symbol;
 	struct string_list *sl;
+	enum av_rule_flavor av_flavor;
 }
 
 %token <string> MLS_LEVEL;
@@ -69,6 +72,8 @@
 
 %type<sl> string_list
 %type<sl> strings
+%type<av_flavor> av_type
+%type<sl> perms_list
 
 %%
 policy:
@@ -76,7 +81,7 @@ policy:
 	;
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3); }
+	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3); ast = cur; }
 	;
 
 body:
@@ -142,17 +147,17 @@ type_alias:
 	;
 
 rule:
-	av_type string_list string_list COLON string_list perms_list SEMICOLON
+	av_type string_list string_list COLON string_list perms_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6); }
 	;
 
 av_type:
-	ALLOW
+	ALLOW { $$ = AV_RULE_ALLOW; }
 	|
-	AUDIT_ALLOW
+	AUDIT_ALLOW { $$ = AV_RULE_AUDITALLOW; }
 	|
-	DONT_AUDIT
+	DONT_AUDIT { $$ = AV_RULE_DONTAUDIT; }
 	|
-	NEVER_ALLOW
+	NEVER_ALLOW { $$ = AV_RULE_NEVERALLOW; }
 	;
 
 string_list:
@@ -173,9 +178,11 @@ strings:
 perms_list:
 	string_list
 	|
-	TILDA string_list
+	TILDA string_list { $$ = malloc(sizeof(struct string_list));
+			$$->string = strdup("~");
+			$$->next = $2; }
 	|
-	STAR
+	STAR { $$ = malloc(sizeof(struct string_list)); $$->string = strdup("*"); $$->next = NULL; } 
 	;
 
 type_transition:
@@ -197,8 +204,8 @@ interface:
 	;
 
 optional_block:
-	OPTIONAL_POLICY OPEN_PAREN { printf("Here 1\n"); } 
-	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { printf("Here 2\n"); }
+	OPTIONAL_POLICY OPEN_PAREN { begin_optional_policy(&cur); } 
+	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
 	;
 
 gen_require:

@@ -64,7 +64,29 @@ START_TEST (test_insert_declaration_type) {
 }
 END_TEST
 
-START_TEST (test_begin_optional_policy) {
+START_TEST (test_insert_av_rule) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_av_rule(&cur, AV_RULE_AUDITALLOW, NULL, NULL, NULL, NULL));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_int_eq(NODE_AV_RULE, cur->flavor);
+	struct av_rule_data *avd = (struct av_rule_data *)(cur->data);
+	ck_assert_int_eq(AV_RULE_AUDITALLOW, avd);
+	ck_assert_ptr_null(avd->sources);
+	ck_assert_ptr_null(avd->targets);
+	ck_assert_ptr_null(avd->object_classes);
+	ck_assert_ptr_null(avd->perms);
+
+	cleanup_parsing();
+
+
+}
+END_TEST
+
+START_TEST (test_optional_policy) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
 	memset(cur, 0, sizeof(struct policy_node));
@@ -86,6 +108,14 @@ START_TEST (test_begin_optional_policy) {
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_ptr_null(cur->parent->next);
 
+	ck_assert_int_eq(SELINT_SUCCESS, end_optional_policy(&cur));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_ptr_eq(cur->prev, head);
+	ck_assert_int_eq(cur->flavor, NODE_OPTIONAL_POLICY);
+	ck_assert_ptr_nonnull(cur->first_child);
+	ck_assert_ptr_null(cur->first_child->prev);
+
 	cleanup_parsing();
 }
 END_TEST
@@ -100,7 +130,7 @@ Suite *parse_functions_suite(void) {
 
 	tcase_add_test(tc_core, test_begin_parsing_te);
 	tcase_add_test(tc_core, test_insert_declaration_type);
-	tcase_add_test(tc_core, test_begin_optional_policy);
+	tcase_add_test(tc_core, test_optional_policy);
 	suite_add_tcase(s, tc_core);
 
 	return s;

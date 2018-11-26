@@ -1,0 +1,18 @@
+policy_module(basic, 1.0)
+
+type basic_t;
+
+type basic_exec_t;
+
+allow basic_t basic_exec_t:file { read execute entrypoint };
+
+optional_policy(`
+	allow basic_t foo_t:file *;
+	allow basic_t foo_t:dir read;
+')
+
+optional_policy(`
+	allow basic_t bar_t:file ~{ read write };
+')
+
+allow basic_t self:capability chown;

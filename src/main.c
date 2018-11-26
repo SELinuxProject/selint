@@ -8,6 +8,8 @@ extern int yyparse();
 
 static int verbose_flag;
 
+struct policy_node *ast;
+
 int main(int argc, char **argv) {
 
 	while (1) {
