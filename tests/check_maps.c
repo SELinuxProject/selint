@@ -48,7 +48,7 @@ Suite *maps_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 
-	s = suite_create("Tree");
+	s = suite_create("Parsing");
 
 	tc_core = tcase_create("Core");
 
