@@ -44,6 +44,8 @@
 %token CLASS;
 %token IFDEF;
 %token IFNDEF;
+%token INTERFACE;
+%token TEMPLATE;
 %token OPEN_PAREN;
 %token COMMA;
 %token CLOSE_PAREN;
@@ -76,7 +78,15 @@
 %type<sl> perms_list
 
 %%
-policy:
+selinux_file:
+	te_policy
+	|
+	if_file
+	;
+
+	// TE File parsing
+
+te_policy:
 	header body
 	;
 
@@ -282,6 +292,34 @@ mls_level:
 	|
 	STRING
 	;
+
+	// IF File parsing
+if_file:
+	interfaces
+	;
+
+interfaces:
+	interfaces interface
+	|
+	interface
+	;
+
+interface:
+	if_keyword BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK gr_block lines SINGLE_QUOTE CLOSE_PAREN
+	;
+
+gr_block:
+	// TODO: Multiple statements in require block
+	// TODO: In a te context type s1, s2 means that s2 is an attr.  In a gen_require its a second type
+	GEN_REQUIRE BACKTICK declaration SINGLE_QUOTE CLOSE_PAREN
+	; 
+
+if_keyword:
+	INTERFACE
+	|
+	TEMPLATE
+	;
+
 %%
 extern int yylineno;
 void yyerror(char* s) {
