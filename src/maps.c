@@ -43,5 +43,6 @@ void free_all_maps() {
 		HASH_DELETE(hh_type, type_map, cur_type);
 		free(cur_type->name);
 		free(cur_type->module_name);
+		free(cur_type);
 	}
 }

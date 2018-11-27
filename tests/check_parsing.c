@@ -11,7 +11,7 @@ extern FILE * yyin;
 extern int yyparse();
 struct policy_node *ast;
 
-START_TEST (test_parse_basic) {
+START_TEST (test_parse_basic_te) {
 
 	yyin = fopen(BASIC_TE_FILENAME, "r");
 	yyparse(); 
@@ -52,6 +52,9 @@ START_TEST (test_parse_basic) {
 	cur = cur->first_child;
 	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
 
+	cleanup_parsing();
+
+	fclose(yyin);
 
 }
 END_TEST
@@ -64,7 +67,7 @@ Suite *parsing_suite(void) {
 
 	tc_core = tcase_create("Core");
 
-	tcase_add_test(tc_core, test_parse_basic);
+	tcase_add_test(tc_core, test_parse_basic_te);
 	suite_add_tcase(s, tc_core);
 
 	return s;

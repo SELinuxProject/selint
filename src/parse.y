@@ -91,7 +91,7 @@ te_policy:
 	;
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3); ast = cur; }
+	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3); ast = cur; free($3); free($5);} // Version number isn't needed
 	;
 
 body:
@@ -139,9 +139,9 @@ declaration:
 	;
 
 type_declaration:
-	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); }
+	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); free($2); }
 	|
-	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); } // TODO: attrs
+	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); free($2); } // TODO: attrs
 	|
 	TYPE STRING ALIAS string_list SEMICOLON
 	;
@@ -173,16 +173,17 @@ av_type:
 string_list:
 	OPEN_CURLY strings CLOSE_CURLY { $$ = $2; }
 	|
-	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; }
+	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1);}
 	;
 
 strings:
-	strings STRING { struct string_list *cur = $1;
-			while (cur->next) { cur++;}
+	strings STRING { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
 			cur->next = malloc(sizeof(struct string_list));
-			cur->next->string = strdup($2); }
+			cur->next->string = strdup($2);
+			cur->next->next = NULL; 
+			free($2); }
 	|
-	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; }
+	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1);}
 	;
 
 perms_list:

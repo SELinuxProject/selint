@@ -37,6 +37,9 @@ START_TEST (test_insert_declaration_type) {
 
 	cur->flavor = NODE_TE_FILE;
 	cur->parent = (struct policy_node *) 0xdeadbeef;
+	cur->data = NULL;
+	cur->first_child = NULL;
+	cur->next = NULL;
 
 	struct policy_node *prev = cur;
 
@@ -48,6 +51,8 @@ START_TEST (test_insert_declaration_type) {
 	ck_assert_ptr_eq(cur->parent, (void *) 0xdeadbeef);
 	ck_assert_ptr_eq(cur->prev, prev);
 	ck_assert_int_eq(cur->flavor, NODE_DECL);
+	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_null(prev->first_child);
 	ck_assert_ptr_nonnull((struct declation *) cur->data);
 	ck_assert_int_eq(((struct declaration_data *)cur->data)->flavor, DECL_TYPE);
 	ck_assert_str_eq(((struct declaration_data *)cur->data)->name, "foo_t");
@@ -74,7 +79,7 @@ START_TEST (test_insert_av_rule) {
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_AV_RULE, cur->flavor);
 	struct av_rule_data *avd = (struct av_rule_data *)(cur->data);
-	ck_assert_int_eq(AV_RULE_AUDITALLOW, avd);
+	ck_assert_int_eq(AV_RULE_AUDITALLOW, avd->flavor);
 	ck_assert_ptr_null(avd->sources);
 	ck_assert_ptr_null(avd->targets);
 	ck_assert_ptr_null(avd->object_classes);
@@ -115,6 +120,8 @@ START_TEST (test_optional_policy) {
 	ck_assert_int_eq(cur->flavor, NODE_OPTIONAL_POLICY);
 	ck_assert_ptr_nonnull(cur->first_child);
 	ck_assert_ptr_null(cur->first_child->prev);
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(head));
 
 	cleanup_parsing();
 }
