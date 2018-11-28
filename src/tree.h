@@ -5,6 +5,7 @@
 
 enum node_flavor {
 	NODE_AV_RULE,
+	NODE_TT_RULE,
 	NODE_DECL,
 	NODE_M4_CALL,
 	NODE_OPTIONAL_POLICY,
@@ -12,6 +13,7 @@ enum node_flavor {
 	NODE_TE_FILE,
 	NODE_START_BLOCK,
 	NODE_IF_DEF,
+	NODE_IF_CALL,
 	NODE_GEN_REQ
 };
 
@@ -41,6 +43,19 @@ struct av_rule_data {
 	struct string_list *perms;
 };
 
+struct type_transition_data {
+	struct string_list *sources;
+	struct string_list *targets;
+	struct string_list *object_classes;
+	char *default_type;
+	char *name;
+};
+
+struct if_call_data {
+	char *name;
+	struct string_list *args;
+};
+
 struct declaration_data {
 	enum decl_flavor flavor;
 	char *name;
@@ -63,6 +78,10 @@ enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_fl
 enum selint_error free_policy_node(struct policy_node *to_free);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
+
+enum selint_error free_type_transition_data(struct type_transition_data *to_free);
+
+enum selint_error free_if_call_data(struct if_call_data *to_free);
 
 enum selint_error free_declaration_data(struct declaration_data *to_free);
 

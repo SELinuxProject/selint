@@ -74,6 +74,8 @@ START_TEST (test_insert_av_rule) {
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
 	memset(cur, 0, sizeof(struct policy_node));
 
+	struct policy_node *head = cur;
+
 	ck_assert_int_eq(SELINT_SUCCESS, insert_av_rule(&cur, AV_RULE_AUDITALLOW, NULL, NULL, NULL, NULL));
 
 	ck_assert_ptr_nonnull(cur);
@@ -85,8 +87,68 @@ START_TEST (test_insert_av_rule) {
 	ck_assert_ptr_null(avd->object_classes);
 	ck_assert_ptr_null(avd->perms);
 
+	free_policy_node(head);
+
 	cleanup_parsing();
 
+
+}
+END_TEST
+
+START_TEST (test_insert_type_transition) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	struct policy_node *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, NULL, NULL, NULL, "example_tmp_t", "filename.txt"));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_int_eq(NODE_TT_RULE, cur->flavor);
+	struct type_transition_data *ttd = (struct type_transition_data *)(cur->data);
+	ck_assert_ptr_null(ttd->sources);
+	ck_assert_ptr_null(ttd->targets);
+	ck_assert_ptr_null(ttd->object_classes);
+	ck_assert_str_eq("example_tmp_t", ttd->default_type);
+	ck_assert_str_eq("filename.txt", ttd->name);
+
+	free_policy_node(head);
+
+	cleanup_parsing();
+}
+END_TEST
+
+START_TEST (test_insert_interface_call) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	struct policy_node *head = cur;
+
+	struct string_list *args = malloc(sizeof(struct string_list));
+	args->string = strdup("foo_t");
+	args->next = malloc(sizeof(struct string_list));
+	args->next->string = strdup("bar_t");
+	args->next->next = NULL;
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_interface_call(&cur, "do_things", args));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_int_eq(NODE_IF_CALL, cur->flavor);
+	ck_assert_ptr_null(cur->next);
+	ck_assert_ptr_null(cur->parent);
+	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_nonnull(cur->prev);
+
+	struct if_call_data *if_data = cur->data;
+
+	ck_assert_str_eq("do_things", if_data->name);
+	ck_assert_str_eq("foo_t", if_data->args->string);
+	ck_assert_str_eq("bar_t", if_data->args->next->string);
+
+	free_policy_node(head);
+	cleanup_parsing();
 
 }
 END_TEST
@@ -205,6 +267,9 @@ Suite *parse_functions_suite(void) {
 
 	tcase_add_test(tc_core, test_begin_parsing_te);
 	tcase_add_test(tc_core, test_insert_declaration_type);
+	tcase_add_test(tc_core, test_insert_av_rule);
+	tcase_add_test(tc_core, test_insert_type_transition);
+	tcase_add_test(tc_core, test_insert_interface_call);
 	suite_add_tcase(s, tc_core);
 
 	tcase_add_test(tc_blocks, test_optional_policy);

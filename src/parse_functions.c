@@ -92,7 +92,39 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_interface_call(struct policy_node **cur, struct string_list args) {
+enum selint_error insert_type_transition(struct policy_node **cur, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name) {
+
+	struct type_transition_data *tt_data = malloc(sizeof(struct type_transition_data));
+
+	tt_data->sources = sources;
+	tt_data->targets = targets;
+	tt_data->object_classes = object_classes;
+	tt_data->default_type = strdup(default_type);
+	tt_data->name = strdup(name);
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_TT_RULE, tt_data);
+	if ( ret != SELINT_SUCCESS) {
+		free_type_transition_data(tt_data);
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error insert_interface_call(struct policy_node **cur, char *if_name, struct string_list *args) {
+	struct if_call_data *if_data = malloc(sizeof(struct if_call_data));
+	if_data->name = strdup(if_name);
+	if_data->args = args;
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_IF_CALL, if_data);
+	if (ret != SELINT_SUCCESS) {
+		free_if_call_data(if_data);
+		return ret;
+	}
+
+	*cur = (*cur)->next;
 
 	return SELINT_SUCCESS;
 }

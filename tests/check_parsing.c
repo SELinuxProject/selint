@@ -3,6 +3,7 @@
 
 #include "../src/tree.h"
 #include "../src/parse.h"
+#include "../src/parse_functions.h"
 
 #define POLICIES_DIR "sample_policy_files/"
 #define BASIC_TE_FILENAME POLICIES_DIR "basic.te"

@@ -74,6 +74,10 @@
 
 %type<sl> string_list
 %type<sl> strings
+%type<sl> args
+%type<string> mls_range
+%type<string> mls_level
+%type<sl> string_list_or_mls
 %type<av_flavor> av_type
 %type<sl> perms_list
 
@@ -115,7 +119,7 @@ line:
 	|
 	range_transition
 	|
-	interface { printf("Here 4i\n"); }
+	interface_call { printf("Here 4i\n"); }
 	|
 	optional_block
 	|
@@ -198,8 +202,10 @@ perms_list:
 
 type_transition:
 	TYPE_TRANSITION string_list string_list COLON string_list STRING SEMICOLON
+	{ insert_type_transition(&cur, $2, $3, $5, $6, NULL); }
 	|
 	TYPE_TRANSITION string_list string_list COLON string_list STRING QUOTED_STRING SEMICOLON
+	{ insert_type_transition(&cur, $2, $3, $5, $6, $7); }
 	;
 
 range_transition:
@@ -208,10 +214,12 @@ range_transition:
 	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON
 	;
 
-interface:
+interface_call:
 	STRING OPEN_PAREN args CLOSE_PAREN
+	{ insert_interface_call(&cur, $1, $3); }
 	|
 	STRING OPEN_PAREN args CLOSE_PAREN SEMICOLON
+	{ insert_interface_call(&cur, $1, $3); }
 	;
 
 optional_block:
@@ -274,18 +282,22 @@ args:
 	string_list_or_mls
 	|
 	args COMMA string_list_or_mls
+	{ struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
+	cur->next = $3; }
 	;
 
 string_list_or_mls:
 	string_list
 	|
-	mls_range
+	mls_range { $$ = malloc(sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
 	|
-	MLS_LEVEL
+	MLS_LEVEL { $$ = malloc(sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
 	;
 
 mls_range:
-	mls_level DASH mls_level
+	mls_level DASH mls_level { size_t len = strlen($1) + strlen($3) + 1 /* DASH */ + 1 /* NT */;
+				$$ = malloc(len);
+				snprintf($$, len, "%s-%s", $1, $3); }
 	;
 
 mls_level:
@@ -296,16 +308,16 @@ mls_level:
 
 	// IF File parsing
 if_file:
-	interfaces
+	interface_defs
 	;
 
-interfaces:
-	interfaces interface
+interface_defs:
+	interface_defs interface_def
 	|
-	interface
+	interface_def
 	;
 
-interface:
+interface_def:
 	if_keyword BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK gr_block lines SINGLE_QUOTE CLOSE_PAREN
 	;
 

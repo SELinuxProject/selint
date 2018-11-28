@@ -76,6 +76,12 @@ enum selint_error free_policy_node(struct policy_node *to_free) {
 		case NODE_AV_RULE:
 			free_av_rule_data(to_free->data);
 			break;
+		case NODE_TT_RULE:
+			free_type_transition_data(to_free->data);
+			break;
+		case NODE_IF_CALL:
+			free_if_call_data(to_free->data);
+			break;
 		case NODE_DECL:
 			free_declaration_data(to_free->data);
 			break;
@@ -133,6 +139,37 @@ enum selint_error free_av_rule_data(struct av_rule_data *to_free) {
 	free_string_list(to_free->perms);
 
 	to_free->sources = to_free->targets = to_free->object_classes = to_free->perms = NULL;
+
+	free(to_free);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error free_type_transition_data(struct type_transition_data *to_free) {
+
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	free_string_list(to_free->sources);
+	free_string_list(to_free->targets);
+	free_string_list(to_free->object_classes);
+	free(to_free->default_type);
+	free(to_free->name);
+
+	free(to_free);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error free_if_call_data(struct if_call_data *to_free) {
+
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	free(to_free->name);
+	free_string_list(to_free->args);
 
 	free(to_free);
 
