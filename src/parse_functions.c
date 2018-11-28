@@ -92,21 +92,24 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_interface_call(struct policy_node **cur, struct string_list args) {
 
-enum selint_error begin_optional_policy(struct policy_node **cur) {
+	return SELINT_SUCCESS;
+}
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_OPTIONAL_POLICY, NULL);
+enum selint_error begin_block(struct policy_node **cur, enum node_flavor block_type, void *data) {
+	enum selint_error ret = insert_policy_node_next(*cur, block_type, data);
 
-	if (ret != SELINT_SUCCESS) {
+	if ( ret != SELINT_SUCCESS) {
 		return ret;
 	}
 
 	*cur = (*cur)->next;
 
 	ret = insert_policy_node_child(*cur, NODE_START_BLOCK, NULL);
-	if (ret != SELINT_SUCCESS) {
+	if ( ret != SELINT_SUCCESS) {
 		*cur = (*cur)->prev;
-		free_policy_node(*cur);
+		free_policy_node((*cur)->next);
 		return ret;
 	}
 
@@ -115,9 +118,45 @@ enum selint_error begin_optional_policy(struct policy_node **cur) {
 	return SELINT_SUCCESS;
 }
 
-enum selint_error end_optional_policy(struct policy_node **cur) {
+enum selint_error end_block(struct policy_node **cur, enum node_flavor block_type) {
+
+	if ((*cur)->parent == NULL || (*cur)->parent->flavor != block_type) {
+		return SELINT_NOT_IN_BLOCK;
+	}
+
 	*cur = (*cur)->parent;
 	return SELINT_SUCCESS;
+}
+	
+
+enum selint_error begin_optional_policy(struct policy_node **cur) {
+
+	return begin_block(cur, NODE_OPTIONAL_POLICY, (void *) NULL);
+}
+
+enum selint_error end_optional_policy(struct policy_node **cur) {
+
+	return end_block(cur, NODE_OPTIONAL_POLICY);
+}
+
+enum selint_error begin_interface_def(struct policy_node **cur, char *name) {
+
+	return begin_block(cur, NODE_IF_DEF, (void *) strdup(name));
+}
+
+enum selint_error end_interface_def(struct policy_node **cur) {
+
+	return end_block(cur, NODE_IF_DEF);
+}
+
+enum selint_error begin_gen_require(struct policy_node **cur) {
+
+	return begin_block(cur, NODE_GEN_REQ, (void *) NULL);
+}
+
+enum selint_error end_gen_require(struct policy_node **cur) {
+
+	return end_block(cur, NODE_GEN_REQ);
 }
 
 void cleanup_parsing() {

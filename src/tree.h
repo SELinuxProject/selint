@@ -10,7 +10,9 @@ enum node_flavor {
 	NODE_OPTIONAL_POLICY,
 	NODE_M4_ARG,
 	NODE_TE_FILE,
-	NODE_START_BLOCK
+	NODE_START_BLOCK,
+	NODE_IF_DEF,
+	NODE_GEN_REQ
 };
 
 enum av_rule_flavor {

@@ -127,18 +127,90 @@ START_TEST (test_optional_policy) {
 }
 END_TEST
 
+START_TEST (test_interface_def) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+
+	cur->flavor = NODE_TE_FILE;
+
+	struct policy_node *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, "foo_read_conf"));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_ptr_nonnull(cur->parent);
+	ck_assert_ptr_eq(cur->parent->prev, head);
+	ck_assert_int_eq(cur->flavor, NODE_START_BLOCK);
+	ck_assert_int_eq(cur->parent->flavor, NODE_IF_DEF);
+	ck_assert_ptr_eq(cur->parent->first_child, cur);
+	ck_assert_str_eq(cur->parent->data, "foo_read_conf");
+	ck_assert_ptr_null(cur->next);
+	ck_assert_ptr_null(cur->prev);
+	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_null(cur->parent->next);
+
+	ck_assert_int_eq(SELINT_SUCCESS, end_interface_def(&cur));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_ptr_eq(cur->prev, head);
+	ck_assert_int_eq(cur->flavor, NODE_IF_DEF);
+	ck_assert_ptr_nonnull(cur->first_child);
+	ck_assert_ptr_null(cur->first_child->prev);
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(head));
+
+	cleanup_parsing();
+}
+END_TEST
+
+START_TEST (test_wrong_block_end) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+
+	cur->flavor = NODE_TE_FILE;
+
+	struct policy_node *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur));
+
+	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_interface_def(&cur));
+
+	ck_assert_int_eq(SELINT_SUCCESS, end_optional_policy(&cur));
+
+	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
+
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, "sample_interface"));
+
+	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
+
+	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_gen_require(&cur));
+
+	ck_assert_int_eq(SELINT_SUCCESS, end_interface_def(&cur));
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(head));
+
+	cleanup_parsing();
+
+}
+END_TEST
+
 Suite *parse_functions_suite(void) {
 	Suite *s;
-	TCase *tc_core;
+	TCase *tc_core, *tc_blocks;
 
 	s = suite_create("Parse_Functions");
 
 	tc_core = tcase_create("Core");
+	tc_blocks = tcase_create("Blocks");
 
 	tcase_add_test(tc_core, test_begin_parsing_te);
 	tcase_add_test(tc_core, test_insert_declaration_type);
-	tcase_add_test(tc_core, test_optional_policy);
 	suite_add_tcase(s, tc_core);
+
+	tcase_add_test(tc_blocks, test_optional_policy);
+	tcase_add_test(tc_blocks, test_interface_def);
+	tcase_add_test(tc_blocks, test_wrong_block_end);
+	suite_add_tcase(s, tc_blocks);
 
 	return s;
 }

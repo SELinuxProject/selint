@@ -77,6 +77,16 @@ enum selint_error begin_optional_policy(struct policy_node **cur);
  **********************************/
 enum selint_error end_optional_policy(struct policy_node **cur);
 
+enum selint_error insert_interface_call(struct policy_node **cur, struct string_list args);
+
+enum selint_error begin_interface_def(struct policy_node **cur, char *name);
+
+enum selint_error end_interface_def(struct policy_node **cur);
+
+enum selint_error begin_gen_require(struct policy_node **cur);
+
+enum selint_error end_gen_require(struct policy_node **cur);
+
 /**********************************
  * cleanup_parsing
  * Call after all parsing is done to free up memory
