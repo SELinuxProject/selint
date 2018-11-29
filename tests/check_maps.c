@@ -44,6 +44,56 @@ START_TEST (test_insert_into_type_map_dup) {
 }
 END_TEST
 
+START_TEST (test_insert_into_template_map) {
+
+	insert_into_template_map("user_domain", DECL_TYPE, "$1_t");
+	insert_into_template_map("user_domain", DECL_TYPE, "$1_exec_t");
+	insert_into_template_map("user_domain", DECL_ROLE, "$1_r");
+
+	insert_into_template_map("other_template", DECL_TYPE, "$1_conf_t");
+
+	struct decl_list *dl = look_up_in_template_map("doesntexist");
+	ck_assert_ptr_null(dl);
+
+	dl = look_up_in_template_map("user_domain");
+	ck_assert_ptr_nonnull(dl);
+	ck_assert_ptr_nonnull(dl->decl);
+	ck_assert_int_eq(dl->decl->flavor, DECL_TYPE);
+	ck_assert_ptr_nonnull(dl->decl->name);
+	ck_assert_str_eq(dl->decl->name, "$1_t");
+	ck_assert_ptr_null(dl->decl->attrs);
+
+	dl = dl->next;
+	ck_assert_ptr_nonnull(dl);
+	ck_assert_ptr_nonnull(dl->decl);
+	ck_assert_int_eq(dl->decl->flavor, DECL_TYPE);
+	ck_assert_ptr_nonnull(dl->decl->name);
+	ck_assert_str_eq(dl->decl->name, "$1_exec_t");
+	ck_assert_ptr_null(dl->decl->attrs);
+
+	dl = dl->next;
+	ck_assert_ptr_nonnull(dl);
+	ck_assert_ptr_nonnull(dl->decl);
+	ck_assert_int_eq(dl->decl->flavor, DECL_ROLE);
+	ck_assert_ptr_nonnull(dl->decl->name);
+	ck_assert_str_eq(dl->decl->name, "$1_r");
+	ck_assert_ptr_null(dl->decl->attrs);
+
+	ck_assert_ptr_null(dl->next);
+
+	dl = look_up_in_template_map("other_template");
+	ck_assert_ptr_nonnull(dl);
+	ck_assert_ptr_nonnull(dl->decl);
+	ck_assert_int_eq(dl->decl->flavor, DECL_TYPE);
+	ck_assert_ptr_nonnull(dl->decl->name);
+	ck_assert_str_eq(dl->decl->name, "$1_conf_t");
+	ck_assert_ptr_null(dl->decl->attrs);
+
+	free_all_maps();
+}
+END_TEST
+
+
 Suite *maps_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -54,6 +104,7 @@ Suite *maps_suite(void) {
 
 	tcase_add_test(tc_core, test_insert_into_type_map);
 	tcase_add_test(tc_core, test_insert_into_type_map_dup);
+	tcase_add_test(tc_core, test_insert_into_template_map);
 	suite_add_tcase(s, tc_core);
 
 	return s;

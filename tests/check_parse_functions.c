@@ -36,7 +36,7 @@ START_TEST (test_insert_declaration_type) {
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
 
 	cur->flavor = NODE_TE_FILE;
-	cur->parent = (struct policy_node *) 0xdeadbeef;
+	cur->parent = NULL; 
 	cur->data = NULL;
 	cur->first_child = NULL;
 	cur->next = NULL;
@@ -48,7 +48,7 @@ START_TEST (test_insert_declaration_type) {
 	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, "type", "foo_t"));
 
 	ck_assert_ptr_nonnull(cur);
-	ck_assert_ptr_eq(cur->parent, (void *) 0xdeadbeef);
+	ck_assert_ptr_null(cur->parent);
 	ck_assert_ptr_eq(cur->prev, prev);
 	ck_assert_int_eq(cur->flavor, NODE_DECL);
 	ck_assert_ptr_null(cur->first_child);

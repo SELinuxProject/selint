@@ -35,10 +35,27 @@ char * get_current_module_name() {
 	return module_name;
 }
 
+char *get_name_if_in_template(struct policy_node *cur) {
+	while (cur->parent) {
+		cur = cur->parent;
+		if (cur->flavor == NODE_TEMP_DEF) {
+			return cur->data;
+		}
+	}
+	return NULL;
+}
+
 enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name) {
 	//TODO: Handle attributes
-	//TODO: Insert type in hash table (Actually, it should be on the first pass
-	// after building the tree, right?)
+
+	enum decl_flavor flavor_to_set = DECL_TYPE; // TODO: Other flavors
+
+	char *temp_name = get_name_if_in_template(*cur);
+
+	if (temp_name) {
+		// We are inside a template, so we need to save declarations in the template map
+		insert_into_template_map(temp_name, flavor_to_set, name);
+	}
 
 	char *mn = get_current_module_name();
 
@@ -55,7 +72,6 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 
 	memset(data, 0, sizeof(struct declaration_data));
 
-	enum decl_flavor flavor_to_set = DECL_TYPE; // TODO: Other flavors
 	data->flavor = flavor_to_set;
 	data->name = strdup(name);
 

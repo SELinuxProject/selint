@@ -188,3 +188,14 @@ enum selint_error free_declaration_data(struct declaration_data *to_free) {
 
 	return SELINT_SUCCESS;
 }
+
+enum selint_error free_decl_list(struct decl_list *to_free) {
+
+	while (to_free) {
+		free_declaration_data(to_free->decl);
+		struct decl_list *tmp = to_free;
+		to_free = to_free->next;
+		free(tmp);
+	}
+	return SELINT_SUCCESS;
+}

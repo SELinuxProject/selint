@@ -5,12 +5,12 @@ if COND_GCOV
 EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
 endif
 
-MAPS_HEADS=$(top_builddir)/src/maps.h
-MAPS_OBJS=$(top_builddir)/src/maps.o
 TREE_HEADS=$(top_builddir)/src/tree.h
 TREE_OBJS=$(top_builddir)/src/tree.o
-PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${TREE_HEADS} ${MAPS_HEADS}
-PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TREE_OBJS} ${MAPS_OBJS}
+MAPS_HEADS=$(top_builddir)/src/maps.h ${TREE_HEADS}
+MAPS_OBJS=$(top_builddir)/src/maps.o ${TREE_OBJS}
+PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${MAPS_HEADS}
+PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${MAPS_OBJS}
 PARSING_HEADS=$(top_builddir)/src/parse.h ${PARSE_FUNCTIONS_HEADS}
 PARSING_OBJS=$(top_builddir)/src/parse.o $(top_builddir)/src/lex.o ${PARSE_FUNCTIONS_OBJS}
 

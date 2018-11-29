@@ -13,6 +13,7 @@ enum node_flavor {
 	NODE_TE_FILE,
 	NODE_START_BLOCK,
 	NODE_IF_DEF,
+	NODE_TEMP_DEF,
 	NODE_IF_CALL,
 	NODE_GEN_REQ
 };
@@ -62,6 +63,11 @@ struct declaration_data {
 	struct string_list *attrs;
 };
 
+struct decl_list {
+	struct declaration_data *decl;
+	struct decl_list *next;
+};
+
 struct policy_node {
 	struct policy_node *parent;
 	struct policy_node *next;
@@ -84,5 +90,7 @@ enum selint_error free_type_transition_data(struct type_transition_data *to_free
 enum selint_error free_if_call_data(struct if_call_data *to_free);
 
 enum selint_error free_declaration_data(struct declaration_data *to_free);
+
+enum selint_error free_decl_list(struct decl_list *to_free);
 
 #endif
