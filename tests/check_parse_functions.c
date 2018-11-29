@@ -197,7 +197,7 @@ START_TEST (test_interface_def) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, "foo_read_conf"));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "foo_read_conf"));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_nonnull(cur->parent);
@@ -212,6 +212,8 @@ START_TEST (test_interface_def) {
 	ck_assert_ptr_null(cur->parent->next);
 
 	ck_assert_int_eq(SELINT_SUCCESS, end_interface_def(&cur));
+
+	ck_assert_int_eq(SELINT_BAD_ARG, begin_interface_def(&cur, NODE_DECL, "foo_read_conf"));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_eq(cur->prev, head);
@@ -241,7 +243,7 @@ START_TEST (test_wrong_block_end) {
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, "sample_interface"));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "sample_interface"));
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
 

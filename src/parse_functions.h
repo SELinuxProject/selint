@@ -80,7 +80,7 @@ enum selint_error begin_optional_policy(struct policy_node **cur);
  **********************************/
 enum selint_error end_optional_policy(struct policy_node **cur);
 
-enum selint_error begin_interface_def(struct policy_node **cur, char *name);
+enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name);
 
 enum selint_error end_interface_def(struct policy_node **cur);
 

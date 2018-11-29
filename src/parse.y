@@ -16,6 +16,7 @@
 	char symbol;
 	struct string_list *sl;
 	enum av_rule_flavor av_flavor;
+	enum node_flavor node_flavor;
 }
 
 %token <string> MLS_LEVEL;
@@ -80,6 +81,7 @@
 %type<sl> string_list_or_mls
 %type<av_flavor> av_type
 %type<sl> perms_list
+%type<node_flavor> if_keyword
 
 %%
 selinux_file:
@@ -228,7 +230,8 @@ optional_block:
 	;
 
 gen_require:
-	GEN_REQUIRE OPEN_PAREN BACKTICK lines SINGLE_QUOTE CLOSE_PAREN
+	GEN_REQUIRE OPEN_PAREN BACKTICK { begin_gen_require(&cur); }
+	lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
 	;
 
 m4_call:
@@ -308,29 +311,36 @@ mls_level:
 
 	// IF File parsing
 if_file:
-	interface_defs
+	if_lines
 	;
 
-interface_defs:
-	interface_defs interface_def
+if_lines:
+	if_lines if_line
 	|
+	if_line { if (!cur) {
+		// Must set up the AST at the beginning
+		cur = malloc(sizeof(struct policy_node));
+		memset(cur, 0, sizeof(struct policy_node));
+		cur->flavor = NODE_IF_FILE;
+		ast = cur; }
+	}
+	;
+
+if_line:
 	interface_def
+	|
+	COMMENT
 	;
 
 interface_def:
-	if_keyword BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK gr_block lines SINGLE_QUOTE CLOSE_PAREN
+	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE { begin_interface_def(&cur, $1, $4); }
+	COMMA BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_interface_def(&cur); }
 	;
 
-gr_block:
-	// TODO: Multiple statements in require block
-	// TODO: In a te context type s1, s2 means that s2 is an attr.  In a gen_require its a second type
-	GEN_REQUIRE BACKTICK declaration SINGLE_QUOTE CLOSE_PAREN
-	; 
-
 if_keyword:
-	INTERFACE
+	INTERFACE { printf("interface"); $$ = NODE_IF_DEF; }
 	|
-	TEMPLATE
+	TEMPLATE { printf("template"); $$ = NODE_TEMP_DEF; }
 	;
 
 %%

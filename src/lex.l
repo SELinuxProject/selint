@@ -33,7 +33,7 @@ interface { return INTERFACE; }
 template { return TEMPLATE; }
 s[0-9]+(:c[0-9]+)? { return MLS_LEVEL; }
 [0-9]+\.[0-9]+(\.[0-9]+)? { printf("vno"); yylval.string = strdup(yytext); return VERSION_NO; }
-[a-zA-Z][a-zA-Z0-9_]* { printf("string"); yylval.string = strdup(yytext); return STRING; }
+[a-zA-Z\$][a-zA-Z0-9_\$]* { printf("string"); yylval.string = strdup(yytext); return STRING; }
 \"[a-zA-Z][a-zA-Z0-9_]*\" { printf("quoted string"); yylval.string = strdup(yytext); return QUOTED_STRING; }
 \( { printf("("); return OPEN_PAREN; }
 \) { printf(")"); return CLOSE_PAREN; }

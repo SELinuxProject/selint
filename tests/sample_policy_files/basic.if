@@ -1,0 +1,20 @@
+## <summary> Some interfaces for test </summary>
+
+# Comments get ignored
+interface(`basic_domtrans',`
+	gen_require(`
+		type basic_t, basic_exec_t;
+	')
+
+	domtrans_pattern($1, basic_exec_t, basic_t)
+') 
+
+template(`basic_template',`
+	gen_require(`
+		type basic_t;
+	')
+
+	type $1_basic_t;
+
+	allow $1_basic_t basic_t:process signal;
+')

@@ -45,25 +45,44 @@ char *get_name_if_in_template(struct policy_node *cur) {
 	return NULL;
 }
 
+int is_in_require(struct policy_node *cur) {
+	while (cur->parent) {
+		cur = cur->parent;
+		if (cur->flavor == NODE_GEN_REQ) {
+			return 1;
+		}
+	}
+	return 0;
+};
+
 enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name) {
 	//TODO: Handle attributes
 
 	enum decl_flavor flavor_to_set = DECL_TYPE; // TODO: Other flavors
 
-	char *temp_name = get_name_if_in_template(*cur);
+	if (!is_in_require(cur)) {
+		// In a require block, the objects arent being declared
+		// Otherwise, we need to insert them into the appropriate map
 
-	if (temp_name) {
-		// We are inside a template, so we need to save declarations in the template map
-		insert_into_template_map(temp_name, flavor_to_set, name);
+
+		char *temp_name = get_name_if_in_template(*cur);
+
+		if (temp_name) {
+			// We are inside a template, so we need to save declarations in the template map
+			// TODO: What about nested templates?  This case may require some thought
+			insert_into_template_map(temp_name, flavor_to_set, name);
+		} else {
+
+			char *mn = get_current_module_name();
+
+			if (!mn) {
+				return SELINT_NO_MOD_NAME;
+			}
+
+			insert_into_type_map(name, mn);
+
+		}
 	}
-
-	char *mn = get_current_module_name();
-
-	if (!mn) {
-		return SELINT_NO_MOD_NAME;
-	}
-
-	insert_into_type_map(name, mn);
 
 	struct declaration_data *data = (struct declaration_data *) malloc(sizeof(struct declaration_data));
 	if (!data) {
@@ -187,9 +206,17 @@ enum selint_error end_optional_policy(struct policy_node **cur) {
 	return end_block(cur, NODE_OPTIONAL_POLICY);
 }
 
-enum selint_error begin_interface_def(struct policy_node **cur, char *name) {
+enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name) {
 
-	return begin_block(cur, NODE_IF_DEF, (void *) strdup(name));
+	switch(flavor) {
+		case NODE_IF_DEF:
+		case NODE_TEMP_DEF:
+			break;
+		default:
+			return SELINT_BAD_ARG;
+	}
+
+	return begin_block(cur, flavor, (void *) strdup(name));
 }
 
 enum selint_error end_interface_def(struct policy_node **cur) {
