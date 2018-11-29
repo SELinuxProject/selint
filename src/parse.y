@@ -115,13 +115,13 @@ line:
 	|
 	type_alias
 	|
-	rule { printf("Here 4r\n"); }
+	rule
 	|
 	type_transition
 	|
 	range_transition
 	|
-	interface_call { printf("Here 4i\n"); }
+	interface_call
 	|
 	optional_block
 	|
@@ -338,9 +338,9 @@ interface_def:
 	;
 
 if_keyword:
-	INTERFACE { printf("interface"); $$ = NODE_IF_DEF; }
+	INTERFACE { $$ = NODE_IF_DEF; }
 	|
-	TEMPLATE { printf("template"); $$ = NODE_TEMP_DEF; }
+	TEMPLATE { $$ = NODE_TEMP_DEF; }
 	;
 
 %%

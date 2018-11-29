@@ -9,10 +9,10 @@ extern void yyerror(char *);
 %option nounput
 %option noinput
 %%
-policy_module { printf("policy_module"); return POLICY_MODULE; }
-type { printf("type"); return TYPE; }
+policy_module { return POLICY_MODULE; }
+type { return TYPE; }
 typealias { return TYPEALIAS; }
-alias {printf("alias"); return ALIAS; }
+alias { return ALIAS; }
 attribute { return ATTRIBUTE; }
 role { return ROLE; }
 types {  return TYPES; }
@@ -32,18 +32,18 @@ ifndef { return IFNDEF; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
 s[0-9]+(:c[0-9]+)? { return MLS_LEVEL; }
-[0-9]+\.[0-9]+(\.[0-9]+)? { printf("vno"); yylval.string = strdup(yytext); return VERSION_NO; }
-[a-zA-Z\$][a-zA-Z0-9_\$]* { printf("string"); yylval.string = strdup(yytext); return STRING; }
-\"[a-zA-Z][a-zA-Z0-9_]*\" { printf("quoted string"); yylval.string = strdup(yytext); return QUOTED_STRING; }
-\( { printf("("); return OPEN_PAREN; }
-\) { printf(")"); return CLOSE_PAREN; }
-\, { printf(","); return COMMA; }
+[0-9]+\.[0-9]+(\.[0-9]+)? { yylval.string = strdup(yytext); return VERSION_NO; }
+[a-zA-Z\$][a-zA-Z0-9_\$]* { yylval.string = strdup(yytext); return STRING; }
+\"[a-zA-Z][a-zA-Z0-9_]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
+\( { return OPEN_PAREN; }
+\) { return CLOSE_PAREN; }
+\, { return COMMA; }
 \{ { return OPEN_CURLY; }
 \} { return CLOSE_CURLY; }
 \: { return COLON; }
 \; { return SEMICOLON; }
-\` { printf("`"); return BACKTICK; }
-\' { printf("\'"); return SINGLE_QUOTE; }
+\` { return BACKTICK; }
+\' { return SINGLE_QUOTE; }
 \~ { return TILDA; }
 \* { return STAR; }
 \- { return DASH; }
@@ -54,7 +54,7 @@ s[0-9]+(:c[0-9]+)? { return MLS_LEVEL; }
 \=\= { return EQUAL; }
 \!\= { return NOT_EQUAL; }
 ^\#.*\n { yylineno++; return COMMENT; }
-(\#.*)?\n { printf("\n"); yylineno++; }
+(\#.*)?\n { yylineno++; }
 [ \t] ; /* skip whitespace */
 . { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); } 
 
