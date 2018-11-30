@@ -76,11 +76,12 @@ struct policy_node {
 	struct policy_node *first_child;
 	enum node_flavor flavor;
 	void *data;
+	int lineno;
 };
 
-enum selint_error insert_policy_node_child(struct policy_node *parent, enum node_flavor flavor, void *data); 
+enum selint_error insert_policy_node_child(struct policy_node *parent, enum node_flavor flavor, void *data, int lineno); 
 
-enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_flavor flavor, void *data); 
+enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_flavor flavor, void *data, int lineno); 
 
 enum selint_error free_policy_node(struct policy_node *to_free);
 

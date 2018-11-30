@@ -13,7 +13,7 @@ START_TEST (test_begin_parsing_te) {
 
 	struct policy_node *cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_parsing_te(&cur, "example"));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_parsing_te(&cur, "example", 1));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_null(cur->parent);
@@ -23,6 +23,7 @@ START_TEST (test_begin_parsing_te) {
 	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
 	ck_assert_str_eq(cur->data, "example");
 	ck_assert_str_eq(get_current_module_name(), "example");
+	ck_assert_int_eq(cur->lineno, 1);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(cur));
 
@@ -46,12 +47,13 @@ START_TEST (test_insert_declaration_type) {
 
 	set_current_module_name("test");
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, "type", "foo_t"));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, "type", "foo_t", 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_null(cur->parent);
 	ck_assert_ptr_eq(cur->prev, prev);
 	ck_assert_int_eq(cur->flavor, NODE_DECL);
+	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_ptr_null(prev->first_child);
 	ck_assert_ptr_nonnull((struct declation *) cur->data);
@@ -77,12 +79,13 @@ START_TEST (test_insert_av_rule) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_av_rule(&cur, AV_RULE_AUDITALLOW, NULL, NULL, NULL, NULL));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_av_rule(&cur, AV_RULE_AUDITALLOW, NULL, NULL, NULL, NULL, 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_AV_RULE, cur->flavor);
 	struct av_rule_data *avd = (struct av_rule_data *)(cur->data);
 	ck_assert_int_eq(AV_RULE_AUDITALLOW, avd->flavor);
+	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_ptr_null(avd->sources);
 	ck_assert_ptr_null(avd->targets);
 	ck_assert_ptr_null(avd->object_classes);
@@ -103,10 +106,11 @@ START_TEST (test_insert_type_transition) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, NULL, NULL, NULL, "example_tmp_t", "filename.txt"));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, NULL, NULL, NULL, "example_tmp_t", "filename.txt", 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_TT_RULE, cur->flavor);
+	ck_assert_int_eq(cur->lineno, 1234);
 	struct type_transition_data *ttd = (struct type_transition_data *)(cur->data);
 	ck_assert_ptr_null(ttd->sources);
 	ck_assert_ptr_null(ttd->targets);
@@ -133,10 +137,11 @@ START_TEST (test_insert_interface_call) {
 	args->next->string = strdup("bar_t");
 	args->next->next = NULL;
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_interface_call(&cur, "do_things", args));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_interface_call(&cur, "do_things", args, 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_IF_CALL, cur->flavor);
+	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_ptr_null(cur->next);
 	ck_assert_ptr_null(cur->parent);
 	ck_assert_ptr_null(cur->first_child);
@@ -163,7 +168,7 @@ START_TEST (test_optional_policy) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur, 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_nonnull(cur->parent);
@@ -171,6 +176,8 @@ START_TEST (test_optional_policy) {
 	ck_assert_int_eq(cur->flavor, NODE_START_BLOCK);
 	ck_assert_int_eq(cur->parent->flavor, NODE_OPTIONAL_POLICY);
 	ck_assert_ptr_eq(cur->parent->first_child, cur);
+	ck_assert_int_eq(cur->lineno, 1234);
+	ck_assert_int_eq(cur->parent->lineno, 1234);
 	ck_assert_ptr_null(cur->next);
 	ck_assert_ptr_null(cur->prev);
 	ck_assert_ptr_null(cur->first_child);
@@ -199,7 +206,7 @@ START_TEST (test_interface_def) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "foo_read_conf"));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "foo_read_conf", 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_nonnull(cur->parent);
@@ -208,6 +215,8 @@ START_TEST (test_interface_def) {
 	ck_assert_int_eq(cur->parent->flavor, NODE_IF_DEF);
 	ck_assert_ptr_eq(cur->parent->first_child, cur);
 	ck_assert_str_eq(cur->parent->data, "foo_read_conf");
+	ck_assert_int_eq(cur->lineno, 1234);
+	ck_assert_int_eq(cur->parent->lineno, 1234);
 	ck_assert_ptr_null(cur->next);
 	ck_assert_ptr_null(cur->prev);
 	ck_assert_ptr_null(cur->first_child);
@@ -215,12 +224,14 @@ START_TEST (test_interface_def) {
 
 	ck_assert_int_eq(SELINT_SUCCESS, end_interface_def(&cur));
 
-	ck_assert_int_eq(SELINT_BAD_ARG, begin_interface_def(&cur, NODE_DECL, "foo_read_conf"));
+	ck_assert_int_eq(SELINT_BAD_ARG, begin_interface_def(&cur, NODE_DECL, "foo_read_conf", 2345));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_eq(cur->prev, head);
 	ck_assert_int_eq(cur->flavor, NODE_IF_DEF);
+	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_ptr_nonnull(cur->first_child);
+	ck_assert_int_eq(cur->first_child->lineno, 1234);
 	ck_assert_ptr_null(cur->first_child->prev);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(head));
@@ -238,7 +249,7 @@ START_TEST (test_wrong_block_end) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur, 1234));
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_interface_def(&cur));
 
@@ -246,7 +257,7 @@ START_TEST (test_wrong_block_end) {
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "sample_interface"));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "sample_interface", 1235));
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
 

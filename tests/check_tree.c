@@ -81,12 +81,13 @@ START_TEST (test_insert_policy_node_child) {
 
 	struct av_rule_data *av_data = make_example_av_rule();
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(&parent_node, NODE_AV_RULE, av_data));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(&parent_node, NODE_AV_RULE, av_data, 1234));
 
 	ck_assert_ptr_null(parent_node.next);
 	ck_assert_ptr_nonnull(parent_node.first_child);
 	ck_assert_ptr_eq(parent_node.first_child->data, av_data);
 	ck_assert_int_eq(parent_node.first_child->flavor, NODE_AV_RULE);
+	ck_assert_int_eq(parent_node.first_child->lineno, 1234);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(parent_node.first_child));
 
@@ -105,12 +106,13 @@ START_TEST (test_insert_policy_node_next) {
 
 	struct av_rule_data *av_data = make_example_av_rule();
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_next(&prev_node, NODE_AV_RULE, av_data));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_next(&prev_node, NODE_AV_RULE, av_data, 1234));
 
 	ck_assert_ptr_null(prev_node.first_child);
 	ck_assert_ptr_nonnull(prev_node.next);
 	ck_assert_ptr_eq(prev_node.next->data, av_data);
 	ck_assert_int_eq(prev_node.next->flavor, NODE_AV_RULE);
+	ck_assert_int_eq(prev_node.next->lineno, 1234);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(prev_node.next));
 

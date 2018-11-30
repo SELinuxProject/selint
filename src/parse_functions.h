@@ -15,7 +15,7 @@
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name);
+enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name, int yylineno);
 
 /**********************************
  * Set the name of the current module to mn
@@ -37,7 +37,7 @@ char *get_current_module_name();
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name); // TODO: Some declarations take things like attribute lists
+enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name, int lineno); // TODO: Some declarations take things like attribute lists
 
 /**********************************
  * insert_av_rule
@@ -52,11 +52,11 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms);
+enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms, int lineno);
 
-enum selint_error insert_type_transition(struct policy_node **cur, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name);
+enum selint_error insert_type_transition(struct policy_node **cur, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno);
 
-enum selint_error insert_interface_call(struct policy_node **cur, char *name, struct string_list *args);
+enum selint_error insert_interface_call(struct policy_node **cur, char *name, struct string_list *args, int lineno);
 
 /**********************************
  * begin_optional_policy
@@ -68,7 +68,7 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *name, st
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error begin_optional_policy(struct policy_node **cur);
+enum selint_error begin_optional_policy(struct policy_node **cur, int lineno);
 
 /**********************************
  * end_optional_policy
@@ -80,11 +80,11 @@ enum selint_error begin_optional_policy(struct policy_node **cur);
  **********************************/
 enum selint_error end_optional_policy(struct policy_node **cur);
 
-enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name);
+enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name, int lineno);
 
 enum selint_error end_interface_def(struct policy_node **cur);
 
-enum selint_error begin_gen_require(struct policy_node **cur);
+enum selint_error begin_gen_require(struct policy_node **cur, int lineno);
 
 enum selint_error end_gen_require(struct policy_node **cur);
 

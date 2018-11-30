@@ -7,6 +7,7 @@
 	void yyerror(char *);
 
 	extern struct policy_node *ast;
+	extern int yylineno;
 
 	struct policy_node *cur;
 %}
@@ -97,7 +98,7 @@ te_policy:
 	;
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3); ast = cur; free($3); free($5);} // Version number isn't needed
+	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3, yylineno); ast = cur; free($3); free($5);} // Version number isn't needed
 	;
 
 body:
@@ -145,9 +146,9 @@ declaration:
 	;
 
 type_declaration:
-	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); free($2); }
+	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); }
 	|
-	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); free($2); free_string_list($4); } // TODO: attrs
+	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
 	|
 	TYPE STRING ALIAS string_list SEMICOLON
 	;
@@ -163,7 +164,7 @@ type_alias:
 	;
 
 rule:
-	av_type string_list string_list COLON string_list perms_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6); }
+	av_type string_list string_list COLON string_list perms_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6, yylineno); }
 	;
 
 av_type:
@@ -204,10 +205,10 @@ perms_list:
 
 type_transition:
 	TYPE_TRANSITION string_list string_list COLON string_list STRING SEMICOLON
-	{ insert_type_transition(&cur, $2, $3, $5, $6, NULL); }
+	{ insert_type_transition(&cur, $2, $3, $5, $6, NULL, yylineno); }
 	|
 	TYPE_TRANSITION string_list string_list COLON string_list STRING QUOTED_STRING SEMICOLON
-	{ insert_type_transition(&cur, $2, $3, $5, $6, $7); }
+	{ insert_type_transition(&cur, $2, $3, $5, $6, $7, yylineno); }
 	;
 
 range_transition:
@@ -218,19 +219,19 @@ range_transition:
 
 interface_call:
 	STRING OPEN_PAREN args CLOSE_PAREN
-	{ insert_interface_call(&cur, $1, $3); free($1); }
+	{ insert_interface_call(&cur, $1, $3, yylineno); free($1); }
 	|
 	STRING OPEN_PAREN args CLOSE_PAREN SEMICOLON
-	{ insert_interface_call(&cur, $1, $3); free($1); }
+	{ insert_interface_call(&cur, $1, $3, yylineno); free($1); }
 	;
 
 optional_block:
-	OPTIONAL_POLICY OPEN_PAREN { begin_optional_policy(&cur); } 
+	OPTIONAL_POLICY OPEN_PAREN { begin_optional_policy(&cur, yylineno); } 
 	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
 	;
 
 gen_require:
-	GEN_REQUIRE OPEN_PAREN BACKTICK { begin_gen_require(&cur); }
+	GEN_REQUIRE OPEN_PAREN BACKTICK { begin_gen_require(&cur, yylineno); }
 	lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
 	;
 
@@ -333,7 +334,7 @@ if_line:
 	;
 
 interface_def:
-	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE { begin_interface_def(&cur, $1, $4); free($4); }
+	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE { begin_interface_def(&cur, $1, $4, yylineno); free($4); }
 	COMMA BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_interface_def(&cur); }
 	;
 
