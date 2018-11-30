@@ -147,7 +147,7 @@ declaration:
 type_declaration:
 	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); free($2); }
 	|
-	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); free($2); } // TODO: attrs
+	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2); free($2); free_string_list($4); } // TODO: attrs
 	|
 	TYPE STRING ALIAS string_list SEMICOLON
 	;
@@ -218,10 +218,10 @@ range_transition:
 
 interface_call:
 	STRING OPEN_PAREN args CLOSE_PAREN
-	{ insert_interface_call(&cur, $1, $3); }
+	{ insert_interface_call(&cur, $1, $3); free($1); }
 	|
 	STRING OPEN_PAREN args CLOSE_PAREN SEMICOLON
-	{ insert_interface_call(&cur, $1, $3); }
+	{ insert_interface_call(&cur, $1, $3); free($1); }
 	;
 
 optional_block:
@@ -333,7 +333,7 @@ if_line:
 	;
 
 interface_def:
-	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE { begin_interface_def(&cur, $1, $4); }
+	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE { begin_interface_def(&cur, $1, $4); free($4); }
 	COMMA BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_interface_def(&cur); }
 	;
 

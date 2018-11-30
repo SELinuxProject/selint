@@ -34,6 +34,7 @@ END_TEST
 START_TEST (test_insert_declaration_type) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
 
 	cur->flavor = NODE_TE_FILE;
 	cur->parent = NULL; 
@@ -192,6 +193,7 @@ END_TEST
 START_TEST (test_interface_def) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
 
 	cur->flavor = NODE_TE_FILE;
 
@@ -230,6 +232,7 @@ END_TEST
 START_TEST (test_wrong_block_end) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
 
 	cur->flavor = NODE_TE_FILE;
 

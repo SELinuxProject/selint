@@ -112,6 +112,7 @@ START_TEST (test_parse_basic_if) {
 	ck_assert_int_eq(NODE_IF_CALL, cur->flavor);
 	ck_assert_ptr_nonnull(cur->parent); 
 
+	free_policy_node(ast);
 	cleanup_parsing();
 	fclose(yyin);
 
