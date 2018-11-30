@@ -60,7 +60,7 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 
 	enum decl_flavor flavor_to_set = DECL_TYPE; // TODO: Other flavors
 
-	if (!is_in_require(cur)) {
+	if (!is_in_require(*cur)) {
 		// In a require block, the objects arent being declared
 		// Otherwise, we need to insert them into the appropriate map
 
