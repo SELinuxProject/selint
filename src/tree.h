@@ -84,6 +84,8 @@ enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_fl
 
 enum selint_error free_policy_node(struct policy_node *to_free);
 
+void free_string_list(struct string_list *list);
+
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
 
 enum selint_error free_type_transition_data(struct type_transition_data *to_free);

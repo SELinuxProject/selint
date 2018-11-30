@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <getopt.h>
+#include "runner.h"
 #include "tree.h"
 #include "parse.h"
 #include "config.h"
@@ -7,8 +8,6 @@
 extern int yyparse();
 
 static int verbose_flag;
-
-struct policy_node *ast;
 
 int main(int argc, char **argv) {
 
@@ -90,9 +89,15 @@ int main(int argc, char **argv) {
 	}
 
 	while (optind < argc ) {
-		printf("%s\n", argv[optind++]);
+		struct policy_node *ast = parse_one_file(argv[optind]);
+
+		if(ast) {	
+			printf("Successfully parsed %s\n", argv[optind]);
+		} else {
+			printf("Error parsing %s\n", argv[optind]);
+		}
+		optind++;
 	}
 
-	yyparse();
 	return 0;
 }
