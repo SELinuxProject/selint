@@ -95,18 +95,10 @@ enum selint_error free_policy_node(struct policy_node *to_free) {
 	free_policy_node(to_free->first_child);
 	to_free->first_child = NULL;
 
-	struct policy_node *cur = to_free->next;
-	while (cur) {
-		struct policy_node *about_to_free = cur;
-		cur = cur->next;
+	free_policy_node(to_free->next);
+	to_free->next = NULL;
 
-		free_policy_node(about_to_free);
-		if (cur && cur->prev) {
-			cur->prev = NULL;
-		}
-	}
-
-	to_free->first_child = NULL;
+	to_free->prev = NULL;
 
 	free(to_free);
 
