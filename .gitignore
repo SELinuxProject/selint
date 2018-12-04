@@ -17,6 +17,7 @@ tests/check_tree
 tests/check_parse_functions
 tests/check_parsing
 tests/check_maps
+tests/check_parse_fc
 tests/test-suite.log
 .deps
 depcomp

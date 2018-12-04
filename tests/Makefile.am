@@ -1,5 +1,5 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing
-check_PROGRAMS = check_tree check_parse_functions check_maps check_parsing
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc
+check_PROGRAMS = check_tree check_parse_functions check_maps check_parsing check_parse_fc
 
 if COND_GCOV
 EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
@@ -13,6 +13,8 @@ PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${MAPS_HEADS}
 PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${MAPS_OBJS}
 PARSING_HEADS=$(top_builddir)/src/parse.h ${PARSE_FUNCTIONS_HEADS}
 PARSING_OBJS=$(top_builddir)/src/parse.o $(top_builddir)/src/lex.o ${PARSE_FUNCTIONS_OBJS}
+PARSE_FC_HEADS = $(top_builddir)/src/parse_fc.h $(TREE_HEADS)
+PARSE_FC_OBJS = $(top_builddir)/src/parse_fc.o $(TREE_OBJS)
 
 check_maps_SOURCES = check_maps.c ${MAPS_HEADS}
 check_maps_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
@@ -29,5 +31,11 @@ check_parse_functions_LDADD = @CHECK_LIBS@ ${PARSE_FUNCTIONS_OBJS}
 check_parsing_SOURCES = check_parsing.c ${PARSING_HEADS} $(top_builddir)/src/selint_error.h
 check_parsing_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
 check_parsing_LDADD = @CHECK_LIBS@ ${PARSING_OBJS}
+
+check_parse_fc_SOURCES = check_parse_fc.c ${PARSE_FC_HEADS}
+check_parse_fc_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_parse_fc_LDADD = @CHECK_LIBS@ ${PARSE_FC_OBJS}
+
+
 
 MOSTLYCLEANFILES = *.gcov *.gcda *.gcno
