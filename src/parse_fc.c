@@ -23,19 +23,16 @@ struct fc_entry * parse_fc_line(char *line) {
 	pos = strtok(NULL, whitespace);
 
 	if (pos == NULL) {
-		printf("Here 1\n");
 		goto cleanup;
 	}
 
 	if (pos[0] == '-') {
 		if ( pos[2] != '\0') {
-			printf("Here 2\n");
 			goto cleanup;
 		}
 		out->obj = pos[1];
 		pos = strtok(NULL, whitespace);
 		if (pos == NULL ) {
-			printf("Here 3\n");
 			goto cleanup;
 		}
 	}
@@ -47,15 +44,12 @@ struct fc_entry * parse_fc_line(char *line) {
 	if (strncmp("gen_context(", pos, GEN_CONTEXT_LEN) == 0) {
 		pos += GEN_CONTEXT_LEN; // Next character
 		char *context_part = strtok(pos, ",");
-		printf("%s\n", context_part);
 		if (context_part == NULL) {
-			printf("Here 4\n");
 			goto cleanup;
 		}
 
 		char *tmp = strtok(NULL,",");
 		if ( tmp == NULL ) {
-			printf("Here 5\n");
 			goto cleanup;
 		}
 		int i = 0;
@@ -64,7 +58,6 @@ struct fc_entry * parse_fc_line(char *line) {
 		}
 		if (tmp[i] == '\0') {
 			// Missing closing paren
-			printf("Here 6\n");
 			goto cleanup;
 		}
 		tmp[i] = '\0';
@@ -88,7 +81,6 @@ struct fc_entry * parse_fc_line(char *line) {
 	} 
 
 	if (out->context == NULL) {
-		printf("here 7\n");
 		goto cleanup;
 	}
 
@@ -102,6 +94,10 @@ cleanup:
 }
 
 struct sel_context * parse_context(char *context_str) {
+
+	if (strchr(context_str, '(')) {
+		return NULL;
+	}
 
 	struct sel_context *context = malloc(sizeof(struct sel_context));
 	memset(context, 0, sizeof(struct sel_context));
@@ -149,7 +145,45 @@ cleanup:
 }
 
 struct policy_node * parse_fc_file(char *filename) {
-	return NULL;
+	FILE *fd = fopen(filename, "r");
+	if (!fd) {
+		return NULL;
+	}
+
+	struct policy_node *head = malloc(sizeof(struct policy_node));
+	memset(head, 0, sizeof(struct policy_node));
+	head->flavor = NODE_FC_FILE;
+
+	struct policy_node *cur = head;
+
+	char *line = NULL;
+
+	size_t len_read = 0;
+	size_t buf_len = 0;
+	int lineno = 0;
+	while ((len_read = getline(&line, &buf_len, fd)) != -1) {
+		lineno++;
+		if (len_read <= 1) {
+			continue;
+		}
+		struct fc_entry *entry = parse_fc_line(line);
+		enum node_flavor flavor;
+		if (entry == NULL) {
+			flavor = NODE_ERROR;
+		} else {
+			flavor = NODE_FC_ENTRY;
+		}
+		if ( insert_policy_node_next(cur, flavor, entry, lineno) != SELINT_SUCCESS ) {
+			free_policy_node(head);
+			fclose(fd);
+			return NULL;
+		}
+		cur = cur->next;
+		free(line);
+	}
+	fclose(fd);
+			
+	return head;
 }
 
 void free_fc_entry(struct fc_entry *to_free) {

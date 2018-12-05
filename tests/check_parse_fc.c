@@ -4,6 +4,9 @@
 #include "../src/tree.h"
 #include "../src/parse_fc.h"
 
+#define POLICIES_DIR "sample_policy_files/"
+#define BASIC_FC_FILENAME POLICIES_DIR "basic.fc"
+
 START_TEST (test_parse_context) {
 
 	char context_str[] = "staff_u:staff_r:foo_t";
@@ -92,6 +95,37 @@ START_TEST (test_parse_fc_line_with_obj) {
 }
 END_TEST
 
+START_TEST (test_parse_basic_fc_file) {
+	struct policy_node *ast = parse_fc_file(BASIC_FC_FILENAME);
+
+	ck_assert_ptr_nonnull(ast);
+	ck_assert_int_eq(ast->flavor, NODE_FC_FILE);
+	ck_assert_ptr_nonnull(ast->next);
+
+	struct policy_node *cur = ast->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_ERROR);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
+	ck_assert_ptr_null(cur->next);
+
+	free_policy_node(ast); 
+}
+END_TEST
+
 Suite *parse_fc_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -105,6 +139,7 @@ Suite *parse_fc_suite(void) {
 	tcase_add_test(tc_core, test_parse_fc_line_with_gen_context);
 	tcase_add_test(tc_core, test_parse_fc_line);
 	tcase_add_test(tc_core, test_parse_fc_line_with_obj);
+	tcase_add_test(tc_core, test_parse_basic_fc_file);
 	suite_add_tcase(s, tc_core);
 
 	return s;

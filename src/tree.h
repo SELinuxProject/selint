@@ -6,6 +6,7 @@
 enum node_flavor {
 	NODE_TE_FILE,
 	NODE_IF_FILE,
+	NODE_FC_FILE,
 	NODE_AV_RULE,
 	NODE_TT_RULE,
 	NODE_DECL,
