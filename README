@@ -91,11 +91,11 @@ OUTPUT
 
 	SELint outputs messages in the following format:
 
-	[SEVERITY LEVEL]([LINENO]): [MESSAGE] ([ISSUE ID])
+	[filename]:[lineno]: ([SEVERITY LEVEL]): [MESSAGE] ([ISSUE ID])
 
 	For example:
 
-	W(127): Interface from module not in optional_policy block (E-001)
+	example.te:127: (E) Interface from module not in optional_policy block (E-001)
 
 CHECK IDS
 
@@ -105,13 +105,16 @@ CHECK IDS
 	C-002: Interface missing comment
 
 	S-001: Require block used instead of interface call
+	S-002: File context file labels with type not declared in module
 
 	W-001: Type referenced without explicit declaration
 	W-002: Type used but not listed in require block in interface
 
 	E-001: Interfaces from module not in optional_policy block
 	E-002: Bad file context format
-	E-003: Nonexistent type listed in fc file
+	E-003: Nonexistent user listed in fc file
+	E-004: Nonexistent role listed in fc file
+	E-005: Nonexistent type listed in fc file
 
 	F-001: Policy syntax error prevents further processing
 	F-002: Internal error in SELint
