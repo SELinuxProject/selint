@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "Vvrc:m:d:e:l:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "c:d:e:hl:mrsVv", long_options, &option_index);
 
 		if ( c == -1 ) {
 			break;
@@ -43,38 +43,54 @@ int main(int argc, char **argv) {
 				break;
 
 			case 'c':
+				// Specify config file
 				printf("Config file: %s\n", optarg);
 				break;
 
 			case 'd':
+				// Disable a given check
 				printf("Flag d with value %s\n", optarg);
 				break;
 
 			case 'e':
+				// Enable a given check
 				printf("Flag e with value %s\n", optarg);
 				break;
 
+			case 'h':
+				// Display usage info and exit
+				printf("Flag h called");
+				exit(0);
+				break;
+
 			case 'l':
+				// Set the severity level
 				printf("Flag l with value %s\n", optarg);
 				break;
 
 			case 'm':
+				// Specify a modules.conf file.  (Not in the README)
 				printf("Flag m with value %s\n", optarg);
 				break;
 
 			case 'r':
+				// Scan recursively for files to parse
 				printf("recursive\n");
 				break;
 
 			case 's':
+				// Run in source mode
 				printf("source mode\n");
 				break;
 
 			case 'V':
-				printf("Version %s\n", VERSION);
+				// Output version info and exit
+				printf("SELint Version %s\n", VERSION);
+				exit(0);
 				break;
 
 			case 'v':
+				// Run in verbose mode
 				verbose_flag = 1;
 				break;
 
