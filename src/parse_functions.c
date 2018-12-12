@@ -54,7 +54,7 @@ int is_in_require(struct policy_node *cur) {
 		}
 	}
 	return 0;
-};
+}
 
 enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name, int lineno) {
 	//TODO: Handle attributes
@@ -70,7 +70,7 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 		if (temp_name) {
 			// We are inside a template, so we need to save declarations in the template map
 			// TODO: What about nested templates?  This case may require some thought
-			insert_into_template_map(temp_name, flavor_to_set, name);
+			insert_decl_into_template_map(temp_name, flavor_to_set, name);
 		} else {
 
 			char *mn = get_current_module_name();
@@ -152,6 +152,12 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 	struct if_call_data *if_data = malloc(sizeof(struct if_call_data));
 	if_data->name = strdup(if_name);
 	if_data->args = args;
+
+	char *template_name = get_name_if_in_template(*cur);
+
+	if (template_name) {
+		insert_call_into_template_map(template_name, if_data);
+	}
 
 	enum selint_error ret = insert_policy_node_next(*cur, NODE_IF_CALL, if_data, lineno);
 	if (ret != SELINT_SUCCESS) {

@@ -15,6 +15,7 @@ struct hash_elem {
 struct template_hash_elem {
 	char *name;
 	struct decl_list *declarations;
+	struct if_call_list *calls;
 	UT_hash_handle hh;
 };
 
@@ -22,9 +23,15 @@ void insert_into_type_map(char *type, char *module_name);
 
 char *look_up_in_type_map(char *type);
 
-void insert_into_template_map(char *name, enum decl_flavor flavor, char *declaration);
+void insert_decl_into_template_map(char *name, enum decl_flavor flavor, char *declaration);
 
-struct decl_list *look_up_in_template_map(char *name);
+void insert_call_into_template_map(char *name, struct if_call_data *call);
+
+struct template_hash_elem *look_up_in_template_map(char *name);
+
+struct decl_list *look_up_decl_in_template_map(char *name);
+
+struct if_call_list *look_up_call_in_template_map(char *name);
 
 unsigned int type_map_count();
 

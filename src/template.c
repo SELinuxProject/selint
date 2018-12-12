@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "template.h"
+#include "maps.h"
 
 char *replace_m4(char *orig, struct string_list *args) {
 	size_t len_to_malloc = strlen(orig) + 1;
@@ -42,12 +43,68 @@ char *replace_m4(char *orig, struct string_list *args) {
 			cur = cur->next;
 			arg_num--;
 			if (!cur) {
+				free(ret);
 				return NULL;
 			}
 		}
 		strcpy(ret_pos, cur->string);
 		ret_pos += strlen(cur->string);
-		// There is no way this works...
 	}
 	return ret;
+}
+
+struct string_list *replace_m4_list(struct string_list *replace_with, struct string_list *replace_from) {
+	struct string_list *ret = malloc(sizeof(struct string_list));
+	struct string_list *cur = ret;
+
+	cur->string = replace_m4(replace_from->string, replace_with);
+	replace_from = replace_from->next;
+
+	while (replace_from) {
+		cur->next = malloc(sizeof(struct string_list));
+		cur = cur->next;
+		cur->string = replace_m4(replace_from->string, replace_with);
+		cur->next = NULL;
+		replace_from = replace_from->next;
+	}
+	return ret;
+}
+
+enum selint_error add_template_declarations(char *template_name, struct string_list *args, struct string_list *parent_temp_names, char *mod_name) {
+	struct string_list *cur = parent_temp_names;
+	while (cur) {
+		if (strcmp(cur->string, template_name) == 0 ){
+			// Loop
+			free_string_list(parent_temp_names);
+			return SELINT_IF_CALL_LOOP;
+		}
+			cur = cur->next;
+	}
+
+	cur = malloc(sizeof(struct string_list));
+	cur->string = strdup(template_name);
+	cur->next = parent_temp_names;
+
+	struct if_call_list *calls = look_up_call_in_template_map(template_name);
+
+	while (calls) {
+		struct string_list *new_args = replace_m4_list(args, calls->call->args);
+
+		add_template_declarations(calls->call->name, new_args, cur, mod_name);
+
+		free_string_list(new_args);
+		calls = calls->next;
+	}
+
+	struct decl_list *decls = look_up_decl_in_template_map(template_name);
+
+	while (decls) {
+		char *new_decl = replace_m4(decls->decl->name, args);
+		insert_into_type_map(new_decl, mod_name);
+		free(new_decl);
+		decls = decls->next;
+	}
+	free(cur->string);
+	free(cur);
+	return SELINT_SUCCESS;
 }

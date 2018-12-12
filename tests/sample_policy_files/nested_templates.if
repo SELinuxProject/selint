@@ -1,0 +1,15 @@
+## <summary> Nesting of template calls </summary>
+
+template(`outer',`
+	middle($1,$3,$2)
+')
+
+template(`middle',`
+	inner($1, $2, $3)
+')
+
+template(`inner',`
+	type $1_t;
+	type $2_foo_t;
+	type $3_bar_t;
+')

@@ -7,17 +7,17 @@ EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inl
 endif
 
 TREE_HEADS=$(top_builddir)/src/tree.h
-TREE_OBJS=$(top_builddir)/src/tree.o
+TREE_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/maps.o
 MAPS_HEADS=$(top_builddir)/src/maps.h ${TREE_HEADS}
-MAPS_OBJS=$(top_builddir)/src/maps.o ${TREE_OBJS}
-TEMPLATE_HEADS=$(top_builddir)/src/template.h ${TREE_HEADS}
-TEMPLATE_OBJS=$(top_builddir)/src/template.o ${TREE_OBJS}
+MAPS_OBJS=${TREE_OBJS}
 PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${MAPS_HEADS}
 PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${MAPS_OBJS}
 PARSING_HEADS=$(top_builddir)/src/parse.h ${PARSE_FUNCTIONS_HEADS}
 PARSING_OBJS=$(top_builddir)/src/parse.o $(top_builddir)/src/lex.o ${PARSE_FUNCTIONS_OBJS}
 PARSE_FC_HEADS = $(top_builddir)/src/parse_fc.h $(TREE_HEADS)
 PARSE_FC_OBJS = $(top_builddir)/src/parse_fc.o $(TREE_OBJS)
+TEMPLATE_HEADS=$(top_builddir)/src/template.h ${PARSING_HEADS}
+TEMPLATE_OBJS=$(top_builddir)/src/template.o ${PARSING_OBJS}
 
 check_maps_SOURCES = check_maps.c ${MAPS_HEADS}
 check_maps_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "tree.h"
+#include "maps.h"
 #include "selint_error.h"
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,
@@ -69,6 +70,23 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 	to_insert->lineno = lineno;
 
 	return SELINT_SUCCESS;
+}
+
+int is_template_call(struct policy_node *node) {
+	if (node == NULL || node->data == NULL) {
+		return 0;
+	}
+
+	if (node->flavor != NODE_IF_CALL) {
+		return 0;
+	}
+
+	char *call_name = ((struct if_call_data *)(node->data))->name;
+
+	if (look_up_in_template_map(call_name)) {
+		return 1;
+	}
+	return 0;
 }
 
 enum selint_error free_policy_node(struct policy_node *to_free) {
@@ -190,6 +208,17 @@ enum selint_error free_decl_list(struct decl_list *to_free) {
 	while (to_free) {
 		free_declaration_data(to_free->decl);
 		struct decl_list *tmp = to_free;
+		to_free = to_free->next;
+		free(tmp);
+	}
+	return SELINT_SUCCESS;
+}
+
+// The if call data structs in an if call list are pointers to data that is freed elsewhere
+enum selint_error free_if_call_list(struct if_call_list *to_free) {
+
+	while (to_free) {
+		struct if_call_list *tmp = to_free;
 		to_free = to_free->next;
 		free(tmp);
 	}

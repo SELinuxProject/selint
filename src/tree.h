@@ -61,6 +61,11 @@ struct if_call_data {
 	struct string_list *args;
 };
 
+struct if_call_list {
+	struct if_call_data *call;
+	struct if_call_list *next;
+};
+
 struct declaration_data {
 	enum decl_flavor flavor;
 	char *name;
@@ -86,6 +91,9 @@ enum selint_error insert_policy_node_child(struct policy_node *parent, enum node
 
 enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_flavor flavor, void *data, int lineno); 
 
+// Returns 1 if the node is a template call, and 0 if not
+int is_template_call(struct policy_node *node);
+
 enum selint_error free_policy_node(struct policy_node *to_free);
 
 void free_string_list(struct string_list *list);
@@ -99,5 +107,8 @@ enum selint_error free_if_call_data(struct if_call_data *to_free);
 enum selint_error free_declaration_data(struct declaration_data *to_free);
 
 enum selint_error free_decl_list(struct decl_list *to_free);
+
+// Only free the list, not what it's pointing to
+enum selint_error free_if_call_list(struct if_call_list *to_free);
 
 #endif
