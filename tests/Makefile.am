@@ -1,4 +1,4 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list
 check_PROGRAMS = ${TESTS}
 #check_PROGRAMS = check_tree check_parse_functions check_maps check_parsing check_parse_fc
 
@@ -8,6 +8,8 @@ endif
 
 TREE_HEADS=$(top_builddir)/src/tree.h
 TREE_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/maps.o
+FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
+FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}
 MAPS_HEADS=$(top_builddir)/src/maps.h ${TREE_HEADS}
 MAPS_OBJS=${TREE_OBJS}
 PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${MAPS_HEADS}
@@ -26,6 +28,10 @@ check_maps_LDADD = @CHECK_LIBS@ ${MAPS_OBJS}
 check_tree_SOURCES = check_tree.c ${TREE_HEADS} $(top_buildddir)/src/selint_error.h
 check_tree_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
 check_tree_LDADD = @CHECK_LIBS@ ${TREE_OBJS}
+
+check_file_list_SOURCES = check_file_list.c ${FILE_LIST_HEADS}
+check_file_list_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_file_list_LDADD = @CHECK_LIBS@ ${FILE_LIST_OBJS}
 
 check_parse_functions_SOURCES = check_parse_functions.c ${PARSE_FUNCTIONS_HEADS} $(top_buildddir)/src/selint_error.h
 check_parse_functions_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
