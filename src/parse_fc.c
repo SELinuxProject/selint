@@ -180,7 +180,10 @@ struct policy_node * parse_fc_file(char *filename) {
 		}
 		cur = cur->next;
 		free(line);
+		line = NULL;
+		buf_len = 0;
 	}
+	free(line); // getline alloc must be freed even if getline failed
 	fclose(fd);
 			
 	return head;
