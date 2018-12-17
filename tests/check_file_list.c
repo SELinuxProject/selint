@@ -7,9 +7,13 @@
 START_TEST (test_file_list_push_back) {
 
 	struct policy_node *ast1 = malloc(sizeof(struct policy_node));
+	memset(ast1, 0, sizeof(struct policy_node));
 	struct policy_node *ast2 = malloc(sizeof(struct policy_node));
+	memset(ast2, 0, sizeof(struct policy_node));
 	struct policy_node *ast3 = malloc(sizeof(struct policy_node));
+	memset(ast3, 0, sizeof(struct policy_node));
 	struct policy_node *ast4 = malloc(sizeof(struct policy_node));
+	memset(ast4, 0, sizeof(struct policy_node));
 
 	struct policy_file_list *list = malloc(sizeof(struct policy_file_list));
 	memset(list, 0, sizeof(struct policy_file_list));
