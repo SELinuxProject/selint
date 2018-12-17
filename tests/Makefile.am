@@ -1,6 +1,5 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks
 check_PROGRAMS = ${TESTS}
-#check_PROGRAMS = check_tree check_parse_functions check_maps check_parsing check_parse_fc
 
 if COND_GCOV
 EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
@@ -20,6 +19,10 @@ PARSE_FC_HEADS = $(top_builddir)/src/parse_fc.h $(TREE_HEADS)
 PARSE_FC_OBJS = $(top_builddir)/src/parse_fc.o $(TREE_OBJS)
 TEMPLATE_HEADS=$(top_builddir)/src/template.h ${PARSING_HEADS}
 TEMPLATE_OBJS=$(top_builddir)/src/template.o ${PARSING_OBJS}
+CHECK_HOOKS_HEADS=$(top_builddir)/src/check_hooks.h ${TREE_HEADS}
+CHECK_HOOKS_OBJS=$(top_builddir)/src/check_hooks.o ${TREE_OBJS}
+FC_CHECKS_HEADS=$(top_builddir)/src/fc_checks.h ${CHECK_HOOKS_HEADS}
+FC_CHECKS_OBJS=$(top_builddir)/src/fc_checks.o ${CHECK_HOOKS_OBJS}
 
 check_maps_SOURCES = check_maps.c ${MAPS_HEADS}
 check_maps_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
@@ -48,5 +51,9 @@ check_parse_fc_LDADD = @CHECK_LIBS@ ${PARSE_FC_OBJS}
 check_template_SOURCES = check_template.c ${TEMPLATE_HEADS}
 check_template_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
 check_template_LDADD = @CHECK_LIBS@ ${TEMPLATE_OBJS}
+
+check_fc_checks_SOURCES = check_fc_checks.c ${FC_CHECKS_HEADS}
+check_fc_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_fc_checks_LDADD = @CHECK_LIBS@ ${FC_CHECKS_OBJS}
 
 MOSTLYCLEANFILES = *.gcov *.gcda *.gcno

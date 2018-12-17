@@ -77,6 +77,20 @@ struct decl_list {
 	struct decl_list *next;
 };
 
+struct sel_context {
+	int has_gen_context; // 1 if context is wrapped in gen_context, 0 if not
+	char *user;
+	char *role;
+	char *type;
+	char *range;
+};
+
+struct fc_entry {
+	char *path;
+	char obj;
+	struct sel_context *context;
+};
+
 struct policy_node {
 	struct policy_node *parent;
 	struct policy_node *next;
@@ -110,5 +124,9 @@ enum selint_error free_decl_list(struct decl_list *to_free);
 
 // Only free the list, not what it's pointing to
 enum selint_error free_if_call_list(struct if_call_list *to_free);
+
+void free_fc_entry(struct fc_entry *to_free);
+
+void free_sel_context(struct sel_context *to_free);
 
 #endif

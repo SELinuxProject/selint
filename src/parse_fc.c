@@ -186,28 +186,3 @@ struct policy_node * parse_fc_file(char *filename) {
 	return head;
 }
 
-void free_fc_entry(struct fc_entry *to_free) {
-	if (to_free->path) {
-		free(to_free->path);
-	}
-	if (to_free->context) {
-		free_sel_context(to_free->context);
-	}
-	free(to_free);
-}
-
-void free_sel_context(struct sel_context *to_free) {
-	if (to_free->user) {
-		free(to_free->user);
-	}
-	if (to_free->role) {
-		free(to_free->role);
-	}
-	if (to_free->type) {
-		free(to_free->type);
-	}
-	if (to_free->range) {
-		free(to_free->range);
-	}
-	free(to_free);
-}

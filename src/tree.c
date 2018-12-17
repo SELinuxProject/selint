@@ -107,6 +107,9 @@ enum selint_error free_policy_node(struct policy_node *to_free) {
 		case NODE_DECL:
 			free_declaration_data(to_free->data);
 			break;
+		case NODE_FC_ENTRY:
+			free_fc_entry(to_free->data);
+			break;
 		default:
 			if (to_free->data != NULL) {
 				free(to_free->data);
@@ -223,4 +226,30 @@ enum selint_error free_if_call_list(struct if_call_list *to_free) {
 		free(tmp);
 	}
 	return SELINT_SUCCESS;
+}
+
+void free_fc_entry(struct fc_entry *to_free) {
+	if (to_free->path) {
+		free(to_free->path);
+	}
+	if (to_free->context) {
+		free_sel_context(to_free->context);
+	}
+	free(to_free);
+}
+
+void free_sel_context(struct sel_context *to_free) {
+	if (to_free->user) {
+		free(to_free->user);
+	}
+	if (to_free->role) {
+		free(to_free->role);
+	}
+	if (to_free->type) {
+		free(to_free->type);
+	}
+	if (to_free->range) {
+		free(to_free->range);
+	}
+	free(to_free);
 }
