@@ -9,7 +9,7 @@
  * node - the node to check
  * returns NULL if passed or check_result for issue E-005
  *********************************************/
-struct check_result *check_file_context_types_exist(const struct check_data *data, struct policy_node *node);
+struct check_result *check_file_context_types_exist(const struct check_data *data, const struct policy_node *node);
 
 /*********************************************
  * Check for issues with file context labels type field.
@@ -17,7 +17,7 @@ struct check_result *check_file_context_types_exist(const struct check_data *dat
  * node - the node to check
  * returns NULL if passed or check_result for issue S-002
  *********************************************/
-struct check_result *check_file_context_types_in_mod(struct policy_node *node);
+struct check_result *check_file_context_types_in_mod(const struct check_data *data, const struct policy_node *node);
 
 /*********************************************
  * Check for issues with file context labels role field.

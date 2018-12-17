@@ -4,6 +4,10 @@
 #include "tree.h"
 #include "selint_error.h"
 
+enum style_ids {
+	S_ID_FC_TYPE = 2
+};
+
 enum error_ids {
 	E_ID_FC_TYPE = 5
 };

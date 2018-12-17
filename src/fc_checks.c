@@ -13,7 +13,7 @@ struct check_result * alloc_internal_error(char *string) {
 	return res;
 } 
 
-struct check_result * check_file_context_types_exist(const struct check_data *check_data, struct policy_node *node) {
+struct check_result * check_file_context_types_exist(const struct check_data *check_data, const struct policy_node *node) {
 
 	if (node->flavor != NODE_FC_ENTRY) {
 		return alloc_internal_error("File context type check called on non file context entry");
@@ -42,7 +42,45 @@ struct check_result * check_file_context_types_exist(const struct check_data *ch
 	return NULL;
 }
 
-struct check_result *check_file_context_types_in_mod(struct policy_node *node) {
+struct check_result *check_file_context_types_in_mod(const struct check_data *check_data, const struct policy_node *node) {
+
+	if (node->flavor != NODE_FC_ENTRY) {
+		return alloc_internal_error("File context type check called on non file context entry");
+	} 
+
+	struct fc_entry *entry = (struct fc_entry *)node->data;
+
+	if (!entry) {
+		return alloc_internal_error("Policy node data field is NULL");
+	}
+
+	char *type_decl_filename = look_up_in_type_map(entry->context->type);
+
+	if (!type_decl_filename) {
+		// If the type is not in any module, that's a different error
+		// Returning success on an error condition may seem weird, but it is a
+		// redundant condition with another check that will catch this if enabled.
+		// Enabling this check and disabling the undeclared check is a valid (although
+		// strange) configuration which will result in this condition not being logged,
+		// but that is what the user has specifically requested in that situation.  The
+		// more common case is having both checks on, and there we don't want to double
+		// log
+		return NULL;
+	}
+
+	if (strcmp(check_data->mod_name, type_decl_filename)) {
+		struct check_result *res = malloc(sizeof(struct check_result));
+
+		res->severity = 'S';
+		res->check_id = S_ID_FC_TYPE;
+		if (!asprintf(&res->message, "Type %s is declared in module %s, but used in file context here.", entry->context->type, type_decl_filename)) {
+			free(res);
+			return alloc_internal_error("Failed to generate error message in fc type checking");
+		}
+
+		return res;
+	}
+
 	return NULL;
 }
 
