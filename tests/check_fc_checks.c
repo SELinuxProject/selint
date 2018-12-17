@@ -33,8 +33,15 @@ START_TEST (test_check_file_context_types_exist) {
 
 	free_check_result(res);
 
-	// TODO insert into map and verify pass
+	insert_into_type_map("foo_t", "foo");
 
+	res = check_file_context_types_exist(data, node);
+
+	ck_assert_ptr_null(res);
+
+	free(res);
+
+	free_all_maps();
 	free(data);
 	free_policy_node(node);
 
