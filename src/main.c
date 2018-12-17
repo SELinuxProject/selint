@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <getopt.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fts.h>
+
 #include "runner.h"
 #include "tree.h"
 #include "parse.h"
 #include "config.h"
+#include "file_list.h"
 
 extern int yyparse();
 
@@ -104,7 +109,52 @@ int main(int argc, char **argv) {
 		printf("Verbose mode\n");
 	}
 
-	while (optind < argc ) {
+	if (optind == argc) {
+		printf("TODO: usage message\n");
+		exit(0);
+	}
+
+	struct policy_file_list *te_files = malloc(sizeof(struct policy_file_list));
+	struct policy_file_list *if_files = malloc(sizeof(struct policy_file_list));
+	struct policy_file_list *fc_files = malloc(sizeof(struct policy_file_list));
+
+	char **paths = malloc (sizeof(char*) * argc - optind + 1);
+
+	int i = 0;
+	while (optind + i < argc ) {
+		paths[i++] = argv[optind];
+	}
+
+	paths[i] = NULL;
+
+	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+
+	FTSENT *file = fts_read(ftsp);
+
+	while ( file ) {
+
+		char *suffix = file->fts_path + file->fts_pathlen - 3;
+
+		if (!strcmp(suffix, ".te")) {
+			file_list_push_back(te_files, make_policy_file(file->fts_path, NULL));
+		} else if ( !strcmp(suffix, ".if")) {
+			file_list_push_back(if_files, make_policy_file(file->fts_path, NULL));
+		} else if ( !strcmp(suffix, ".fc")) {
+			file_list_push_back(fc_files, make_policy_file(file->fts_path, NULL));
+		} else {
+			printf("%s is not a policy file\n", file->fts_path);
+		}
+
+		file = fts_read(ftsp);
+	}
+
+	struct policy_file_node *cur = te_files->head;
+	while (cur) {
+		printf("Going to scan %s\n", cur->file->filename);
+		cur = cur->next;
+	}
+
+/*
 		struct policy_node *ast = parse_one_file(argv[optind]);
 
 		if(ast) {	
@@ -113,7 +163,11 @@ int main(int argc, char **argv) {
 			printf("Error parsing %s\n", argv[optind]);
 		}
 		optind++;
+		
+		file_list_push_back(	
 	}
+
+*/	
 
 	return 0;
 }
