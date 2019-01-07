@@ -36,7 +36,7 @@ struct check_result {
 };
 
 struct check_node {
-	struct check_result (*check_function)(const struct check_data *data, struct policy_node *node);
+	struct check_result * (*check_function)(const struct check_data *data, struct policy_node *node);
 	struct check_node *next;
 };
 
@@ -46,36 +46,22 @@ struct checks {
 };
 
 /*********************************************
- * Add an check to be called on fc_entry nodes
+ * Add an check to be called on check_flavor nodes
+ * check_flavor - The flavor of node to call the check for
  * ck - The check structure to add the check to
  * check_function - the check to add
  * returns SELINT_SUCCESS or an error code on failure
  *********************************************/
-enum selint_error add_fc_entry_node_check(struct checks *ck, struct check_result (*check_function)(const struct check_data *check_data, struct policy_node *node));
+enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, struct check_result * (*check_function)(const struct check_data *check_data, struct policy_node *node));
 
 /*********************************************
- * Add an check to be called on fc_error nodes
- * ck - The check structure to add the check to
- * check_function - the check to add
- * returns SELINT_SUCCESS or an error code on failure
- *********************************************/
-enum selint_error add_error_node_check(struct checks *ck, struct check_result (*check_function)(const struct check_data *check_data, struct policy_node *node));
-
-/*********************************************
- * Call all registered checks for fc_entry nodes and write 
- * any error messages to STDOUT 
+ * Call all registered checks for check_flavor node types
+ * and write any error messages to STDOUT 
+ * check_flavor - the node type to run checks for
  * node - the node to check
  * returns SELINT_SUCCESS or an error code on failure
  *********************************************/
-enum selint_error call_fc_entry_node_checks(struct policy_node *node);
-
-/*********************************************
- * Call all registered checks for error nodes and write 
- * any error messages to STDOUT 
- * node - the node to check
- * returns SELINT_SUCCESS or an error code on failure
- *********************************************/
-enum selint_error call_error_node_checks(struct policy_node *node);
+enum selint_error call_checks(enum node_flavor check_flavor, struct policy_node *node);
 
 void free_check_result(struct check_result *);
 

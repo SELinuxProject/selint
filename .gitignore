@@ -21,6 +21,7 @@ tests/check_parse_fc
 tests/check_template
 tests/check_file_list
 tests/check_fc_checks
+tests/check_check_hooks
 tests/test-suite.log
 .deps
 depcomp

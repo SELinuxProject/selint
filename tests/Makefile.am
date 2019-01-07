@@ -1,4 +1,4 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks
 check_PROGRAMS = ${TESTS}
 
 if COND_GCOV
@@ -51,6 +51,10 @@ check_parse_fc_LDADD = @CHECK_LIBS@ ${PARSE_FC_OBJS}
 check_template_SOURCES = check_template.c ${TEMPLATE_HEADS}
 check_template_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
 check_template_LDADD = @CHECK_LIBS@ ${TEMPLATE_OBJS}
+
+check_check_hooks_SOURCES = check_check_hooks.c ${CHECK_HOOKS_HEADS}
+check_check_hooks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_check_hooks_LDADD = @CHECK_LIBS@ ${CHECK_HOOKS_OBJS}
 
 check_fc_checks_SOURCES = check_fc_checks.c ${FC_CHECKS_HEADS}
 check_fc_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
