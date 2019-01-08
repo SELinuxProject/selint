@@ -69,4 +69,8 @@ void display_check_result(struct check_result *res, struct check_data *data);
 
 void free_check_result(struct check_result *);
 
+void free_checks(struct checks *to_free);
+
+void free_check_node(struct check_node *to_free);
+
 #endif

@@ -21,6 +21,8 @@ START_TEST (test_add_check) {
 
 	ck_assert_ptr_eq(ck->fc_entry_node_checks->check_function, example_check);
 
+	free_checks(ck);
+
 }
 END_TEST
 
