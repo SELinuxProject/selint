@@ -29,9 +29,9 @@ struct check_data {
 };
 
 struct check_result {
-	int lineno;
+	unsigned int lineno;
 	char severity;
-	int check_id;
+	unsigned int check_id;
 	char *message;
 };
 
@@ -57,11 +57,15 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, st
 /*********************************************
  * Call all registered checks for check_flavor node types
  * and write any error messages to STDOUT 
- * check_flavor - the node type to run checks for
+ * ck - The checks structure
  * node - the node to check
  * returns SELINT_SUCCESS or an error code on failure
  *********************************************/
-enum selint_error call_checks(enum node_flavor check_flavor, struct policy_node *node);
+enum selint_error call_checks(struct checks *ck, struct check_data *data, struct policy_node *node);
+
+enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct check_data *data, struct policy_node *node);
+
+void display_check_result(struct check_result *res, struct check_data *data);
 
 void free_check_result(struct check_result *);
 

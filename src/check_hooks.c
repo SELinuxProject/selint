@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "check_hooks.h"
 
@@ -34,6 +35,37 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, st
 	loc->next = NULL;
 
 	return SELINT_SUCCESS;
+}
+
+enum selint_error call_checks(struct checks *ck, struct check_data *data, struct policy_node *node) {
+
+	switch (node->flavor) {
+		case NODE_FC_ENTRY:
+			return call_checks_for_node_type(ck->fc_entry_node_checks, data, node);
+		case NODE_ERROR:
+			return call_checks_for_node_type(ck->error_node_checks, data, node);
+		default:
+			return SELINT_SUCCESS;
+	}
+}
+
+enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct check_data *data, struct policy_node *node) {
+
+	struct check_node *cur = ck_list;
+
+	while (cur) {
+		struct check_result *res = cur->check_function(data, node);
+		if (res) {
+			display_check_result(res, data);
+		}
+		cur = cur->next;
+	}
+	return SELINT_SUCCESS;
+}
+
+void display_check_result(struct check_result *res, struct check_data *data) {
+
+	printf("%s:%u: (%c): %s (%c-%03u)", data->mod_name, res->lineno, res->severity, res->message, res->severity, res->check_id);
 }
 
 void free_check_result(struct check_result *res) {
