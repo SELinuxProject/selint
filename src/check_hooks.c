@@ -82,6 +82,7 @@ void free_checks(struct checks *to_free) {
 	if (to_free->error_node_checks) {
 		free_check_node(to_free->error_node_checks);
 	}
+	free(to_free);
 }
 
 void free_check_node(struct check_node *to_free) {
