@@ -154,6 +154,10 @@ int main(int argc, char **argv) {
 		cur = cur->next;
 	}
 
+	struct checks *ck = register_checks();
+
+	run_analysis(ck, te_files, if_files, fc_files);
+
 /*
 		struct policy_node *ast = parse_one_file(argv[optind]);
 

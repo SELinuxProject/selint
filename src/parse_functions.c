@@ -4,6 +4,7 @@
 #include "parse_functions.h"
 #include "selint_error.h"
 #include "tree.h"
+#include "template.h"
 
 char *module_name = NULL;
 
@@ -157,6 +158,8 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 
 	if (template_name) {
 		insert_call_into_template_map(template_name, if_data);
+	} else { 
+		add_template_declarations(if_name, args, NULL, module_name);
 	}
 
 	enum selint_error ret = insert_policy_node_next(*cur, NODE_IF_CALL, if_data, lineno);
