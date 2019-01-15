@@ -40,6 +40,6 @@ struct check_result *check_file_context_users(struct policy_node *node);
  * returns NULL if called on a node type other than error node
  * or a check_result for issue E-002
  *********************************************/
-struct check_result *check_file_context_error_nodes(struct policy_node *node);
+struct check_result *check_file_context_error_nodes(const struct check_data *data, const struct policy_node *node);
 
 #endif

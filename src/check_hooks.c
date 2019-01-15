@@ -14,7 +14,7 @@
 			}
 
 
-enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, struct check_result * (*check_function)(const struct check_data *check_data, struct policy_node *node)) {
+enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, struct check_result * (*check_function)(const struct check_data *check_data, const struct policy_node *node)) {
 
 	struct check_node *loc;
 

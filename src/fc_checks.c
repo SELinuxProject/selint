@@ -92,6 +92,6 @@ struct check_result *check_file_context_users(struct policy_node *node) {
 	return NULL;
 }
 
-struct check_result *check_file_context_error_nodes(struct policy_node *node) {
+struct check_result *check_file_context_error_nodes(const struct check_data *data, const struct policy_node *node) {
 	return NULL;
 }
