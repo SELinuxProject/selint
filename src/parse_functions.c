@@ -7,6 +7,7 @@
 #include "template.h"
 
 char *module_name = NULL;
+char *parsing_filename = NULL;
 
 enum selint_error begin_parsing_te(struct policy_node **cur, char *mn, int lineno) {
 

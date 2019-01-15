@@ -7,6 +7,7 @@ extern FILE * yyin;
 extern int yyparse();
 struct policy_node *ast; // Must be global so the parser can access it
 extern int yylineno;
+extern char * parsing_filename;
 
 struct policy_node * parse_one_file(char *filename) {
 
@@ -14,6 +15,7 @@ struct policy_node * parse_one_file(char *filename) {
 	yylineno = 1;
 
 	yyin = fopen(filename, "r");
+	parsing_filename = filename;
 	yyparse();
 	fclose(yyin);
 
@@ -39,6 +41,7 @@ enum selint_error parse_all_files_in_list(struct policy_file_list *files) {
 	struct policy_file_node *cur = files->head;
 
 	while (cur) {
+		printf("Parsing %s\n", cur->file->filename);
 		cur->file->ast = parse_one_file(cur->file->filename);
 		if (!cur->file->ast) {
 			return SELINT_PARSE_ERROR;

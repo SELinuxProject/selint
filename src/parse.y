@@ -8,6 +8,7 @@
 
 	extern struct policy_node *ast;
 	extern int yylineno;
+	extern char *parsing_filename;
 
 	struct policy_node *cur;
 %}
@@ -347,5 +348,5 @@ if_keyword:
 %%
 extern int yylineno;
 void yyerror(char* s) {
-	fprintf(stderr, "line %d: %s\n", yylineno, s);
+	fprintf(stderr, "%s line %d: %s\n", parsing_filename, yylineno, s);
 }
