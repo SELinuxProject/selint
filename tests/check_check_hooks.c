@@ -3,10 +3,10 @@
 
 #include "../src/check_hooks.h"
 
-struct check_result * example_check(const struct check_data *check_data, struct policy_node *node);
+struct check_result * example_check(const struct check_data *check_data, const struct policy_node *node);
 
 struct check_result * example_check(__attribute__((unused)) const struct check_data *check_data, 
-				  __attribute__((unused)) struct policy_node *node) {
+				  __attribute__((unused)) const struct policy_node *node) {
 	return (struct check_result *) NULL;
 }
 
