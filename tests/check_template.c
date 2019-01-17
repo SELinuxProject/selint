@@ -122,11 +122,11 @@ START_TEST (test_nested_template_declarations) {
 
 	ck_assert_int_eq(SELINT_SUCCESS, add_template_declarations("outer", called_args, NULL, "nested_interfaces"));
 
-	ck_assert_str_eq("nested_interfaces", look_up_in_type_map("first_t"));
-	ck_assert_str_eq("nested_interfaces", look_up_in_type_map("third_foo_t"));
-	ck_assert_str_eq("nested_interfaces", look_up_in_type_map("second_bar_t"));
-	ck_assert_ptr_null(look_up_in_type_map("second_foo_t"));
-	ck_assert_ptr_null(look_up_in_type_map("third_bar_t"));
+	ck_assert_str_eq("nested_interfaces", look_up_in_decl_map("first_t", DECL_TYPE));
+	ck_assert_str_eq("nested_interfaces", look_up_in_decl_map("third_foo_t", DECL_TYPE));
+	ck_assert_str_eq("nested_interfaces", look_up_in_decl_map("second_bar_t", DECL_TYPE));
+	ck_assert_ptr_null(look_up_in_decl_map("second_foo_t", DECL_TYPE));
+	ck_assert_ptr_null(look_up_in_decl_map("third_bar_t", DECL_TYPE));
 
 	free_all_maps();
 	free_string_list(called_args);

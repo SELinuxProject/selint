@@ -25,7 +25,7 @@ struct check_result * check_file_context_types_exist(const struct check_data *ch
 		return alloc_internal_error("Policy node data field is NULL");
 	}
 
-	char *type_decl_filename = look_up_in_type_map(entry->context->type);
+	char *type_decl_filename = look_up_in_decl_map(entry->context->type, DECL_TYPE);
 
 	if (!type_decl_filename) {
 		struct check_result *res = malloc(sizeof(struct check_result));
@@ -54,7 +54,7 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *ch
 		return alloc_internal_error("Policy node data field is NULL");
 	}
 
-	char *type_decl_filename = look_up_in_type_map(entry->context->type);
+	char *type_decl_filename = look_up_in_decl_map(entry->context->type, DECL_TYPE);
 
 	if (!type_decl_filename) {
 		// If the type is not in any module, that's a different error

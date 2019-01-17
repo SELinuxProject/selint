@@ -34,7 +34,7 @@ START_TEST (test_check_file_context_types_exist) {
 
 	free_check_result(res);
 
-	insert_into_type_map("foo_t", "foo");
+	insert_into_decl_map("foo_t", "foo", DECL_TYPE);
 
 	res = check_file_context_types_exist(data, node);
 
@@ -73,7 +73,7 @@ START_TEST (test_check_file_context_types_in_mod) {
 
 	ck_assert_ptr_null(res);
 
-	insert_into_type_map("foo_t", "bar");
+	insert_into_decl_map("foo_t", "bar", DECL_TYPE);
 
 	res = check_file_context_types_in_mod(data, node);
 

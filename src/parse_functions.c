@@ -81,7 +81,7 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 				return SELINT_NO_MOD_NAME;
 			}
 
-			insert_into_type_map(name, mn);
+			insert_into_decl_map(name, mn, flavor_to_set);
 
 		}
 	}

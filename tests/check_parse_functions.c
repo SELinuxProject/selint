@@ -64,7 +64,7 @@ START_TEST (test_insert_declaration_type) {
 
 	// TODO attributes
 
-	char *mn = look_up_in_type_map("foo_t");
+	char *mn = look_up_in_decl_map("foo_t", DECL_TYPE);
 
 	ck_assert_ptr_nonnull(mn);
 

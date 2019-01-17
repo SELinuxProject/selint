@@ -4,30 +4,30 @@
 
 START_TEST (test_insert_into_type_map) {
 
-	insert_into_type_map("foo_t", "test_module");
-	insert_into_type_map("bar_t", "test_module");
-	insert_into_type_map("baz_t", "other_module");
+	insert_into_decl_map("foo_t", "test_module", DECL_TYPE);
+	insert_into_decl_map("bar_t", "test_module", DECL_TYPE);
+	insert_into_decl_map("baz_t", "other_module", DECL_TYPE);
 
-	char *mod_name = look_up_in_type_map("doesntexist");
+	char *mod_name = look_up_in_decl_map("doesntexist", DECL_TYPE);
 
 	ck_assert_ptr_null(mod_name);
 
-	mod_name = look_up_in_type_map("foo_t");
+	mod_name = look_up_in_decl_map("foo_t", DECL_TYPE);
 
 	ck_assert_ptr_nonnull(mod_name);
 	ck_assert_str_eq(mod_name, "test_module");
 
-	mod_name = look_up_in_type_map("bar_t");
+	mod_name = look_up_in_decl_map("bar_t", DECL_TYPE);
 
 	ck_assert_ptr_nonnull(mod_name);
 	ck_assert_str_eq(mod_name, "test_module");
 
-	mod_name = look_up_in_type_map("baz_t");
+	mod_name = look_up_in_decl_map("baz_t", DECL_TYPE);
 
 	ck_assert_ptr_nonnull(mod_name);
 	ck_assert_str_eq(mod_name, "other_module");
 
-	ck_assert_int_eq(type_map_count(), 3);
+	ck_assert_int_eq(decl_map_count(DECL_TYPE), 3);
 
 	free_all_maps();
 }
@@ -35,10 +35,10 @@ END_TEST
 
 START_TEST (test_insert_into_type_map_dup) {
 
-	insert_into_type_map("foo_t", "test_module");
-	insert_into_type_map("foo_t", "other_module");
+	insert_into_decl_map("foo_t", "test_module", DECL_TYPE);
+	insert_into_decl_map("foo_t", "other_module", DECL_TYPE);
 
-	ck_assert_int_eq(type_map_count(), 1);
+	ck_assert_int_eq(decl_map_count(DECL_TYPE), 1);
 
 	free_all_maps();
 }

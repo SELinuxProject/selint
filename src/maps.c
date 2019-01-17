@@ -1,39 +1,81 @@
 #include "maps.h"
 
 struct hash_elem *type_map = NULL;
+struct hash_elem *role_map = NULL;
+struct hash_elem *user_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
-void insert_into_type_map(char *name, char *module_name) {
+struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor) {
 
-	struct hash_elem *type;
+	struct hash_elem *decl;
 
-	HASH_FIND(hh_type, type_map, name, strlen(name), type);
+	switch (flavor) {
+		case DECL_TYPE:
+			HASH_FIND(hh_type, type_map, name, strlen(name), decl);
+			break;
+		case DECL_ROLE:
+			HASH_FIND(hh_role, role_map, name, strlen(name), decl);
+			break;
+		case DECL_USER:
+			HASH_FIND(hh_user, user_map, name, strlen(name), decl);
+			break;
+		default:
+			decl = NULL;
+	}
 
-	if (type == NULL) { // Type not in hash table already
+	return decl;
+}
 
-		type = malloc(sizeof(struct hash_elem));
-		type->name = strdup(name);
-		type->module_name = strdup(module_name);
+void insert_into_decl_map(char *name, char *module_name, enum decl_flavor flavor) {
 
-		HASH_ADD_KEYPTR(hh_type, type_map, type->name, strlen(type->name), type);
+	struct hash_elem *decl = look_up_hash_elem(name, flavor);
+
+	if (decl == NULL) { // Item not in hash table already
+
+		decl = malloc(sizeof(struct hash_elem));
+		decl->name = strdup(name);
+		decl->module_name = strdup(module_name);
+
+		switch (flavor) {
+			case DECL_TYPE:
+				HASH_ADD_KEYPTR(hh_type, type_map, decl->name, strlen(decl->name), decl);
+				break;
+			case DECL_ROLE:
+				HASH_ADD_KEYPTR(hh_role, role_map, decl->name, strlen(decl->name), decl);
+				break;
+			case DECL_USER:
+				HASH_ADD_KEYPTR(hh_user, user_map, decl->name, strlen(decl->name), decl);
+				break;
+			default:
+				return;
+		}
 	} //TODO: else report error?
 }
 
-char *look_up_in_type_map(char *name) {
+char *look_up_in_decl_map(char *name, enum decl_flavor flavor) {
 	
-	struct hash_elem *type;
+	struct hash_elem *decl = look_up_hash_elem(name, flavor);
 
-	HASH_FIND(hh_type, type_map, name, strlen(name), type);
-
-	if (type == NULL) {
+	if (decl == NULL) {
 		return NULL;
 	} else {
-		return type->module_name;
+		return decl->module_name;
 	}
 }
 
-unsigned int type_map_count() {
-	return HASH_CNT(hh_type, type_map);
+unsigned int decl_map_count(enum decl_flavor flavor) {
+	switch (flavor) {
+		case DECL_TYPE:
+			return HASH_CNT(hh_type, type_map);
+		case DECL_ATTRIBUTE:
+			return 0;
+		case DECL_ROLE:
+			return HASH_CNT(hh_role, role_map);
+		case DECL_USER:
+			return HASH_CNT(hh_user, user_map);
+		default:
+			return 0;
+	}
 }
 
 void insert_decl(struct template_hash_elem *template, void *new_node) {

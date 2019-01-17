@@ -100,7 +100,7 @@ enum selint_error add_template_declarations(char *template_name, struct string_l
 
 	while (decls) {
 		char *new_decl = replace_m4(decls->decl->name, args);
-		insert_into_type_map(new_decl, mod_name);
+		insert_into_decl_map(new_decl, mod_name, decls->decl->flavor);
 		free(new_decl);
 		decls = decls->next;
 	}

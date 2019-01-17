@@ -32,7 +32,8 @@ enum av_rule_flavor {
 enum decl_flavor {
 	DECL_TYPE,
 	DECL_ATTRIBUTE,
-	DECL_ROLE
+	DECL_ROLE,
+	DECL_USER
 };
 
 struct string_list {

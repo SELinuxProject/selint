@@ -9,7 +9,7 @@
 struct hash_elem {
         char *name;
         char *module_name;
-        UT_hash_handle hh_type; //TODO: Other hash tables for other things that are declared
+        UT_hash_handle hh_type, hh_role, hh_user; //TODO: Other hash tables for other things that are declared
 };
 
 struct template_hash_elem {
@@ -19,9 +19,9 @@ struct template_hash_elem {
 	UT_hash_handle hh;
 };
 
-void insert_into_type_map(char *type, char *module_name);
+void insert_into_decl_map(char *type, char *module_name, enum decl_flavor flavor);
 
-char *look_up_in_type_map(char *type);
+char *look_up_in_decl_map(char *type, enum decl_flavor flavor);
 
 void insert_decl_into_template_map(char *name, enum decl_flavor flavor, char *declaration);
 
@@ -33,7 +33,7 @@ struct decl_list *look_up_decl_in_template_map(char *name);
 
 struct if_call_list *look_up_call_in_template_map(char *name);
 
-unsigned int type_map_count();
+unsigned int decl_map_count(enum decl_flavor flavor);
 
 void free_all_maps();
 
