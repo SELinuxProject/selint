@@ -164,6 +164,7 @@ Suite *maps_suite(void) {
 	tcase_add_test(tc_core, test_insert_into_type_map_dup);
 	tcase_add_test(tc_core, test_role_and_user_maps);
 	tcase_add_test(tc_core, test_insert_decl_into_template_map);
+	tcase_add_test(tc_core, test_insert_call_into_template_map);
 	suite_add_tcase(s, tc_core);
 
 	return s;
