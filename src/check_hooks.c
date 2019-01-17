@@ -56,6 +56,7 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct c
 	while (cur) {
 		struct check_result *res = cur->check_function(data, node);
 		if (res) {
+			res->lineno = node->lineno;
 			display_check_result(res, data);
 			free_check_result(res);
 		}
