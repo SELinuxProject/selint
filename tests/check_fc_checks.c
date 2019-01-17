@@ -99,6 +99,38 @@ START_TEST (test_check_file_context_types_in_mod) {
 }
 END_TEST
 
+START_TEST (test_check_file_context_error_nodes) {
+
+	struct check_data *data = malloc(sizeof(struct check_data));
+
+	data->mod_name = "foo";
+	data->flavor = FILE_FC_FILE;
+
+	struct policy_node *node = malloc(sizeof(struct policy_node));
+	memset(node, 0, sizeof(struct policy_node));
+
+	node->flavor = NODE_FC_ENTRY;
+
+	struct check_result *res = check_file_context_error_nodes(data, node);
+
+	ck_assert_ptr_null(res);
+
+	node->flavor = NODE_ERROR;
+
+	res = check_file_context_error_nodes(data, node);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_ERROR);
+	ck_assert_ptr_nonnull(res->message);
+
+	free_check_result(res);
+
+	free(data);
+	free_policy_node(node);
+}
+END_TEST
+
 Suite *fc_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -109,6 +141,7 @@ Suite *fc_checks_suite(void) {
 
 	tcase_add_test(tc_core, test_check_file_context_types_exist);
 	tcase_add_test(tc_core, test_check_file_context_types_in_mod);
+	tcase_add_test(tc_core, test_check_file_context_error_nodes);
 	suite_add_tcase(s, tc_core);
 
 	return s;

@@ -9,6 +9,9 @@ enum style_ids {
 };
 
 enum error_ids {
+	E_ID_FC_ERROR = 2,
+	E_ID_FC_USER = 3,
+	E_ID_FC_ROLE = 4,
 	E_ID_FC_TYPE = 5
 };
 

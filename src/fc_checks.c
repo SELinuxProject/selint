@@ -93,5 +93,18 @@ struct check_result *check_file_context_users(struct policy_node *node) {
 }
 
 struct check_result *check_file_context_error_nodes(const struct check_data *data, const struct policy_node *node) {
-	return NULL;
+
+	if (node->flavor != NODE_ERROR) {
+		return NULL;
+	}
+
+	struct check_result *res = malloc(sizeof(struct check_result));
+
+	res->severity = 'E';
+	res->check_id = E_ID_FC_ERROR;
+	if (!asprintf(&res->message, "Bad file context format")) {
+		free(res);
+		return alloc_internal_error("Failed to generate error message in fc error handling");
+	}
+	return res;
 }
