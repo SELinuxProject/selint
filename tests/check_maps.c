@@ -44,6 +44,43 @@ START_TEST (test_insert_into_type_map_dup) {
 }
 END_TEST
 
+START_TEST (test_role_and_user_maps) {
+
+	insert_into_decl_map("foo_r", "test_module1", DECL_ROLE);
+	insert_into_decl_map("bar_r", "test_module2", DECL_ROLE);
+	insert_into_decl_map("bar_u", "test_module3", DECL_USER);
+
+	char *mod_name = look_up_in_decl_map("foo_r", DECL_TYPE);
+
+	ck_assert_ptr_null(mod_name);
+
+	mod_name = look_up_in_decl_map("foo_r", DECL_ROLE);
+
+	ck_assert_ptr_nonnull(mod_name);
+	ck_assert_str_eq(mod_name, "test_module1");
+
+	mod_name = look_up_in_decl_map("foo_r", DECL_ATTRIBUTE);
+
+	ck_assert_ptr_null(mod_name);
+
+	mod_name = look_up_in_decl_map("bar_u", DECL_ROLE);
+
+	ck_assert_ptr_null(mod_name);
+
+	mod_name = look_up_in_decl_map("bar_u", DECL_USER);
+
+	ck_assert_ptr_nonnull(mod_name);
+	ck_assert_str_eq(mod_name, "test_module3");
+
+	ck_assert_int_eq(decl_map_count(DECL_TYPE), 0);
+	ck_assert_int_eq(decl_map_count(DECL_ROLE), 2);
+	ck_assert_int_eq(decl_map_count(DECL_USER), 1);
+
+	free_all_maps();
+
+}
+END_TEST
+
 START_TEST (test_insert_decl_into_template_map) {
 
 	insert_decl_into_template_map("user_domain", DECL_TYPE, "$1_t");
@@ -125,6 +162,7 @@ Suite *maps_suite(void) {
 
 	tcase_add_test(tc_core, test_insert_into_type_map);
 	tcase_add_test(tc_core, test_insert_into_type_map_dup);
+	tcase_add_test(tc_core, test_role_and_user_maps);
 	tcase_add_test(tc_core, test_insert_decl_into_template_map);
 	suite_add_tcase(s, tc_core);
 
