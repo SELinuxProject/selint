@@ -37,7 +37,7 @@ char *get_current_module_name();
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name, int lineno); // TODO: Some declarations take things like attribute lists
+enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, int lineno); // TODO: Some declarations take things like attribute lists
 
 /**********************************
  * insert_av_rule

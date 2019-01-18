@@ -47,7 +47,7 @@ START_TEST (test_insert_declaration_type) {
 
 	set_current_module_name("test");
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, "type", "foo_t", 1234));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, DECL_TYPE, "foo_t", 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_null(cur->parent);

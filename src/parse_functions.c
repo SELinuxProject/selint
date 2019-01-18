@@ -58,10 +58,8 @@ int is_in_require(struct policy_node *cur) {
 	return 0;
 }
 
-enum selint_error insert_declaration(struct policy_node **cur, char *flavor, char *name, int lineno) {
+enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, int lineno) {
 	//TODO: Handle attributes
-
-	enum decl_flavor flavor_to_set = DECL_TYPE; // TODO: Other flavors
 
 	if (!is_in_require(*cur)) {
 		// In a require block, the objects arent being declared
@@ -72,7 +70,7 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 		if (temp_name) {
 			// We are inside a template, so we need to save declarations in the template map
 			// TODO: What about nested templates?  This case may require some thought
-			insert_decl_into_template_map(temp_name, flavor_to_set, name);
+			insert_decl_into_template_map(temp_name, flavor, name);
 		} else {
 
 			char *mn = get_current_module_name();
@@ -81,7 +79,7 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 				return SELINT_NO_MOD_NAME;
 			}
 
-			insert_into_decl_map(name, mn, flavor_to_set);
+			insert_into_decl_map(name, mn, flavor);
 
 		}
 	}
@@ -93,7 +91,7 @@ enum selint_error insert_declaration(struct policy_node **cur, char *flavor, cha
 
 	memset(data, 0, sizeof(struct declaration_data));
 
-	data->flavor = flavor_to_set;
+	data->flavor = flavor;
 	data->name = strdup(name);
 
 	enum selint_error ret = insert_policy_node_next(*cur, NODE_DECL, data, lineno);
