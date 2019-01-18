@@ -56,6 +56,9 @@ START_TEST (test_parse_basic_te) {
 	cur = cur->first_child;
 	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
 
+	ck_assert_str_eq("basic", look_up_in_decl_map("basic_t", DECL_TYPE));
+	ck_assert_int_eq(2, decl_map_count(DECL_TYPE));
+
 	cleanup_parsing();
 
 	fclose(yyin);
