@@ -167,7 +167,16 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 
-	run_analysis(ck, te_files, if_files, fc_files);
+	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files);
+	switch (res) {
+		case SELINT_SUCCESS:
+			break;
+		case SELINT_PARSE_ERROR:
+			printf("Error during parsing\n");
+			break;
+		default:
+			printf("Internal error: %d\n", res);
+	}
 
 	free_checks(ck);
 

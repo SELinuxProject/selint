@@ -355,7 +355,7 @@ if_file:
 if_lines:
 	if_lines if_line
 	|
-	if_line { if (!cur) {
+	if_line { if (!ast) {
 		// Must set up the AST at the beginning
 		cur = malloc(sizeof(struct policy_node));
 		memset(cur, 0, sizeof(struct policy_node));
