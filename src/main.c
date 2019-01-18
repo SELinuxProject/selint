@@ -17,6 +17,8 @@ extern int verbose_flag;
 
 int main(int argc, char **argv) {
 
+	char severity = 'C'; //Default
+
 	while (1) {
 
 		static struct option long_options[] = 
@@ -71,7 +73,7 @@ int main(int argc, char **argv) {
 
 			case 'l':
 				// Set the severity level
-				printf("Flag l with value %s\n", optarg);
+				severity = optarg[0];
 				break;
 
 			case 'm':
@@ -150,11 +152,14 @@ int main(int argc, char **argv) {
 
 	struct policy_file_node *cur = te_files->head;
 	while (cur) {
-		printf("Going to scan %s\n", cur->file->filename);
 		cur = cur->next;
 	}
 
-	struct checks *ck = register_checks();
+	struct checks *ck = register_checks(severity);
+	if (!ck) {
+		printf("Failed to register checks (bad configuration)\n");
+		return -1;
+	}
 
 	run_analysis(ck, te_files, if_files, fc_files);
 

@@ -8,7 +8,7 @@
 
 struct policy_node * parse_one_file(char *filename);
 
-struct checks * register_checks();
+struct checks * register_checks(char level);
 
 enum selint_error parse_all_files_in_list(struct policy_file_list *files);
 

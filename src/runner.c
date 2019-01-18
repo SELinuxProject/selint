@@ -27,16 +27,27 @@ struct policy_node * parse_one_file(char *filename) {
 	return ast;
 }
 
-struct checks * register_checks() {
+struct checks * register_checks(char level) {
 
 	struct checks *ck = malloc(sizeof(struct checks));
 	memset(ck, 0, sizeof(struct checks));
 
-	// Temporarily just register all, since config files and command line check specification
-	// isn't implemented yet
-	add_check(NODE_FC_ENTRY, ck, check_file_context_types_exist);
-	add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
-	add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
+	// Temporarily just register all at specified level, since config files and
+	// command line check specification isn't implemented yet
+	switch (level) {
+		case 'C':
+		case 'S':
+			add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
+		case 'W':
+		case 'E':
+			add_check(NODE_FC_ENTRY, ck, check_file_context_types_exist);
+			add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
+		case 'F':
+			break;
+		default:
+			free(ck);
+			return NULL;
+	}
 
 	return ck;
 }
