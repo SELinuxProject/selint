@@ -133,6 +133,11 @@ line:
 	m4_call
 	|
 	COMMENT
+	// Would like to do error recovery, but the best strategy seems to be to skip
+	// to next newline, which lex doesn't give us right now.
+	// Also, we would need to know in yyerror whether the error was recoverable
+	//|
+	//error { yyerrok; yyclearin;}
 	;
 
 declaration:

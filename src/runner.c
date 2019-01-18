@@ -20,7 +20,10 @@ struct policy_node * parse_one_file(char *filename) {
 
 	yyin = fopen(filename, "r");
 	parsing_filename = filename;
-	yyparse();
+	if (0 != yyparse()) {
+		free_policy_node(ast);
+		return NULL;
+	}
 	fclose(yyin);
 
 	// dont run cleanup_parsing until everything is done because it frees the maps
