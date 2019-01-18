@@ -153,6 +153,9 @@ int main(int argc, char **argv) {
 		file = fts_read(ftsp);
 	}
 
+	fts_close(ftsp);
+	free(paths);
+
 	struct policy_file_node *cur = te_files->head;
 	while (cur) {
 		cur = cur->next;
@@ -165,6 +168,12 @@ int main(int argc, char **argv) {
 	}
 
 	run_analysis(ck, te_files, if_files, fc_files);
+
+	free_checks(ck);
+
+	free_file_list(te_files);
+	free_file_list(if_files);
+	free_file_list(fc_files);
 
 /*
 		struct policy_node *ast = parse_one_file(argv[optind]);

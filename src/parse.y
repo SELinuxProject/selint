@@ -137,7 +137,7 @@ line:
 declaration:
 	type_declaration
 	|
-	ATTRIBUTE STRING SEMICOLON
+	ATTRIBUTE STRING SEMICOLON { free($2); }
 	|
 	CLASS STRING perms_list SEMICOLON
 	|
