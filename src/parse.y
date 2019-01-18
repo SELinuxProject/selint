@@ -80,6 +80,7 @@
 
 %type<sl> string_list
 %type<sl> strings
+%type<string> sl_item
 %type<sl> args
 %type<string> mls_range
 %type<string> mls_level
@@ -201,17 +202,28 @@ av_type:
 string_list:
 	OPEN_CURLY strings CLOSE_CURLY { $$ = $2; }
 	|
-	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1);}
+	sl_item { $$ = malloc(sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
 	;
 
 strings:
-	strings STRING { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
+	strings sl_item { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
 			cur->next = malloc(sizeof(struct string_list));
 			cur->next->string = strdup($2);
 			cur->next->next = NULL; 
 			free($2); }
 	|
-	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1);}
+	sl_item { $$ = malloc(sizeof(struct string_list)); $$->string = $1; $$->next = NULL; } 
+	;
+
+sl_item:
+	STRING { $$ = strdup($1); free($1);}
+	|
+	DASH STRING { $$ = malloc(sizeof(char) * (strlen($2) + 2));
+			$$[0] = '-';
+			strcat($$, $2);
+			free($2);}
+	|
+	QUOTED_STRING { $$ = strdup($1); free($1);}
 	;
 
 perms_list:
@@ -289,6 +301,8 @@ arbitrary_m4_string:
 	OPEN_PAREN arbitrary_m4_string
 	|
 	CLOSE_PAREN arbitrary_m4_string
+	|
+	COMMA arbitrary_m4_string
 	;
 
 condition:
