@@ -137,8 +137,6 @@ enum selint_error run_analysis(struct checks *ck, struct policy_file_list *te_fi
 		return res;
 	}
 
-	cleanup_parsing();
-
 	// TODO template passes
 
 	res = run_all_checks(ck, FILE_TE_FILE, te_files);
@@ -155,6 +153,8 @@ enum selint_error run_analysis(struct checks *ck, struct policy_file_list *te_fi
 	if (res != SELINT_SUCCESS) {
 		return res;
 	}
+
+	cleanup_parsing();
 
 	return SELINT_SUCCESS;
 }
