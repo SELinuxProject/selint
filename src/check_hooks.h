@@ -28,6 +28,7 @@ enum file_flavor {
 
 struct check_data {
 	char *mod_name;
+	char *filename;
 	enum file_flavor flavor;
 };
 

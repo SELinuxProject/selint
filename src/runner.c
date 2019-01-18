@@ -119,7 +119,8 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor, str
 
 	while (file) {
 
-		data.mod_name = strdup(basename(file->file->filename));
+		data.filename = strdup(basename(file->file->filename));
+		data.mod_name = strdup(data.filename);
 
 		char *suffix_ptr = rindex(data.mod_name, '.');
 
@@ -130,6 +131,7 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor, str
 			return res;
 		}
 
+		free(data.filename);
 		free(data.mod_name);
 
 		file = file->next;
