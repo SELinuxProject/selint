@@ -117,8 +117,11 @@ int main(int argc, char **argv) {
 	}
 
 	struct policy_file_list *te_files = malloc(sizeof(struct policy_file_list));
+	memset(te_files, 0, sizeof(struct policy_file_list));
 	struct policy_file_list *if_files = malloc(sizeof(struct policy_file_list));
+	memset(if_files, 0, sizeof(struct policy_file_list));
 	struct policy_file_list *fc_files = malloc(sizeof(struct policy_file_list));
+	memset(fc_files, 0, sizeof(struct policy_file_list));
 
 	char **paths = malloc (sizeof(char*) * argc - optind + 1);
 
