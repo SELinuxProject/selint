@@ -137,7 +137,11 @@ enum selint_error insert_type_transition(struct policy_node **cur, struct string
 	tt_data->targets = targets;
 	tt_data->object_classes = object_classes;
 	tt_data->default_type = strdup(default_type);
-	tt_data->name = strdup(name);
+	if (name) {
+		tt_data->name = strdup(name);
+	} else {
+		tt_data->name = NULL;
+	}
 
 	enum selint_error ret = insert_policy_node_next(*cur, NODE_TT_RULE, tt_data, lineno);
 	if ( ret != SELINT_SUCCESS) {

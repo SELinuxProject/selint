@@ -100,6 +100,31 @@ START_TEST (test_insert_av_rule) {
 END_TEST
 
 START_TEST (test_insert_type_transition) {
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	struct policy_node *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, NULL, NULL, NULL, "example_tmp_t", NULL, 1234));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_int_eq(NODE_TT_RULE, cur->flavor);
+	ck_assert_int_eq(cur->lineno, 1234);
+	struct type_transition_data *ttd = (struct type_transition_data *)(cur->data);
+	ck_assert_ptr_null(ttd->sources);
+	ck_assert_ptr_null(ttd->targets);
+	ck_assert_ptr_null(ttd->object_classes);
+	ck_assert_str_eq("example_tmp_t", ttd->default_type);
+	ck_assert_ptr_null(ttd->name);
+
+	free_policy_node(head);
+
+	cleanup_parsing();
+
+}
+END_TEST
+
+START_TEST (test_insert_named_type_transition) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
 	memset(cur, 0, sizeof(struct policy_node));
