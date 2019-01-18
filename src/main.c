@@ -9,10 +9,11 @@
 #include "parse.h"
 #include "config.h"
 #include "file_list.h"
+#include "util.h"
 
 extern int yyparse();
 
-static int verbose_flag;
+extern int verbose_flag;
 
 int main(int argc, char **argv) {
 
@@ -105,9 +106,8 @@ int main(int argc, char **argv) {
 
 	}
 
-	if (verbose_flag) {
-		printf("Verbose mode\n");
-	}
+	print_if_verbose("Verbose mode enabled\n");
+	print_if_verbose("Severity level set to %c\n", severity);
 
 	if (optind == argc) {
 		printf("TODO: usage message\n");
@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
 		} else if ( !strcmp(suffix, ".fc")) {
 			file_list_push_back(fc_files, make_policy_file(file->fts_path, NULL));
 		} else {
-			printf("%s is not a policy file\n", file->fts_path);
+			print_if_verbose("Skipping %s which is not a policy file\n", file->fts_path);
 		}
 
 		file = fts_read(ftsp);

@@ -5,6 +5,7 @@
 #include "runner.h"
 #include "fc_checks.h"
 #include "parse_fc.h"
+#include "util.h"
 
 extern FILE * yyin;
 extern int yyparse();
@@ -45,7 +46,7 @@ enum selint_error parse_all_files_in_list(struct policy_file_list *files) {
 	struct policy_file_node *cur = files->head;
 
 	while (cur) {
-		printf("Parsing %s\n", cur->file->filename);
+		print_if_verbose("Parsing %s\n", cur->file->filename);
 		cur->file->ast = parse_one_file(cur->file->filename);
 		if (!cur->file->ast) {
 			return SELINT_PARSE_ERROR;
@@ -62,7 +63,7 @@ enum selint_error parse_all_fc_files_in_list(struct policy_file_list *files) {
 	struct policy_file_node *cur = files->head;
 
 	while (cur) {
-		printf("Parsing fc file %s\n", cur->file->filename);
+		print_if_verbose("Parsing fc file %s\n", cur->file->filename);
 		cur->file->ast = parse_fc_file(cur->file->filename);
 		if (!cur->file->ast) {
 			return SELINT_PARSE_ERROR;
@@ -141,7 +142,7 @@ enum selint_error run_analysis(struct checks *ck, struct policy_file_list *te_fi
 		return res;
 	}
 
-	res = parse_all_fc_files_in_list(fc_files); // TODO: This needs to do fc_file parsing
+	res = parse_all_fc_files_in_list(fc_files);
 	if (res != SELINT_SUCCESS) {
 		return res;
 	}
