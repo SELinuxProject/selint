@@ -114,6 +114,31 @@ struct check_result *check_file_context_roles(const struct check_data *data, con
 }
 
 struct check_result *check_file_context_users(const struct check_data *data, const struct policy_node *node) {
+	
+	if (node->flavor != NODE_FC_ENTRY) {
+		return alloc_internal_error("File context user check called on non file context entry");
+	} 
+
+	struct fc_entry *entry = (struct fc_entry *)node->data;
+
+	if (!entry) {
+		return alloc_internal_error("Policy node data field is NULL");
+	}
+
+	char *user_decl_filename = look_up_in_decl_map(entry->context->user, DECL_USER);
+
+	if (!user_decl_filename) {
+		struct check_result *res = malloc(sizeof(struct check_result));
+		res->severity = 'E';
+		res->check_id = E_ID_FC_USER;
+		if (!asprintf(&res->message, "Nonexistent user (%s) listed in fc_entry", entry->context->user)) {
+			free(res);
+			return alloc_internal_error("Failed to generate error message in fc user checking"); 
+		}
+
+		return res;
+	}
+
 	return NULL;
 }
 
