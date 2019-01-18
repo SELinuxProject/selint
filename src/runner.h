@@ -10,6 +10,10 @@ struct policy_node * parse_one_file(char *filename);
 
 struct checks * register_checks();
 
+enum selint_error parse_all_files_in_list(struct policy_file_list *files);
+
+enum selint_error parse_all_fc_files_in_list(struct policy_file_list *files);
+
 /****************************************************
  * Run all checks for a certain file
  * head - The head of the AST for that file
