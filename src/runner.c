@@ -32,6 +32,7 @@ struct checks * register_checks() {
 	// Temporarily just register all, since config files and command line check specification
 	// isn't implemented yet
 	add_check(NODE_FC_ENTRY, ck, check_file_context_types_exist);
+	add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
 	add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
 
 	return ck;
@@ -44,6 +45,7 @@ enum selint_error parse_all_files_in_list(struct policy_file_list *files) {
 	while (cur) {
 		printf("Parsing %s\n", cur->file->filename);
 		cur->file->ast = parse_one_file(cur->file->filename);
+		cur->file->mod_name = strdup(get_current_module_name());
 		if (!cur->file->ast) {
 			return SELINT_PARSE_ERROR;
 		}
@@ -104,7 +106,7 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor, str
 
 	while (file) {
 
-		data.mod_name = file->file->filename;
+		data.mod_name = file->file->mod_name;
 
 		enum selint_error res = run_checks_on_one_file(ck, &data, file->file->ast);
 		if ( res != SELINT_SUCCESS) {
