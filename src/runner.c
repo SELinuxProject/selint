@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <libgen.h>
 
 #include "runner.h"
 #include "fc_checks.h"
@@ -105,12 +107,18 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor, str
 
 	while (file) {
 
-		data.mod_name = file->file->filename; //TODO
+		data.mod_name = strdup(basename(file->file->filename));
+
+		char *suffix_ptr = rindex(data.mod_name, '.');
+
+		*suffix_ptr = '\0';
 
 		enum selint_error res = run_checks_on_one_file(ck, &data, file->file->ast);
 		if ( res != SELINT_SUCCESS) {
 			return res;
 		}
+
+		free(data.mod_name);
 
 		file = file->next;
 
