@@ -163,7 +163,7 @@ struct policy_node * parse_fc_file(char *filename) {
 	int lineno = 0;
 	while ((len_read = getline(&line, &buf_len, fd)) != -1) {
 		lineno++;
-		if (len_read <= 1) {
+		if (len_read <= 1 || line[0] == '#') {
 			continue;
 		}
 		struct fc_entry *entry = parse_fc_line(line);
