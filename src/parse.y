@@ -33,6 +33,7 @@
 %token TYPEALIAS;
 %token ALIAS;
 %token ATTRIBUTE;
+%token TYPE_ATTRIBUTE;
 %token ROLE;
 %token TYPES;
 %token ATTRIBUTE_ROLE;
@@ -45,6 +46,7 @@
 %token OPTIONAL_POLICY;
 %token GEN_REQUIRE;
 %token TUNABLE_POLICY;
+%token REFPOLICYWARN;
 %token CLASS;
 %token IFDEF;
 %token IFNDEF;
@@ -116,6 +118,8 @@ lines:
 line:
 	declaration
 	|
+	type_attribute
+	|
 	type_alias
 	|
 	rule
@@ -174,6 +178,10 @@ role_declaration:
 
 type_alias:
 	TYPEALIAS string_list ALIAS string_list SEMICOLON
+	;
+
+type_attribute:
+	TYPE_ATTRIBUTE STRING args SEMICOLON
 	;
 
 rule:
@@ -252,6 +260,8 @@ m4_call:
 	ifdef
 	|
 	tunable
+	|
+	refpolicywarn
 	;
 
 ifdef:
@@ -265,6 +275,20 @@ if_or_ifn:
 
 tunable:
 	TUNABLE_POLICY OPEN_PAREN BACKTICK condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN
+	;
+
+refpolicywarn:
+	REFPOLICYWARN OPEN_PAREN BACKTICK arbitrary_m4_string SINGLE_QUOTE CLOSE_PAREN
+	;
+
+arbitrary_m4_string:
+	STRING
+	|
+	STRING arbitrary_m4_string
+	|
+	OPEN_PAREN arbitrary_m4_string
+	|
+	CLOSE_PAREN arbitrary_m4_string
 	;
 
 condition:

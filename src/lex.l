@@ -14,6 +14,7 @@ type { return TYPE; }
 typealias { return TYPEALIAS; }
 alias { return ALIAS; }
 attribute { return ATTRIBUTE; }
+typeattribute { return TYPE_ATTRIBUTE; }
 role { return ROLE; }
 types {  return TYPES; }
 attribute_role { return ATTRIBUTE_ROLE; }
@@ -26,6 +27,7 @@ range_transition { return RANGE_TRANSITION; }
 optional_policy { return OPTIONAL_POLICY; }
 gen_require { return GEN_REQUIRE; }
 tunable_policy { return TUNABLE_POLICY; }
+refpolicywarn { return REFPOLICYWARN; }
 class { return CLASS; }
 ifdef { return IFDEF; }
 ifndef { return IFNDEF; }
@@ -33,7 +35,7 @@ interface { return INTERFACE; }
 template { return TEMPLATE; }
 s[0-9]+(:c[0-9]+)? { return MLS_LEVEL; }
 [0-9]+\.[0-9]+(\.[0-9]+)? { yylval.string = strdup(yytext); return VERSION_NO; }
-[a-zA-Z\$][a-zA-Z0-9_\$]* { yylval.string = strdup(yytext); return STRING; }
+[a-zA-Z\$][a-zA-Z0-9_\$\*\.]* { yylval.string = strdup(yytext); return STRING; }
 \"[a-zA-Z][a-zA-Z0-9_]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
 \( { return OPEN_PAREN; }
 \) { return CLOSE_PAREN; }
