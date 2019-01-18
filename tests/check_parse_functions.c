@@ -32,7 +32,7 @@ START_TEST (test_begin_parsing_te) {
 }
 END_TEST
 
-START_TEST (test_insert_declaration_type) {
+START_TEST (test_insert_declaration) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
 	memset(cur, 0, sizeof(struct policy_node));
@@ -307,7 +307,7 @@ Suite *parse_functions_suite(void) {
 	tc_blocks = tcase_create("Blocks");
 
 	tcase_add_test(tc_core, test_begin_parsing_te);
-	tcase_add_test(tc_core, test_insert_declaration_type);
+	tcase_add_test(tc_core, test_insert_declaration);
 	tcase_add_test(tc_core, test_insert_av_rule);
 	tcase_add_test(tc_core, test_insert_type_transition);
 	tcase_add_test(tc_core, test_insert_interface_call);

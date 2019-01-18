@@ -25,14 +25,14 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *da
  * node - the node to check
  * returns NULL if passed or check_result for issue E-004
  *********************************************/
-struct check_result *check_file_context_roles(struct policy_node *node);
+struct check_result *check_file_context_roles(const struct check_data *data, const struct policy_node *node);
 
 /*********************************************
  * Check for issues with file context labels user field
  * node - the node to check
  * returns NULL if passed or check_result for issue E-003
  *********************************************/
-struct check_result *check_file_context_users(struct policy_node *node);
+struct check_result *check_file_context_users(const struct check_data *data, const struct policy_node *node);
 
 /*********************************************
  * Report an error on error nodes in a file_context file

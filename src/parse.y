@@ -171,9 +171,9 @@ attribute_declaration:
 	;
 
 role_declaration:
-	ROLE STRING SEMICOLON
+	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); }
 	|
-	ROLE STRING TYPES args SEMICOLON
+	ROLE STRING TYPES args SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
 	; 
 
 type_alias:

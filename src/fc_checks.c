@@ -84,11 +84,36 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *ch
 	return NULL;
 }
 
-struct check_result *check_file_context_roles(struct policy_node *node) {
+struct check_result *check_file_context_roles(const struct check_data *data, const struct policy_node *node) {
+	
+	if (node->flavor != NODE_FC_ENTRY) {
+		return alloc_internal_error("File context role check called on non file context entry");
+	} 
+
+	struct fc_entry *entry = (struct fc_entry *)node->data;
+
+	if (!entry) {
+		return alloc_internal_error("Policy node data field is NULL");
+	}
+
+	char *role_decl_filename = look_up_in_decl_map(entry->context->role, DECL_ROLE);
+
+	if (!role_decl_filename) {
+		struct check_result *res = malloc(sizeof(struct check_result));
+		res->severity = 'E';
+		res->check_id = E_ID_FC_ROLE;
+		if (!asprintf(&res->message, "Nonexistent role (%s) listed in fc_entry", entry->context->role)) {
+			free(res);
+			return alloc_internal_error("Failed to generate error message in fc role checking"); 
+		}
+
+		return res;
+	}
+
 	return NULL;
 }
 
-struct check_result *check_file_context_users(struct policy_node *node) {
+struct check_result *check_file_context_users(const struct check_data *data, const struct policy_node *node) {
 	return NULL;
 }
 
