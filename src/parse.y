@@ -3,6 +3,7 @@
 	#include <string.h>
 	#include "tree.h"
 	#include "parse_functions.h"
+	#include "check_hooks.h"
 	int yylex(void);
 	void yyerror(char *);
 
@@ -137,7 +138,7 @@ line:
 declaration:
 	type_declaration
 	|
-	ATTRIBUTE STRING SEMICOLON { free($2); }
+	attribute_declaration
 	|
 	CLASS STRING perms_list SEMICOLON
 	|
@@ -152,6 +153,12 @@ type_declaration:
 	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
 	|
 	TYPE STRING ALIAS string_list SEMICOLON
+	;
+
+attribute_declaration:
+	ATTRIBUTE STRING SEMICOLON { free($2); }
+	|
+	ATTRIBUTE STRING COMMA args SEMICOLON { free($2); free_string_list($4); }
 	;
 
 role_declaration:
@@ -348,5 +355,19 @@ if_keyword:
 %%
 extern int yylineno;
 void yyerror(char* s) {
-	fprintf(stderr, "%s line %d: %s\n", parsing_filename, yylineno, s);
+	struct check_result *res = malloc(sizeof(struct check_result));
+	res->lineno = yylineno;
+	res->severity = 'F';
+	res->check_id = F_ID_POLICY_SYNTAX;
+	res->message = strdup(s);
+
+	struct check_data data;
+	data.mod_name = get_current_module_name();
+	data.filename = parsing_filename;
+	data.flavor = FILE_TE_FILE; // We don't know but it's unused by display_check_result
+	
+	display_check_result(res, &data);
+
+	free(data.mod_name);
+	free_check_result(res);
 }
