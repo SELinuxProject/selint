@@ -15,6 +15,7 @@ typealias { return TYPEALIAS; }
 alias { return ALIAS; }
 attribute { return ATTRIBUTE; }
 typeattribute { return TYPE_ATTRIBUTE; }
+roleattribute { return ROLE_ATTRIBUTE; }
 role { return ROLE; }
 types {  return TYPES; }
 attribute_role { return ATTRIBUTE_ROLE; }

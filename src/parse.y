@@ -34,6 +34,7 @@
 %token ALIAS;
 %token ATTRIBUTE;
 %token TYPE_ATTRIBUTE;
+%token ROLE_ATTRIBUTE;
 %token ROLE;
 %token TYPES;
 %token ATTRIBUTE_ROLE;
@@ -121,6 +122,8 @@ line:
 	|
 	type_attribute
 	|
+	role_attribute
+	|
 	type_alias
 	|
 	rule
@@ -184,6 +187,9 @@ type_alias:
 type_attribute:
 	TYPE_ATTRIBUTE STRING args SEMICOLON
 	;
+
+role_attribute:
+	ROLE_ATTRIBUTE STRING args SEMICOLON
 
 rule:
 	av_type string_list string_list COLON string_list perms_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6, yylineno); }
