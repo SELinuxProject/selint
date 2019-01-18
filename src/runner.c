@@ -44,6 +44,10 @@ struct checks * register_checks(char level) {
 		case 'W':
 		case 'E':
 			add_check(NODE_FC_ENTRY, ck, check_file_context_types_exist);
+			// These checks just spam until we can actually get the valid users
+			// and roles
+			//add_check(NODE_FC_ENTRY, ck, check_file_context_roles);
+			//add_check(NODE_FC_ENTRY, ck, check_file_context_users);
 			add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
 		case 'F':
 			break;
