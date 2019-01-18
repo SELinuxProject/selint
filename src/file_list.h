@@ -5,7 +5,6 @@
 
 struct policy_file {
 	char *filename;
-	char *mod_name;
 	struct policy_node *ast;
 };
 

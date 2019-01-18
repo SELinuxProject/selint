@@ -45,7 +45,6 @@ enum selint_error parse_all_files_in_list(struct policy_file_list *files) {
 	while (cur) {
 		printf("Parsing %s\n", cur->file->filename);
 		cur->file->ast = parse_one_file(cur->file->filename);
-		cur->file->mod_name = strdup(get_current_module_name());
 		if (!cur->file->ast) {
 			return SELINT_PARSE_ERROR;
 		}
@@ -106,7 +105,7 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor, str
 
 	while (file) {
 
-		data.mod_name = file->file->mod_name;
+		data.mod_name = file->file->filename; //TODO
 
 		enum selint_error res = run_checks_on_one_file(ck, &data, file->file->ast);
 		if ( res != SELINT_SUCCESS) {
