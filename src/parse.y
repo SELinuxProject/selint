@@ -176,7 +176,7 @@ declaration:
 	|
 	ATTRIBUTE_ROLE args SEMICOLON
 	|
-	BOOL STRING SEMICOLON
+	BOOL args SEMICOLON
 	;
 
 type_declaration:
