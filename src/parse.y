@@ -24,6 +24,7 @@
 
 %token <string> MLS_LEVEL;
 %token <string> STRING;
+%token <string> NUMBER;
 %token <string> QUOTED_STRING;
 %token <symbol> SYMBOL;
 %token <string> VERSION_NO;
@@ -59,6 +60,9 @@
 %token IF;
 %token ELSE;
 %token GENFSCON;
+%token SID;
+%token PORTCON;
+%token NETIFCON;
 %token DEFINE;
 %token GEN_CONTEXT;
 %token INTERFACE;
@@ -175,6 +179,12 @@ line:
 	cond_expr
 	|
 	genfscon
+	|
+	sid
+	|
+	portcon
+	|
+	netifcon
 	|
 	define
 	|
@@ -451,6 +461,24 @@ cond_expr:
 
 genfscon:
 	GENFSCON STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	;
+
+sid:
+	SID STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	;
+
+portcon:
+	PORTCON STRING port_range GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	;
+
+port_range:
+	NUMBER
+	|
+	NUMBER DASH NUMBER
+	;
+
+netifcon:
+	NETIFCON STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
 	;
 
 define:

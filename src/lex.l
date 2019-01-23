@@ -40,12 +40,16 @@ else { return ELSE; }
 ifdef { return IFDEF; }
 ifndef { return IFNDEF; }
 genfscon { return GENFSCON; }
+sid { return SID; }
+portcon { return PORTCON; }
+netifcon { return NETIFCON; }
 define { return DEFINE; }
 gen_context { return GEN_CONTEXT; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
 s[0-9]+(:c[0-9]+)? { return MLS_LEVEL; }
 [0-9]+\.[0-9]+(\.[0-9]+)? { yylval.string = strdup(yytext); return VERSION_NO; }
+[0-9]+ { yylval.string = strdup(yytext); return NUMBER; }
 [a-zA-Z\$\/][a-zA-Z0-9_\$\*\.\/]* { yylval.string = strdup(yytext); return STRING; }
 \"[a-zA-Z0-9_\.\-]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
 \( { return OPEN_PAREN; }
