@@ -90,7 +90,10 @@ enum selint_error add_template_declarations(char *template_name, struct string_l
 	while (calls) {
 		struct string_list *new_args = replace_m4_list(args, calls->call->args);
 
-		add_template_declarations(calls->call->name, new_args, cur, mod_name);
+		enum selint_error res = add_template_declarations(calls->call->name, new_args, cur, mod_name);
+		if (res != SELINT_SUCCESS) {
+			return res;
+		}
 
 		free_string_list(new_args);
 		calls = calls->next;
@@ -100,6 +103,11 @@ enum selint_error add_template_declarations(char *template_name, struct string_l
 
 	while (decls) {
 		char *new_decl = replace_m4(decls->decl->name, args);
+		if (!new_decl) {
+			free(cur->string);
+			free(cur);
+			return SELINT_M4_SUB_FAILURE;
+		}
 		insert_into_decl_map(new_decl, mod_name, decls->decl->flavor);
 		free(new_decl);
 		decls = decls->next;

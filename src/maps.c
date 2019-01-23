@@ -7,6 +7,10 @@ struct template_hash_elem *template_map = NULL;
 
 struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor) {
 
+	if (!name) {
+		return NULL;
+	}
+
 	struct hash_elem *decl;
 
 	switch (flavor) {
