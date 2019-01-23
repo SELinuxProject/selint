@@ -36,9 +36,11 @@ ifelse { return IFELSE; }
 refpolicywarn { return REFPOLICYWARN; }
 class { return CLASS; }
 if { return IF; }
+else { return ELSE; }
 ifdef { return IFDEF; }
 ifndef { return IFNDEF; }
 genfscon { return GENFSCON; }
+define { return DEFINE; }
 gen_context { return GEN_CONTEXT; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
@@ -67,6 +69,7 @@ s[0-9]+(:c[0-9]+)? { return MLS_LEVEL; }
 \!\= { return NOT_EQUAL; }
 ^\#.*\n { yylineno++; return COMMENT; }
 (\#.*)?\n { yylineno++; }
+dnl(.*)?\n { yylineno++; }
 [ \t] ; /* skip whitespace */
 . { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); } 
 

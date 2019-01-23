@@ -57,7 +57,9 @@
 %token IFDEF;
 %token IFNDEF;
 %token IF;
+%token ELSE;
 %token GENFSCON;
+%token DEFINE;
 %token GEN_CONTEXT;
 %token INTERFACE;
 %token TEMPLATE;
@@ -96,20 +98,37 @@
 %type<string> mls_level
 %type<sl> string_list_or_mls
 %type<av_flavor> av_type
-%type<sl> perms_list
 %type<node_flavor> if_keyword
 
 %%
 selinux_file:
 	te_policy
 	|
+	comments te_policy
+	|
 	if_file
+	|
+	comments if_file
+	|
+	comments {if (!ast) {
+			// This is an if file with no interfaces
+			cur = malloc(sizeof(struct policy_node));
+			memset(cur, 0, sizeof(struct policy_node));
+			cur->flavor = NODE_IF_FILE;
+			ast = cur;
+		} }
 	;
 
 	// TE File parsing
 
 te_policy:
 	header body
+	;
+
+comments:
+	COMMENT
+	|
+	comments COMMENT
 	;
 
 header:
@@ -157,6 +176,8 @@ line:
 	|
 	genfscon
 	|
+	define
+	|
 	COMMENT
 	// Would like to do error recovery, but the best strategy seems to be to skip
 	// to next newline, which lex doesn't give us right now.
@@ -170,7 +191,7 @@ declaration:
 	|
 	attribute_declaration
 	|
-	CLASS STRING perms_list SEMICOLON
+	CLASS STRING string_list SEMICOLON
 	|
 	role_declaration
 	|
@@ -184,7 +205,7 @@ type_declaration:
 	|
 	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
 	|
-	TYPE STRING ALIAS string_list SEMICOLON
+	TYPE STRING ALIAS args SEMICOLON
 	;
 
 attribute_declaration:
@@ -211,7 +232,7 @@ role_attribute:
 	ROLE_ATTRIBUTE STRING args SEMICOLON
 
 rule:
-	av_type string_list string_list COLON string_list perms_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6, yylineno); }
+	av_type string_list string_list COLON string_list string_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6, yylineno); }
 	;
 
 av_type:
@@ -227,7 +248,13 @@ av_type:
 string_list:
 	OPEN_CURLY strings CLOSE_CURLY { $$ = $2; }
 	|
+	TILDA string_list { $$ = malloc(sizeof(struct string_list));
+			$$->string = strdup("~");
+			$$->next = $2; }
+	|
 	sl_item { $$ = malloc(sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	|
+	STAR { $$ = malloc(sizeof(struct string_list)); $$->string = strdup("*"); $$->next = NULL; }
 	;
 
 strings:
@@ -249,16 +276,6 @@ sl_item:
 			free($2);}
 	|
 	QUOTED_STRING { $$ = strdup($1); free($1);}
-	;
-
-perms_list:
-	string_list
-	|
-	TILDA string_list { $$ = malloc(sizeof(struct string_list));
-			$$->string = strdup("~");
-			$$->next = $2; }
-	|
-	STAR { $$ = malloc(sizeof(struct string_list)); $$->string = strdup("*"); $$->next = NULL; } 
 	;
 
 role_allow:
@@ -341,6 +358,8 @@ arbitrary_m4_string:
 	m4_string_elem
 	|
 	m4_string_elem arbitrary_m4_string
+	|
+	BACKTICK m4_string_elem SINGLE_QUOTE
 	;
 
 m4_string_elem:
@@ -397,8 +416,10 @@ args:
 	string_list_or_mls
 	|
 	args COMMA string_list_or_mls
-	{ struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
-	cur->next = $3; }
+	{ struct string_list *cur = $1;
+	while (cur->next) { cur = cur->next; }
+	cur->next = $3;
+	$$= $1; }
 	;
 
 string_list_or_mls:
@@ -423,11 +444,17 @@ mls_level:
 
 cond_expr:
 	IF OPEN_PAREN condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
+	|
+	IF OPEN_PAREN condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
+	ELSE OPEN_CURLY lines CLOSE_CURLY
 	;
 
 genfscon:
 	GENFSCON STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
 	;
+
+define:
+	DEFINE OPEN_PAREN m4_args CLOSE_PAREN
 
 context:
 	STRING COLON STRING COLON STRING
@@ -441,19 +468,15 @@ context:
 
 	// IF File parsing
 if_file:
-	if_lines
+	interface_def if_lines
+	|
+	interface_def
 	;
 
 if_lines:
 	if_lines if_line
 	|
-	if_line { if (!ast) {
-		// Must set up the AST at the beginning
-		cur = malloc(sizeof(struct policy_node));
-		memset(cur, 0, sizeof(struct policy_node));
-		cur->flavor = NODE_IF_FILE;
-		ast = cur; }
-	}
+	if_line
 	;
 
 if_line:
@@ -463,7 +486,15 @@ if_line:
 	;
 
 interface_def:
-	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE { begin_interface_def(&cur, $1, $4, yylineno); free($4); }
+	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE {
+		if (!ast) {
+			// Must set up the AST at the beginning
+			cur = malloc(sizeof(struct policy_node));
+			memset(cur, 0, sizeof(struct policy_node));
+			cur->flavor = NODE_IF_FILE;
+			ast = cur;
+		} 
+		begin_interface_def(&cur, $1, $4, yylineno); free($4); }
 	COMMA BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_interface_def(&cur); }
 	;
 
