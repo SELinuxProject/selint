@@ -220,7 +220,7 @@ type_declaration:
 	|
 	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
 	|
-	TYPE STRING ALIAS args SEMICOLON
+	TYPE STRING ALIAS args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); }
 	;
 
 attribute_declaration:
