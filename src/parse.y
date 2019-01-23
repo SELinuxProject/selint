@@ -44,6 +44,7 @@
 %token DONT_AUDIT;
 %token NEVER_ALLOW;
 %token TYPE_TRANSITION;
+%token TYPE_MEMBER;
 %token RANGE_TRANSITION;
 %token ROLE_TRANSITION;
 %token OPTIONAL_POLICY;
@@ -266,6 +267,8 @@ type_transition:
 	|
 	TYPE_TRANSITION string_list string_list COLON string_list STRING QUOTED_STRING SEMICOLON
 	{ insert_type_transition(&cur, $2, $3, $5, $6, $7, yylineno); }
+	|
+	TYPE_MEMBER string_list string_list COLON string_list STRING SEMICOLON
 	;
 
 range_transition:
