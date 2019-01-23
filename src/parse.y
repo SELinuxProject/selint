@@ -56,10 +56,13 @@
 %token IFDEF;
 %token IFNDEF;
 %token IF;
+%token GENFSCON;
+%token GEN_CONTEXT;
 %token INTERFACE;
 %token TEMPLATE;
 %token OPEN_PAREN;
 %token COMMA;
+%token PERIOD;
 %token CLOSE_PAREN;
 %token OPEN_CURLY;
 %token CLOSE_CURLY;
@@ -150,6 +153,8 @@ line:
 	m4_call
 	|
 	cond_expr
+	|
+	genfscon
 	|
 	COMMENT
 	// Would like to do error recovery, but the best strategy seems to be to skip
@@ -330,15 +335,21 @@ refpolicywarn:
 	;
 
 arbitrary_m4_string:
+	m4_string_elem
+	|
+	m4_string_elem arbitrary_m4_string
+	;
+
+m4_string_elem:
 	STRING
 	|
-	STRING arbitrary_m4_string
+	OPEN_PAREN
 	|
-	OPEN_PAREN arbitrary_m4_string
+	CLOSE_PAREN
 	|
-	CLOSE_PAREN arbitrary_m4_string
+	COMMA
 	|
-	COMMA arbitrary_m4_string
+	PERIOD
 	;
 
 condition:
@@ -407,6 +418,20 @@ mls_level:
 
 cond_expr:
 	IF OPEN_PAREN condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
+	;
+
+genfscon:
+	GENFSCON STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	;
+
+context:
+	STRING COLON STRING COLON STRING
+	|
+	STRING COLON STRING COLON STRING COLON string_list_or_mls
+	|
+	STRING COLON STRING COLON STRING COLON string_list_or_mls COLON string_list_or_mls
+	|
+	STRING COLON STRING COLON STRING COMMA string_list_or_mls
 	;
 
 	// IF File parsing
