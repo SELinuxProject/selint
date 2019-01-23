@@ -45,6 +45,7 @@
 %token NEVER_ALLOW;
 %token TYPE_TRANSITION;
 %token RANGE_TRANSITION;
+%token ROLE_TRANSITION;
 %token OPTIONAL_POLICY;
 %token GEN_REQUIRE;
 %token TUNABLE_POLICY;
@@ -135,6 +136,8 @@ line:
 	type_transition
 	|
 	range_transition
+	|
+	role_transition
 	|
 	interface_call
 	|
@@ -268,6 +271,10 @@ range_transition:
 	RANGE_TRANSITION string_list string_list COLON string_list mls_range SEMICOLON
 	|
 	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON
+	;
+
+role_transition:
+	ROLE_TRANSITION string_list string_list STRING SEMICOLON
 	;
 
 interface_call:

@@ -26,6 +26,7 @@ dontaudit { return DONT_AUDIT; }
 neverallow { return NEVER_ALLOW; }
 type_transition { return TYPE_TRANSITION; }
 range_transition { return RANGE_TRANSITION; }
+role_transition { return ROLE_TRANSITION; }
 optional_policy { return OPTIONAL_POLICY; }
 gen_require { return GEN_REQUIRE; }
 tunable_policy { return TUNABLE_POLICY; }
