@@ -128,6 +128,8 @@ line:
 	|
 	rule
 	|
+	role_allow
+	|
 	type_transition
 	|
 	range_transition
@@ -240,6 +242,12 @@ perms_list:
 			$$->next = $2; }
 	|
 	STAR { $$ = malloc(sizeof(struct string_list)); $$->string = strdup("*"); $$->next = NULL; } 
+	;
+
+role_allow:
+	// It is an error for this to be anything other than ALLOW, but using av_type
+	// instead seems like the cleanest way to avoid ambiguities in the grammar
+	av_type string_list string_list SEMICOLON 
 	;
 
 type_transition:
