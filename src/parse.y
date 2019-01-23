@@ -63,6 +63,9 @@
 %token SID;
 %token PORTCON;
 %token NETIFCON;
+%token FS_USE_TRANS;
+%token FS_USE_XATTR;
+%token FS_USE_TASK;
 %token DEFINE;
 %token GEN_CONTEXT;
 %token INTERFACE;
@@ -185,6 +188,8 @@ line:
 	portcon
 	|
 	netifcon
+	|
+	fs_use
 	|
 	define
 	|
@@ -479,6 +484,14 @@ port_range:
 
 netifcon:
 	NETIFCON STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	;
+
+fs_use:
+	FS_USE_TRANS STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON
+	|
+	FS_USE_XATTR STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON
+	|
+	FS_USE_TASK STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON
 	;
 
 define:
