@@ -14,6 +14,7 @@ type { return TYPE; }
 typealias { return TYPEALIAS; }
 alias { return ALIAS; }
 attribute { return ATTRIBUTE; }
+bool { return BOOL; }
 typeattribute { return TYPE_ATTRIBUTE; }
 roleattribute { return ROLE_ATTRIBUTE; }
 role { return ROLE; }
@@ -30,6 +31,7 @@ gen_require { return GEN_REQUIRE; }
 tunable_policy { return TUNABLE_POLICY; }
 refpolicywarn { return REFPOLICYWARN; }
 class { return CLASS; }
+if { return IF; }
 ifdef { return IFDEF; }
 ifndef { return IFNDEF; }
 interface { return INTERFACE; }

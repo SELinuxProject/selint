@@ -33,6 +33,7 @@
 %token TYPEALIAS;
 %token ALIAS;
 %token ATTRIBUTE;
+%token BOOL;
 %token TYPE_ATTRIBUTE;
 %token ROLE_ATTRIBUTE;
 %token ROLE;
@@ -51,6 +52,7 @@
 %token CLASS;
 %token IFDEF;
 %token IFNDEF;
+%token IF;
 %token INTERFACE;
 %token TEMPLATE;
 %token OPEN_PAREN;
@@ -142,6 +144,8 @@ line:
 	|
 	m4_call
 	|
+	cond_expr
+	|
 	COMMENT
 	// Would like to do error recovery, but the best strategy seems to be to skip
 	// to next newline, which lex doesn't give us right now.
@@ -159,7 +163,9 @@ declaration:
 	|
 	role_declaration
 	|
-	ATTRIBUTE_ROLE STRING SEMICOLON;
+	ATTRIBUTE_ROLE STRING SEMICOLON
+	|
+	BOOL STRING SEMICOLON
 	;
 
 type_declaration:
@@ -373,6 +379,10 @@ mls_level:
 	MLS_LEVEL
 	|
 	STRING
+	;
+
+cond_expr:
+	IF OPEN_PAREN condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
 	;
 
 	// IF File parsing
