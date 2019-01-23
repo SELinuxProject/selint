@@ -30,6 +30,7 @@ role_transition { return ROLE_TRANSITION; }
 optional_policy { return OPTIONAL_POLICY; }
 gen_require { return GEN_REQUIRE; }
 tunable_policy { return TUNABLE_POLICY; }
+ifelse { return IFELSE; }
 refpolicywarn { return REFPOLICYWARN; }
 class { return CLASS; }
 if { return IF; }

@@ -49,6 +49,7 @@
 %token OPTIONAL_POLICY;
 %token GEN_REQUIRE;
 %token TUNABLE_POLICY;
+%token IFELSE;
 %token REFPOLICYWARN;
 %token CLASS;
 %token IFDEF;
@@ -300,6 +301,8 @@ m4_call:
 	|
 	tunable
 	|
+	ifelse
+	|
 	refpolicywarn
 	;
 
@@ -315,6 +318,9 @@ if_or_ifn:
 tunable:
 	TUNABLE_POLICY OPEN_PAREN BACKTICK condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN
 	;
+
+ifelse:
+	IFELSE OPEN_PAREN m4_args CLOSE_PAREN
 
 refpolicywarn:
 	REFPOLICYWARN OPEN_PAREN BACKTICK arbitrary_m4_string SINGLE_QUOTE CLOSE_PAREN
@@ -355,9 +361,17 @@ binary_operator:
 	;
 
 m4_args:
+	m4_argument
+	|
+	m4_args COMMA m4_argument
+	;
+
+m4_argument:
+	BACKTICK SINGLE_QUOTE
+	|
 	BACKTICK lines SINGLE_QUOTE
 	|
-	m4_args COMMA BACKTICK lines SINGLE_QUOTE
+	BACKTICK string_list SINGLE_QUOTE
 	;
 
 args:
