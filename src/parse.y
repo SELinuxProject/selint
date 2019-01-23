@@ -174,7 +174,7 @@ declaration:
 	|
 	role_declaration
 	|
-	ATTRIBUTE_ROLE STRING SEMICOLON
+	ATTRIBUTE_ROLE args SEMICOLON
 	|
 	BOOL STRING SEMICOLON
 	;
@@ -353,6 +353,8 @@ m4_string_elem:
 	COMMA
 	|
 	PERIOD
+	|
+	COLON
 	;
 
 condition:
