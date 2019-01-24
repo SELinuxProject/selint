@@ -40,9 +40,32 @@ START_TEST (test_check_file_context_types_exist) {
 
 	ck_assert_ptr_null(res);
 
-	free(res);
-
 	free_all_maps();
+	free(data);
+	free_policy_node(node);
+
+}
+END_TEST
+
+START_TEST (test_check_file_context_types_exist_bad_flavor) {
+
+	struct check_data *data = malloc(sizeof(struct check_data));
+
+	data->mod_name = "foo";
+	data->flavor = FILE_FC_FILE;
+
+	struct policy_node *node = malloc(sizeof(struct policy_node));
+	memset(node, 0, sizeof(struct policy_node));
+	node->flavor = NODE_TE_FILE;
+
+	struct check_result *res = check_file_context_types_exist(data, node);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq('F', res->severity);
+	ck_assert_int_eq(F_ID_INTERNAL, res->check_id);
+	ck_assert_ptr_nonnull(res->message);
+
+	free_check_result(res);
 	free(data);
 	free_policy_node(node);
 
