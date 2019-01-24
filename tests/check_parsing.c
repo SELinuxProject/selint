@@ -8,6 +8,7 @@
 #define POLICIES_DIR "sample_policy_files/"
 #define BASIC_TE_FILENAME POLICIES_DIR "basic.te"
 #define BASIC_IF_FILENAME POLICIES_DIR "basic.if"
+#define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"
 
 extern FILE * yyin;
 extern int yyparse();
@@ -122,6 +123,22 @@ START_TEST (test_parse_basic_if) {
 }
 END_TEST
 
+START_TEST (test_parse_uncommon_constructs) {
+
+	ast = NULL;
+
+	yyin = fopen(UNCOMMON_TE_FILENAME, "r");
+	yyparse();
+
+	ck_assert_ptr_nonnull(ast);
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(yyin);
+}
+END_TEST
+	
+
 Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -132,6 +149,7 @@ Suite *parsing_suite(void) {
 
 	tcase_add_test(tc_core, test_parse_basic_te);
 	tcase_add_test(tc_core, test_parse_basic_if);
+	tcase_add_test(tc_core, test_parse_uncommon_constructs);
 	suite_add_tcase(s, tc_core);
 
 	return s;
