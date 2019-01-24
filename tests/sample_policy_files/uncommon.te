@@ -11,3 +11,11 @@ fs_use_trans devtmpfs gen_context(system_u:object_r:device_t,s0);
 genfscon sysfs /devices/system/cpu/online gen_context(system_u:object_r:cpu_online_t,s0)
 fs_use_xattr btrfs gen_context(system_u:object_r:fs_t,s0);
 fs_use_task eventpollfs gen_context(system_u:object_r:fs_t,s0);
+
+bool bool_one;
+
+attribute_role rattr;
+
+class file { read write open };
+
+roleattribute system_r mount_roles;
