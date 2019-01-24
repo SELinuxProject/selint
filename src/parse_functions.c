@@ -51,7 +51,7 @@ char *get_name_if_in_template(struct policy_node *cur) {
 int is_in_require(struct policy_node *cur) {
 	while (cur->parent) {
 		cur = cur->parent;
-		if (cur->flavor == NODE_GEN_REQ) {
+		if (cur->flavor == NODE_GEN_REQ || cur->flavor == NODE_REQUIRE) {
 			return 1;
 		}
 	}
@@ -244,6 +244,16 @@ enum selint_error begin_gen_require(struct policy_node **cur, int lineno) {
 enum selint_error end_gen_require(struct policy_node **cur) {
 
 	return end_block(cur, NODE_GEN_REQ);
+}
+
+enum selint_error begin_require(struct policy_node **cur, int lineno) {
+
+	return begin_block(cur, NODE_REQUIRE, (void *) NULL, lineno);
+}
+
+enum selint_error end_require(struct policy_node **cur) {
+
+	return end_block(cur, NODE_REQUIRE);
 }
 
 void cleanup_parsing() {

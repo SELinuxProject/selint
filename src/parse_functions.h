@@ -88,6 +88,10 @@ enum selint_error begin_gen_require(struct policy_node **cur, int lineno);
 
 enum selint_error end_gen_require(struct policy_node **cur);
 
+enum selint_error begin_require(struct policy_node **cur, int lineno);
+
+enum selint_error end_require(struct policy_node **cur);
+
 /**********************************
  * cleanup_parsing
  * Call after all parsing is done to free up memory

@@ -31,6 +31,7 @@ range_transition { return RANGE_TRANSITION; }
 role_transition { return ROLE_TRANSITION; }
 optional_policy { return OPTIONAL_POLICY; }
 gen_require { return GEN_REQUIRE; }
+require { return REQUIRE; }
 tunable_policy { return TUNABLE_POLICY; }
 ifelse { return IFELSE; }
 refpolicywarn { return REFPOLICYWARN; }

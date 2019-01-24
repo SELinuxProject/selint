@@ -51,6 +51,7 @@
 %token ROLE_TRANSITION;
 %token OPTIONAL_POLICY;
 %token GEN_REQUIRE;
+%token REQUIRE;
 %token TUNABLE_POLICY;
 %token IFELSE;
 %token REFPOLICYWARN;
@@ -175,7 +176,7 @@ line:
 	|
 	optional_block
 	|
-	gen_require
+	require
 	|
 	m4_call
 	|
@@ -335,9 +336,12 @@ optional_block:
 	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
 	;
 
-gen_require:
+require:
 	GEN_REQUIRE OPEN_PAREN BACKTICK { begin_gen_require(&cur, yylineno); }
 	lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
+	|
+	REQUIRE OPEN_CURLY { begin_require(&cur, yylineno); }
+	lines CLOSE_CURLY { end_require(&cur); }
 	;
 
 m4_call:
