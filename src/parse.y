@@ -30,6 +30,7 @@
 %token <string> VERSION_NO;
 
 %token POLICY_MODULE;
+%token MODULE;
 %token TYPE;
 %token TYPEALIAS;
 %token ALIAS;
@@ -142,6 +143,8 @@ comments:
 
 header:
 	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3, yylineno); ast = cur; free($3); free($5);} // Version number isn't needed
+	|
+	MODULE STRING VERSION_NO SEMICOLON { begin_parsing_te(&cur, $2, yylineno); ast = cur; free($2); free($3); }
 	;
 
 body:

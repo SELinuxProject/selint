@@ -10,6 +10,7 @@ extern void yyerror(char *);
 %option noinput
 %%
 policy_module { return POLICY_MODULE; }
+module { return MODULE; }
 type { return TYPE; }
 typealias { return TYPEALIAS; }
 alias { return ALIAS; }
