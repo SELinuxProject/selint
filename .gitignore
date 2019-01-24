@@ -2,6 +2,8 @@ selint
 *.o
 *.log
 *.trs
+*.gcda
+*.gcno
 parse.c
 parse.h
 lex.c
