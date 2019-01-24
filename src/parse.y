@@ -69,6 +69,7 @@
 %token FS_USE_TASK;
 %token DEFINE;
 %token GEN_CONTEXT;
+%token PERMISSIVE;
 %token INTERFACE;
 %token TEMPLATE;
 %token OPEN_PAREN;
@@ -193,6 +194,8 @@ line:
 	fs_use
 	|
 	define
+	|
+	permissive
 	|
 	COMMENT
 	// Would like to do error recovery, but the best strategy seems to be to skip
@@ -511,6 +514,10 @@ context:
 	STRING COLON STRING COLON STRING COLON string_list_or_mls COLON string_list_or_mls { free($1); free($3); free($5); free_string_list($7); free_string_list($9); }
 	|
 	STRING COLON STRING COLON STRING COMMA string_list_or_mls { free($1); free($3); free($5); free_string_list($7); }
+	;
+
+permissive:
+	PERMISSIVE STRING SEMICOLON { free($2); }
 	;
 
 	// IF File parsing

@@ -49,6 +49,7 @@ fs_use_xattr { return FS_USE_XATTR; }
 fs_use_task { return FS_USE_TASK; }
 define { return DEFINE; }
 gen_context { return GEN_CONTEXT; }
+permissive { return PERMISSIVE; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
 s[0-9]+(:c[0-9]+)? { yylval.string = strdup(yytext); return MLS_LEVEL; }
