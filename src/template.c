@@ -58,6 +58,7 @@ struct string_list *replace_m4_list(struct string_list *replace_with, struct str
 	struct string_list *cur = ret;
 
 	cur->string = replace_m4(replace_from->string, replace_with);
+	cur->next = NULL;
 	replace_from = replace_from->next;
 
 	while (replace_from) {
@@ -91,11 +92,11 @@ enum selint_error add_template_declarations(char *template_name, struct string_l
 		struct string_list *new_args = replace_m4_list(args, calls->call->args);
 
 		enum selint_error res = add_template_declarations(calls->call->name, new_args, cur, mod_name);
+		free_string_list(new_args);
 		if (res != SELINT_SUCCESS) {
 			return res;
 		}
 
-		free_string_list(new_args);
 		calls = calls->next;
 	}
 

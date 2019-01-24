@@ -206,13 +206,13 @@ declaration:
 	|
 	attribute_declaration
 	|
-	CLASS STRING string_list SEMICOLON
+	CLASS STRING string_list SEMICOLON { free($2); free_string_list($3); }
 	|
 	role_declaration
 	|
-	ATTRIBUTE_ROLE args SEMICOLON
+	ATTRIBUTE_ROLE args SEMICOLON { free_string_list($2); }
 	|
-	BOOL args SEMICOLON
+	BOOL args SEMICOLON { free_string_list($2); }
 	;
 
 type_declaration:
@@ -220,7 +220,7 @@ type_declaration:
 	|
 	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
 	|
-	TYPE STRING ALIAS args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); }
+	TYPE STRING ALIAS args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); }
 	;
 
 attribute_declaration:
@@ -236,15 +236,15 @@ role_declaration:
 	; 
 
 type_alias:
-	TYPEALIAS string_list ALIAS string_list SEMICOLON
+	TYPEALIAS string_list ALIAS string_list SEMICOLON { free_string_list($2); free_string_list($4); };
 	;
 
 type_attribute:
-	TYPE_ATTRIBUTE STRING args SEMICOLON
+	TYPE_ATTRIBUTE STRING args SEMICOLON { free($2); free_string_list($3); }
 	;
 
 role_attribute:
-	ROLE_ATTRIBUTE STRING args SEMICOLON
+	ROLE_ATTRIBUTE STRING args SEMICOLON { free($2); free_string_list($3); }
 
 rule:
 	av_type string_list string_list COLON string_list string_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6, yylineno); }
@@ -287,6 +287,7 @@ sl_item:
 	|
 	DASH STRING { $$ = malloc(sizeof(char) * (strlen($2) + 2));
 			$$[0] = '-';
+			$$[1] = '\0';
 			strcat($$, $2);
 			free($2);}
 	|
@@ -296,29 +297,29 @@ sl_item:
 role_allow:
 	// It is an error for this to be anything other than ALLOW, but using av_type
 	// instead seems like the cleanest way to avoid ambiguities in the grammar
-	av_type string_list string_list SEMICOLON 
+	av_type string_list string_list SEMICOLON { free_string_list($2); free_string_list($3); } 
 	;
 
 type_transition:
 	TYPE_TRANSITION string_list string_list COLON string_list STRING SEMICOLON
-	{ insert_type_transition(&cur, $2, $3, $5, $6, NULL, yylineno); }
+	{ insert_type_transition(&cur, $2, $3, $5, $6, NULL, yylineno); free($6); }
 	|
 	TYPE_TRANSITION string_list string_list COLON string_list STRING QUOTED_STRING SEMICOLON
-	{ insert_type_transition(&cur, $2, $3, $5, $6, $7, yylineno); }
+	{ insert_type_transition(&cur, $2, $3, $5, $6, $7, yylineno); free($6); free($7); }
 	|
-	TYPE_MEMBER string_list string_list COLON string_list STRING SEMICOLON
+	TYPE_MEMBER string_list string_list COLON string_list STRING SEMICOLON { free_string_list($2); free_string_list($3); free_string_list($5); free($6); }
 	|
-	TYPE_CHANGE string_list string_list COLON string_list STRING SEMICOLON
+	TYPE_CHANGE string_list string_list COLON string_list STRING SEMICOLON { free_string_list($2); free_string_list($3); free_string_list($5); free($6); }
 	;
 
 range_transition:
-	RANGE_TRANSITION string_list string_list COLON string_list mls_range SEMICOLON
+	RANGE_TRANSITION string_list string_list COLON string_list mls_range SEMICOLON { free_string_list($2); free_string_list($3); free_string_list($5); free($6); }
 	|
-	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON
+	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON { free($6); free_string_list($2); free_string_list($3); free_string_list($5); }
 	;
 
 role_transition:
-	ROLE_TRANSITION string_list string_list STRING SEMICOLON
+	ROLE_TRANSITION string_list string_list STRING SEMICOLON { free_string_list($2); free_string_list($3); free($4); }
 	;
 
 interface_call:
@@ -350,7 +351,7 @@ m4_call:
 	;
 
 ifdef:
-	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA m4_args CLOSE_PAREN
+	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA m4_args CLOSE_PAREN { free($4); }
 	;
 
 if_or_ifn:
@@ -378,7 +379,7 @@ arbitrary_m4_string:
 	;
 
 m4_string_elem:
-	STRING
+	STRING { free($1); }
 	|
 	OPEN_PAREN
 	|
@@ -392,7 +393,7 @@ m4_string_elem:
 	;
 
 condition:
-	STRING
+	STRING { free($1); }
 	|
 	NOT condition
 	|
@@ -424,7 +425,7 @@ m4_argument:
 	|
 	BACKTICK lines SINGLE_QUOTE
 	|
-	BACKTICK string_list SINGLE_QUOTE
+	BACKTICK string_list SINGLE_QUOTE { free_string_list($2); }
 	;
 
 args:
@@ -448,13 +449,14 @@ string_list_or_mls:
 mls_range:
 	mls_level DASH mls_level { size_t len = strlen($1) + strlen($3) + 1 /* DASH */ + 1 /* NT */;
 				$$ = malloc(len);
-				snprintf($$, len, "%s-%s", $1, $3); }
+				snprintf($$, len, "%s-%s", $1, $3);
+				free($1); free($3); }
 	;
 
 mls_level:
-	MLS_LEVEL
+	MLS_LEVEL { $$ = strdup($1); free($1); }
 	|
-	STRING
+	STRING { $$ = strdup($1); free($1); }
 	;
 
 cond_expr:
@@ -465,46 +467,46 @@ cond_expr:
 	;
 
 genfscon:
-	GENFSCON STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	GENFSCON STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); free($3); }
 	;
 
 sid:
-	SID STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	SID STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); }
 	;
 
 portcon:
-	PORTCON STRING port_range GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	PORTCON STRING port_range GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); }
 	;
 
 port_range:
-	NUMBER
+	NUMBER { free($1); }
 	|
-	NUMBER DASH NUMBER
+	NUMBER DASH NUMBER { free($1); free($3); }
 	;
 
 netifcon:
-	NETIFCON STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	NETIFCON STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); }
 	;
 
 fs_use:
-	FS_USE_TRANS STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON
+	FS_USE_TRANS STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON { free($2); }
 	|
-	FS_USE_XATTR STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON
+	FS_USE_XATTR STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON { free($2); }
 	|
-	FS_USE_TASK STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON
+	FS_USE_TASK STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON { free($2); }
 	;
 
 define:
 	DEFINE OPEN_PAREN m4_args CLOSE_PAREN
 
 context:
-	STRING COLON STRING COLON STRING
+	STRING COLON STRING COLON STRING { free($1); free($3); free($5); }
 	|
-	STRING COLON STRING COLON STRING COLON string_list_or_mls
+	STRING COLON STRING COLON STRING COLON string_list_or_mls { free($1); free($3); free($5); free_string_list($7); }
 	|
-	STRING COLON STRING COLON STRING COLON string_list_or_mls COLON string_list_or_mls
+	STRING COLON STRING COLON STRING COLON string_list_or_mls COLON string_list_or_mls { free($1); free($3); free($5); free_string_list($7); free_string_list($9); }
 	|
-	STRING COLON STRING COLON STRING COMMA string_list_or_mls
+	STRING COLON STRING COLON STRING COMMA string_list_or_mls { free($1); free($3); free($5); free_string_list($7); }
 	;
 
 	// IF File parsing
