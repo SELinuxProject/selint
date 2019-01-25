@@ -16,10 +16,13 @@ AC_PROG_YACC
 AM_PATH_CHECK([0.9.0], [], [AC_MSG_ERROR([Check not found])])
 
 # Checks for libraries.
+AC_SEARCH_LIBS([cfg_init], [confuse], [], [
+  AC_MSG_ERROR([Unable to find libconfuse])
+])
 
 # Checks for header files.
 AC_FUNC_ALLOCA
-AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdlib.h string.h unistd.h stdbool.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_INT16_T

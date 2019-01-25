@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fts.h>
+#include <confuse.h>
 
 #include "runner.h"
 #include "tree.h"
@@ -17,7 +18,16 @@ extern int verbose_flag;
 
 int main(int argc, char **argv) {
 
-	char severity = 'C'; //Default
+	char severity = '\0';
+	char *config_filename = NULL;
+
+	cfg_opt_t opts[] =
+	{
+		CFG_STR("severity", "convention", CFGF_NONE),
+		CFG_END()
+	};
+	cfg_t *cfg;
+	cfg = cfg_init(opts, CFGF_NONE);
 
 	while (1) {
 
@@ -52,7 +62,7 @@ int main(int argc, char **argv) {
 
 			case 'c':
 				// Specify config file
-				printf("Config file: %s\n", optarg);
+				config_filename = optarg;
 				break;
 
 			case 'd':
@@ -109,6 +119,39 @@ int main(int argc, char **argv) {
 	}
 
 	print_if_verbose("Verbose mode enabled\n");
+	if (config_filename) {
+		print_if_verbose("Loading configuration from: %s\n", config_filename);
+		if (cfg_parse(cfg, config_filename) == CFG_PARSE_ERROR) {
+			printf("Parse error when attempting to parse configuration file.\n");
+			return -1;
+		}
+	}
+
+	if (!severity) {
+		if (config_filename) {
+			// Not specified on command line.  Read from config
+			char *config_severity = cfg_getstr(cfg, "severity");
+			printf("severity: %s\n", config_severity);
+
+			if (strcmp(config_severity, "convention") == 0) {
+				severity = 'C';
+			} else if (strcmp(config_severity, "style") == 0) {
+				severity = 'S';
+			} else if (strcmp(config_severity, "warning") == 0) {
+				severity = 'W';
+			} else if (strcmp(config_severity, "error") == 0) {
+				severity = 'E';
+			} else if (strcmp(config_severity, "fatal") == 0) {
+				severity = 'F';
+			} else {
+				printf("Invalid severity level (%s) specified in config.  Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"", config_severity);
+				return -1;
+			}
+		} else {
+			severity = 'C';
+		}
+	}
+
 	print_if_verbose("Severity level set to %c\n", severity);
 
 	if (optind == argc) {
@@ -177,6 +220,8 @@ int main(int argc, char **argv) {
 		default:
 			printf("Internal error: %d\n", res);
 	}
+
+	cfg_free(cfg);
 
 	free_checks(ck);
 

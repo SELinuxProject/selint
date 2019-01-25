@@ -9,6 +9,8 @@ INSTALLING
 	To install, first install the following dependencies:
 
 	uthash-devel
+	libconfuse
+	libconfuse-devel
 
 	Then run:
 
