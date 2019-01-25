@@ -25,6 +25,10 @@ struct check_result * check_file_context_types_exist(const struct check_data *ch
 		return alloc_internal_error("Policy node data field is NULL");
 	}
 
+	if (!entry->context) {
+		return NULL;
+	}
+
 	char *type_decl_filename = look_up_in_decl_map(entry->context->type, DECL_TYPE);
 
 	if (!type_decl_filename) {
@@ -52,6 +56,10 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *ch
 
 	if (!entry) {
 		return alloc_internal_error("Policy node data field is NULL");
+	}
+
+	if (!entry->context) {
+		return NULL;
 	}
 
 	char *type_decl_mod_name = look_up_in_decl_map(entry->context->type, DECL_TYPE);
@@ -96,6 +104,10 @@ struct check_result *check_file_context_roles(const struct check_data *data, con
 		return alloc_internal_error("Policy node data field is NULL");
 	}
 
+	if (!entry->context) {
+		return NULL;
+	}
+
 	char *role_decl_filename = look_up_in_decl_map(entry->context->role, DECL_ROLE);
 
 	if (!role_decl_filename) {
@@ -123,6 +135,10 @@ struct check_result *check_file_context_users(const struct check_data *data, con
 
 	if (!entry) {
 		return alloc_internal_error("Policy node data field is NULL");
+	}
+
+	if (!entry->context) {
+		return NULL;
 	}
 
 	char *user_decl_filename = look_up_in_decl_map(entry->context->user, DECL_USER);
