@@ -59,16 +59,30 @@ struct checks {
 enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, struct check_result * (*check_function)(const struct check_data *check_data, const struct policy_node *node));
 
 /*********************************************
- * Call all registered checks for check_flavor node types
+ * Call all registered checks for node->flavor node types
  * and write any error messages to STDOUT 
  * ck - The checks structure
+ * data - Metadata about the file
  * node - the node to check
  * returns SELINT_SUCCESS or an error code on failure
  *********************************************/
 enum selint_error call_checks(struct checks *ck, struct check_data *data, struct policy_node *node);
 
+/*********************************************
+ * Helper function for call_checks that takes the appropriate
+ * list of checks for the node flavor and writes any error messages to STDOUT
+ * ck_list - The checks to run
+ * data - Metadata about the file
+ * node - the node to check
+ * returns SELINT_SUCCESS or an error code on failure
+ *********************************************/
 enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct check_data *data, struct policy_node *node);
 
+/*********************************************
+ * Display a result message for a positive check finding
+ * res - Information about the result of the check
+ * data - Metadata about the file
+ *********************************************/
 void display_check_result(struct check_result *res, struct check_data *data);
 
 void free_check_result(struct check_result *);
