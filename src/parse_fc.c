@@ -166,6 +166,14 @@ struct policy_node * parse_fc_file(char *filename) {
 		if (len_read <= 1 || line[0] == '#') {
 			continue;
 		}
+
+		// Skip over m4 constructs
+		if (!strncmp(line, "ifdef", 5)) {
+			continue;
+		} else if (!strncmp(line, "')", 2)) {
+			continue;
+		}
+
 		struct fc_entry *entry = parse_fc_line(line);
 		enum node_flavor flavor;
 		if (entry == NULL) {

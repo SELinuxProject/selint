@@ -6,6 +6,7 @@
 
 #define POLICIES_DIR "sample_policy_files/"
 #define BASIC_FC_FILENAME POLICIES_DIR "basic.fc"
+#define WITH_M4_FILENAME POLICIES_DIR "with_m4.fc"
 
 START_TEST (test_parse_context) {
 
@@ -126,6 +127,34 @@ START_TEST (test_parse_basic_fc_file) {
 }
 END_TEST
 
+START_TEST (test_parse_m4) {
+	struct policy_node *ast = parse_fc_file(WITH_M4_FILENAME);
+
+	ck_assert_ptr_nonnull(ast);
+	ck_assert_int_eq(ast->flavor, NODE_FC_FILE);
+	ck_assert_ptr_nonnull(ast->next);
+
+	struct policy_node *cur = ast->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
+	ck_assert_ptr_nonnull(cur->data);
+
+	struct fc_entry *data = (struct fc_entry *) cur->data;
+
+	ck_assert_ptr_nonnull(data->context);
+	ck_assert_str_eq(data->context->type, "hijklmn_t");
+
+	ck_assert_ptr_null(cur->next);
+
+	free_policy_node(ast);
+}
+END_TEST
+
 Suite *parse_fc_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -140,6 +169,7 @@ Suite *parse_fc_suite(void) {
 	tcase_add_test(tc_core, test_parse_fc_line);
 	tcase_add_test(tc_core, test_parse_fc_line_with_obj);
 	tcase_add_test(tc_core, test_parse_basic_fc_file);
+	tcase_add_test(tc_core, test_parse_m4);
 	suite_add_tcase(s, tc_core);
 
 	return s;
