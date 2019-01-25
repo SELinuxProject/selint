@@ -167,9 +167,10 @@ struct policy_node * parse_fc_file(char *filename) {
 		}
 
 		// Skip over m4 constructs
-		if (!strncmp(line, "ifdef", 5)) {
-			continue;
-		} else if (!strncmp(line, "')", 2)) {
+		if (strncmp(line, "ifdef", 5) == 0 ||
+			strncmp(line, "ifndef", 6) == 0 ||
+			strncmp(line, "')", 2) == 0 ) {
+
 			continue;
 		}
 
