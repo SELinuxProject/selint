@@ -72,16 +72,15 @@ struct fc_entry * parse_fc_line(char *line) {
 		}
 		out->context->has_gen_context = 1;
 		out->context->range = strdup(tmp);
+	} else if (strcmp("<<none>>\n", pos) == 0 || strcmp("<<none>>\r\n", pos) == 0) {
+		out->context = NULL;
 	} else {
 		out->context = parse_context(pos);
 		if (out->context == NULL) {
 			goto cleanup;
 		}
 		out->context->has_gen_context = 0;
-	} 
 
-	if (out->context == NULL) {
-		goto cleanup;
 	}
 
 	free(orig_line);
