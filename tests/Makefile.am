@@ -1,10 +1,14 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config
 check_PROGRAMS = ${TESTS}
 
 if COND_GCOV
 EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
 endif
 
+UTIL_HEADS=$(top_builddir)/src/util.h
+UTIL_OBJS=$(top_builddir)/src/util.o
+SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${UTIL_HEADS}
+SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${UTIL_OBJS}
 TREE_HEADS=$(top_builddir)/src/tree.h
 TREE_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/maps.o
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
@@ -23,6 +27,10 @@ CHECK_HOOKS_HEADS=$(top_builddir)/src/check_hooks.h ${TREE_HEADS}
 CHECK_HOOKS_OBJS=$(top_builddir)/src/check_hooks.o ${TREE_OBJS}
 FC_CHECKS_HEADS=$(top_builddir)/src/fc_checks.h ${CHECK_HOOKS_HEADS}
 FC_CHECKS_OBJS=$(top_builddir)/src/fc_checks.o ${CHECK_HOOKS_OBJS}
+
+check_selint_config_SOURCES = check_selint_config.c ${SELINT_CONFIG_HEADS}
+check_selint_config_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_selint_config_LDADD = @CHECK_LIBS@ ${SELINT_CONFIG_OBJS}
 
 check_maps_SOURCES = check_maps.c ${MAPS_HEADS}
 check_maps_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}

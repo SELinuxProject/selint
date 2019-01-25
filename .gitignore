@@ -24,6 +24,7 @@ tests/check_template
 tests/check_file_list
 tests/check_fc_checks
 tests/check_check_hooks
+tests/check_selint_config
 tests/test-suite.log
 .deps
 depcomp
