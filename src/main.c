@@ -16,6 +16,28 @@ extern int yyparse();
 
 extern int verbose_flag;
 
+void usage() {
+
+	printf("Usage: selint [OPTIONS] [FILE] [...]\n"\
+		"Perform static code analysis on SELinux policy source.\n\n");
+	printf("  -c CONFIGFILE, --config=CONFIGFILE\tOverride default config with config\n"\
+		"\t\t\t\t\tspecified on command line.  See\n"\
+		"\t\t\t\t\tCONFIGURATION section for config file syntax.\n"\
+		"  -d CHECKID, --disable=CHECKID\t\tDisable check with the given ID.\n"\
+		"  -e CHECKID, --enable=CHECKID\t\tEnable check with the given ID.\n"\
+		"  -h, --help\t\t\t\tDisplay this menu\n"\
+		"  -l LEVEL, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
+		"\t\t\t\t\tgreater than LEVEL.  Options are C (convention), S (style),\n"\
+		"\t\t\t\t\tW (warning), E (error), F (fatal error).\n"\
+		"  -s, --source\t\t\t\tRun in \"source mode\" to scan a policy source repository\n"\
+		"\t\t\t\t\tthat is designed to compile into a full system policy.\n"\
+		"  -r, --recursive\t\t\tScan recursively and check all SELinux policy files found.\n"\
+		"  -v, --verbose\t\t\t\tEnable verbose output\n"\
+		"  -V, --version\t\t\t\tShow version information and exit.\n"
+);
+
+}
+
 int main(int argc, char **argv) {
 
 	char severity = '\0';
@@ -69,7 +91,7 @@ int main(int argc, char **argv) {
 
 			case 'h':
 				// Display usage info and exit
-				printf("Flag h called");
+				usage();
 				exit(0);
 				break;
 
@@ -126,7 +148,7 @@ int main(int argc, char **argv) {
 	print_if_verbose("Severity level set to %c\n", severity);
 
 	if (optind == argc) {
-		printf("TODO: usage message\n");
+		usage();
 		exit(0);
 	}
 
