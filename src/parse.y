@@ -439,6 +439,8 @@ m4_argument:
 	BACKTICK lines SINGLE_QUOTE
 	|
 	BACKTICK string_list SINGLE_QUOTE { free_string_list($2); }
+	|
+	STRING
 	;
 
 args:
