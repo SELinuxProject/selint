@@ -9,6 +9,7 @@
 #define BASIC_TE_FILENAME POLICIES_DIR "basic.te"
 #define BASIC_IF_FILENAME POLICIES_DIR "basic.if"
 #define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"
+#define BLOCKS_TE_FILENAME POLICIES_DIR "blocks.te"
 
 extern FILE * yyin;
 extern int yyparse();
@@ -19,7 +20,7 @@ START_TEST (test_parse_basic_te) {
 	ast = NULL;
 
 	yyin = fopen(BASIC_TE_FILENAME, "r");
-	yyparse(); 
+	ck_assert_int_eq(0, yyparse());
 
 	struct policy_node *cur = ast;
 
@@ -72,7 +73,7 @@ START_TEST (test_parse_basic_if) {
 	ast = NULL;
 
 	yyin = fopen(BASIC_IF_FILENAME, "r");
-	yyparse();
+	ck_assert_int_eq(0, yyparse());
 
 	struct policy_node *cur = ast;
 
@@ -128,7 +129,7 @@ START_TEST (test_parse_uncommon_constructs) {
 	ast = NULL;
 
 	yyin = fopen(UNCOMMON_TE_FILENAME, "r");
-	yyparse();
+	ck_assert_int_eq(0, yyparse());
 
 	ck_assert_ptr_nonnull(ast);
 
@@ -137,7 +138,32 @@ START_TEST (test_parse_uncommon_constructs) {
 	fclose(yyin);
 }
 END_TEST
-	
+
+START_TEST (test_parse_blocks) {
+
+	ast = NULL;
+
+	yyin = fopen(BLOCKS_TE_FILENAME ,"r");
+	ck_assert_int_eq(0, yyparse());
+
+	ck_assert_ptr_nonnull(ast);
+
+	struct policy_node *cur = ast;
+
+	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
+
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+	ck_assert_int_eq(NODE_OPTIONAL_POLICY, cur->flavor);
+	ck_assert_ptr_null(cur->next);
+	ck_assert_ptr_nonnull(cur->first_child);
+
+	cur = cur->first_child;
+	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
+	ck_assert_ptr_null(cur->next);
+}
+END_TEST
 
 Suite *parsing_suite(void) {
 	Suite *s;
@@ -150,6 +176,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_basic_te);
 	tcase_add_test(tc_core, test_parse_basic_if);
 	tcase_add_test(tc_core, test_parse_uncommon_constructs);
+	tcase_add_test(tc_core, test_parse_blocks);
 	suite_add_tcase(s, tc_core);
 
 	return s;

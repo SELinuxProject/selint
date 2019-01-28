@@ -338,8 +338,11 @@ interface_call:
 	;
 
 optional_block:
-	OPTIONAL_POLICY OPEN_PAREN { begin_optional_policy(&cur, yylineno); } 
-	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
+	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); } 
+	lines SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
+	|
+	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); } 
+	SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
 	;
 
 require:

@@ -1,0 +1,5 @@
+policy_module(blocks, 1.0)
+
+# Empty optional_policy block
+optional_policy(`
+')
