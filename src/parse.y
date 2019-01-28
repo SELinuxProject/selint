@@ -239,6 +239,8 @@ attribute_declaration:
 role_declaration:
 	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); }
 	|
+	ROLE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
+	|
 	ROLE STRING TYPES args SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
 	; 
 
