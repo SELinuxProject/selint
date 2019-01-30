@@ -550,7 +550,13 @@ if_line:
 	;
 
 interface_def:
-	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE {
+	start_interface lines end_interface
+	|
+	start_interface end_interface
+	;
+
+start_interface:
+	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK {
 		if (!ast) {
 			// Must set up the AST at the beginning
 			cur = malloc(sizeof(struct policy_node));
@@ -559,7 +565,10 @@ interface_def:
 			ast = cur;
 		} 
 		begin_interface_def(&cur, $1, $4, yylineno); free($4); }
-	COMMA BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_interface_def(&cur); }
+	;
+
+end_interface:
+	SINGLE_QUOTE CLOSE_PAREN { end_interface_def(&cur); }
 	;
 
 if_keyword:
