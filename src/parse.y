@@ -200,6 +200,8 @@ line:
 	|
 	permissive
 	|
+	SEMICOLON
+	|
 	COMMENT
 	// Would like to do error recovery, but the best strategy seems to be to skip
 	// to next newline, which lex doesn't give us right now.
