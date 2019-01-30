@@ -2,6 +2,11 @@ module uncommon 1.7;
 
 # Use uncommon policy constructs to ensure the parser can handle them without breaking
 
+require {
+	type bar_t;
+	role system_r, user_r;
+}
+
 permissive foo_t;
 
 sid netmsg gen_context(system_u:object_r:netlabel_peer_t,mls_systemhigh)
@@ -19,3 +24,13 @@ attribute_role rattr;
 class file { read write open };
 
 roleattribute system_r mount_roles;
+
+optional_policy(`
+;
+')
+
+netifcon lo gen_context(system_u:object_r:lo_netif_t,s0 - mls_systemhigh) gen_context(system_u:object_r:unlabeled_t,s0 - mls_systemhigh)
+
+if (!bool_one) {
+	allow foo_t bar_t:file open;
+}
