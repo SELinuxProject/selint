@@ -104,15 +104,16 @@ CHECK IDS
 	The following checks may be performed:
 
 	C-001: Violation of refpolicy te file ordering conventions
-	C-002: Interface missing comment
+	C-002: Interface does not have documentation comment
 
 	S-001: Require block used instead of interface call
 	S-002: File context file labels with type not declared in module
 
 	W-001: Type referenced without explicit declaration
 	W-002: Type used but not listed in require block in interface
+	W-003: Unused type listed in require block
 
-	E-001: Interfaces from module not in optional_policy block
+	E-001: Interface call from module not in optional_policy block
 	E-002: Bad file context format
 	E-003: Nonexistent user listed in fc file
 	E-004: Nonexistent role listed in fc file
@@ -162,6 +163,14 @@ CHECK EXAMPLES
 			read_files_pattern($1, foo_conf_t, foo_conf_t)
 		')
 
+	W-003:
+
+		interface(`foo_read_conf',`
+			gen_require(`
+				type foo_conf_t;
+			')
+		')
+
 	Error:
 
 	E-001:
@@ -173,7 +182,7 @@ CHECK EXAMPLES
 
 		/usr/bin/foo		--	gen_erquire(system_u:object_r:foo_exec_t, s0)
 
-	E-003:
+	E-005:
 
 		# There is no type named foo_exce_t defined in our policy
 		/usr/bin/foo		--	gen_require(system_u:object_r:foo_exce_t, s0)
