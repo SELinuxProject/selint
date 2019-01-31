@@ -1,14 +1,40 @@
+#include <stdlib.h>
 #include <confuse.h>
 #include <string.h>
 
 #include "util.h"
 #include "selint_config.h"
 
-enum selint_error parse_config(char *config_filename, char *severity) {
+#define READ_STRING_LIST_FROM_CONFIG(slp, config_name) \
+	if (slp) {\
+		struct string_list *end = NULL;\
+		for (int i = 0; i < cfg_size(cfg, config_name); i++) {\
+			struct string_list *cur = malloc(sizeof(struct string_list));\
+			cur->string = strdup(cfg_getnstr(cfg, config_name, i));\
+			cur->next = NULL;\
+			if (!end) {\
+				*slp = end = cur;\
+			} else {\
+				end->next = cur;\
+				end = end->next;\
+			}\
+		}\
+	}\
+
+
+
+enum selint_error parse_config(char *config_filename,
+				int in_source_mode,
+				char *severity,
+				struct string_list **config_disabled_checks,
+				struct string_list **config_enabled_checks) {
 
 	cfg_opt_t opts[] =
 	{
 		CFG_STR("severity", "convention", CFGF_NONE),
+		CFG_STR_LIST("disable", "{}", CFGF_NONE),
+		CFG_STR_LIST("enable_normal", "{}", CFGF_NONE),
+		CFG_STR_LIST("enable_source", "{}", CFGF_NONE),
 		CFG_END()
 	};
 	cfg_t *cfg;
@@ -39,6 +65,14 @@ enum selint_error parse_config(char *config_filename, char *severity) {
 		printf("Invalid severity level (%s) specified in config.  Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"", config_severity);
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
+	}
+
+	READ_STRING_LIST_FROM_CONFIG(config_disabled_checks, "disable")
+	if (in_source_mode) {
+		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks, "enable_source")
+	} else {
+		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks, "enable_normal")
+
 	}
 
 	cfg_free(cfg);

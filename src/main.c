@@ -5,7 +5,6 @@
 #include <fts.h>
 
 #include "runner.h"
-#include "tree.h"
 #include "parse.h"
 #include "config.h"
 #include "file_list.h"
@@ -42,6 +41,7 @@ int main(int argc, char **argv) {
 
 	char severity = '\0';
 	char *config_filename = NULL;
+	int source_flag = 0;
 
 	while (1) {
 
@@ -112,7 +112,8 @@ int main(int argc, char **argv) {
 
 			case 's':
 				// Run in source mode
-				printf("source mode\n");
+				print_if_verbose("Source mode enabled\n");
+				source_flag = 1;
 				break;
 
 			case 'V':
@@ -133,9 +134,11 @@ int main(int argc, char **argv) {
 	}
 
 	print_if_verbose("Verbose mode enabled\n");
+	struct string_list *config_disabled_checks = NULL;
+	struct string_list *config_enabled_checks = NULL;
 	if (config_filename) {
 		char cfg_severity;
-		parse_config(config_filename, &cfg_severity);
+		parse_config(config_filename, source_flag, &cfg_severity, &config_disabled_checks, &config_enabled_checks);
 		if (!severity) {
 			severity = cfg_severity;
 		}
@@ -212,6 +215,13 @@ int main(int argc, char **argv) {
 			break;
 		default:
 			printf("Internal error: %d\n", res);
+	}
+
+	if (config_enabled_checks) {
+		free_string_list(config_enabled_checks);
+	}
+	if (config_disabled_checks) {
+		free_string_list(config_disabled_checks);
 	}
 
 	free_checks(ck);

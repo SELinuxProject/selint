@@ -7,8 +7,8 @@ endif
 
 UTIL_HEADS=$(top_builddir)/src/util.h
 UTIL_OBJS=$(top_builddir)/src/util.o
-SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${UTIL_HEADS}
-SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${UTIL_OBJS}
+SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${UTIL_HEADS} $(top_builddir)/src/string_list.h
+SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${UTIL_OBJS} $(top_builddir)/src/string_list.o
 TREE_HEADS=$(top_builddir)/src/tree.h $(top_builddir)/src/string_list.h
 TREE_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/maps.o $(top_builddir)/src/string_list.o
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
