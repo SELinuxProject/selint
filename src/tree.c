@@ -130,20 +130,6 @@ enum selint_error free_policy_node(struct policy_node *to_free) {
 	return SELINT_SUCCESS;
 }
 
-void free_string_list(struct string_list *list) {
-	if (list == NULL) {
-		return;
-	}
-	struct string_list *cur = list;
-
-	while (cur) {
-		struct string_list *to_free = cur;
-		cur = cur->next;
-		free(to_free->string);
-		free(to_free);
-	}
-}
-
 enum selint_error free_av_rule_data(struct av_rule_data *to_free) {
 
 	if (to_free == NULL) {

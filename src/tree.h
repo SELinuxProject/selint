@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include "selint_error.h"
+#include "string_list.h"
 
 enum node_flavor {
 	NODE_TE_FILE,
@@ -35,11 +36,6 @@ enum decl_flavor {
 	DECL_ATTRIBUTE,
 	DECL_ROLE,
 	DECL_USER
-};
-
-struct string_list {
-	char *string;
-	struct string_list *next;
 };
 
 struct av_rule_data {
@@ -111,8 +107,6 @@ enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_fl
 int is_template_call(struct policy_node *node);
 
 enum selint_error free_policy_node(struct policy_node *to_free);
-
-void free_string_list(struct string_list *list);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
 
