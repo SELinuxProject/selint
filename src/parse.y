@@ -1,6 +1,7 @@
 %{
 	#include <stdio.h>
 	#include <string.h>
+	#include <libgen.h>
 	#include "tree.h"
 	#include "parse_functions.h"
 	#include "check_hooks.h"
@@ -441,7 +442,7 @@ m4_argument:
 	|
 	BACKTICK string_list SINGLE_QUOTE { free_string_list($2); }
 	|
-	STRING
+	STRING { free($1); }
 	;
 
 args:
@@ -587,11 +588,10 @@ void yyerror(char* s) {
 
 	struct check_data data;
 	data.mod_name = get_current_module_name();
-	data.filename = parsing_filename;
+	data.filename = basename(parsing_filename);
 	data.flavor = FILE_TE_FILE; // We don't know but it's unused by display_check_result
 	
 	display_check_result(res, &data);
 
-	free(data.mod_name);
 	free_check_result(res);
 }

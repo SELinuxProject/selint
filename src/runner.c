@@ -154,36 +154,37 @@ enum selint_error run_analysis(struct checks *ck, struct policy_file_list *te_fi
 
 	res = parse_all_files_in_list(if_files);
 	if (res != SELINT_SUCCESS) {
-		return res;
+		goto out;
 	}
 
 	res = parse_all_files_in_list(te_files);
 	if (res != SELINT_SUCCESS) {
-		return res;
+		goto out;
 	}
 
 	res = parse_all_fc_files_in_list(fc_files);
 	if (res != SELINT_SUCCESS) {
-		return res;
+		goto out;
 	}
 
 	// TODO template passes
 
 	res = run_all_checks(ck, FILE_TE_FILE, te_files);
 	if (res != SELINT_SUCCESS) {
-		return res;
+		goto out;
 	}
 
 	res = run_all_checks(ck, FILE_IF_FILE, if_files);
 	if (res != SELINT_SUCCESS) {
-		return res;
+		goto out;
 	}
 
 	res = run_all_checks(ck, FILE_FC_FILE, fc_files);
 	if (res != SELINT_SUCCESS) {
-		return res;
+		goto out;
 	}
 
+out:
 	cleanup_parsing();
 
 	return SELINT_SUCCESS;

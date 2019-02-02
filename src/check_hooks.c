@@ -69,6 +69,7 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct c
 void display_check_result(struct check_result *res, struct check_data *data) {
 
 	int padding = 18 - strlen(data->filename);
+	if (padding < 0) { padding = 0; }
 
 	printf("%s:%*u: (%c): %s (%c-%03u)\n", data->filename, padding, res->lineno, res->severity, res->message, res->severity, res->check_id);
 }
