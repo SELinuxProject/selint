@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "check_hooks.h"
 
@@ -67,7 +68,9 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct c
 
 void display_check_result(struct check_result *res, struct check_data *data) {
 
-	printf("%s:%u: (%c): %s (%c-%03u)\n", data->filename, res->lineno, res->severity, res->message, res->severity, res->check_id);
+	int padding = 18 - strlen(data->filename);
+
+	printf("%s:%*u: (%c): %s (%c-%03u)\n", data->filename, padding, res->lineno, res->severity, res->message, res->severity, res->check_id);
 }
 
 void free_check_result(struct check_result *res) {
