@@ -106,6 +106,26 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_aliases(struct policy_node **cur, struct string_list *aliases, enum decl_flavor flavor, int lineno) {
+
+	struct string_list *alias = aliases;
+
+	while (alias) {
+		char *mn = get_current_module_name();
+		if (!mn) {
+			return SELINT_NO_MOD_NAME;
+		}
+
+		insert_into_decl_map(alias->string, mn, flavor);
+		enum selint_error ret = insert_policy_node_child(*cur, NODE_ALIAS, strdup(alias->string), lineno);
+		alias = alias->next;
+	}
+
+	free_string_list(aliases);
+
+	return SELINT_SUCCESS;
+}
+
 enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms, int lineno) {
 
 	struct av_rule_data *av_data = malloc(sizeof(struct av_rule_data));

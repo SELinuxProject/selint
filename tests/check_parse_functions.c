@@ -72,6 +72,57 @@ START_TEST (test_insert_declaration) {
 }
 END_TEST
 
+START_TEST (test_insert_aliases) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	cur->flavor = NODE_DECL;
+
+	struct policy_node *orig = cur;
+
+	struct string_list *aliases = malloc(sizeof(struct string_list));
+	aliases->string = strdup("foo_t");
+	aliases->next = malloc(sizeof(struct string_list));
+	aliases->next->string = strdup("bar_t");
+	aliases->next->next = NULL;
+
+	set_current_module_name("test");
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_aliases(&cur, aliases, DECL_TYPE, 123));
+
+	ck_assert_ptr_eq(cur, orig);
+	ck_assert_ptr_nonnull(cur->first_child);
+
+	cur = cur->first_child;
+
+	ck_assert_int_eq(cur->flavor, NODE_ALIAS);
+	ck_assert_str_eq((char *) cur->data, "foo_t");
+	ck_assert_ptr_null(cur->prev);
+	ck_assert_ptr_eq(cur->parent, orig);
+	ck_assert_ptr_nonnull(cur->next);
+	ck_assert_int_eq(cur->lineno, 123);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_ALIAS);
+	ck_assert_str_eq((char *) cur->data, "bar_t");
+	ck_assert_ptr_nonnull(cur->prev);
+	ck_assert_ptr_eq(cur->parent, orig);
+	ck_assert_ptr_null(cur->next);
+	ck_assert_int_eq(cur->lineno, 123);
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(orig));
+
+	ck_assert_ptr_nonnull(look_up_in_decl_map("foo_t", DECL_TYPE));
+	ck_assert_ptr_nonnull(look_up_in_decl_map("bar_t", DECL_TYPE));
+
+	cleanup_parsing();
+
+}
+END_TEST
+
+
 START_TEST (test_insert_av_rule) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
@@ -94,7 +145,6 @@ START_TEST (test_insert_av_rule) {
 	free_policy_node(head);
 
 	cleanup_parsing();
-
 
 }
 END_TEST
@@ -308,6 +358,7 @@ Suite *parse_functions_suite(void) {
 
 	tcase_add_test(tc_core, test_begin_parsing_te);
 	tcase_add_test(tc_core, test_insert_declaration);
+	tcase_add_test(tc_core, test_insert_aliases);
 	tcase_add_test(tc_core, test_insert_av_rule);
 	tcase_add_test(tc_core, test_insert_type_transition);
 	tcase_add_test(tc_core, test_insert_interface_call);

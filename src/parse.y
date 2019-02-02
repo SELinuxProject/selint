@@ -229,7 +229,7 @@ type_declaration:
 	|
 	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
 	|
-	TYPE STRING ALIAS args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); }
+	TYPE STRING ALIAS args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
 	;
 
 attribute_declaration:
@@ -335,9 +335,6 @@ role_transition:
 
 interface_call:
 	STRING OPEN_PAREN args CLOSE_PAREN
-	{ insert_interface_call(&cur, $1, $3, yylineno); free($1); }
-	|
-	STRING OPEN_PAREN args CLOSE_PAREN SEMICOLON
 	{ insert_interface_call(&cur, $1, $3, yylineno); free($1); }
 	;
 

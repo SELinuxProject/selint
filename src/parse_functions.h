@@ -40,6 +40,18 @@ char *get_current_module_name();
 enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, int lineno); // TODO: Some declarations take things like attribute lists
 
 /**********************************
+ * insert_aliases
+ * Add alias nodes below the declaration and insert the aliases into the type map 
+ * cur (in) - The current spot in the tree.  Will not be changed
+ * aliases (in) - The aliases.  This function will free the list
+ * flavor (in) - The flavor being declared
+ * lineno (in) - The line number
+ *
+ * Returns - SELINT error code
+ **********************************/
+enum selint_error insert_aliases(struct policy_node **cur, struct string_list *aliases, enum decl_flavor flavor, int lineno);
+
+/**********************************
  * insert_av_rule
  * Add an av rule node at the next node in the tree, allocating all memory for it
  * cur (in, out) - The current spot in the tree.  Will be updated to point to
