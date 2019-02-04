@@ -111,13 +111,22 @@ enum selint_error insert_aliases(struct policy_node **cur, struct string_list *a
 	struct string_list *alias = aliases;
 
 	while (alias) {
-		char *mn = get_current_module_name();
-		if (!mn) {
-			return SELINT_NO_MOD_NAME;
-		}
+		char *temp_name = get_name_if_in_template(*cur);
+		if (temp_name) {
+			insert_decl_into_template_map(temp_name, flavor, alias->string);
+		} else {
+			char *mn = get_current_module_name();
+			if (!mn) {
+				free_string_list(aliases);
+				return SELINT_NO_MOD_NAME;
+			}
 
-		insert_into_decl_map(alias->string, mn, flavor);
+			insert_into_decl_map(alias->string, mn, flavor);
+		}
 		enum selint_error ret = insert_policy_node_child(*cur, NODE_ALIAS, strdup(alias->string), lineno);
+		if (ret != SELINT_SUCCESS) {
+			return ret;
+		}
 		alias = alias->next;
 	}
 
