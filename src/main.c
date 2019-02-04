@@ -165,8 +165,8 @@ int main(int argc, char **argv) {
 	char **paths = malloc (sizeof(char*) * argc - optind + 1);
 
 	int i = 0;
-	while (optind + i < argc ) {
-		paths[i++] = argv[optind];
+	while (optind < argc ) {
+		paths[i++] = argv[optind++];
 	}
 
 	paths[i] = NULL;
