@@ -122,6 +122,11 @@ START_TEST (test_parse_basic_fc_file) {
 	cur = cur->next;
 
 	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
 	ck_assert_ptr_null(cur->next);
 
 	free_policy_node(ast); 

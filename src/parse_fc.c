@@ -48,22 +48,40 @@ struct fc_entry * parse_fc_line(char *line) {
 			goto cleanup;
 		}
 
-		char *tmp = strtok(NULL,",");
-		if ( tmp == NULL ) {
+		char *maybe_s = strtok(NULL,",");
+		if ( maybe_s == NULL ) {
 			goto cleanup;
 		}
+		char *maybe_c = strtok(NULL,",");
 		int i = 0;
-		while (tmp[i] != '\0' && tmp[i] != ')') {
+		while (maybe_s[i] != '\0' && maybe_s[i] != ')') {
 			i++;
 		}
-		if (tmp[i] == '\0') {
-			// Missing closing paren
-			goto cleanup;
+		if (maybe_s[i] == '\0') {
+			if (!maybe_c) {
+				// Missing closing paren
+				goto cleanup;
+			}
 		}
-		tmp[i] = '\0';
-		while (tmp[0] != '\0' && (tmp[0] == ' ' || tmp[0] == '\t')) {
+		maybe_s[i] = '\0';
+		while (maybe_s[0] != '\0' && (maybe_s[0] == ' ' || maybe_s[0] == '\t')) {
 			// trim beginning whitespace
-			tmp++;
+			maybe_s++;
+		}
+
+		if (maybe_c) {
+			while (maybe_c[i] != '\0' && maybe_c[i] != ')') {
+				i++;
+			}
+			if (maybe_c[i] == '\0') {
+				// Missing closing paren
+				goto cleanup;
+			}
+			maybe_c[i] = '\0';
+			while (maybe_c[0] != '\0' && (maybe_c[0] == ' ' || maybe_c[0] == '\t')) {
+				// trim beginning whitespace
+				maybe_c++;
+			}
 		}
 
 		out->context = parse_context(context_part);
@@ -71,7 +89,14 @@ struct fc_entry * parse_fc_line(char *line) {
 			goto cleanup;
 		}
 		out->context->has_gen_context = 1;
-		out->context->range = strdup(tmp);
+		if (maybe_c) {
+			out->context->range = malloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
+			strcpy(out->context->range,maybe_s);
+			strcat(out->context->range,":");
+			strcat(out->context->range,maybe_c); 
+		} else {
+			out->context->range = strdup(maybe_s);
+		}
 	} else if (strcmp("<<none>>\n", pos) == 0 || strcmp("<<none>>\r\n", pos) == 0) {
 		out->context = NULL;
 	} else {
