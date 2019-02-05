@@ -230,20 +230,5 @@ int main(int argc, char **argv) {
 	free_file_list(if_files);
 	free_file_list(fc_files);
 
-/*
-		struct policy_node *ast = parse_one_file(argv[optind]);
-
-		if(ast) {	
-			printf("Successfully parsed %s\n", argv[optind]);
-		} else {
-			printf("Error parsing %s\n", argv[optind]);
-		}
-		optind++;
-		
-		file_list_push_back(	
-	}
-
-*/	
-
 	return 0;
 }
