@@ -122,6 +122,26 @@ START_TEST (test_insert_aliases) {
 }
 END_TEST
 
+START_TEST (test_insert_type_alias) {
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	struct policy_node *orig = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_type_alias(&cur, "foo_t", 123));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_ptr_eq(cur->prev, orig);
+
+	ck_assert_int_eq(cur->flavor, NODE_TYPE_ALIAS);
+	ck_assert_int_eq(cur->lineno, 123);
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(orig));
+
+	cleanup_parsing();
+}
+END_TEST
 
 START_TEST (test_insert_av_rule) {
 
@@ -359,6 +379,7 @@ Suite *parse_functions_suite(void) {
 	tcase_add_test(tc_core, test_begin_parsing_te);
 	tcase_add_test(tc_core, test_insert_declaration);
 	tcase_add_test(tc_core, test_insert_aliases);
+	tcase_add_test(tc_core, test_insert_type_alias);
 	tcase_add_test(tc_core, test_insert_av_rule);
 	tcase_add_test(tc_core, test_insert_type_transition);
 	tcase_add_test(tc_core, test_insert_interface_call);

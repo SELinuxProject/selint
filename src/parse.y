@@ -248,7 +248,7 @@ role_declaration:
 	; 
 
 type_alias:
-	TYPEALIAS string_list ALIAS string_list SEMICOLON { free_string_list($2); free_string_list($4); };
+	TYPEALIAS STRING ALIAS string_list SEMICOLON { insert_type_alias(&cur, $2, yylineno); insert_aliases(&cur, $4, DECL_TYPE, yylineno); free($2); }
 	;
 
 type_attribute:

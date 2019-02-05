@@ -51,6 +51,8 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
  **********************************/
 enum selint_error insert_aliases(struct policy_node **cur, struct string_list *aliases, enum decl_flavor flavor, int lineno);
 
+enum selint_error insert_type_alias(struct policy_node **cur, char *type, int lineno);
+
 /**********************************
  * insert_av_rule
  * Add an av rule node at the next node in the tree, allocating all memory for it

@@ -135,6 +135,17 @@ enum selint_error insert_aliases(struct policy_node **cur, struct string_list *a
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_type_alias(struct policy_node **cur, char *type, int lineno) {
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_TYPE_ALIAS, strdup(type), lineno);
+	if (ret != SELINT_SUCCESS) {
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+	return SELINT_SUCCESS;
+}
+
 enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms, int lineno) {
 
 	struct av_rule_data *av_data = malloc(sizeof(struct av_rule_data));
