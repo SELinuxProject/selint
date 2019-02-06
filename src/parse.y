@@ -337,6 +337,9 @@ role_transition:
 interface_call:
 	STRING OPEN_PAREN args CLOSE_PAREN
 	{ insert_interface_call(&cur, $1, $3, yylineno); free($1); }
+	|
+	STRING OPEN_PAREN CLOSE_PAREN
+	{ insert_interface_call(&cur, $1, NULL, yylineno); free($1); }
 	;
 
 optional_block:
