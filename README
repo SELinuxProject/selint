@@ -12,6 +12,10 @@ INSTALLING
 	libconfuse
 	libconfuse-devel
 
+	To run unit tests, you will also need:
+
+	libcheck
+
 	Then run:
 
 	./configure
