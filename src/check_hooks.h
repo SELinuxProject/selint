@@ -32,6 +32,8 @@ struct check_data {
 	enum file_flavor flavor;
 };
 
+// A check is responsible for filling out all fields except lineno
+// which is filled out by the calling function.`
 struct check_result {
 	unsigned int lineno;
 	char severity;
