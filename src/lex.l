@@ -49,6 +49,7 @@ fs_use_trans { return FS_USE_TRANS; }
 fs_use_xattr { return FS_USE_XATTR; }
 fs_use_task { return FS_USE_TASK; }
 define { return DEFINE; }
+gen_user { return GEN_USER; }
 gen_context { return GEN_CONTEXT; }
 permissive { return PERMISSIVE; }
 interface { return INTERFACE; }

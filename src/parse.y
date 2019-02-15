@@ -70,6 +70,7 @@
 %token FS_USE_XATTR;
 %token FS_USE_TASK;
 %token DEFINE;
+%token GEN_USER;
 %token GEN_CONTEXT;
 %token PERMISSIVE;
 %token INTERFACE;
@@ -102,6 +103,7 @@
 %left EQUAL NOT_EQUAL
 
 %type<sl> string_list
+%type<sl> comma_string_list
 %type<sl> strings
 %type<string> sl_item
 %type<sl> args
@@ -199,6 +201,8 @@ line:
 	|
 	define
 	|
+	gen_user
+	|
 	permissive
 	|
 	SEMICOLON
@@ -220,31 +224,31 @@ declaration:
 	|
 	role_declaration
 	|
-	ATTRIBUTE_ROLE args SEMICOLON { free_string_list($2); }
+	ATTRIBUTE_ROLE comma_string_list SEMICOLON { free_string_list($2); }
 	|
-	BOOL args SEMICOLON { free_string_list($2); }
+	BOOL comma_string_list SEMICOLON { free_string_list($2); }
 	;
 
 type_declaration:
 	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); }
 	|
-	TYPE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
+	TYPE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
 	|
-	TYPE STRING ALIAS args SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
+	TYPE STRING ALIAS string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
+	|
+	TYPE STRING ALIAS string_list COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
 	;
 
 attribute_declaration:
-	ATTRIBUTE STRING SEMICOLON { free($2); }
-	|
-	ATTRIBUTE STRING COMMA args SEMICOLON { free($2); free_string_list($4); }
+	ATTRIBUTE comma_string_list SEMICOLON { free_string_list($2); }
 	;
 
 role_declaration:
 	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); }
 	|
-	ROLE STRING COMMA args SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
+	ROLE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
 	|
-	ROLE STRING TYPES args SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
+	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
 	; 
 
 type_alias:
@@ -252,11 +256,11 @@ type_alias:
 	;
 
 type_attribute:
-	TYPE_ATTRIBUTE STRING args SEMICOLON { free($2); free_string_list($3); }
+	TYPE_ATTRIBUTE STRING comma_string_list SEMICOLON { free($2); free_string_list($3); }
 	;
 
 role_attribute:
-	ROLE_ATTRIBUTE STRING args SEMICOLON { free($2); free_string_list($3); }
+	ROLE_ATTRIBUTE STRING comma_string_list SEMICOLON { free($2); free_string_list($3); }
 
 rule:
 	av_type string_list string_list COLON string_list string_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6, yylineno); }
@@ -304,6 +308,15 @@ sl_item:
 			free($2);}
 	|
 	QUOTED_STRING { $$ = strdup($1); free($1);}
+	;
+comma_string_list:
+	comma_string_list COMMA STRING { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
+					cur->next = malloc(sizeof(struct string_list));
+					cur->next->string = strdup($3);
+					cur->next->next = NULL;
+					free($3); }
+	|
+	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1); }
 	;
 
 role_allow:
@@ -518,6 +531,11 @@ fs_use:
 
 define:
 	DEFINE OPEN_PAREN m4_args CLOSE_PAREN
+	;
+
+gen_user:
+	GEN_USER OPEN_PAREN args CLOSE_PAREN { free_string_list($3); }
+	;
 
 context:
 	STRING COLON STRING COLON STRING { free($1); free($3); free($5); }
@@ -538,6 +556,9 @@ if_file:
 	interface_def if_lines
 	|
 	interface_def
+	//|
+	// Empty file
+	//EOF
 	;
 
 if_lines:
