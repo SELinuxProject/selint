@@ -114,8 +114,8 @@ CHECK IDS
 	S-002: File context file labels with type not declared in module
 
 	W-001: Type referenced without explicit declaration
-	W-002: Type used but not listed in require block in interface
-	W-003: Unused type listed in require block
+	W-002: Type, attribute or role used but not listed in require block in interface
+	W-003: Unused type, attribute or role listed in require block
 
 	E-001: Interface call from module not in optional_policy block
 	E-002: Bad file context format
