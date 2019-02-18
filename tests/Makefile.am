@@ -1,4 +1,4 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list
 check_PROGRAMS = ${TESTS}
 
 if COND_GCOV
@@ -7,8 +7,10 @@ endif
 
 UTIL_HEADS=$(top_builddir)/src/util.h
 UTIL_OBJS=$(top_builddir)/src/util.o
-SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${UTIL_HEADS} $(top_builddir)/src/string_list.h
-SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${UTIL_OBJS} $(top_builddir)/src/string_list.o
+STRING_LIST_HEADS=$(top_builddir)/src/string_list.h
+STRING_LIST_OBJS=$(top_builddir)/src/string_list.o
+SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${UTIL_HEADS} ${STRING_LIST_HEADS}
+SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${UTIL_OBJS} ${STRING_LIST_OBJS}
 TREE_HEADS=$(top_builddir)/src/tree.h $(top_builddir)/src/string_list.h
 TREE_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/maps.o $(top_builddir)/src/string_list.o
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
@@ -29,6 +31,10 @@ FC_CHECKS_HEADS=$(top_builddir)/src/fc_checks.h ${CHECK_HOOKS_HEADS}
 FC_CHECKS_OBJS=$(top_builddir)/src/fc_checks.o ${CHECK_HOOKS_OBJS}
 IF_CHECKS_HEADS=$(top_builddir)/src/if_checks.h ${CHECK_HOOKS_HEADS}
 IF_CHECKS_OBJS=$(top_builddir)/src/if_checks.o ${CHECK_HOOKS_OBJS}
+
+check_string_list_SOURCES = check_string_list.c ${STRING_LIST_HEADS}
+check_string_list_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_string_list_LDADD = @CHECK_LIBS@ ${STRING_LIST_OBJS}
 
 check_selint_config_SOURCES = check_selint_config.c ${SELINT_CONFIG_HEADS}
 check_selint_config_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
