@@ -200,7 +200,7 @@ int main(int argc, char **argv) {
 		cur = cur->next;
 	}
 
-	struct checks *ck = register_checks(severity);
+	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, NULL, NULL);
 	if (!ck) {
 		printf("Failed to register checks (bad configuration)\n");
 		return -1;

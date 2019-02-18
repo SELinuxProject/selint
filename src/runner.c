@@ -14,6 +14,8 @@ struct policy_node *ast; // Must be global so the parser can access it
 extern int yylineno;
 extern char * parsing_filename;
 
+#define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks)
+
 struct policy_node * parse_one_file(char *filename) {
 
 	ast = NULL;
@@ -31,7 +33,39 @@ struct policy_node * parse_one_file(char *filename) {
 	return ast;
 }
 
-struct checks * register_checks(char level) {
+int is_check_enabled(const char *check_name,
+			struct string_list *config_enabled_checks,
+			struct string_list *config_disabled_checks,
+			struct string_list *cl_enabled_checks,
+			struct string_list *cl_disabled_checks) {
+
+	int is_enabled = 1; // default
+
+	if (str_in_sl(check_name, config_disabled_checks)) {
+		is_enabled = 0;
+	}
+
+	if (str_in_sl(check_name, config_enabled_checks)) {
+		is_enabled = 1;
+	}
+
+	if (str_in_sl(check_name, cl_disabled_checks)) {
+		is_enabled = 0;
+	}
+
+	if (str_in_sl(check_name, cl_enabled_checks)) {
+		is_enabled = 1;
+	}
+
+	return is_enabled;
+}
+
+
+struct checks * register_checks(char level,
+				struct string_list *config_enabled_checks,
+				struct string_list *config_disabled_checks,
+				struct string_list *cl_enabled_checks,
+				struct string_list *cl_disabled_checks) {
 
 	struct checks *ck = malloc(sizeof(struct checks));
 	memset(ck, 0, sizeof(struct checks));
@@ -40,18 +74,28 @@ struct checks * register_checks(char level) {
 	// command line check specification isn't implemented yet
 	switch (level) {
 		case 'C':
-			add_check(NODE_IF_DEF, ck, check_interface_definitions_have_comment);
-			add_check(NODE_TEMP_DEF, ck, check_interface_definitions_have_comment);
+			if (CHECK_ENABLED("C-002")) {
+				add_check(NODE_IF_DEF, ck, check_interface_definitions_have_comment);
+				add_check(NODE_TEMP_DEF, ck, check_interface_definitions_have_comment);
+			}
 		case 'S':
-			add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
+			if (CHECK_ENABLED("S-002")) {
+				add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
+			}
 		case 'W':
 		case 'E':
-			add_check(NODE_FC_ENTRY, ck, check_file_context_types_exist);
-			// These checks just spam until we can actually get the valid users
-			// and roles
-			//add_check(NODE_FC_ENTRY, ck, check_file_context_roles);
-			//add_check(NODE_FC_ENTRY, ck, check_file_context_users);
-			add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
+			if (CHECK_ENABLED("E-002")) {
+				add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
+			}
+			if (CHECK_ENABLED("E-003")) {
+				add_check(NODE_FC_ENTRY, ck, check_file_context_users);
+			}
+			if (CHECK_ENABLED("E-004")) {
+				add_check(NODE_FC_ENTRY, ck, check_file_context_roles);
+			}
+			if (CHECK_ENABLED("E-005")) {
+				add_check(NODE_FC_ENTRY, ck, check_file_context_types_exist);
+			}
 		case 'F':
 			break;
 		default:

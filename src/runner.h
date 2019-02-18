@@ -19,7 +19,11 @@ struct policy_node * parse_one_file(char *filename);
  * level - The severity level to load checks at and above
  * Returns the allocated checks structure or NULL on failure
  ****************************************************/
-struct checks * register_checks(char level);
+struct checks * register_checks(char level,
+				struct string_list *config_enabled_checks,
+				struct string_list *config_disabled_checks,
+				struct string_list *cl_enabled_checks,
+				struct string_list *cl_disabled_checks);
 
 /****************************************************
  * Parse all the provided te or if files, storing their parsed ASTs

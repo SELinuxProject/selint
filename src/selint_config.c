@@ -49,7 +49,6 @@ enum selint_error parse_config(char *config_filename,
 
 	// Not specified on command line.  Read from config
 	char *config_severity = cfg_getstr(cfg, "severity");
-	printf("severity: %s\n", config_severity);
 
 	if (strcmp(config_severity, "convention") == 0) {
 		*severity = 'C';
