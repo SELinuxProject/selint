@@ -58,6 +58,7 @@ s[0-9]+(:c[0-9]+)? { yylval.string = strdup(yytext); return MLS_LEVEL; }
 [0-9]+\.[0-9]+(\.[0-9]+)? { yylval.string = strdup(yytext); return VERSION_NO; }
 [0-9]+ { yylval.string = strdup(yytext); return NUMBER; }
 [a-zA-Z\$\/][a-zA-Z0-9_\$\*\.\/\-]* { yylval.string = strdup(yytext); return STRING; }
+[0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\.\/\-]* { yylval.string = strdup(yytext); return NUM_STRING; }
 \"[a-zA-Z0-9_\.\-\:~]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
 \( { return OPEN_PAREN; }
 \) { return CLOSE_PAREN; }

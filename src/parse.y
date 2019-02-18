@@ -25,6 +25,7 @@
 
 %token <string> MLS_LEVEL;
 %token <string> STRING;
+%token <string> NUM_STRING;
 %token <string> NUMBER;
 %token <string> QUOTED_STRING;
 %token <symbol> SYMBOL;
@@ -530,6 +531,8 @@ cond_expr:
 
 genfscon:
 	GENFSCON STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); free($3); }
+	|
+	GENFSCON NUM_STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); free($3); }
 	;
 
 sid:
