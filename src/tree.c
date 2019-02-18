@@ -89,6 +89,16 @@ int is_template_call(struct policy_node *node) {
 	return 0;
 }
 
+char *get_name_if_in_template(struct policy_node *cur) {
+	while (cur->parent) {
+		cur = cur->parent;
+		if (cur->flavor == NODE_TEMP_DEF) {
+			return cur->data;
+		}
+	}
+	return NULL;
+}
+
 enum selint_error free_policy_node(struct policy_node *to_free) {
 	if (to_free == NULL) {
 		return SELINT_BAD_ARG;

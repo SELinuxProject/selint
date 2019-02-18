@@ -37,17 +37,6 @@ void set_current_module_name(char *mn) {
 char * get_current_module_name() {
 	return module_name;
 }
-
-char *get_name_if_in_template(struct policy_node *cur) {
-	while (cur->parent) {
-		cur = cur->parent;
-		if (cur->flavor == NODE_TEMP_DEF) {
-			return cur->data;
-		}
-	}
-	return NULL;
-}
-
 int is_in_require(struct policy_node *cur) {
 	while (cur->parent) {
 		cur = cur->parent;

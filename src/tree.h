@@ -110,6 +110,8 @@ enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_fl
 // Returns 1 if the node is a template call, and 0 if not
 int is_template_call(struct policy_node *node);
 
+char *get_name_if_in_template(struct policy_node *cur);
+
 enum selint_error free_policy_node(struct policy_node *to_free);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
