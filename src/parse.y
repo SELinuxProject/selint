@@ -123,13 +123,7 @@ selinux_file:
 	|
 	comments if_file
 	|
-	comments {if (!ast) {
-			// This is an if file with no interfaces
-			cur = malloc(sizeof(struct policy_node));
-			memset(cur, 0, sizeof(struct policy_node));
-			cur->flavor = NODE_IF_FILE;
-			ast = cur;
-		} }
+	comments
 	;
 
 	// TE File parsing
@@ -139,7 +133,13 @@ te_policy:
 	;
 
 comments:
-	COMMENT
+	COMMENT { if (!ast) {
+			cur = malloc(sizeof(struct policy_node));
+			memset(cur, 0, sizeof(struct policy_node));
+			cur->flavor = NODE_IF_FILE;
+			ast = cur;
+		}
+		insert_comment(&cur, yylineno); }
 	|
 	comments COMMENT
 	;
@@ -579,7 +579,7 @@ if_lines:
 if_line:
 	interface_def
 	|
-	COMMENT
+	COMMENT { insert_comment(&cur, yylineno); }
 	;
 
 interface_def:

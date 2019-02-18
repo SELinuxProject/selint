@@ -4,6 +4,10 @@
 #include "tree.h"
 #include "selint_error.h"
 
+enum convention_ids {
+	C_IF_COMMENT = 1
+};
+
 enum style_ids {
 	S_ID_FC_TYPE = 2
 };

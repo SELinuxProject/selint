@@ -1,4 +1,4 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks
 check_PROGRAMS = ${TESTS}
 
 if COND_GCOV
@@ -27,6 +27,8 @@ CHECK_HOOKS_HEADS=$(top_builddir)/src/check_hooks.h ${TREE_HEADS}
 CHECK_HOOKS_OBJS=$(top_builddir)/src/check_hooks.o ${TREE_OBJS}
 FC_CHECKS_HEADS=$(top_builddir)/src/fc_checks.h ${CHECK_HOOKS_HEADS}
 FC_CHECKS_OBJS=$(top_builddir)/src/fc_checks.o ${CHECK_HOOKS_OBJS}
+IF_CHECKS_HEADS=$(top_builddir)/src/if_checks.h ${CHECK_HOOKS_HEADS}
+IF_CHECKS_OBJS=$(top_builddir)/src/if_checks.o ${CHECK_HOOKS_OBJS}
 
 check_selint_config_SOURCES = check_selint_config.c ${SELINT_CONFIG_HEADS}
 check_selint_config_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
@@ -67,5 +69,10 @@ check_check_hooks_LDADD = @CHECK_LIBS@ ${CHECK_HOOKS_OBJS}
 check_fc_checks_SOURCES = check_fc_checks.c ${FC_CHECKS_HEADS}
 check_fc_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
 check_fc_checks_LDADD = @CHECK_LIBS@ ${FC_CHECKS_OBJS}
+
+check_if_checks_SOURCES = check_if_checks.c ${IF_CHECKS_HEADS}
+check_if_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_if_checks_LDADD = @CHECK_LIBS@ ${IF_CHECKS_OBJS}
+
 
 MOSTLYCLEANFILES = *.gcov *.gcda *.gcno
