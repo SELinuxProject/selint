@@ -12,6 +12,7 @@ permissive foo_t;
 sid netmsg gen_context(system_u:object_r:netlabel_peer_t,mls_systemhigh)
 
 portcon udp 7007 gen_context(system_u:object_r:afs_bos_port_t,s0)
+portcon udp 7007-7008 gen_context(system_u:object_r:afs_bos_port_t,s0)
 fs_use_trans devtmpfs gen_context(system_u:object_r:device_t,s0);
 genfscon sysfs /devices/system/cpu/online gen_context(system_u:object_r:cpu_online_t,s0)
 fs_use_xattr btrfs gen_context(system_u:object_r:fs_t,s0);

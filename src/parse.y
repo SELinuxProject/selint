@@ -544,6 +544,8 @@ portcon:
 	;
 
 port_range:
+	NUM_STRING
+	|
 	NUMBER { free($1); }
 	|
 	NUMBER DASH NUMBER { free($1); free($3); }
