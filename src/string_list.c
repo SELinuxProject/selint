@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "string_list.h"
 
@@ -16,7 +17,11 @@ void free_string_list(struct string_list *list) {
 	}
 }
 
-int str_in_sl(char *str, struct string_list *sl) {
+int str_in_sl(const char *str, struct string_list *sl) {
+
+	if (!sl) {
+		return 0;
+	}
 
 	while (sl) {
 		if (0 == strcmp(sl->string, str)) {
