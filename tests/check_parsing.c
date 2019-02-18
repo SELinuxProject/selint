@@ -61,6 +61,8 @@ START_TEST (test_parse_basic_te) {
 	ck_assert_str_eq("basic", look_up_in_decl_map("basic_t", DECL_TYPE));
 	ck_assert_int_eq(2, decl_map_count(DECL_TYPE));
 
+	free_policy_node(ast);
+
 	cleanup_parsing();
 
 	fclose(yyin);

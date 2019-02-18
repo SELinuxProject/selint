@@ -28,7 +28,7 @@ START_TEST (test_check_interface_defs_have_comment) {
 	ck_assert_int_eq('C', res->severity);
 	ck_assert_int_eq(C_IF_COMMENT, res->check_id);
 
-	free(res);
+	free_check_result(res);
 	free_policy_node(head);
 }
 END_TEST

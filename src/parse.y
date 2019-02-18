@@ -544,7 +544,7 @@ portcon:
 	;
 
 port_range:
-	NUM_STRING
+	NUM_STRING { free($1); }
 	|
 	NUMBER { free($1); }
 	|
