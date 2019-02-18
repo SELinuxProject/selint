@@ -106,6 +106,29 @@ enum selint_error begin_optional_policy(struct policy_node **cur, int lineno);
  **********************************/
 enum selint_error end_optional_policy(struct policy_node **cur);
 
+/**********************************
+ * begin_optional_else
+ * Add the else portion of an optional policy node at the next node in the tree.  Create its first child
+ * as the start of the block.  Set cur to the child node. Allocate all memory for
+ * both nodes.
+ * cur (in, out) - The current spot in the tree.  Will be updated to point to the
+ * first child of the optional_policy node
+ *
+ * Returns - SELINT error code
+ **********************************/
+enum selint_error begin_optional_else(struct policy_node **cur, int lineno);
+
+/**********************************
+ * end_optional_policy
+ * Complete the optional policy else block by moving cur back up to the parent level
+ * cur (in, out) - The current spot in the tree.  Will be updated to point to the
+ * parent optional policy node
+ *
+ * Returns - SELINT error code
+ **********************************/
+enum selint_error end_optional_else(struct policy_node **cur);
+
+
 enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name, int lineno);
 
 enum selint_error end_interface_def(struct policy_node **cur);

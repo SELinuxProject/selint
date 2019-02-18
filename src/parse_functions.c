@@ -268,6 +268,14 @@ enum selint_error end_optional_policy(struct policy_node **cur) {
 	return end_block(cur, NODE_OPTIONAL_POLICY);
 }
 
+enum selint_error begin_optional_else(struct policy_node **cur, int lineno) {
+	return begin_block(cur, NODE_OPTIONAL_ELSE, (void *) NULL, lineno);
+}
+
+enum selint_error end_optional_else(struct policy_node **cur) {
+	return end_block(cur, NODE_OPTIONAL_ELSE);
+}
+
 enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name, int lineno) {
 
 	switch(flavor) {

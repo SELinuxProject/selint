@@ -368,11 +368,20 @@ interface_call:
 	;
 
 optional_block:
-	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); } 
+	optional_open
 	lines SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
 	|
-	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); } 
+	optional_open
 	SINGLE_QUOTE CLOSE_PAREN { end_optional_policy(&cur); }
+	|
+	optional_open
+	lines SINGLE_QUOTE COMMA { end_optional_policy(&cur); }
+	BACKTICK { begin_optional_else(&cur, yylineno); }
+	lines SINGLE_QUOTE CLOSE_PAREN { end_optional_else(&cur); }
+	;
+
+optional_open:
+	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); } 
 	;
 
 require:
