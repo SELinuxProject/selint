@@ -5,14 +5,6 @@
 #include "maps.h"
 #include "tree.h"
 
-struct check_result * alloc_internal_error(char *string) {
-	struct check_result *res = malloc(sizeof(struct check_result));
-	res->severity = 'F';
-	res->check_id = F_ID_INTERNAL;
-	res->message = strdup(string);
-	return res;
-} 
-
 struct check_result * check_file_context_types_exist(const struct check_data *check_data, const struct policy_node *node) {
 
 	if (node->flavor != NODE_FC_ENTRY) {

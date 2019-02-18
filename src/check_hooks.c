@@ -74,6 +74,14 @@ void display_check_result(struct check_result *res, struct check_data *data) {
 	printf("%s:%*u: (%c): %s (%c-%03u)\n", data->filename, padding, res->lineno, res->severity, res->message, res->severity, res->check_id);
 }
 
+struct check_result * alloc_internal_error(char *string) {
+	struct check_result *res = malloc(sizeof(struct check_result));
+	res->severity = 'F';
+	res->check_id = F_ID_INTERNAL;
+	res->message = strdup(string);
+	return res;
+}
+
 void free_check_result(struct check_result *res) {
 	free(res->message);
 	free(res);

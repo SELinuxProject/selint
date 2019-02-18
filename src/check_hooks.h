@@ -87,6 +87,8 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct c
  *********************************************/
 void display_check_result(struct check_result *res, struct check_data *data);
 
+struct check_result *alloc_internal_error(char *string);
+
 void free_check_result(struct check_result *);
 
 void free_checks(struct checks *to_free);
