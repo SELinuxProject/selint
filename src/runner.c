@@ -4,6 +4,7 @@
 
 #include "runner.h"
 #include "fc_checks.h"
+#include "if_checks.h"
 #include "parse_fc.h"
 #include "util.h"
 
@@ -39,6 +40,8 @@ struct checks * register_checks(char level) {
 	// command line check specification isn't implemented yet
 	switch (level) {
 		case 'C':
+			add_check(NODE_IF_DEF, ck, check_interface_definitions_have_comment);
+			add_check(NODE_TEMP_DEF, ck, check_interface_definitions_have_comment);
 		case 'S':
 			add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
 		case 'W':

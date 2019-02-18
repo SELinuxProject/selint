@@ -51,6 +51,8 @@ struct check_node {
 };
 
 struct checks {
+	struct check_node *if_def_node_checks;
+	struct check_node *temp_def_node_checks;
 	struct check_node *fc_entry_node_checks;
 	struct check_node *error_node_checks;
 };
