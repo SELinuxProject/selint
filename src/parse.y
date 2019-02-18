@@ -279,23 +279,23 @@ av_type:
 string_list:
 	OPEN_CURLY strings CLOSE_CURLY { $$ = $2; }
 	|
-	TILDA string_list { $$ = malloc(sizeof(struct string_list));
+	TILDA string_list { $$ = calloc(1, sizeof(struct string_list));
 			$$->string = strdup("~");
 			$$->next = $2; }
 	|
-	sl_item { $$ = malloc(sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
 	|
-	STAR { $$ = malloc(sizeof(struct string_list)); $$->string = strdup("*"); $$->next = NULL; }
+	STAR { $$ = calloc(1, sizeof(struct string_list)); $$->string = strdup("*"); $$->next = NULL; }
 	;
 
 strings:
 	strings sl_item { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
-			cur->next = malloc(sizeof(struct string_list));
+			cur->next = calloc(1, sizeof(struct string_list));
 			cur->next->string = strdup($2);
 			cur->next->next = NULL; 
 			free($2); }
 	|
-	sl_item { $$ = malloc(sizeof(struct string_list)); $$->string = $1; $$->next = NULL; } 
+	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; } 
 	;
 
 sl_item:
@@ -309,14 +309,15 @@ sl_item:
 	|
 	QUOTED_STRING { $$ = strdup($1); free($1);}
 	;
+
 comma_string_list:
 	comma_string_list COMMA STRING { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
-					cur->next = malloc(sizeof(struct string_list));
+					cur->next = calloc(1, sizeof(struct string_list));
 					cur->next->string = strdup($3);
 					cur->next->next = NULL;
 					free($3); }
 	|
-	STRING { $$ = malloc(sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1); }
+	STRING { $$ = calloc(1, sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1); }
 	;
 
 role_allow:
@@ -468,15 +469,23 @@ args:
 	{ struct string_list *cur = $1;
 	while (cur->next) { cur = cur->next; }
 	cur->next = $3;
-	$$= $1; }
+	$$ = $1; }
+	|
+	args STRING
+	{ struct string_list *cur = $1;
+	while (cur->next) { cur = cur->next; }
+	cur->next = calloc(1, sizeof(struct string_list));
+	cur->next->string = $2;
+	cur->next->has_incorrect_space = 1;
+	$$ = $1; }
 	;
 
 string_list_or_mls:
 	string_list
 	|
-	mls_range { $$ = malloc(sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
+	mls_range { $$ = calloc(1, sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
 	|
-	MLS_LEVEL { $$ = malloc(sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
+	MLS_LEVEL { $$ = calloc(1, sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
 	;
 
 mls_range:

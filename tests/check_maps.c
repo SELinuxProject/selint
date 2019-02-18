@@ -135,7 +135,7 @@ START_TEST (test_insert_call_into_template_map) {
 	struct if_call_data *call = malloc(sizeof(struct if_call_data));
 
 	call->name = strdup("foo");
-	call->args = malloc(sizeof(struct string_list));
+	call->args = calloc(1, sizeof(struct string_list));
 	call->args->string = strdup("bar_t");
 	call->args->next = NULL;
 

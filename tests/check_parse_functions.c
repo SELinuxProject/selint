@@ -81,9 +81,9 @@ START_TEST (test_insert_aliases) {
 
 	struct policy_node *orig = cur;
 
-	struct string_list *aliases = malloc(sizeof(struct string_list));
+	struct string_list *aliases = calloc(1, sizeof(struct string_list));
 	aliases->string = strdup("foo_t");
-	aliases->next = malloc(sizeof(struct string_list));
+	aliases->next = calloc(1, sizeof(struct string_list));
 	aliases->next->string = strdup("bar_t");
 	aliases->next->next = NULL;
 
@@ -226,9 +226,9 @@ START_TEST (test_insert_interface_call) {
 
 	struct policy_node *head = cur;
 
-	struct string_list *args = malloc(sizeof(struct string_list));
+	struct string_list *args = calloc(1, sizeof(struct string_list));
 	args->string = strdup("foo_t");
-	args->next = malloc(sizeof(struct string_list));
+	args->next = calloc(1, sizeof(struct string_list));
 	args->next->string = strdup("bar_t");
 	args->next->next = NULL;
 

@@ -34,3 +34,6 @@ netifcon lo gen_context(system_u:object_r:lo_netif_t,s0 - mls_systemhigh) gen_co
 if (!bool_one) {
 	allow foo_t bar_t:file open;
 }
+
+# Interface with a missing comma
+foo_if(foo_t, bar_t baz_t)

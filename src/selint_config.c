@@ -9,7 +9,7 @@
 	if (slp) {\
 		struct string_list *end = NULL;\
 		for (int i = 0; i < cfg_size(cfg, config_name); i++) {\
-			struct string_list *cur = malloc(sizeof(struct string_list));\
+			struct string_list *cur = calloc(1, sizeof(struct string_list));\
 			cur->string = strdup(cfg_getnstr(cfg, config_name, i));\
 			cur->next = NULL;\
 			if (!end) {\

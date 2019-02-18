@@ -54,7 +54,7 @@ char *replace_m4(char *orig, struct string_list *args) {
 }
 
 struct string_list *replace_m4_list(struct string_list *replace_with, struct string_list *replace_from) {
-	struct string_list *ret = malloc(sizeof(struct string_list));
+	struct string_list *ret = calloc(1, sizeof(struct string_list));
 	struct string_list *cur = ret;
 
 	cur->string = replace_m4(replace_from->string, replace_with);
@@ -62,7 +62,7 @@ struct string_list *replace_m4_list(struct string_list *replace_with, struct str
 	replace_from = replace_from->next;
 
 	while (replace_from) {
-		cur->next = malloc(sizeof(struct string_list));
+		cur->next = calloc(1, sizeof(struct string_list));
 		cur = cur->next;
 		cur->string = replace_m4(replace_from->string, replace_with);
 		cur->next = NULL;
@@ -82,7 +82,7 @@ enum selint_error add_template_declarations(char *template_name, struct string_l
 			cur = cur->next;
 	}
 
-	cur = malloc(sizeof(struct string_list));
+	cur = calloc(1, sizeof(struct string_list));
 	cur->string = strdup(template_name);
 	cur->next = parent_temp_names;
 

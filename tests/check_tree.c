@@ -15,7 +15,7 @@ struct av_rule_data * make_example_av_rule() {
 
 	av_rule_data->flavor = AV_RULE_ALLOW;
 
-	av_rule_data->sources = malloc(sizeof(struct string_list));
+	av_rule_data->sources = calloc(1,sizeof(struct string_list));
 	ck_assert_ptr_nonnull(av_rule_data->sources);
 
 	av_rule_data->sources->string = strdup(EXAMPLE_TYPE_1);
@@ -23,13 +23,13 @@ struct av_rule_data * make_example_av_rule() {
 
 	av_rule_data->sources->next = NULL;
 
-	av_rule_data->targets = malloc(sizeof(struct string_list));
+	av_rule_data->targets = calloc(1,sizeof(struct string_list));
 	ck_assert_ptr_nonnull(av_rule_data->targets);
 
 	av_rule_data->targets->string = strdup(EXAMPLE_TYPE_2);
 	ck_assert_ptr_nonnull(av_rule_data->targets->string);
 
-	av_rule_data->targets->next = malloc(sizeof(struct string_list));
+	av_rule_data->targets->next = calloc(1,sizeof(struct string_list));
 	ck_assert_ptr_nonnull(av_rule_data->targets->next);
 
 	av_rule_data->targets->next->string = strdup(EXAMPLE_TYPE_3);
@@ -37,7 +37,7 @@ struct av_rule_data * make_example_av_rule() {
 
 	av_rule_data->targets->next->next = NULL;
 
-	av_rule_data->object_classes = malloc(sizeof(struct string_list));
+	av_rule_data->object_classes = calloc(1,sizeof(struct string_list));
 	ck_assert_ptr_nonnull(av_rule_data->object_classes);
 
 	av_rule_data->object_classes->string = strdup("file");
@@ -45,19 +45,19 @@ struct av_rule_data * make_example_av_rule() {
 
 	av_rule_data->object_classes->next = NULL;
 
-	av_rule_data->perms = malloc(sizeof(struct string_list));
+	av_rule_data->perms = calloc(1,sizeof(struct string_list));
 	ck_assert_ptr_nonnull(av_rule_data->perms);
 
 	av_rule_data->perms->string = strdup("read");
 	ck_assert_ptr_nonnull(av_rule_data->perms->string);
 
-	av_rule_data->perms->next = malloc(sizeof(struct string_list));
+	av_rule_data->perms->next = calloc(1,sizeof(struct string_list));
 	ck_assert_ptr_nonnull(av_rule_data->perms->next);
 
 	av_rule_data->perms->next->string = strdup("write");
 	ck_assert_ptr_nonnull(av_rule_data->perms->next->string);
 
-	av_rule_data->perms->next->next = malloc(sizeof(struct string_list));
+	av_rule_data->perms->next->next = calloc(1,sizeof(struct string_list));
 	ck_assert_ptr_nonnull(av_rule_data->perms->next->next);
 
 	av_rule_data->perms->next->next->string = strdup("getattr");

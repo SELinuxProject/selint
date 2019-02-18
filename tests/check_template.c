@@ -15,9 +15,9 @@ extern int yyparse();
 START_TEST (test_replace_m4) {
 	char *orig1 = "$1_t";
 
-	struct string_list *args = malloc(sizeof(struct string_list));
+	struct string_list *args = calloc(1,sizeof(struct string_list));
 	args->string = strdup("foo");
-	args->next = malloc(sizeof(struct string_list));
+	args->next = calloc(1,sizeof(struct string_list));
 	args->next->string = strdup("bar");
 	args->next->next = NULL;
 
@@ -58,9 +58,9 @@ START_TEST (test_replace_m4) {
 END_TEST
 
 START_TEST (test_replace_m4_too_few_args) {
-	struct string_list *args = malloc(sizeof(struct string_list));
+	struct string_list *args = calloc(1,sizeof(struct string_list));
 	args->string = strdup("foo");
-	args->next = malloc(sizeof(struct string_list));
+	args->next = calloc(1,sizeof(struct string_list));
 	args->next->string = strdup("bar");
 	args->next->next = NULL;
 	
@@ -75,15 +75,15 @@ END_TEST
 
 START_TEST (test_replace_m4_list) {
 
-	struct string_list *caller_args = malloc(sizeof(struct string_list));
+	struct string_list *caller_args = calloc(1,sizeof(struct string_list));
 	caller_args->string = strdup("foo");
-	caller_args->next = malloc(sizeof(struct string_list));
+	caller_args->next = calloc(1,sizeof(struct string_list));
 	caller_args->next->string = strdup("bar");
 	caller_args->next->next = NULL;
 
-	struct string_list *called_args = malloc(sizeof(struct string_list));
+	struct string_list *called_args = calloc(1,sizeof(struct string_list));
 	called_args->string = strdup("$2");
-	called_args->next = malloc(sizeof(struct string_list));
+	called_args->next = calloc(1,sizeof(struct string_list));
 	called_args->next->string = strdup("$1");
 	called_args->next->next = NULL;
 
@@ -112,11 +112,11 @@ START_TEST (test_nested_template_declarations) {
 	yyparse();
 	fclose(yyin);
 
-	struct string_list *called_args = malloc(sizeof(struct string_list));
+	struct string_list *called_args = calloc(1,sizeof(struct string_list));
 	called_args->string = strdup("first");
-	called_args->next = malloc(sizeof(struct string_list));
+	called_args->next = calloc(1,sizeof(struct string_list));
 	called_args->next->string = strdup("second");
-	called_args->next->next = malloc(sizeof(struct string_list));
+	called_args->next->next = calloc(1,sizeof(struct string_list));
 	called_args->next->next->string = strdup("third");
 	called_args->next->next->next = NULL;
 
