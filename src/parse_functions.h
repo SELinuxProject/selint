@@ -28,12 +28,24 @@ void set_current_module_name(char *mn);
 char *get_current_module_name();
 
 /**********************************
+ * insert_comment
+ * Add a comment node at the next node in the tree, allocating all memory for it.
+ * cur (in, out) - The current spot in the tree.  Will be updated to point to
+ *	the newly allocated declaration node
+ * lineno (in) - The line number
+ *
+ * Returns - SELINT error code
+ **********************************/
+enum selint_error insert_comment(struct policy_node **cur, int lineno);
+
+/**********************************
  * insert_declaration
  * Add a declaration node at the next node in the tree, allocating all memory for it
  * cur (in, out) - The current spot in the tree.  Will be updated to point to
  *	the newly allocated declaration node
  * flavor (in)- What sort of declaration this is
  * name (in) - The name of the item being declared
+ * lineno (in) - The line number
  *
  * Returns - SELINT error code
  **********************************/

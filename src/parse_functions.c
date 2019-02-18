@@ -58,6 +58,16 @@ int is_in_require(struct policy_node *cur) {
 	return 0;
 }
 
+enum selint_error insert_comment(struct policy_node **cur, int lineno) {
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_COMMENT, NULL, lineno);
+	if (ret != SELINT_SUCCESS) {
+		return ret;
+	}
+	*cur = (*cur)->next;
+
+	return SELINT_SUCCESS;
+}
+
 enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, int lineno) {
 	//TODO: Handle attributes
 
