@@ -133,6 +133,12 @@ te_policy:
 	;
 
 comments:
+	comment
+	|
+	comment comments
+	;
+
+comment:
 	COMMENT { if (!ast) {
 			cur = malloc(sizeof(struct policy_node));
 			memset(cur, 0, sizeof(struct policy_node));
@@ -140,12 +146,11 @@ comments:
 			ast = cur;
 		}
 		insert_comment(&cur, yylineno); }
-	|
-	comments COMMENT
 	;
 
+
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3, yylineno); ast = cur; free($3); free($5);} // Version number isn't needed
+	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3, yylineno); if (ast) { free_policy_node(ast); } ast = cur; free($3); free($5);} // Version number isn't needed
 	|
 	MODULE STRING VERSION_NO SEMICOLON { begin_parsing_te(&cur, $2, yylineno); ast = cur; free($2); free($3); }
 	;
@@ -236,7 +241,13 @@ type_declaration:
 	|
 	TYPE STRING ALIAS string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
 	|
-	TYPE STRING ALIAS string_list COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
+	TYPE STRING ALIAS STRING COMMA comma_string_list SEMICOLON {
+				insert_declaration(&cur, DECL_TYPE, $2, yylineno);
+				free($2);
+				struct string_list *tmp = calloc(1, sizeof(struct string_list));
+				tmp->string = $4;
+				tmp->next = $6;
+				insert_aliases(&cur, tmp, DECL_TYPE, yylineno); }
 	;
 
 attribute_declaration:
