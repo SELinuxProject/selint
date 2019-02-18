@@ -36,6 +36,17 @@ START_TEST (test_file_list_push_back) {
 }
 END_TEST
 
+START_TEST (test_make_policy_file) {
+	struct policy_file *file = make_policy_file("foo", NULL);
+	ck_assert_ptr_nonnull(file);
+	ck_assert_str_eq(file->filename, "foo");
+	ck_assert_ptr_null(file->ast);
+
+	free(file->filename);
+	free(file);
+}
+END_TEST
+
 Suite *file_list_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -45,6 +56,7 @@ Suite *file_list_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_file_list_push_back);
+	tcase_add_test(tc_core, test_make_policy_file);
 	suite_add_tcase(s, tc_core);
 
 	return s;
