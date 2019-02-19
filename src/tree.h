@@ -25,6 +25,7 @@ enum node_flavor {
 	NODE_GEN_REQ,
 	NODE_FC_ENTRY,
 	NODE_COMMENT,
+	NODE_EMPTY,
 	NODE_ERROR // When a parsing error occurs, save an error node in the tree
 };
 

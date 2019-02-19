@@ -116,6 +116,8 @@
 
 %%
 selinux_file:
+	/* empty */ { ast = calloc(1, sizeof(struct policy_node)); ast->flavor = NODE_EMPTY; }
+	|
 	te_policy
 	|
 	comments te_policy
