@@ -5,21 +5,21 @@
 #include "maps.h"
 #include "tree.h"
 
+#define SETUP_FOR_FC_CHECK(node) \
+	if (node->flavor != NODE_FC_ENTRY) {\
+		return alloc_internal_error("File context type check called on non file context entry");\
+	}\
+	struct fc_entry *entry = (struct fc_entry *)node->data;\
+	if (!entry) {\
+		return alloc_internal_error("Policy node data field is NULL");\
+	}\
+	if (!entry->context) {\
+		return NULL;\
+	}\
+
 struct check_result *check_file_context_types_in_mod(const struct check_data *check_data, const struct policy_node *node) {
 
-	if (node->flavor != NODE_FC_ENTRY) {
-		return alloc_internal_error("File context type check called on non file context entry");
-	} 
-
-	struct fc_entry *entry = (struct fc_entry *)node->data;
-
-	if (!entry) {
-		return alloc_internal_error("Policy node data field is NULL");
-	}
-
-	if (!entry->context) {
-		return NULL;
-	}
+	SETUP_FOR_FC_CHECK(node)
 
 	char *type_decl_mod_name = look_up_in_decl_map(entry->context->type, DECL_TYPE);
 
@@ -36,16 +36,11 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *ch
 	}
 
 	if (strcmp(check_data->mod_name, type_decl_mod_name)) {
-		struct check_result *res = malloc(sizeof(struct check_result));
-
-		res->severity = 'S';
-		res->check_id = S_ID_FC_TYPE;
-		if (!asprintf(&res->message, "Type %s is declared in module %s, but used in file context here.", entry->context->type, type_decl_mod_name)) {
-			free(res);
-			return alloc_internal_error("Failed to generate error message in fc type checking");
+		char *message = NULL;
+		if (asprintf(&message, "Type %s is declared in module %s, but used in file context here.", entry->context->type, type_decl_mod_name) == -1) {
+			message = NULL;
 		}
-
-		return res;
+		return make_check_result('S', S_ID_FC_TYPE, message);
 	}
 
 	return NULL;
@@ -57,77 +52,43 @@ struct check_result *check_file_context_error_nodes(const struct check_data *dat
 		return NULL;
 	}
 
-	struct check_result *res = malloc(sizeof(struct check_result));
-
-	res->severity = 'E';
-	res->check_id = E_ID_FC_ERROR;
-	if (!asprintf(&res->message, "Bad file context format")) {
-		free(res);
-		return alloc_internal_error("Failed to generate error message in fc error handling");
+	char *message = NULL;
+	if (asprintf(&message, "Bad file context format") == -1) {
+		message = NULL;
 	}
-	return res;
+	return make_check_result('E', E_ID_FC_ERROR, message);
 }
 
 struct check_result *check_file_context_users(const struct check_data *data, const struct policy_node *node) {
 
-	if (node->flavor != NODE_FC_ENTRY) {
-		return alloc_internal_error("File context user check called on non file context entry");
-	} 
-
-	struct fc_entry *entry = (struct fc_entry *)node->data;
-
-	if (!entry) {
-		return alloc_internal_error("Policy node data field is NULL");
-	}
-
-	if (!entry->context) {
-		return NULL;
-	}
+	SETUP_FOR_FC_CHECK(node)
 
 	char *user_decl_filename = look_up_in_decl_map(entry->context->user, DECL_USER);
 
 	if (!user_decl_filename) {
-		struct check_result *res = malloc(sizeof(struct check_result));
-		res->severity = 'E';
-		res->check_id = E_ID_FC_USER;
-		if (!asprintf(&res->message, "Nonexistent user (%s) listed in fc_entry", entry->context->user)) {
-			free(res);
-			return alloc_internal_error("Failed to generate error message in fc user checking"); 
+		char *message = NULL;
+		if (asprintf(&message, "Nonexistent user (%s) listed in fc_entry", entry->context->user) == -1) {
+			message = NULL;
 		}
-
-		return res;
+		return make_check_result('E', E_ID_FC_USER, message);
 	}
 
 	return NULL;
 }
 
 struct check_result *check_file_context_roles(const struct check_data *data, const struct policy_node *node) {
-	
-	if (node->flavor != NODE_FC_ENTRY) {
-		return alloc_internal_error("File context role check called on non file context entry");
-	} 
 
-	struct fc_entry *entry = (struct fc_entry *)node->data;
-
-	if (!entry) {
-		return alloc_internal_error("Policy node data field is NULL");
-	}
-
-	if (!entry->context) {
-		return NULL;	}
+	SETUP_FOR_FC_CHECK(node)
 
 	char *role_decl_filename = look_up_in_decl_map(entry->context->role, DECL_ROLE);
 
 	if (!role_decl_filename) {
-		struct check_result *res = malloc(sizeof(struct check_result));
-		res->severity = 'E';
-		res->check_id = E_ID_FC_ROLE;
-		if (!asprintf(&res->message, "Nonexistent role (%s) listed in fc_entry", entry->context->role)) {
-	free(res);
-			return alloc_internal_error("Failed to generate error message in fc role checking"); 
+		char *message = NULL;
+		if (asprintf(&message, "Nonexistent role (%s) listed in fc_entry", entry->context->role) == -1) {
+			message = NULL;
 		}
 
-		return res;
+		return make_check_result('E', E_ID_FC_ROLE, message);
 	}
 
 	return NULL;
@@ -135,32 +96,16 @@ struct check_result *check_file_context_roles(const struct check_data *data, con
 
 struct check_result * check_file_context_types_exist(const struct check_data *check_data, const struct policy_node *node) {
 
-	if (node->flavor != NODE_FC_ENTRY) {
-		return alloc_internal_error("File context type check called on non file context entry");
-	} 
-
-	struct fc_entry *entry = (struct fc_entry *)node->data;
-
-	if (!entry) {
-		return alloc_internal_error("Policy node data field is NULL");
-	}
-
-	if (!entry->context) {
-		return NULL;
-	}
+	SETUP_FOR_FC_CHECK(node)
 
 	char *type_decl_filename = look_up_in_decl_map(entry->context->type, DECL_TYPE);
 
 	if (!type_decl_filename) {
-		struct check_result *res = malloc(sizeof(struct check_result));
-		res->severity = 'E';
-		res->check_id = E_ID_FC_TYPE;
-		if (!asprintf(&res->message, "Nonexistent type (%s) listed in fc_entry", entry->context->type)) {
-			free(res);
-			return alloc_internal_error("Failed to generate error message in fc type checking"); 
+		char *message = NULL;
+		if (asprintf(&message, "Nonexistent type (%s) listed in fc_entry", entry->context->type) == -1) {
+			message = NULL;
 		}
-
-		return res;
+		return make_check_result('E', E_ID_FC_TYPE, message);
 	}
 
 	return NULL;

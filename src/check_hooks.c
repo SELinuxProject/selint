@@ -99,6 +99,17 @@ void free_check_result(struct check_result *res) {
 	free(res);
 }
 
+struct check_result *make_check_result(char severity, unsigned int check_id, char *message) {
+	if (!message) {
+		return alloc_internal_error("Failed to generate error message in fc type checking");
+	}
+	struct check_result *res = malloc(sizeof(struct check_result));
+	res->severity = severity;
+	res->check_id = check_id;
+	res->message = message;
+	return res;
+}
+
 void free_checks(struct checks *to_free) {
 
 	if (to_free->if_def_node_checks) {
