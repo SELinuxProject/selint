@@ -10,6 +10,7 @@
 #define BASIC_IF_FILENAME POLICIES_DIR "basic.if"
 #define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"
 #define BLOCKS_TE_FILENAME POLICIES_DIR "blocks.te"
+#define EMPTY_TE_FILENAME POLICIES_DIR "empty.te"
 
 extern FILE * yyin;
 extern int yyparse();
@@ -156,7 +157,7 @@ START_TEST (test_parse_blocks) {
 
 	ast = NULL;
 
-	yyin = fopen(BLOCKS_TE_FILENAME ,"r");
+	yyin = fopen(BLOCKS_TE_FILENAME, "r");
 	ck_assert_int_eq(0, yyparse());
 
 	ck_assert_ptr_nonnull(ast);
@@ -175,6 +176,30 @@ START_TEST (test_parse_blocks) {
 	cur = cur->first_child;
 	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
 	ck_assert_ptr_null(cur->next);
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(yyin);
+}
+END_TEST
+
+START_TEST (test_parse_empty_file) {
+
+	ast = NULL;
+
+	yyin = fopen(EMPTY_TE_FILENAME, "r");
+	ck_assert_int_eq(0, yyparse());
+
+	ck_assert_ptr_nonnull(ast);
+
+	ck_assert_int_eq(NODE_EMPTY, ast->flavor);
+	ck_assert_ptr_null(ast->next);
+	ck_assert_ptr_null(ast->first_child);
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(yyin);
+
 }
 END_TEST
 
@@ -190,6 +215,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_basic_if);
 	tcase_add_test(tc_core, test_parse_uncommon_constructs);
 	tcase_add_test(tc_core, test_parse_blocks);
+	tcase_add_test(tc_core, test_parse_empty_file);
 	suite_add_tcase(s, tc_core);
 
 	return s;
