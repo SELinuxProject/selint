@@ -87,11 +87,7 @@ void display_check_result(struct check_result *res, struct check_data *data) {
 }
 
 struct check_result * alloc_internal_error(char *string) {
-	struct check_result *res = malloc(sizeof(struct check_result));
-	res->severity = 'F';
-	res->check_id = F_ID_INTERNAL;
-	res->message = strdup(string);
-	return res;
+	return make_check_result('F', F_ID_INTERNAL, strdup(string));
 }
 
 void free_check_result(struct check_result *res) {
@@ -101,7 +97,7 @@ void free_check_result(struct check_result *res) {
 
 struct check_result *make_check_result(char severity, unsigned int check_id, char *message) {
 	if (!message) {
-		return alloc_internal_error("Failed to generate error message in fc type checking");
+		return alloc_internal_error("Failed to generate error message");
 	}
 	struct check_result *res = malloc(sizeof(struct check_result));
 	res->severity = severity;

@@ -13,14 +13,12 @@ struct check_result *check_interface_definitions_have_comment(const struct check
 	}
 
 	if (!(node->prev) || node->prev->flavor != NODE_COMMENT) {
-		struct check_result *res = malloc(sizeof(struct check_result));
-		res->severity = 'C';
-		res->check_id = C_IF_COMMENT;
-		if (!asprintf(&res->message, "No comment before interface definition for %s", (char*) node->data)) {
-			free(res);
-			return alloc_internal_error("Failed to generate error message in interface comment checking");
+		char *message = NULL;
+		if (asprintf(&message, "No comment before interface definition for %s", (char*) node->data) == -1) {
+			message = NULL;
 		}
-		return res;
+		return make_check_result('C', C_IF_COMMENT, message);
+
 	} else {
 		return NULL;
 	}
