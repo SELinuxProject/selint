@@ -14,6 +14,16 @@
 struct policy_node * parse_one_file(char *filename);
 
 /****************************************************
+ * Determine whether a specific check is enabled based on the
+ * config file and the command line arguments
+ ****************************************************/
+int is_check_enabled(const char *check_name,
+			struct string_list *config_enabled_checks,
+			struct string_list *config_disabled_checks,
+			struct string_list *cl_enabled_checks,
+			struct string_list *cl_disabled_checks);
+
+/****************************************************
  * Allocate and populate a checks structure with the list of checks enabled for
  * this run.  Caller is responsible for freeing
  * level - The severity level to load checks at and above

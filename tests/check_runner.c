@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "../src/string_list.h"
+#include "../src/runner.h"
 
 START_TEST (test_is_check_enabled) {
 	struct string_list *con_e = calloc(1, sizeof(struct string_list));
