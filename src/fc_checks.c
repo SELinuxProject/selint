@@ -5,39 +5,6 @@
 #include "maps.h"
 #include "tree.h"
 
-struct check_result * check_file_context_types_exist(const struct check_data *check_data, const struct policy_node *node) {
-
-	if (node->flavor != NODE_FC_ENTRY) {
-		return alloc_internal_error("File context type check called on non file context entry");
-	} 
-
-	struct fc_entry *entry = (struct fc_entry *)node->data;
-
-	if (!entry) {
-		return alloc_internal_error("Policy node data field is NULL");
-	}
-
-	if (!entry->context) {
-		return NULL;
-	}
-
-	char *type_decl_filename = look_up_in_decl_map(entry->context->type, DECL_TYPE);
-
-	if (!type_decl_filename) {
-		struct check_result *res = malloc(sizeof(struct check_result));
-		res->severity = 'E';
-		res->check_id = E_ID_FC_TYPE;
-		if (!asprintf(&res->message, "Nonexistent type (%s) listed in fc_entry", entry->context->type)) {
-			free(res);
-			return alloc_internal_error("Failed to generate error message in fc type checking"); 
-		}
-
-		return res;
-	}
-
-	return NULL;
-}
-
 struct check_result *check_file_context_types_in_mod(const struct check_data *check_data, const struct policy_node *node) {
 
 	if (node->flavor != NODE_FC_ENTRY) {
@@ -84,41 +51,25 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *ch
 	return NULL;
 }
 
-struct check_result *check_file_context_roles(const struct check_data *data, const struct policy_node *node) {
-	
-	if (node->flavor != NODE_FC_ENTRY) {
-		return alloc_internal_error("File context role check called on non file context entry");
-	} 
+struct check_result *check_file_context_error_nodes(const struct check_data *data, const struct policy_node *node) {
 
-	struct fc_entry *entry = (struct fc_entry *)node->data;
-
-	if (!entry) {
-		return alloc_internal_error("Policy node data field is NULL");
-	}
-
-	if (!entry->context) {
+	if (node->flavor != NODE_ERROR) {
 		return NULL;
 	}
 
-	char *role_decl_filename = look_up_in_decl_map(entry->context->role, DECL_ROLE);
+	struct check_result *res = malloc(sizeof(struct check_result));
 
-	if (!role_decl_filename) {
-		struct check_result *res = malloc(sizeof(struct check_result));
-		res->severity = 'E';
-		res->check_id = E_ID_FC_ROLE;
-		if (!asprintf(&res->message, "Nonexistent role (%s) listed in fc_entry", entry->context->role)) {
-			free(res);
-			return alloc_internal_error("Failed to generate error message in fc role checking"); 
-		}
-
-		return res;
+	res->severity = 'E';
+	res->check_id = E_ID_FC_ERROR;
+	if (!asprintf(&res->message, "Bad file context format")) {
+		free(res);
+		return alloc_internal_error("Failed to generate error message in fc error handling");
 	}
-
-	return NULL;
+	return res;
 }
 
 struct check_result *check_file_context_users(const struct check_data *data, const struct policy_node *node) {
-	
+
 	if (node->flavor != NODE_FC_ENTRY) {
 		return alloc_internal_error("File context user check called on non file context entry");
 	} 
@@ -150,19 +101,67 @@ struct check_result *check_file_context_users(const struct check_data *data, con
 	return NULL;
 }
 
-struct check_result *check_file_context_error_nodes(const struct check_data *data, const struct policy_node *node) {
+struct check_result *check_file_context_roles(const struct check_data *data, const struct policy_node *node) {
+	
+	if (node->flavor != NODE_FC_ENTRY) {
+		return alloc_internal_error("File context role check called on non file context entry");
+	} 
 
-	if (node->flavor != NODE_ERROR) {
+	struct fc_entry *entry = (struct fc_entry *)node->data;
+
+	if (!entry) {
+		return alloc_internal_error("Policy node data field is NULL");
+	}
+
+	if (!entry->context) {
+		return NULL;	}
+
+	char *role_decl_filename = look_up_in_decl_map(entry->context->role, DECL_ROLE);
+
+	if (!role_decl_filename) {
+		struct check_result *res = malloc(sizeof(struct check_result));
+		res->severity = 'E';
+		res->check_id = E_ID_FC_ROLE;
+		if (!asprintf(&res->message, "Nonexistent role (%s) listed in fc_entry", entry->context->role)) {
+	free(res);
+			return alloc_internal_error("Failed to generate error message in fc role checking"); 
+		}
+
+		return res;
+	}
+
+	return NULL;
+}
+
+struct check_result * check_file_context_types_exist(const struct check_data *check_data, const struct policy_node *node) {
+
+	if (node->flavor != NODE_FC_ENTRY) {
+		return alloc_internal_error("File context type check called on non file context entry");
+	} 
+
+	struct fc_entry *entry = (struct fc_entry *)node->data;
+
+	if (!entry) {
+		return alloc_internal_error("Policy node data field is NULL");
+	}
+
+	if (!entry->context) {
 		return NULL;
 	}
 
-	struct check_result *res = malloc(sizeof(struct check_result));
+	char *type_decl_filename = look_up_in_decl_map(entry->context->type, DECL_TYPE);
 
-	res->severity = 'E';
-	res->check_id = E_ID_FC_ERROR;
-	if (!asprintf(&res->message, "Bad file context format")) {
-		free(res);
-		return alloc_internal_error("Failed to generate error message in fc error handling");
+	if (!type_decl_filename) {
+		struct check_result *res = malloc(sizeof(struct check_result));
+		res->severity = 'E';
+		res->check_id = E_ID_FC_TYPE;
+		if (!asprintf(&res->message, "Nonexistent type (%s) listed in fc_entry", entry->context->type)) {
+			free(res);
+			return alloc_internal_error("Failed to generate error message in fc type checking"); 
+		}
+
+		return res;
 	}
-	return res;
+
+	return NULL;
 }
