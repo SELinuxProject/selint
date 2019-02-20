@@ -43,6 +43,14 @@ int main(int argc, char **argv) {
 	char *config_filename = NULL;
 	int source_flag = 0;
 
+	struct string_list *config_disabled_checks = NULL;
+	struct string_list *config_enabled_checks = NULL;
+	struct string_list *cl_disabled_checks = NULL;
+	struct string_list *cl_enabled_checks = NULL;
+
+	struct string_list *cl_e_cursor = NULL;
+	struct string_list *cl_d_cursor = NULL;
+
 	while (1) {
 
 		static struct option long_options[] = 
@@ -81,12 +89,26 @@ int main(int argc, char **argv) {
 
 			case 'd':
 				// Disable a given check
-				printf("Flag d with value %s\n", optarg);
+				if (cl_d_cursor) {
+					cl_d_cursor->next = calloc(1, sizeof(struct string_list));
+					cl_d_cursor = cl_d_cursor->next;
+				} else {
+					cl_d_cursor = calloc(1, sizeof(struct string_list));
+					cl_disabled_checks = cl_d_cursor;
+				}
+				cl_d_cursor->string = strdup(optarg);
 				break;
 
 			case 'e':
 				// Enable a given check
-				printf("Flag e with value %s\n", optarg);
+				if (cl_e_cursor) {
+					cl_e_cursor->next = calloc(1, sizeof(struct string_list));
+					cl_e_cursor = cl_e_cursor->next;
+				} else {
+					cl_e_cursor = calloc(1, sizeof(struct string_list));
+					cl_enabled_checks = cl_e_cursor;
+				}
+				cl_e_cursor->string = strdup(optarg);
 				break;
 
 			case 'h':
@@ -134,8 +156,6 @@ int main(int argc, char **argv) {
 	}
 
 	print_if_verbose("Verbose mode enabled\n");
-	struct string_list *config_disabled_checks = NULL;
-	struct string_list *config_enabled_checks = NULL;
 	if (config_filename) {
 		char cfg_severity;
 		parse_config(config_filename, source_flag, &cfg_severity, &config_disabled_checks, &config_enabled_checks);
@@ -200,7 +220,7 @@ int main(int argc, char **argv) {
 		cur = cur->next;
 	}
 
-	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, NULL, NULL);
+	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks);
 	if (!ck) {
 		printf("Failed to register checks (bad configuration)\n");
 		return -1;
@@ -222,6 +242,12 @@ int main(int argc, char **argv) {
 	}
 	if (config_disabled_checks) {
 		free_string_list(config_disabled_checks);
+	}
+	if (cl_enabled_checks) {
+		free_string_list(cl_enabled_checks);
+	}
+	if (cl_disabled_checks) {
+		free_string_list(cl_disabled_checks);
 	}
 
 	free_checks(ck);
