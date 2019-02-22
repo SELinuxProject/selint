@@ -49,7 +49,7 @@ enum selint_error insert_comment(struct policy_node **cur, int lineno);
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, int lineno); // TODO: Some declarations take things like attribute lists
+enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, struct string_list *attrs, int lineno);
 
 /**********************************
  * insert_aliases

@@ -57,8 +57,7 @@ enum selint_error insert_comment(struct policy_node **cur, int lineno) {
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, int lineno) {
-	//TODO: Handle attributes
+enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, struct string_list *attrs, int lineno) {
 
 	if (!is_in_require(*cur)) {
 		// In a require block, the objects arent being declared
@@ -92,6 +91,7 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
 
 	data->flavor = flavor;
 	data->name = strdup(name);
+	data->attrs = attrs;
 
 	enum selint_error ret = insert_policy_node_next(*cur, NODE_DECL, data, lineno);
 

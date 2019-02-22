@@ -238,14 +238,14 @@ declaration:
 	;
 
 type_declaration:
-	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); }
+	TYPE STRING SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, NULL, yylineno); free($2); }
 	|
-	TYPE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); free_string_list($4); } // TODO: attrs
+	TYPE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, $4, yylineno); free($2); }
 	|
-	TYPE STRING ALIAS string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
+	TYPE STRING ALIAS string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, NULL, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
 	|
 	TYPE STRING ALIAS STRING COMMA comma_string_list SEMICOLON {
-				insert_declaration(&cur, DECL_TYPE, $2, yylineno);
+				insert_declaration(&cur, DECL_TYPE, $2, NULL, yylineno);
 				free($2);
 				struct string_list *tmp = calloc(1, sizeof(struct string_list));
 				tmp->string = $4;
@@ -258,11 +258,11 @@ attribute_declaration:
 	;
 
 role_declaration:
-	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); }
+	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, NULL, yylineno); free($2); }
 	|
-	ROLE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
+	ROLE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
 	|
-	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, yylineno); free($2); free_string_list($4); }
+	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, NULL, yylineno); free($2); free_string_list($4); }
 	; 
 
 type_alias:

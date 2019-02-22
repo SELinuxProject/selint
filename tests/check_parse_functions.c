@@ -66,7 +66,9 @@ START_TEST (test_insert_declaration) {
 
 	set_current_module_name("test");
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, DECL_TYPE, "foo_t", 1234));
+	struct string_list *attrs = calloc(1, sizeof(struct string_list));
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_declaration(&cur, DECL_TYPE, "foo_t", attrs, 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_null(cur->parent);
@@ -78,6 +80,7 @@ START_TEST (test_insert_declaration) {
 	ck_assert_ptr_nonnull((struct declation *) cur->data);
 	ck_assert_int_eq(((struct declaration_data *)cur->data)->flavor, DECL_TYPE);
 	ck_assert_str_eq(((struct declaration_data *)cur->data)->name, "foo_t");
+	ck_assert_ptr_eq(((struct declaration_data *)cur->data)->attrs, attrs);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(prev));
 
