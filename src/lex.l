@@ -45,6 +45,7 @@ genfscon { return GENFSCON; }
 sid { return SID; }
 portcon { return PORTCON; }
 netifcon { return NETIFCON; }
+nodecon { return NODECON; }
 fs_use_trans { return FS_USE_TRANS; }
 fs_use_xattr { return FS_USE_XATTR; }
 fs_use_task { return FS_USE_TASK; }
@@ -54,7 +55,7 @@ gen_context { return GEN_CONTEXT; }
 permissive { return PERMISSIVE; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
-s[0-9]+(:c[0-9]+)? { yylval.string = strdup(yytext); return MLS_LEVEL; }
+s[0-9]+(\.s[0-9]+)?(:c?[0-9]+(.c?[0-9]+)?)? { yylval.string = strdup(yytext); return MLS_LEVEL; }
 [0-9]+\.[0-9]+(\.[0-9]+)? { yylval.string = strdup(yytext); return VERSION_NO; }
 [0-9]+ { yylval.string = strdup(yytext); return NUMBER; }
 [a-zA-Z\$\/][a-zA-Z0-9_\$\*\.\/\-]* { yylval.string = strdup(yytext); return STRING; }

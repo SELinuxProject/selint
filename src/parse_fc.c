@@ -194,10 +194,15 @@ struct policy_node * parse_fc_file(char *filename) {
 		// Skip over m4 constructs
 		if (strncmp(line, "ifdef", 5) == 0 ||
 			strncmp(line, "ifndef", 6) == 0 ||
-			strncmp(line, "')", 2) == 0 ) {
+			strncmp(line, "')", 2) == 0 ||
+			strncmp(line, "', `", 4) == 0 || 
+			strncmp(line, "',`", 3) == 0 ) {
 
 			continue;
 		}
+
+		// TODO: Right now whitespace parses as an error
+		// We may want to detect it and report a lower severity issue
 
 		struct fc_entry *entry = parse_fc_line(line);
 		enum node_flavor flavor;

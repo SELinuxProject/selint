@@ -67,6 +67,7 @@
 %token SID;
 %token PORTCON;
 %token NETIFCON;
+%token NODECON;
 %token FS_USE_TRANS;
 %token FS_USE_XATTR;
 %token FS_USE_TASK;
@@ -204,6 +205,8 @@ line:
 	portcon
 	|
 	netifcon
+	|
+	nodecon
 	|
 	fs_use
 	|
@@ -388,11 +391,19 @@ optional_open:
 	;
 
 require:
-	GEN_REQUIRE OPEN_PAREN BACKTICK { begin_gen_require(&cur, yylineno); }
-	lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
+	gen_require_begin
+	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
+	|
+	// TODO: This is bad and should be checked
+	gen_require_begin
+	line CLOSE_PAREN { end_gen_require(&cur); }
 	|
 	REQUIRE OPEN_CURLY { begin_require(&cur, yylineno); }
 	lines CLOSE_CURLY { end_require(&cur); }
+	;
+
+gen_require_begin:
+	GEN_REQUIRE OPEN_PAREN { begin_gen_require(&cur, yylineno); }
 	;
 
 m4_call:
@@ -557,6 +568,30 @@ netifcon:
 	NETIFCON STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); }
 	;
 
+nodecon:
+	NODECON two_ip_addrs GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	;
+
+two_ip_addrs:
+	NUM_STRING NUM_STRING
+	|
+	ipv6
+	;
+
+ipv6:
+	ipv6_item
+	|
+	ipv6_item ipv6
+	;
+
+ipv6_item:
+	STRING { free($1); }
+	|
+	COLON
+	|
+	NUMBER
+	;
+
 fs_use:
 	FS_USE_TRANS STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON { free($2); }
 	|
@@ -581,6 +616,11 @@ context:
 	STRING COLON STRING COLON STRING COLON string_list_or_mls COLON string_list_or_mls { free($1); free($3); free($5); free_string_list($7); free_string_list($9); }
 	|
 	STRING COLON STRING COLON STRING COMMA string_list_or_mls { free($1); free($3); free($5); free_string_list($7); }
+	|
+	STRING COLON STRING COLON STRING COMMA string_list_or_mls COMMA string_list_or_mls { free($1); free($3); free($5); free_string_list($7); free_string_list($9); }
+	|
+	// because m4
+	STRING COLON STRING COLON STRING COMMA string_list_or_mls COMMA { free($1); free($3); free($5); free_string_list($7); }
 	;
 
 permissive:
