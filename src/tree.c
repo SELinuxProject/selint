@@ -99,6 +99,64 @@ char *get_name_if_in_template(struct policy_node *cur) {
 	return NULL;
 }
 
+struct string_list * get_types_in_node(struct policy_node *node) {
+
+	struct string_list *ret = NULL;
+	struct string_list *cur = NULL;
+	struct av_rule_data *av_data;
+	struct type_transition_data *tt_data;
+	struct declaration_data *d_data;
+
+	switch (node->flavor) {
+		case NODE_AV_RULE:
+			av_data = (struct av_rule_data *)node->data;
+			cur = ret = copy_string_list(av_data->sources);
+			while (cur && cur->next) {
+				cur = cur->next;
+			}
+			cur->next = copy_string_list(av_data->targets);
+			break;
+
+		case NODE_TT_RULE:
+			tt_data = (struct type_transition_data *)node->data;
+			cur = ret = copy_string_list(tt_data->sources);
+			while (cur && cur->next) {
+				cur = cur->next;
+			}
+			cur->next = copy_string_list(tt_data->targets);
+			while (cur && cur->next) {
+				cur = cur->next;
+			}
+			cur->next = calloc(1,sizeof(struct string_list));
+			cur->next->string = strdup(tt_data->default_type);
+			break;
+
+		case NODE_DECL:
+			d_data = (struct declaration_data *)node->data;
+			ret = calloc(1, sizeof(struct string_list));
+			ret->string = strdup(d_data->name);
+			ret->next = copy_string_list(d_data->attrs);
+			break;
+
+/*
+		NODE_M4_CALL,
+		NODE_OPTIONAL_POLICY,
+		NODE_OPTIONAL_ELSE,
+		NODE_M4_ARG,
+		NODE_START_BLOCK,
+		NODE_IF_DEF,
+		NODE_TEMP_DEF,
+		NODE_IF_CALL,
+		NODE_REQUIRE,
+		NODE_GEN_REQ,
+*/
+		default:
+			break;
+	}
+	return ret;
+
+}
+
 enum selint_error free_policy_node(struct policy_node *to_free) {
 	if (to_free == NULL) {
 		return SELINT_BAD_ARG;

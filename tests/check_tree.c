@@ -119,6 +119,113 @@ START_TEST (test_insert_policy_node_next) {
 }
 END_TEST
 
+START_TEST (test_get_types_in_node_av) {
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_AV_RULE;
+
+	node->data = make_example_av_rule();
+
+	struct string_list *out = get_types_in_node(node);
+
+	struct string_list *cur = out;
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_1);
+
+	cur = cur->next; 
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_2);
+
+	cur = cur->next; 
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_3);
+
+	ck_assert_ptr_null(cur->next);
+
+	free_string_list(out);
+	free_policy_node(node);
+}
+END_TEST
+
+START_TEST (test_get_types_in_node_tt) {
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_TT_RULE;
+
+	node->data = calloc(1, sizeof(struct type_transition_data));
+
+	struct type_transition_data *tt_data = (struct type_transition_data *)node->data;
+
+	tt_data->sources = calloc(1, sizeof(struct string_list));
+	tt_data->sources->string = strdup(EXAMPLE_TYPE_3);
+
+	tt_data->targets = calloc(1, sizeof(struct string_list));
+	tt_data->targets->string = strdup(EXAMPLE_TYPE_2);
+
+	tt_data->default_type = strdup(EXAMPLE_TYPE_1);
+
+	struct string_list *out = get_types_in_node(node);
+
+	struct string_list *cur = out;
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_3);
+
+	cur = cur->next; 
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_2);
+
+	cur = cur->next; 
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_1);
+
+	ck_assert_ptr_null(cur->next);
+
+	free_string_list(out);
+	free_policy_node(node);
+}
+END_TEST
+
+START_TEST (test_get_types_in_node_dd) {
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_DECL;
+
+	node->data = calloc(1, sizeof(struct declaration_data));
+
+	struct declaration_data *d_data = (struct declaration_data *)node->data;
+
+	d_data->name = strdup(EXAMPLE_TYPE_2);
+
+	struct string_list *out = get_types_in_node(node);
+
+	ck_assert_ptr_nonnull(out);
+
+	ck_assert_str_eq(out->string, EXAMPLE_TYPE_2);
+
+	ck_assert_ptr_null(out->next);
+
+	free_string_list(out);
+	free_policy_node(node);
+}
+END_TEST
+
+START_TEST (test_get_types_in_node_no_types) {
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_ERROR;
+
+	ck_assert_ptr_null(get_types_in_node(node));
+
+	free_policy_node(node);
+}
+END_TEST
+
 Suite *tree_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -129,6 +236,10 @@ Suite *tree_suite(void) {
 
 	tcase_add_test(tc_core, test_insert_policy_node_child);
 	tcase_add_test(tc_core, test_insert_policy_node_next);
+	tcase_add_test(tc_core, test_get_types_in_node_av);
+	tcase_add_test(tc_core, test_get_types_in_node_tt);
+	tcase_add_test(tc_core, test_get_types_in_node_dd);
+	tcase_add_test(tc_core, test_get_types_in_node_no_types);
 	suite_add_tcase(s, tc_core);
 
 	return s;

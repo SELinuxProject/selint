@@ -9,6 +9,9 @@ struct string_list {
 
 int str_in_sl(const char *str, struct string_list *sl);
 
+// Return an identical copy of sl
+struct string_list *copy_string_list(struct string_list *sl);
+
 void free_string_list(struct string_list *list);
 
 #endif

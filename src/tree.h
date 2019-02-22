@@ -113,6 +113,8 @@ int is_template_call(struct policy_node *node);
 
 char *get_name_if_in_template(struct policy_node *cur);
 
+struct string_list * get_types_in_node(struct policy_node *node);
+
 enum selint_error free_policy_node(struct policy_node *to_free);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
