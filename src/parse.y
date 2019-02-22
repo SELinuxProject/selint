@@ -573,7 +573,7 @@ nodecon:
 	;
 
 two_ip_addrs:
-	NUM_STRING NUM_STRING
+	NUM_STRING NUM_STRING { free($1); free($2); }
 	|
 	ipv6
 	;
@@ -589,7 +589,7 @@ ipv6_item:
 	|
 	COLON
 	|
-	NUMBER
+	NUMBER { free($1); }
 	;
 
 fs_use:
