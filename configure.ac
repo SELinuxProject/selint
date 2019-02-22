@@ -46,6 +46,14 @@ AC_ARG_ENABLE([gcov],
 
 AM_CONDITIONAL([COND_GCOV],[ test "x$enable_gcov" "=" "xyes" ])
 
+AC_CHECK_PROGS([HELP2MAN], [help2man])
+if ! test -z "$HELP2MAN"
+then
+AC_SUBST(MANPAGES, selint.1)
+HAVE_HELP2MAN=true
+fi
+AM_CONDITIONAL([HAVE_HELP2MAN], [test "x$HAVE_HELP2MAN" "=" "xtrue"])
+
 #AC_CONFIG_FILES([Makefile])
-AC_OUTPUT(Makefile src/Makefile tests/Makefile)
+AC_OUTPUT(Makefile src/Makefile tests/Makefile man/Makefile)
 
