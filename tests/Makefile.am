@@ -5,14 +5,17 @@ if COND_GCOV
 EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
 endif
 
+TEST_UTILS_HEADS=test_utils.h $(top_builddir)/src/tree.h $(top_builddir)/src/string_list.h
+TEST_UTILS_OBJS=test_utils.o $(top_builddir)/src/tree.o $(top_builddir)/src/string_list.o
+
 UTIL_HEADS=$(top_builddir)/src/util.h
 UTIL_OBJS=$(top_builddir)/src/util.o
 STRING_LIST_HEADS=$(top_builddir)/src/string_list.h
 STRING_LIST_OBJS=$(top_builddir)/src/string_list.o
 SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${UTIL_HEADS} ${STRING_LIST_HEADS}
 SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${UTIL_OBJS} ${STRING_LIST_OBJS}
-TREE_HEADS=$(top_builddir)/src/tree.h $(top_builddir)/src/string_list.h
-TREE_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/maps.o $(top_builddir)/src/string_list.o
+TREE_HEADS=${TEST_UTILS_HEADS}
+TREE_OBJS=${TEST_UTILS_OBJS} $(top_builddir)/src/maps.o
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
 FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}
 MAPS_HEADS=$(top_builddir)/src/maps.h ${TREE_HEADS}
