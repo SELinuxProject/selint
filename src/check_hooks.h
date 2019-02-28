@@ -12,6 +12,10 @@ enum style_ids {
 	S_ID_FC_TYPE = 2
 };
 
+enum warn_ids {
+	W_ID_FC_REGEX = 4
+};
+
 enum error_ids {
 	E_ID_FC_ERROR = 2,
 	E_ID_FC_USER = 3,

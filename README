@@ -116,6 +116,7 @@ CHECK IDS
 	W-001: Type referenced without explicit declaration
 	W-002: Type, attribute or role used but not listed in require block in interface
 	W-003: Unused type, attribute or role listed in require block
+	W-004: Potentially unescaped regex character in file contexts paths
 
 	E-001: Interface call from module not in optional_policy block
 	E-002: Bad file context format
@@ -174,6 +175,10 @@ CHECK EXAMPLES
 				type foo_conf_t;
 			')
 		')
+
+	W-004:
+
+		/path/with/unescaped.dot    -- gen_context(system_u:object_r:foo_exec_t,s0)
 
 	Error:
 

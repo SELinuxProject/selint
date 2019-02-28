@@ -271,6 +271,44 @@ START_TEST (test_fc_checks_handle_null_context_fields) {
 }
 END_TEST
 
+START_TEST (test_check_file_context_regex) {
+	struct check_data *data = malloc(sizeof(struct check_data));
+
+	data->mod_name = "foo";
+	data->flavor = FILE_FC_FILE;
+
+	struct policy_node *node = malloc(sizeof(struct policy_node));
+	memset(node, 0, sizeof(struct policy_node));
+	node->flavor = NODE_FC_ENTRY;
+
+	struct fc_entry *entry = malloc(sizeof(struct fc_entry));
+	memset(entry, 0, sizeof(struct fc_entry));
+	entry->context = malloc(sizeof(struct sel_context));
+	memset(entry->context, 0, sizeof(struct sel_context));
+	entry->path = strdup("path.with.unescpaed.dots");
+
+	node->data = entry;
+
+	struct check_result *res = check_file_context_regex(data, node);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'W');
+	ck_assert_int_eq(res->check_id, W_ID_FC_REGEX);
+	ck_assert_ptr_nonnull(res->message);
+
+	free_check_result(res);
+
+	free(entry->path);
+	entry->path = strdup("path\\.with\\.escpaed\\.dots");
+
+	res = check_file_context_regex(data, node);
+	ck_assert_ptr_null(res);
+
+	free(data);
+	free_policy_node(node);
+}
+END_TEST
+
 Suite *fc_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -284,6 +322,7 @@ Suite *fc_checks_suite(void) {
 	tcase_add_test(tc_core, test_check_file_context_roles);
 	tcase_add_test(tc_core, test_check_file_context_users);
 	tcase_add_test(tc_core, test_check_file_context_error_nodes);
+	tcase_add_test(tc_core, test_check_file_context_regex);
 	tcase_add_test(tc_core, test_fc_checks_handle_null_context_fields);
 	suite_add_tcase(s, tc_core);
 

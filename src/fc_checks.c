@@ -39,6 +39,52 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *ch
 	return NULL;
 }
 
+struct check_result *check_file_context_regex(const struct check_data *data, const struct policy_node *node) {
+
+	SETUP_FOR_FC_CHECK(node)
+
+	char *path = entry->path;
+	char cur = *path;
+	char prev = '\0';
+	int error = 0;
+
+	while (*path != '\0') {
+		char next = *(path + 1);
+
+		switch (cur) {
+			case '.':
+				// require that periods are either escaped or are one of ".*", ".+", or ".?"
+				// rarely are periods actually used to just mean one of any character
+				if (prev != '\\' && next != '*' && next != '+' && next != '?') {
+					error = 1;
+				}
+				break;
+			case '+':
+			case '*':
+				// require that pluses and asterisks are either escaped or look
+				// something kindof like ".*", "(...)*", or "[...]*"
+				if (prev != '\\' && prev != '.' && prev != ']' && prev != ')') {
+					error = 1;
+				}
+				break;
+			default:
+				break;
+		}
+
+		if (error) {
+			return make_check_result('W', W_ID_FC_REGEX,
+				"File context path contains a potentially unescaped regex character '%c' at position %d: %s",
+				cur, (int)(path - entry->path + 1), entry->path);
+		}
+
+		prev = cur;
+		cur = next;
+		path++;
+	}
+
+	return NULL;
+}
+
 struct check_result *check_file_context_error_nodes(const struct check_data *data, const struct policy_node *node) {
 
 	if (node->flavor != NODE_ERROR) {

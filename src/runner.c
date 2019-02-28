@@ -83,6 +83,9 @@ struct checks * register_checks(char level,
 				add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
 			}
 		case 'W':
+			if (CHECK_ENABLED("W-004")) {
+				add_check(NODE_FC_ENTRY, ck, check_file_context_regex);
+			}
 		case 'E':
 			if (CHECK_ENABLED("E-002")) {
 				add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
