@@ -1,6 +1,4 @@
-#define _GNU_SOURCE
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "if_checks.h"
@@ -13,12 +11,7 @@ struct check_result *check_interface_definitions_have_comment(const struct check
 	}
 
 	if (!(node->prev) || node->prev->flavor != NODE_COMMENT) {
-		char *message = NULL;
-		if (asprintf(&message, "No comment before interface definition for %s", (char*) node->data) == -1) {
-			message = NULL;
-		}
-		return make_check_result('C', C_IF_COMMENT, message);
-
+		return make_check_result('C', C_IF_COMMENT, "No comment before interface definition for %s", (char*) node->data);
 	} else {
 		return NULL;
 	}

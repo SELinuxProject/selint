@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -95,14 +97,22 @@ void free_check_result(struct check_result *res) {
 	free(res);
 }
 
-struct check_result *make_check_result(char severity, unsigned int check_id, char *message) {
-	if (!message) {
-		return alloc_internal_error("Failed to generate error message");
-	}
+__attribute__ ((format (printf, 3, 4))) struct check_result *make_check_result(char severity, unsigned int check_id, char *format, ...) {
+
 	struct check_result *res = malloc(sizeof(struct check_result));
 	res->severity = severity;
 	res->check_id = check_id;
-	res->message = message;
+
+	va_list args;
+	va_start(args, format);
+
+	if (vasprintf(&res->message, format, args) == -1) {
+		free(res);
+		res = alloc_internal_error("Failed to generate check result message");
+	}
+
+	va_end(args);
+
 	return res;
 }
 

@@ -680,11 +680,8 @@ if_keyword:
 %%
 extern int yylineno;
 void yyerror(char* s) {
-	struct check_result *res = malloc(sizeof(struct check_result));
+	struct check_result *res = make_check_result('F', F_ID_POLICY_SYNTAX, s);
 	res->lineno = yylineno;
-	res->severity = 'F';
-	res->check_id = F_ID_POLICY_SYNTAX;
-	res->message = strdup(s);
 
 	struct check_data data;
 	data.mod_name = get_current_module_name();

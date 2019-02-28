@@ -1,6 +1,3 @@
-#define _GNU_SOURCE
-#include <stdio.h>
-
 #include "fc_checks.h"
 #include "maps.h"
 #include "tree.h"
@@ -36,11 +33,7 @@ struct check_result *check_file_context_types_in_mod(const struct check_data *ch
 	}
 
 	if (strcmp(check_data->mod_name, type_decl_mod_name)) {
-		char *message = NULL;
-		if (asprintf(&message, "Type %s is declared in module %s, but used in file context here.", entry->context->type, type_decl_mod_name) == -1) {
-			message = NULL;
-		}
-		return make_check_result('S', S_ID_FC_TYPE, message);
+		return make_check_result('S', S_ID_FC_TYPE, "Type %s is declared in module %s, but used in file context here.", entry->context->type, type_decl_mod_name);
 	}
 
 	return NULL;
@@ -52,11 +45,7 @@ struct check_result *check_file_context_error_nodes(const struct check_data *dat
 		return NULL;
 	}
 
-	char *message = NULL;
-	if (asprintf(&message, "Bad file context format") == -1) {
-		message = NULL;
-	}
-	return make_check_result('E', E_ID_FC_ERROR, message);
+	return make_check_result('E', E_ID_FC_ERROR, "Bad file context format");
 }
 
 struct check_result *check_file_context_users(const struct check_data *data, const struct policy_node *node) {
@@ -66,11 +55,7 @@ struct check_result *check_file_context_users(const struct check_data *data, con
 	char *user_decl_filename = look_up_in_decl_map(entry->context->user, DECL_USER);
 
 	if (!user_decl_filename) {
-		char *message = NULL;
-		if (asprintf(&message, "Nonexistent user (%s) listed in fc_entry", entry->context->user) == -1) {
-			message = NULL;
-		}
-		return make_check_result('E', E_ID_FC_USER, message);
+		return make_check_result('E', E_ID_FC_USER, "Nonexistent user (%s) listed in fc_entry", entry->context->user);
 	}
 
 	return NULL;
@@ -83,12 +68,7 @@ struct check_result *check_file_context_roles(const struct check_data *data, con
 	char *role_decl_filename = look_up_in_decl_map(entry->context->role, DECL_ROLE);
 
 	if (!role_decl_filename) {
-		char *message = NULL;
-		if (asprintf(&message, "Nonexistent role (%s) listed in fc_entry", entry->context->role) == -1) {
-			message = NULL;
-		}
-
-		return make_check_result('E', E_ID_FC_ROLE, message);
+		return make_check_result('E', E_ID_FC_ROLE, "Nonexistent role (%s) listed in fc_entry", entry->context->role);
 	}
 
 	return NULL;
@@ -101,11 +81,7 @@ struct check_result * check_file_context_types_exist(const struct check_data *ch
 	char *type_decl_filename = look_up_in_decl_map(entry->context->type, DECL_TYPE);
 
 	if (!type_decl_filename) {
-		char *message = NULL;
-		if (asprintf(&message, "Nonexistent type (%s) listed in fc_entry", entry->context->type) == -1) {
-			message = NULL;
-		}
-		return make_check_result('E', E_ID_FC_TYPE, message);
+		return make_check_result('E', E_ID_FC_TYPE, "Nonexistent type (%s) listed in fc_entry", entry->context->type);
 	}
 
 	return NULL;

@@ -93,7 +93,14 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct c
  *********************************************/
 void display_check_result(struct check_result *res, struct check_data *data);
 
-struct check_result *make_check_result(char severity, unsigned int check_id, char *message);
+/*********************************************
+ * Creates a check_result, using a printf style format string and optional
+ * arguments to generate a message
+ * severity - The severity of the check result
+ * check_id - The check identifier
+ * format - A printf style format string
+ *********************************************/
+struct check_result *make_check_result(char severity, unsigned int check_id, char *format, ...);
 
 struct check_result *alloc_internal_error(char *string);
 
