@@ -54,6 +54,7 @@
 %token ROLE_TRANSITION;
 %token OPTIONAL_POLICY;
 %token GEN_REQUIRE;
+%token GEN_TUNABLE;
 %token REQUIRE;
 %token TUNABLE_POLICY;
 %token IFELSE;
@@ -411,6 +412,8 @@ m4_call:
 	|
 	tunable
 	|
+	gen_tunable
+	|
 	ifelse
 	|
 	refpolicywarn
@@ -427,6 +430,12 @@ if_or_ifn:
 
 tunable:
 	TUNABLE_POLICY OPEN_PAREN BACKTICK condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN
+	;
+
+gen_tunable:
+	GEN_TUNABLE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA STRING CLOSE_PAREN
+	|
+	GEN_TUNABLE OPEN_PAREN STRING COMMA STRING CLOSE_PAREN
 	;
 
 ifelse:
