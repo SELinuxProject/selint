@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
 	char severity = '\0';
 	char *config_filename = NULL;
 	int source_flag = 0;
+	int recursive_scan = 0;
 
 	struct string_list *config_disabled_checks = NULL;
 	struct string_list *config_enabled_checks = NULL;
@@ -129,7 +130,7 @@ int main(int argc, char **argv) {
 
 			case 'r':
 				// Scan recursively for files to parse
-				printf("recursive\n");
+				recursive_scan = 1;
 				break;
 
 			case 's':
@@ -207,12 +208,16 @@ int main(int argc, char **argv) {
 			file_list_push_back(fc_files, make_policy_file(file->fts_path, NULL));
 		} else {
 			print_if_verbose("Skipping %s which is not a policy file\n", file->fts_path);
+			if (!recursive_scan) {
+				fts_set(ftsp, file, FTS_SKIP);
+			}
 		}
 
 		file = fts_read(ftsp);
 	}
 
 	fts_close(ftsp);
+
 	free(paths);
 
 	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks);
