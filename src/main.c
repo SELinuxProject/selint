@@ -215,11 +215,6 @@ int main(int argc, char **argv) {
 	fts_close(ftsp);
 	free(paths);
 
-	struct policy_file_node *cur = te_files->head;
-	while (cur) {
-		cur = cur->next;
-	}
-
 	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks);
 	if (!ck) {
 		printf("Failed to register checks (bad configuration)\n");
