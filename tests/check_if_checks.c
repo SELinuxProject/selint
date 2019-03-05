@@ -1,6 +1,8 @@
 #include <check.h>
 #include <stdlib.h>
 
+#include "test_utils.h"
+
 #include "../src/if_checks.h"
 #include "../src/check_hooks.h"
 
@@ -26,10 +28,68 @@ START_TEST (test_check_interface_defs_have_comment) {
 	res = check_interface_definitions_have_comment(NULL, head->next);
 	ck_assert_ptr_nonnull(res);
 	ck_assert_int_eq('C', res->severity);
-	ck_assert_int_eq(C_IF_COMMENT, res->check_id);
+	ck_assert_int_eq(C_ID_IF_COMMENT, res->check_id);
 
 	free_check_result(res);
 	free_policy_node(head);
+}
+END_TEST
+
+START_TEST(test_check_type_used_but_not_required_in_if) {
+
+	struct policy_node *head = calloc(1, sizeof(struct policy_node));
+	head->flavor = NODE_IF_DEF;
+
+	struct policy_node *cur = head->first_child = calloc(1, sizeof(struct policy_node));
+
+	cur->flavor = NODE_GEN_REQ;
+	cur->parent = head;
+
+	cur->first_child = calloc(1, sizeof(struct policy_node));
+	cur->first_child->parent = cur;
+	cur = cur->first_child;
+
+	cur->flavor = NODE_START_BLOCK;
+
+	cur->next = calloc(1, sizeof(struct policy_node));
+	cur->next->prev = cur;
+	cur->next->parent = cur->parent;
+	cur = cur->next;
+
+	cur->flavor = NODE_DECL;
+
+	struct declaration_data *data = calloc(1, sizeof(struct policy_node));
+
+	cur->data = data;
+
+	data->flavor = DECL_TYPE;
+	data->name = strdup("bar_t");
+
+	cur = cur->parent;
+
+	cur->next = calloc(1, sizeof(struct policy_node));
+	cur->next->prev = cur;
+	cur->next->parent = cur->parent;
+
+	cur = cur->next;
+
+	cur->flavor = NODE_AV_RULE;
+	cur->data = make_example_av_rule();
+
+	struct av_rule_data *av_data = cur->data;
+	free(av_data->sources->string);
+	av_data->sources->string = strdup("$1");
+
+	struct check_result *res = check_type_used_but_not_required_in_if(NULL, cur);
+
+	ck_assert_ptr_nonnull(res);
+
+	ck_assert_int_eq(W_ID_NO_REQ, res->check_id);
+	ck_assert_str_eq("Type baz_t is used in interface but not required", res->message);
+
+	free_check_result(res);
+	free_policy_node(head);
+
 }
 END_TEST
 
@@ -42,6 +102,7 @@ Suite *if_checks_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_check_interface_defs_have_comment);
+	tcase_add_test(tc_core, test_check_type_used_but_not_required_in_if);
 	suite_add_tcase(s, tc_core);
 
 	return s;

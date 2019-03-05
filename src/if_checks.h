@@ -20,6 +20,6 @@ struct check_result *check_interface_definitions_have_comment(const struct check
  * node - the node to check
  * returns NULL if passed or check_result for issue W-002
  *********************************************/
-struct check_result *type_used_but_not_required_in_if(const struct check_data *data, const struct policy_node *node);
+struct check_result *check_type_used_but_not_required_in_if(const struct check_data *data, const struct policy_node *node);
 
 #endif

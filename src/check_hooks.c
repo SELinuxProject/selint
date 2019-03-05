@@ -22,12 +22,24 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, st
 	struct check_node *loc;
 
 	switch (check_flavor) {
+		case NODE_AV_RULE:
+			ALLOC_NODE(av_rule_node_checks);
+			break;
+
+		case NODE_TT_RULE:
+			ALLOC_NODE(tt_rule_node_checks);
+			break;
+
 		case NODE_IF_DEF:
 			ALLOC_NODE(if_def_node_checks);
 			break;
 
 		case NODE_TEMP_DEF:
 			ALLOC_NODE(temp_def_node_checks);
+			break;
+
+		case NODE_IF_CALL:
+			ALLOC_NODE(if_call_node_checks);
 			break;
 
 		case NODE_FC_ENTRY:
@@ -51,10 +63,16 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, st
 enum selint_error call_checks(struct checks *ck, struct check_data *data, struct policy_node *node) {
 
 	switch (node->flavor) {
+		case NODE_AV_RULE:
+			return call_checks_for_node_type(ck->av_rule_node_checks, data, node);
+		case NODE_TT_RULE:
+			return call_checks_for_node_type(ck->tt_rule_node_checks, data, node);
 		case NODE_IF_DEF:
 			return call_checks_for_node_type(ck->if_def_node_checks, data, node);
 		case NODE_TEMP_DEF:
 			return call_checks_for_node_type(ck->temp_def_node_checks, data, node);
+		case NODE_IF_CALL:
+			return call_checks_for_node_type(ck->if_call_node_checks, data, node);
 		case NODE_FC_ENTRY:
 			return call_checks_for_node_type(ck->fc_entry_node_checks, data, node);
 		case NODE_ERROR:

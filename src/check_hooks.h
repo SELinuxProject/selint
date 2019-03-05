@@ -5,7 +5,7 @@
 #include "selint_error.h"
 
 enum convention_ids {
-	C_IF_COMMENT = 2
+	C_ID_IF_COMMENT = 2
 };
 
 enum style_ids {
@@ -13,6 +13,7 @@ enum style_ids {
 };
 
 enum warn_ids {
+	W_ID_NO_REQ = 2,
 	W_ID_FC_REGEX = 4
 };
 
@@ -55,8 +56,11 @@ struct check_node {
 };
 
 struct checks {
+	struct check_node *av_rule_node_checks;
+	struct check_node *tt_rule_node_checks;
 	struct check_node *if_def_node_checks;
 	struct check_node *temp_def_node_checks;
+	struct check_node *if_call_node_checks;
 	struct check_node *fc_entry_node_checks;
 	struct check_node *error_node_checks;
 };

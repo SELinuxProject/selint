@@ -99,13 +99,14 @@ char *get_name_if_in_template(struct policy_node *cur) {
 	return NULL;
 }
 
-struct string_list * get_types_in_node(struct policy_node *node) {
+struct string_list * get_types_in_node(const struct policy_node *node) {
 
 	struct string_list *ret = NULL;
 	struct string_list *cur = NULL;
 	struct av_rule_data *av_data;
 	struct type_transition_data *tt_data;
 	struct declaration_data *d_data;
+	struct if_call_data *ifc_data;
 
 	switch (node->flavor) {
 		case NODE_AV_RULE:
@@ -138,6 +139,11 @@ struct string_list * get_types_in_node(struct policy_node *node) {
 			ret->next = copy_string_list(d_data->attrs);
 			break;
 
+		case NODE_IF_CALL:
+			ifc_data = (struct if_call_data *) node->data;
+			ret = copy_string_list(ifc_data->args);
+			break;
+
 /*
 		NODE_M4_CALL,
 		NODE_OPTIONAL_POLICY,
@@ -146,7 +152,6 @@ struct string_list * get_types_in_node(struct policy_node *node) {
 		NODE_START_BLOCK,
 		NODE_IF_DEF,
 		NODE_TEMP_DEF,
-		NODE_IF_CALL,
 		NODE_REQUIRE,
 		NODE_GEN_REQ,
 */
@@ -155,6 +160,28 @@ struct string_list * get_types_in_node(struct policy_node *node) {
 	}
 	return ret;
 
+}
+
+struct string_list *get_types_required(const struct policy_node *node) {
+	struct string_list *ret = NULL;
+	struct string_list *ret_cursor = NULL;
+
+	struct policy_node *cur = node->first_child;
+
+	while (cur) {
+		if (ret_cursor) {
+			ret_cursor->next = get_types_in_node(cur);
+		} else {
+			ret = ret_cursor = get_types_in_node(cur);
+		}
+		while (ret_cursor && ret_cursor->next) {
+			ret_cursor = ret_cursor->next;
+		}
+
+		cur = cur->next;
+	}
+
+	return ret;
 }
 
 enum selint_error free_policy_node(struct policy_node *to_free) {
