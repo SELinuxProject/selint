@@ -3,6 +3,8 @@
 
 #include "selint_error.h"
 #include "string_list.h"
+#include "tree.h"
+#include "maps.h"
 
 /*******************************************************************
  * Parse the config file and set the function arguments appropriately

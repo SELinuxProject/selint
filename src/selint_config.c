@@ -21,7 +21,11 @@
 		}\
 	}\
 
-
+void insert_config_declarations(cfg_t *cfg, char *config_item, enum decl_flavor flavor) {
+	for (int i = 0; i < cfg_size(cfg, config_item); i++) {
+		insert_into_decl_map(cfg_getnstr(cfg, config_item, i), "__assumed__", flavor);
+	}
+}
 
 enum selint_error parse_config(char *config_filename,
 				int in_source_mode,
@@ -35,6 +39,8 @@ enum selint_error parse_config(char *config_filename,
 		CFG_STR_LIST("disable", "{}", CFGF_NONE),
 		CFG_STR_LIST("enable_normal", "{}", CFGF_NONE),
 		CFG_STR_LIST("enable_source", "{}", CFGF_NONE),
+		CFG_STR_LIST("assume_users", "{}", CFGF_NONE),
+		CFG_STR_LIST("assume_roles", "{}", CFGF_NONE),
 		CFG_END()
 	};
 	cfg_t *cfg;
@@ -73,6 +79,9 @@ enum selint_error parse_config(char *config_filename,
 		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks, "enable_normal")
 
 	}
+
+	insert_config_declarations(cfg, "assume_users", DECL_USER);
+	insert_config_declarations(cfg, "assume_roles", DECL_ROLE);
 
 	cfg_free(cfg);
 
