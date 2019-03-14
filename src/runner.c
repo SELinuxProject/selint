@@ -217,8 +217,6 @@ enum selint_error run_analysis(struct checks *ck, struct policy_file_list *te_fi
 		goto out;
 	}
 
-	// TODO template passes
-
 	res = run_all_checks(ck, FILE_TE_FILE, te_files);
 	if (res != SELINT_SUCCESS) {
 		goto out;
