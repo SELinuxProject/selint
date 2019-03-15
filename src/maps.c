@@ -3,6 +3,8 @@
 struct hash_elem *type_map = NULL;
 struct hash_elem *role_map = NULL;
 struct hash_elem *user_map = NULL;
+struct hash_elem *class_map = NULL;
+struct hash_elem *perm_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
 struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor) {
@@ -22,6 +24,12 @@ struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor) {
 			break;
 		case DECL_USER:
 			HASH_FIND(hh_user, user_map, name, strlen(name), decl);
+			break;
+		case DECL_CLASS:
+			HASH_FIND(hh_class, class_map, name, strlen(name), decl);
+			break;
+		case DECL_PERM:
+			HASH_FIND(hh_perm, perm_map, name, strlen(name), decl);
 			break;
 		default:
 			decl = NULL;
@@ -50,6 +58,12 @@ void insert_into_decl_map(char *name, char *module_name, enum decl_flavor flavor
 			case DECL_USER:
 				HASH_ADD_KEYPTR(hh_user, user_map, decl->name, strlen(decl->name), decl);
 				break;
+			case DECL_CLASS:
+				HASH_ADD_KEYPTR(hh_class, class_map, decl->name, strlen(decl->name), decl);
+				break;
+			case DECL_PERM:
+				HASH_ADD_KEYPTR(hh_perm, perm_map, decl->name, strlen(decl->name), decl);
+				break;
 			default:
 				return;
 		}
@@ -77,6 +91,10 @@ unsigned int decl_map_count(enum decl_flavor flavor) {
 			return HASH_CNT(hh_role, role_map);
 		case DECL_USER:
 			return HASH_CNT(hh_user, user_map);
+		case DECL_CLASS:
+			return HASH_CNT(hh_class, class_map);
+		case DECL_PERM:
+			return HASH_CNT(hh_perm, perm_map);
 		default:
 			return 0;
 	}

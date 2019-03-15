@@ -81,6 +81,30 @@ START_TEST (test_role_and_user_maps) {
 }
 END_TEST
 
+START_TEST (test_class_and_perm_maps) {
+
+	insert_into_decl_map("file", "class", DECL_CLASS);
+	insert_into_decl_map("read", "perm", DECL_PERM);
+
+	char *res = look_up_in_decl_map("dir", DECL_CLASS);
+
+	ck_assert_ptr_null(res);
+
+	res = look_up_in_decl_map("file", DECL_CLASS);
+
+	ck_assert_ptr_nonnull(res);
+
+	res = look_up_in_decl_map("read", DECL_PERM);
+
+	ck_assert_ptr_nonnull(res);
+
+	ck_assert_int_eq(decl_map_count(DECL_CLASS), 1);
+	ck_assert_int_eq(decl_map_count(DECL_PERM), 1);
+
+	free_all_maps();
+}
+END_TEST
+
 START_TEST (test_insert_decl_into_template_map) {
 
 	insert_decl_into_template_map("user_domain", DECL_TYPE, "$1_t");
@@ -163,6 +187,7 @@ Suite *maps_suite(void) {
 	tcase_add_test(tc_core, test_insert_into_type_map);
 	tcase_add_test(tc_core, test_insert_into_type_map_dup);
 	tcase_add_test(tc_core, test_role_and_user_maps);
+	tcase_add_test(tc_core, test_class_and_perm_maps);
 	tcase_add_test(tc_core, test_insert_decl_into_template_map);
 	tcase_add_test(tc_core, test_insert_call_into_template_map);
 	suite_add_tcase(s, tc_core);

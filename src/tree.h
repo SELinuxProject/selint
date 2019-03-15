@@ -40,7 +40,9 @@ enum decl_flavor {
 	DECL_TYPE,
 	DECL_ATTRIBUTE,
 	DECL_ROLE,
-	DECL_USER
+	DECL_USER,
+	DECL_CLASS,
+	DECL_PERM
 };
 
 struct av_rule_data {
