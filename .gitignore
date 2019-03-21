@@ -28,6 +28,7 @@ tests/check_selint_config
 tests/check_if_checks
 tests/check_string_list
 tests/check_runner
+tests/check_startup
 tests/test-suite.log
 .deps
 depcomp

@@ -1,4 +1,4 @@
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup
 check_PROGRAMS = ${TESTS}
 
 if COND_GCOV
@@ -20,6 +20,8 @@ FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
 FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}
 MAPS_HEADS=$(top_builddir)/src/maps.h ${TREE_HEADS}
 MAPS_OBJS=${TREE_OBJS}
+STARTUP_HEADS=$(top_builddir)/src/startup.h ${MAPS_HEADS}
+STARTUP_OBJS=$(top_builddir)/src/startup.o ${MAPS_OBJS}
 TEMPLATE_HEADS=$(top_builddir)/src/template.h ${MAPS_HEADS}
 TEMPLATE_OBJS=$(top_builddir)/src/template.o ${MAPS_OBJS}
 PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${TEMPLATE_HEADS}
@@ -48,6 +50,10 @@ check_selint_config_LDADD = @CHECK_LIBS@ ${SELINT_CONFIG_OBJS}
 check_maps_SOURCES = check_maps.c ${MAPS_HEADS}
 check_maps_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
 check_maps_LDADD = @CHECK_LIBS@ ${MAPS_OBJS}
+
+check_startup_SOURCES = check_startup.c ${STARTUP_HEADS}
+check_startup_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_startup_LDADD = @CHECK_LIBS@ ${STARTUP_OBJS}
 
 check_tree_SOURCES = check_tree.c ${TREE_HEADS} $(top_builddir)/src/selint_error.h
 check_tree_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
