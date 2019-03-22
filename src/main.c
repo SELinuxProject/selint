@@ -10,6 +10,7 @@
 #include "file_list.h"
 #include "util.h"
 #include "selint_config.h"
+#include "startup.h"
 
 extern int yyparse();
 
@@ -227,6 +228,13 @@ int main(int argc, char **argv) {
 	if (!ck) {
 		printf("Failed to register checks (bad configuration)\n");
 		return -1;
+	}
+
+	// Load object classes and permissions
+	if (source_flag) {
+		load_access_vectors_source();
+	} else {
+		load_access_vectors_normal("/sys/fs/selinux/class"); // TODO
 	}
 
 	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files);
