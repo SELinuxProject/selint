@@ -149,6 +149,7 @@ comment:
 			memset(cur, 0, sizeof(struct policy_node));
 			cur->flavor = NODE_IF_FILE;
 			ast = cur;
+			set_current_module_name(parsing_filename);
 		}
 		insert_comment(&cur, yylineno); }
 	;
@@ -268,7 +269,7 @@ role_declaration:
 	|
 	ROLE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
 	|
-	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, NULL, yylineno); free($2); free_string_list($4); }
+	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
 	; 
 
 type_alias:
@@ -674,6 +675,7 @@ start_interface:
 			memset(cur, 0, sizeof(struct policy_node));
 			cur->flavor = NODE_IF_FILE;
 			ast = cur;
+			set_current_module_name(parsing_filename);
 		} 
 		begin_interface_def(&cur, $1, $4, yylineno); free($4); }
 	;

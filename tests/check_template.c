@@ -11,6 +11,7 @@
 
 extern FILE * yyin;
 extern int yyparse();
+extern char *parsing_filename;
 
 START_TEST (test_replace_m4) {
 	char *orig1 = "$1_t";
@@ -109,6 +110,7 @@ START_TEST (test_nested_template_declarations) {
 	ast = NULL;
 
 	yyin = fopen(NESTED_IF_FILENAME, "r");
+	parsing_filename = "nested";
 	yyparse();
 	fclose(yyin);
 

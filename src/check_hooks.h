@@ -14,6 +14,7 @@ enum style_ids {
 
 enum warn_ids {
 	W_ID_NO_REQ = 2,
+	W_ID_UNUSED_REQ = 3,
 	W_ID_FC_REGEX = 4
 };
 
@@ -58,6 +59,7 @@ struct check_node {
 struct checks {
 	struct check_node *av_rule_node_checks;
 	struct check_node *tt_rule_node_checks;
+	struct check_node *decl_node_checks;
 	struct check_node *if_def_node_checks;
 	struct check_node *temp_def_node_checks;
 	struct check_node *if_call_node_checks;

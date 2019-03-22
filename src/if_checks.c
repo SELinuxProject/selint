@@ -88,3 +88,75 @@ struct check_result *check_type_used_but_not_required_in_if(const struct check_d
 
 	return NULL;
 }
+
+struct check_result *check_type_required_but_not_used_in_if(const struct check_data *data, const struct policy_node *node) {
+
+	struct declaration_data *dd = (struct declaration_data *) node->data;
+
+	if (dd->flavor != DECL_TYPE) {
+		return NULL; // TODO: Attributes and roles
+	}
+
+	const struct policy_node *cur = node;
+	const struct policy_node *req_block_node = NULL;
+	while (cur->parent && cur->flavor != NODE_IF_DEF && cur->flavor != NODE_TEMP_DEF) {
+		if (cur->flavor == NODE_GEN_REQ || cur->flavor == NODE_REQUIRE) {
+			req_block_node = cur;
+		}
+		cur = cur->parent;
+	}
+
+	if ((cur->flavor != NODE_IF_DEF && cur->flavor != NODE_TEMP_DEF) || !req_block_node) {
+		// This check only applies to nodes in require blocks in interfaces
+		return NULL;
+	}
+
+	struct string_list *types_to_check = get_types_in_node(node);
+	if (!types_to_check) {
+		// This should never happen
+		return alloc_internal_error("Declaration with no declared items");
+	}
+
+	cur = req_block_node;
+
+	cur = cur->next;
+
+	struct string_list *sl_end = NULL;
+	struct string_list *sl_head = NULL;
+
+	while (cur) {
+		struct string_list *types_used = get_types_in_node(cur);
+		if (!types_used) {
+			cur = cur->next;
+			continue;
+		}
+		if (!sl_head) {
+			sl_head = sl_end = types_used;
+		} else {
+			sl_end->next = types_used;
+		}
+
+		while (sl_end->next) {
+			sl_end = sl_end->next;
+		}
+
+		cur = cur->next;
+	}
+
+	struct string_list *type_node = types_to_check;
+
+	struct check_result *res = NULL;
+
+	while (type_node) {
+		if (!str_in_sl(type_node->string, sl_head)) {
+			res = make_check_result('W', W_ID_UNUSED_REQ, "%s %s is listed in require block but not used in interface", "Type", type_node->string);
+			break;
+		}
+		type_node = type_node->next;
+	}
+
+	free_string_list(sl_head);
+	free_string_list(types_to_check);
+	return res;
+}
+

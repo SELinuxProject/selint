@@ -15,6 +15,7 @@
 extern FILE * yyin;
 extern int yyparse();
 struct policy_node *ast;
+extern char *parsing_filename;
 
 START_TEST (test_parse_basic_te) {
 
@@ -76,6 +77,7 @@ START_TEST (test_parse_basic_if) {
 	ast = NULL;
 
 	yyin = fopen(BASIC_IF_FILENAME, "r");
+	parsing_filename = "basic";
 	ck_assert_int_eq(0, yyparse());
 
 	struct policy_node *cur = ast;
