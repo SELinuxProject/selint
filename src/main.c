@@ -135,7 +135,6 @@ int main(int argc, char **argv) {
 
 			case 's':
 				// Run in source mode
-				print_if_verbose("Source mode enabled\n");
 				source_flag = 1;
 				break;
 
@@ -157,6 +156,10 @@ int main(int argc, char **argv) {
 	}
 
 	print_if_verbose("Verbose mode enabled\n");
+
+	if (source_flag) {
+		print_if_verbose("Source mode enabled\n");
+	}
 	if (config_filename) {
 		char cfg_severity;
 		parse_config(config_filename, source_flag, &cfg_severity, &config_disabled_checks, &config_enabled_checks);
