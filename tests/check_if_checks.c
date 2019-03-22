@@ -76,6 +76,10 @@ START_TEST(test_check_type_used_but_not_required_in_if) {
 	cur->flavor = NODE_AV_RULE;
 	cur->data = make_example_av_rule();
 
+	insert_into_decl_map("foo_t", "test", DECL_TYPE);
+	insert_into_decl_map("bar_t", "test", DECL_TYPE);
+	insert_into_decl_map("baz_t", "test", DECL_TYPE);
+
 	struct av_rule_data *av_data = cur->data;
 	free(av_data->sources->string);
 	av_data->sources->string = strdup("$1");

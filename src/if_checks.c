@@ -60,15 +60,22 @@ struct check_result *check_type_used_but_not_required_in_if(const struct check_d
 	}
 
 	struct string_list *type_node = types_in_current_node;
+	char *flavor = NULL;
 
 	while (type_node) {
-		if ((strcmp(type_node->string, "self") != 0) &&
-		            !index(type_node->string, '$') &&
-		            type_node->string[0] != '\"' &&
-		            !look_up_in_decl_map(type_node->string, DECL_CLASS) &&
-		            !look_up_in_decl_map(type_node->string, DECL_PERM) &&
-		            !str_in_sl(type_node->string, types_required)) {
-			struct check_result *res = make_check_result('W', W_ID_NO_REQ, NOT_REQ_MESSAGE, "Type", type_node->string);
+		if (!str_in_sl(type_node->string, types_required)) {
+			if(look_up_in_decl_map(type_node->string, DECL_TYPE)) {
+				flavor = "Type";
+			} else if (look_up_in_decl_map(type_node->string, DECL_ATTRIBUTE)) {
+				flavor = "Attribute";
+			} else {
+				// This is a string we don't recognize.  Other checks and/or
+				// the compiler catch invalid bare words
+				type_node = type_node->next;
+				continue;
+			} 
+
+			struct check_result *res = make_check_result('W', W_ID_NO_REQ, NOT_REQ_MESSAGE, flavor, type_node->string);
 			free_string_list(types_in_current_node);
 			free_string_list(types_required);
 			return res;

@@ -258,7 +258,9 @@ type_declaration:
 	;
 
 attribute_declaration:
-	ATTRIBUTE comma_string_list SEMICOLON { free_string_list($2); }
+	ATTRIBUTE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, NULL, yylineno); }
+	|
+	ATTRIBUTE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, $4, yylineno); }
 	;
 
 role_declaration:
