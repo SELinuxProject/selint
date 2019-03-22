@@ -63,11 +63,11 @@ struct check_result *check_type_used_but_not_required_in_if(const struct check_d
 
 	while (type_node) {
 		if ((strcmp(type_node->string, "self") != 0) &&
-			!index(type_node->string, '$') &&
-			type_node->string[0] != '\"' &&
-			!look_up_in_decl_map(type_node->string, DECL_CLASS) &&
-			!look_up_in_decl_map(type_node->string, DECL_PERM) &&
-			!str_in_sl(type_node->string, types_required)) {
+		            !index(type_node->string, '$') &&
+		            type_node->string[0] != '\"' &&
+		            !look_up_in_decl_map(type_node->string, DECL_CLASS) &&
+		            !look_up_in_decl_map(type_node->string, DECL_PERM) &&
+		            !str_in_sl(type_node->string, types_required)) {
 			struct check_result *res = make_check_result('W', W_ID_NO_REQ, NOT_REQ_MESSAGE, "Type", type_node->string);
 			free_string_list(types_in_current_node);
 			free_string_list(types_required);
