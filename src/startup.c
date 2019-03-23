@@ -26,6 +26,7 @@ void load_access_vectors_normal(char *av_path) {
 		file = fts_read(ftsp);
 	}
 	fts_close(ftsp);
+	free(paths);
 }
 
 void load_access_vectors_source() {

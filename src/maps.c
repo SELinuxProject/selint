@@ -3,6 +3,7 @@
 struct hash_elem *type_map = NULL;
 struct hash_elem *role_map = NULL;
 struct hash_elem *user_map = NULL;
+struct hash_elem *attr_map = NULL;
 struct hash_elem *class_map = NULL;
 struct hash_elem *perm_map = NULL;
 struct template_hash_elem *template_map = NULL;
@@ -24,6 +25,9 @@ struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor) {
 			break;
 		case DECL_USER:
 			HASH_FIND(hh_user, user_map, name, strlen(name), decl);
+			break;
+		case DECL_ATTRIBUTE:
+			HASH_FIND(hh_attr, attr_map, name, strlen(name), decl);
 			break;
 		case DECL_CLASS:
 			HASH_FIND(hh_class, class_map, name, strlen(name), decl);
@@ -58,6 +62,9 @@ void insert_into_decl_map(char *name, char *module_name, enum decl_flavor flavor
 			case DECL_USER:
 				HASH_ADD_KEYPTR(hh_user, user_map, decl->name, strlen(decl->name), decl);
 				break;
+			case DECL_ATTRIBUTE:
+				HASH_ADD_KEYPTR(hh_attr, attr_map, decl->name, strlen(decl->name), decl);
+				break;
 			case DECL_CLASS:
 				HASH_ADD_KEYPTR(hh_class, class_map, decl->name, strlen(decl->name), decl);
 				break;
@@ -65,6 +72,9 @@ void insert_into_decl_map(char *name, char *module_name, enum decl_flavor flavor
 				HASH_ADD_KEYPTR(hh_perm, perm_map, decl->name, strlen(decl->name), decl);
 				break;
 			default:
+				free(decl->name);
+				free(decl->module_name);
+				free(decl);
 				return;
 		}
 	} //TODO: else report error?
@@ -86,7 +96,7 @@ unsigned int decl_map_count(enum decl_flavor flavor) {
 		case DECL_TYPE:
 			return HASH_CNT(hh_type, type_map);
 		case DECL_ATTRIBUTE:
-			return 0;
+			return HASH_CNT(hh_attr, attr_map);
 		case DECL_ROLE:
 			return HASH_CNT(hh_role, role_map);
 		case DECL_USER:
@@ -192,16 +202,28 @@ struct if_call_list *look_up_call_in_template_map(char *name) {
 	}
 }
 
+#define FREE_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) {\
+		HASH_DELETE(hh_ ## mn, mn ## _map, cur_decl);\
+		free(cur_decl->name);\
+		free(cur_decl->module_name);\
+		free(cur_decl);\
+	}\
+
 void free_all_maps() {
 
-	struct hash_elem *cur_type, *tmp_type;
+	struct hash_elem *cur_decl, *tmp_decl;
 
-	HASH_ITER(hh_type, type_map, cur_type, tmp_type) {
-		HASH_DELETE(hh_type, type_map, cur_type);
-		free(cur_type->name);
-		free(cur_type->module_name);
-		free(cur_type);
-	}
+	FREE_MAP(type);
+
+	FREE_MAP(role);
+
+	FREE_MAP(user);
+
+	FREE_MAP(attr);
+
+	FREE_MAP(class);
+
+	FREE_MAP(perm);
 
 	struct template_hash_elem *cur_template, *tmp_template;
 

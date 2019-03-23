@@ -9,7 +9,7 @@
 struct hash_elem {
         char *name;
         char *module_name;
-        UT_hash_handle hh_type, hh_role, hh_user, hh_class, hh_perm;
+        UT_hash_handle hh_type, hh_role, hh_user, hh_attr, hh_class, hh_perm;
 };
 
 struct template_hash_elem {

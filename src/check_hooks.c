@@ -142,11 +142,23 @@ __attribute__ ((format (printf, 3, 4))) struct check_result *make_check_result(c
 
 void free_checks(struct checks *to_free) {
 
+	if (to_free->av_rule_node_checks) {
+		free_check_node(to_free->av_rule_node_checks);
+	}
+	if (to_free->tt_rule_node_checks) {
+		free_check_node(to_free->tt_rule_node_checks);
+	}
+	if (to_free->decl_node_checks) {
+		free_check_node(to_free->decl_node_checks);
+	}
 	if (to_free->if_def_node_checks) {
 		free_check_node(to_free->if_def_node_checks);
 	}
 	if (to_free->temp_def_node_checks) {
 		free_check_node(to_free->temp_def_node_checks);
+	}
+	if (to_free->if_call_node_checks) {
+		free_check_node(to_free->if_call_node_checks);
 	}
 	if (to_free->fc_entry_node_checks) {
 		free_check_node(to_free->fc_entry_node_checks);

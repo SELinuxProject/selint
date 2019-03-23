@@ -259,9 +259,9 @@ type_declaration:
 	;
 
 attribute_declaration:
-	ATTRIBUTE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, NULL, yylineno); }
+	ATTRIBUTE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, NULL, yylineno); free($2); }
 	|
-	ATTRIBUTE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, $4, yylineno); }
+	ATTRIBUTE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, $4, yylineno); free($2); }
 	;
 
 role_declaration:
@@ -436,9 +436,9 @@ tunable:
 	;
 
 gen_tunable:
-	GEN_TUNABLE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA STRING CLOSE_PAREN
+	GEN_TUNABLE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA STRING CLOSE_PAREN { free($4); free($7); }
 	|
-	GEN_TUNABLE OPEN_PAREN STRING COMMA STRING CLOSE_PAREN
+	GEN_TUNABLE OPEN_PAREN STRING COMMA STRING CLOSE_PAREN { free($3); free($5); }
 	;
 
 ifelse:
