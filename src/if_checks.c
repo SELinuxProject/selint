@@ -124,23 +124,31 @@ struct check_result *check_type_required_but_not_used_in_if(const struct check_d
 	struct string_list *sl_end = NULL;
 	struct string_list *sl_head = NULL;
 
+	int depth = 0;
+
 	while (cur) {
 		struct string_list *types_used = get_types_in_node(cur);
-		if (!types_used) {
-			cur = cur->next;
-			continue;
+		if (types_used) {
+			if (!sl_head) {
+				sl_head = sl_end = types_used;
+			} else {
+				sl_end->next = types_used;
+			}
+
+			while (sl_end->next) {
+				sl_end = sl_end->next;
+			}
 		}
-		if (!sl_head) {
-			sl_head = sl_end = types_used;
+
+		if (cur->first_child) {
+			cur = cur->first_child;
+			depth++;
+		} else if (!cur->next && depth > 0 && cur->parent) {
+			cur = cur->parent->next;
+			depth--;
 		} else {
-			sl_end->next = types_used;
+			cur = cur->next;
 		}
-
-		while (sl_end->next) {
-			sl_end = sl_end->next;
-		}
-
-		cur = cur->next;
 	}
 
 	struct string_list *type_node = types_to_check;

@@ -80,7 +80,7 @@ enum selint_error insert_type_alias(struct policy_node **cur, char *type, int li
  **********************************/
 enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms, int lineno);
 
-enum selint_error insert_type_transition(struct policy_node **cur, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno);
+enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno);
 
 enum selint_error insert_interface_call(struct policy_node **cur, char *name, struct string_list *args, int lineno);
 

@@ -166,7 +166,7 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_type_transition(struct policy_node **cur, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno) {
+enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno) {
 
 	struct type_transition_data *tt_data = malloc(sizeof(struct type_transition_data));
 
@@ -179,6 +179,7 @@ enum selint_error insert_type_transition(struct policy_node **cur, struct string
 	} else {
 		tt_data->name = NULL;
 	}
+	tt_data->flavor = flavor;
 
 	enum selint_error ret = insert_policy_node_next(*cur, NODE_TT_RULE, tt_data, lineno);
 	if ( ret != SELINT_SUCCESS) {

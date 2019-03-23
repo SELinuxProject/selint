@@ -197,7 +197,7 @@ START_TEST (test_insert_type_transition) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, NULL, NULL, NULL, "example_tmp_t", NULL, 1234));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, TT_TT, NULL, NULL, NULL, "example_tmp_t", NULL, 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_TT_RULE, cur->flavor);
@@ -223,7 +223,7 @@ START_TEST (test_insert_named_type_transition) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, NULL, NULL, NULL, "example_tmp_t", "filename.txt", 1234));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_type_transition(&cur, TT_TT, NULL, NULL, NULL, "example_tmp_t", "filename.txt", 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_TT_RULE, cur->flavor);

@@ -349,20 +349,20 @@ role_allow:
 
 type_transition:
 	TYPE_TRANSITION string_list string_list COLON string_list STRING SEMICOLON
-	{ insert_type_transition(&cur, $2, $3, $5, $6, NULL, yylineno); free($6); }
+	{ insert_type_transition(&cur, TT_TT, $2, $3, $5, $6, NULL, yylineno); free($6); }
 	|
 	TYPE_TRANSITION string_list string_list COLON string_list STRING QUOTED_STRING SEMICOLON
-	{ insert_type_transition(&cur, $2, $3, $5, $6, $7, yylineno); free($6); free($7); }
+	{ insert_type_transition(&cur, TT_TT, $2, $3, $5, $6, $7, yylineno); free($6); free($7); }
 	|
-	TYPE_MEMBER string_list string_list COLON string_list STRING SEMICOLON { free_string_list($2); free_string_list($3); free_string_list($5); free($6); }
+	TYPE_MEMBER string_list string_list COLON string_list STRING SEMICOLON { insert_type_transition(&cur, TT_TM, $2, $3, $5, $6, NULL, yylineno); free($6); }
 	|
-	TYPE_CHANGE string_list string_list COLON string_list STRING SEMICOLON { free_string_list($2); free_string_list($3); free_string_list($5); free($6); }
+	TYPE_CHANGE string_list string_list COLON string_list STRING SEMICOLON { insert_type_transition(&cur, TT_TC, $2, $3, $5, $6, NULL, yylineno); free($6); }
 	;
 
 range_transition:
-	RANGE_TRANSITION string_list string_list COLON string_list mls_range SEMICOLON { free_string_list($2); free_string_list($3); free_string_list($5); free($6); }
+	RANGE_TRANSITION string_list string_list COLON string_list mls_range SEMICOLON { insert_type_transition(&cur, TT_RT, $2, $3, $5, $6, NULL, yylineno); free($6); }
 	|
-	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON { free($6); free_string_list($2); free_string_list($3); free_string_list($5); }
+	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON {  insert_type_transition(&cur, TT_RT, $2, $3, $5, $6, NULL, yylineno); free($6); }
 	;
 
 role_transition:

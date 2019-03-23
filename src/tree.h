@@ -10,6 +10,8 @@ enum node_flavor {
 	NODE_FC_FILE,
 	NODE_AV_RULE,
 	NODE_TT_RULE,
+	NODE_TM_RULE,
+	NODE_TC_RULE,
 	NODE_DECL,
 	NODE_ALIAS,
 	NODE_TYPE_ALIAS,
@@ -45,6 +47,13 @@ enum decl_flavor {
 	DECL_PERM
 };
 
+enum tt_flavor {
+	TT_TT,
+	TT_TM,
+	TT_TC,
+	TT_RT
+};
+
 struct av_rule_data {
 	enum av_rule_flavor flavor;
 	struct string_list *sources;
@@ -59,6 +68,7 @@ struct type_transition_data {
 	struct string_list *object_classes;
 	char *default_type;
 	char *name;
+	enum tt_flavor flavor;
 };
 
 struct if_call_data {
