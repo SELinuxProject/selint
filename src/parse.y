@@ -113,6 +113,7 @@
 %type<string> mls_range
 %type<string> mls_level
 %type<sl> string_list_or_mls
+%type<sl> string_list_or_mls_no_range
 %type<av_flavor> av_type
 %type<node_flavor> if_keyword
 
@@ -509,15 +510,15 @@ m4_argument:
 	;
 
 args:
-	string_list_or_mls
+	string_list_or_mls_no_range
 	|
-	args COMMA string_list_or_mls
+	args COMMA string_list_or_mls_no_range
 	{ struct string_list *cur = $1;
 	while (cur->next) { cur = cur->next; }
 	cur->next = $3;
 	$$ = $1; }
 	|
-	args STRING
+	args sl_item
 	{ struct string_list *cur = $1;
 	while (cur->next) { cur = cur->next; }
 	cur->next = calloc(1, sizeof(struct string_list));
@@ -527,12 +528,17 @@ args:
 	;
 
 string_list_or_mls:
-	string_list
+	string_list_or_mls_no_range
 	|
 	mls_range { $$ = calloc(1, sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
+	;
+
+string_list_or_mls_no_range:
+	string_list
 	|
 	MLS_LEVEL { $$ = calloc(1, sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
 	;
+
 
 mls_range:
 	mls_level DASH mls_level { size_t len = strlen($1) + strlen($3) + 1 /* DASH */ + 1 /* NT */;
