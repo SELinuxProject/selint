@@ -38,6 +38,9 @@ OPTIONS
 	-e CHECKID, --enable=CHECKID
 		Enable check with the given ID.
 
+	-E, --only-enabled
+		Only run checks that are explicitly enabled with the --enable option.
+
 	-h, --help
 		Show help menu about command line options.
 

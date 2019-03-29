@@ -21,10 +21,15 @@ START_TEST (test_is_check_enabled) {
 	struct string_list *cl_d = calloc(1, sizeof(struct string_list));
 	cl_d->string = strdup("S-004");
 
-	ck_assert_int_eq(is_check_enabled("S-001", con_e, con_d, cl_e, cl_d), 1);
-	ck_assert_int_eq(is_check_enabled("S-002", con_e, con_d, cl_e, cl_d), 1);
-	ck_assert_int_eq(is_check_enabled("S-003", con_e, con_d, cl_e, cl_d), 0);
-	ck_assert_int_eq(is_check_enabled("S-004", con_e, con_d, cl_e, cl_d), 0);
+	ck_assert_int_eq(is_check_enabled("S-001", con_e, con_d, cl_e, cl_d, 0), 1);
+	ck_assert_int_eq(is_check_enabled("S-002", con_e, con_d, cl_e, cl_d, 0), 1);
+	ck_assert_int_eq(is_check_enabled("S-003", con_e, con_d, cl_e, cl_d, 0), 0);
+	ck_assert_int_eq(is_check_enabled("S-004", con_e, con_d, cl_e, cl_d, 0), 0);
+
+	ck_assert_int_eq(is_check_enabled("S-001", con_e, con_d, cl_e, cl_d, 1), 0);
+	ck_assert_int_eq(is_check_enabled("S-002", con_e, con_d, cl_e, cl_d, 1), 1);
+	ck_assert_int_eq(is_check_enabled("S-003", con_e, con_d, cl_e, cl_d, 1), 0);
+	ck_assert_int_eq(is_check_enabled("S-004", con_e, con_d, cl_e, cl_d, 1), 0);
 
 	free_string_list(con_e);
 	free_string_list(con_d);

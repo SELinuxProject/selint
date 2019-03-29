@@ -14,7 +14,7 @@ struct policy_node *ast; // Must be global so the parser can access it
 extern int yylineno;
 extern char * parsing_filename;
 
-#define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks)
+#define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
 struct policy_node * parse_one_file(char *filename) {
 
@@ -37,20 +37,29 @@ int is_check_enabled(const char *check_name,
 			struct string_list *config_enabled_checks,
 			struct string_list *config_disabled_checks,
 			struct string_list *cl_enabled_checks,
-			struct string_list *cl_disabled_checks) {
+			struct string_list *cl_disabled_checks,
+			int only_enabled) {
 
-	int is_enabled = 1; // default
+	int is_enabled = 1; // default to enabled
 
-	if (str_in_sl(check_name, config_disabled_checks)) {
+	if (only_enabled) {
+		// if only_enabled is true, we only want to enable checks that are
+		// explicitly enabled in the cl_enabled_checks. So change the default
+		// enabled state to disabled, and skip all other checks except for the
+		// enabled checks.
 		is_enabled = 0;
-	}
+	} else {
+		if (str_in_sl(check_name, config_disabled_checks)) {
+			is_enabled = 0;
+		}
 
-	if (str_in_sl(check_name, config_enabled_checks)) {
-		is_enabled = 1;
-	}
+		if (str_in_sl(check_name, config_enabled_checks)) {
+			is_enabled = 1;
+		}
 
-	if (str_in_sl(check_name, cl_disabled_checks)) {
-		is_enabled = 0;
+		if (str_in_sl(check_name, cl_disabled_checks)) {
+			is_enabled = 0;
+		}
 	}
 
 	if (str_in_sl(check_name, cl_enabled_checks)) {
@@ -65,7 +74,8 @@ struct checks * register_checks(char level,
 				struct string_list *config_enabled_checks,
 				struct string_list *config_disabled_checks,
 				struct string_list *cl_enabled_checks,
-				struct string_list *cl_disabled_checks) {
+				struct string_list *cl_disabled_checks,
+				int only_enabled) {
 
 	struct checks *ck = malloc(sizeof(struct checks));
 	memset(ck, 0, sizeof(struct checks));

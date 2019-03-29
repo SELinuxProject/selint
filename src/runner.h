@@ -21,7 +21,8 @@ int is_check_enabled(const char *check_name,
 			struct string_list *config_enabled_checks,
 			struct string_list *config_disabled_checks,
 			struct string_list *cl_enabled_checks,
-			struct string_list *cl_disabled_checks);
+			struct string_list *cl_disabled_checks,
+			int only_enabled);
 
 /****************************************************
  * Allocate and populate a checks structure with the list of checks enabled for
@@ -33,7 +34,8 @@ struct checks * register_checks(char level,
 				struct string_list *config_enabled_checks,
 				struct string_list *config_disabled_checks,
 				struct string_list *cl_enabled_checks,
-				struct string_list *cl_disabled_checks);
+				struct string_list *cl_disabled_checks,
+				int only_enabled);
 
 /****************************************************
  * Parse all the provided te or if files, storing their parsed ASTs

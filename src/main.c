@@ -25,6 +25,8 @@ void usage() {
 		"\t\t\t\t\tCONFIGURATION section for config file syntax.\n"\
 		"  -d CHECKID, --disable=CHECKID\t\tDisable check with the given ID.\n"\
 		"  -e CHECKID, --enable=CHECKID\t\tEnable check with the given ID.\n"\
+		"  -E, --only-enabled\t\t\tOnly run checks that are explicitly enabled with\n"\
+		"\t\t\t\t\tthe --enable option.\n"\
 		"  -h, --help\t\t\t\tDisplay this menu\n"\
 		"  -l LEVEL, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
 		"\t\t\t\t\tgreater than LEVEL.  Options are C (convention), S (style),\n"\
@@ -44,6 +46,7 @@ int main(int argc, char **argv) {
 	char *config_filename = NULL;
 	int source_flag = 0;
 	int recursive_scan = 0;
+	int only_enabled = 0;
 
 	struct string_list *config_disabled_checks = NULL;
 	struct string_list *config_enabled_checks = NULL;
@@ -60,6 +63,7 @@ int main(int argc, char **argv) {
 				{ "config", required_argument, NULL, 'c' },
 				{ "disable", required_argument, NULL, 'd' },
 				{ "enable", required_argument, NULL, 'e' },
+				{ "only-enabled", no_argument, NULL, 'E' },
 				{ "help", no_argument, NULL, 'h' },
 				{ "level", required_argument, NULL, 'l' },
 				{ "modules-conf", required_argument, NULL, 'm' },
@@ -72,7 +76,7 @@ int main(int argc, char **argv) {
 
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "c:d:e:hl:mrsVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "c:d:e:Ehl:mrsVv", long_options, &option_index);
 
 		if ( c == -1 ) {
 			break;
@@ -111,6 +115,11 @@ int main(int argc, char **argv) {
 					cl_enabled_checks = cl_e_cursor;
 				}
 				cl_e_cursor->string = strdup(optarg);
+				break;
+
+			case 'E':
+				// Only run checks enabled by the --enable flag.
+				only_enabled = 1;
 				break;
 
 			case 'h':
@@ -226,7 +235,7 @@ int main(int argc, char **argv) {
 
 	free(paths);
 
-	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks);
+	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled);
 	if (!ck) {
 		printf("Failed to register checks (bad configuration)\n");
 		return -1;
