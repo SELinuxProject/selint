@@ -151,7 +151,9 @@ int main(int argc, char **argv) {
 				break;
 
 			case '?':
-				printf("Unrecognized option\n");
+				usage();
+				exit(129);
+				break;
 		}
 
 	}
