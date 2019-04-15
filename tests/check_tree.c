@@ -56,6 +56,28 @@ START_TEST (test_insert_policy_node_next) {
 }
 END_TEST
 
+START_TEST (test_is_template_call) {
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+
+	ck_assert_int_eq(0, is_template_call(node));
+
+	struct if_call_data *data = calloc(1, sizeof(struct if_call_data));
+	data->name = strdup("foo");
+	node->data = data;
+
+	ck_assert_int_eq(0, is_template_call(node));
+
+	node->flavor = NODE_IF_CALL;
+
+	ck_assert_int_eq(0, is_template_call(node));
+
+	insert_call_into_template_map("foo", data);
+
+	ck_assert_int_eq(1, is_template_call(node));
+}
+END_TEST
+
 START_TEST (test_get_types_in_node_av) {
 
 	struct policy_node *node = calloc(1, sizeof(struct policy_node));
@@ -173,6 +195,7 @@ Suite *tree_suite(void) {
 
 	tcase_add_test(tc_core, test_insert_policy_node_child);
 	tcase_add_test(tc_core, test_insert_policy_node_next);
+	tcase_add_test(tc_core, test_is_template_call);
 	tcase_add_test(tc_core, test_get_types_in_node_av);
 	tcase_add_test(tc_core, test_get_types_in_node_tt);
 	tcase_add_test(tc_core, test_get_types_in_node_dd);
