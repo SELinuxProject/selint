@@ -8,9 +8,14 @@ INSTALLING
 
 	To install, first install the following dependencies:
 
-	uthash-devel
-	libconfuse
-	libconfuse-devel
+	On rpm based distros:
+		uthash-devel
+		libconfuse
+		libconfuse-devel
+
+	On apt based distros:
+		uthash-dev
+		libconfuse-dev
 
 	To run unit tests, you will also need:
 
