@@ -68,6 +68,8 @@ struct check_result *check_type_used_but_not_required_in_if(const struct check_d
 				flavor = "Type";
 			} else if (look_up_in_decl_map(type_node->string, DECL_ATTRIBUTE)) {
 				flavor = "Attribute";
+			} else if (look_up_in_decl_map(type_node->string, DECL_ROLE)) {
+				flavor = "Role";
 			} else {
 				// This is a string we don't recognize.  Other checks and/or
 				// the compiler catch invalid bare words
@@ -93,8 +95,16 @@ struct check_result *check_type_required_but_not_used_in_if(const struct check_d
 
 	struct declaration_data *dd = (struct declaration_data *) node->data;
 
-	if (dd->flavor != DECL_TYPE) {
-		return NULL; // TODO: Attributes and roles
+	char *flavor = "";
+
+	if (dd->flavor == DECL_TYPE) {
+		flavor = "Type";
+	} else if (dd->flavor == DECL_ATTRIBUTE) {
+		flavor = "Attribute";
+	} else if (dd->flavor == DECL_ROLE) {
+		flavor = "Role";
+	} else {
+		return NULL;
 	}
 
 	const struct policy_node *cur = node;
@@ -157,7 +167,7 @@ struct check_result *check_type_required_but_not_used_in_if(const struct check_d
 
 	while (type_node) {
 		if (!str_in_sl(type_node->string, sl_head)) {
-			res = make_check_result('W', W_ID_UNUSED_REQ, "%s %s is listed in require block but not used in interface", "Type", type_node->string);
+			res = make_check_result('W', W_ID_UNUSED_REQ, "%s %s is listed in require block but not used in interface", flavor, type_node->string);
 			break;
 		}
 		type_node = type_node->next;
