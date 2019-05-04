@@ -75,6 +75,8 @@ START_TEST (test_is_template_call) {
 	insert_call_into_template_map("foo", data);
 
 	ck_assert_int_eq(1, is_template_call(node));
+
+	free_policy_node(node);
 }
 END_TEST
 
