@@ -54,6 +54,7 @@ define { return DEFINE; }
 gen_user { return GEN_USER; }
 gen_context { return GEN_CONTEXT; }
 permissive { return PERMISSIVE; }
+typebounds { return TYPEBOUNDS; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
 s[0-9]+(\.s[0-9]+)?(:c?[0-9]+(.c?[0-9]+)?)? { yylval.string = strdup(yytext); return MLS_LEVEL; }

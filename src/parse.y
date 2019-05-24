@@ -76,6 +76,7 @@
 %token GEN_USER;
 %token GEN_CONTEXT;
 %token PERMISSIVE;
+%token TYPEBOUNDS;
 %token INTERFACE;
 %token TEMPLATE;
 %token OPEN_PAREN;
@@ -218,6 +219,8 @@ line:
 	gen_user
 	|
 	permissive
+	|
+	typebounds
 	|
 	SEMICOLON
 	|
@@ -643,6 +646,10 @@ context:
 
 permissive:
 	PERMISSIVE STRING SEMICOLON { free($2); }
+	;
+
+typebounds:
+	TYPEBOUNDS STRING STRING SEMICOLON { free($2); free($3); }
 	;
 
 	// IF File parsing
