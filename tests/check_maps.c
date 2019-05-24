@@ -105,6 +105,25 @@ START_TEST (test_class_and_perm_maps) {
 }
 END_TEST
 
+START_TEST (test_mods_map) {
+
+	insert_into_mods_map("systemd", "base");
+	insert_into_mods_map("games", "off");
+
+	char *res = look_up_in_mods_map("systemd");
+	ck_assert_str_eq("base", res);
+
+	res = look_up_in_mods_map("games");
+	ck_assert_str_eq("off", res);
+
+	res = look_up_in_mods_map("foo");
+	ck_assert_ptr_null(res);
+
+	free_all_maps();
+
+}
+END_TEST
+
 START_TEST (test_insert_decl_into_template_map) {
 
 	insert_decl_into_template_map("user_domain", DECL_TYPE, "$1_t");
@@ -188,6 +207,7 @@ Suite *maps_suite(void) {
 	tcase_add_test(tc_core, test_insert_into_type_map_dup);
 	tcase_add_test(tc_core, test_role_and_user_maps);
 	tcase_add_test(tc_core, test_class_and_perm_maps);
+	tcase_add_test(tc_core, test_mods_map);
 	tcase_add_test(tc_core, test_insert_decl_into_template_map);
 	tcase_add_test(tc_core, test_insert_call_into_template_map);
 	suite_add_tcase(s, tc_core);

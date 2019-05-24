@@ -6,6 +6,7 @@ struct hash_elem *user_map = NULL;
 struct hash_elem *attr_map = NULL;
 struct hash_elem *class_map = NULL;
 struct hash_elem *perm_map = NULL;
+struct hash_elem *mods_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
 struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor) {
@@ -49,31 +50,31 @@ void insert_into_decl_map(char *name, char *module_name, enum decl_flavor flavor
 	if (decl == NULL) { // Item not in hash table already
 
 		decl = malloc(sizeof(struct hash_elem));
-		decl->name = strdup(name);
-		decl->module_name = strdup(module_name);
+		decl->key = strdup(name);
+		decl->val = strdup(module_name);
 
 		switch (flavor) {
 			case DECL_TYPE:
-				HASH_ADD_KEYPTR(hh_type, type_map, decl->name, strlen(decl->name), decl);
+				HASH_ADD_KEYPTR(hh_type, type_map, decl->key, strlen(decl->key), decl);
 				break;
 			case DECL_ROLE:
-				HASH_ADD_KEYPTR(hh_role, role_map, decl->name, strlen(decl->name), decl);
+				HASH_ADD_KEYPTR(hh_role, role_map, decl->key, strlen(decl->key), decl);
 				break;
 			case DECL_USER:
-				HASH_ADD_KEYPTR(hh_user, user_map, decl->name, strlen(decl->name), decl);
+				HASH_ADD_KEYPTR(hh_user, user_map, decl->key, strlen(decl->key), decl);
 				break;
 			case DECL_ATTRIBUTE:
-				HASH_ADD_KEYPTR(hh_attr, attr_map, decl->name, strlen(decl->name), decl);
+				HASH_ADD_KEYPTR(hh_attr, attr_map, decl->key, strlen(decl->key), decl);
 				break;
 			case DECL_CLASS:
-				HASH_ADD_KEYPTR(hh_class, class_map, decl->name, strlen(decl->name), decl);
+				HASH_ADD_KEYPTR(hh_class, class_map, decl->key, strlen(decl->key), decl);
 				break;
 			case DECL_PERM:
-				HASH_ADD_KEYPTR(hh_perm, perm_map, decl->name, strlen(decl->name), decl);
+				HASH_ADD_KEYPTR(hh_perm, perm_map, decl->key, strlen(decl->key), decl);
 				break;
 			default:
-				free(decl->name);
-				free(decl->module_name);
+				free(decl->key);
+				free(decl->val);
 				free(decl);
 				return;
 		}
@@ -87,7 +88,34 @@ char *look_up_in_decl_map(char *name, enum decl_flavor flavor) {
 	if (decl == NULL) {
 		return NULL;
 	} else {
-		return decl->module_name;
+		return decl->val;
+	}
+}
+
+void insert_into_mods_map(char *mod_name, char *status) {
+
+	struct hash_elem *mod;
+
+	HASH_FIND(hh_mods, mods_map, mod_name, strlen(mod_name), mod);
+
+	if (!mod) {
+		mod = malloc(sizeof(struct hash_elem));
+		mod->key = strdup(mod_name);
+		mod->val = strdup(status);
+		HASH_ADD_KEYPTR(hh_mods, mods_map, mod->key, strlen(mod->key), mod);
+	}
+}
+
+char *look_up_in_mods_map(char *mod_name) {
+
+	struct hash_elem *mod;
+
+	HASH_FIND(hh_mods, mods_map, mod_name, strlen(mod_name), mod);
+
+	if (mod == NULL) {
+		return NULL;
+	} else {
+		return mod->val;
 	}
 }
 
@@ -204,8 +232,8 @@ struct if_call_list *look_up_call_in_template_map(char *name) {
 
 #define FREE_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) {\
 		HASH_DELETE(hh_ ## mn, mn ## _map, cur_decl);\
-		free(cur_decl->name);\
-		free(cur_decl->module_name);\
+		free(cur_decl->key);\
+		free(cur_decl->val);\
 		free(cur_decl);\
 	}\
 
@@ -224,6 +252,8 @@ void free_all_maps() {
 	FREE_MAP(class);
 
 	FREE_MAP(perm);
+
+	FREE_MAP(mods);
 
 	struct template_hash_elem *cur_template, *tmp_template;
 
