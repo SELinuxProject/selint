@@ -19,7 +19,7 @@ INSTALLING
 
 	To run unit tests, you will also need:
 
-	libcheck
+	check
 
 	Then run:
 
