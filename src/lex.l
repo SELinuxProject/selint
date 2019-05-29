@@ -86,7 +86,7 @@ s[0-9]+(\.s[0-9]+)?(:c?[0-9]+(.c?[0-9]+)?)? { yylval.string = strdup(yytext); re
 (\#.*)?\n { yylineno++; }
 dnl(.*)?\n { yylineno++; }
 [ \t] ; /* skip whitespace */
-. { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); } 
+. { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); }
 
 %%
 int yywrap(void) {

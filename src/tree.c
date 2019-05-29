@@ -43,7 +43,7 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 	}
 
 	return SELINT_SUCCESS;
-} 
+}
 
 enum selint_error insert_policy_node_next(struct policy_node *prev,
 				enum node_flavor flavor,

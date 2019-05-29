@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 
 	while (1) {
 
-		static struct option long_options[] = 
+		static struct option long_options[] =
 			{
 				{ "config", required_argument, NULL, 'c' },
 				{ "disable", required_argument, NULL, 'd' },

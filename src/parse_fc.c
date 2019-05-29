@@ -93,7 +93,7 @@ struct fc_entry * parse_fc_line(char *line) {
 			out->context->range = malloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
 			strcpy(out->context->range,maybe_s);
 			strcat(out->context->range,":");
-			strcat(out->context->range,maybe_c); 
+			strcat(out->context->range,maybe_c);
 		} else {
 			out->context->range = strdup(maybe_s);
 		}
@@ -195,7 +195,7 @@ struct policy_node * parse_fc_file(char *filename) {
 		if (strncmp(line, "ifdef", 5) == 0 ||
 			strncmp(line, "ifndef", 6) == 0 ||
 			strncmp(line, "')", 2) == 0 ||
-			strncmp(line, "', `", 4) == 0 || 
+			strncmp(line, "', `", 4) == 0 ||
 			strncmp(line, "',`", 3) == 0 ) {
 
 			continue;
@@ -223,7 +223,7 @@ struct policy_node * parse_fc_file(char *filename) {
 	}
 	free(line); // getline alloc must be freed even if getline failed
 	fclose(fd);
-			
+
 	return head;
 }
 

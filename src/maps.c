@@ -82,7 +82,7 @@ void insert_into_decl_map(char *name, char *module_name, enum decl_flavor flavor
 }
 
 char *look_up_in_decl_map(char *name, enum decl_flavor flavor) {
-	
+
 	struct hash_elem *decl = look_up_hash_elem(name, flavor);
 
 	if (decl == NULL) {
@@ -159,7 +159,7 @@ void insert_call(struct template_hash_elem *template, void *new_node) {
 }
 
 void insert_into_template_map(char *name, void *new_node, void (*insertion_func)(struct template_hash_elem *, void *)) {
-	
+
 	struct template_hash_elem *template;
 
 	HASH_FIND(hh, template_map, name, strlen(name), template);

@@ -53,7 +53,7 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
 
 /**********************************
  * insert_aliases
- * Add alias nodes below the declaration and insert the aliases into the type map 
+ * Add alias nodes below the declaration and insert the aliases into the type map
  * cur (in) - The current spot in the tree.  Will not be changed
  * aliases (in) - The aliases.  This function will free the list
  * flavor (in) - The flavor being declared

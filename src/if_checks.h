@@ -4,7 +4,7 @@
 #include "check_hooks.h"
 
 /*********************************************
- * Check to make sure all interfaces and templates have a comment above them 
+ * Check to make sure all interfaces and templates have a comment above them
  * Called on NODE_IF_DEF and NODE_TEMP_DEF nodes.
  * data - metadata about the file
  * node - the node to check

@@ -26,7 +26,7 @@ struct check_result *check_type_used_but_not_required_in_if(const struct check_d
 
 	const struct policy_node *cur = node;
 
-	struct string_list *types_in_current_node = get_types_in_node(node); 
+	struct string_list *types_in_current_node = get_types_in_node(node);
 
 	if (!types_in_current_node) {
 		return NULL;
@@ -75,7 +75,7 @@ struct check_result *check_type_used_but_not_required_in_if(const struct check_d
 				// the compiler catch invalid bare words
 				type_node = type_node->next;
 				continue;
-			} 
+			}
 
 			struct check_result *res = make_check_result('W', W_ID_NO_REQ, NOT_REQ_MESSAGE, flavor, type_node->string);
 			free_string_list(types_in_current_node);

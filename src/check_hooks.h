@@ -78,7 +78,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, st
 
 /*********************************************
  * Call all registered checks for node->flavor node types
- * and write any error messages to STDOUT 
+ * and write any error messages to STDOUT
  * ck - The checks structure
  * data - Metadata about the file
  * node - the node to check

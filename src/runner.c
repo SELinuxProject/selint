@@ -106,7 +106,7 @@ struct checks * register_checks(char level,
 			}
 		case 'E':
 			if (CHECK_ENABLED("E-002")) {
-				add_check(NODE_ERROR, ck, check_file_context_error_nodes); 
+				add_check(NODE_ERROR, ck, check_file_context_error_nodes);
 			}
 			if (CHECK_ENABLED("E-003")) {
 				add_check(NODE_FC_ENTRY, ck, check_file_context_users);

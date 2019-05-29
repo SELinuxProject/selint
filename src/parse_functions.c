@@ -203,7 +203,7 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 
 	if (template_name) {
 		insert_call_into_template_map(template_name, if_data);
-	} else { 
+	} else {
 		add_template_declarations(if_name, args, NULL, module_name);
 	}
 
@@ -248,7 +248,7 @@ enum selint_error end_block(struct policy_node **cur, enum node_flavor block_typ
 	*cur = (*cur)->parent;
 	return SELINT_SUCCESS;
 }
-	
+
 
 enum selint_error begin_optional_policy(struct policy_node **cur, int lineno) {
 

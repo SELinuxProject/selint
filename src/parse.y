@@ -274,7 +274,7 @@ role_declaration:
 	ROLE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
 	|
 	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
-	; 
+	;
 
 type_alias:
 	TYPEALIAS STRING ALIAS string_list SEMICOLON { insert_type_alias(&cur, $2, yylineno); insert_aliases(&cur, $4, DECL_TYPE, yylineno); free($2); }
@@ -317,10 +317,10 @@ strings:
 	strings sl_item { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
 			cur->next = calloc(1, sizeof(struct string_list));
 			cur->next->string = strdup($2);
-			cur->next->next = NULL; 
+			cur->next->next = NULL;
 			free($2); }
 	|
-	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; } 
+	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
 	;
 
 sl_item:
@@ -348,7 +348,7 @@ comma_string_list:
 role_allow:
 	// It is an error for this to be anything other than ALLOW, but using av_type
 	// instead seems like the cleanest way to avoid ambiguities in the grammar
-	av_type string_list string_list SEMICOLON { free_string_list($2); free_string_list($3); } 
+	av_type string_list string_list SEMICOLON { free_string_list($2); free_string_list($3); }
 	;
 
 type_transition:
@@ -395,7 +395,7 @@ optional_block:
 	;
 
 optional_open:
-	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); } 
+	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); }
 	;
 
 require:
@@ -689,7 +689,7 @@ start_interface:
 			cur->flavor = NODE_IF_FILE;
 			ast = cur;
 			set_current_module_name(parsing_filename);
-		} 
+		}
 		begin_interface_def(&cur, $1, $4, yylineno); free($4); }
 	;
 
@@ -713,7 +713,7 @@ void yyerror(char* s) {
 	data.mod_name = get_current_module_name();
 	data.filename = basename(parsing_filename);
 	data.flavor = FILE_TE_FILE; // We don't know but it's unused by display_check_result
-	
+
 	display_check_result(res, &data);
 
 	free_check_result(res);
