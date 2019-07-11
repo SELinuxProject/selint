@@ -175,12 +175,12 @@ int main(int argc, char **argv) {
 	if (config_filename) {
 		char cfg_severity;
 		parse_config(config_filename, source_flag, &cfg_severity, &config_disabled_checks, &config_enabled_checks);
-		if (severity != '\0') {
+		if (severity == '\0') {
 			severity = cfg_severity;
 		}
 	}
 
-	if (!severity) {
+	if (severity == '\0') {
 		severity = 'C';
 	}
 
