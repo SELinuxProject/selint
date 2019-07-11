@@ -80,8 +80,6 @@ struct checks * register_checks(char level,
 	struct checks *ck = malloc(sizeof(struct checks));
 	memset(ck, 0, sizeof(struct checks));
 
-	// Temporarily just register all at specified level, since config files and
-	// command line check specification isn't implemented yet
 	switch (level) {
 		case 'C':
 			if (CHECK_ENABLED("C-002")) {
