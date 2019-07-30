@@ -651,7 +651,7 @@ context:
 	;
 
 permissive:
-	PERMISSIVE STRING SEMICOLON { free($2); }
+	PERMISSIVE STRING SEMICOLON { insert_permissive_statement(&cur, $2, yylineno); }
 	;
 
 typebounds:

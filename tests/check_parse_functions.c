@@ -276,6 +276,27 @@ START_TEST (test_insert_interface_call) {
 }
 END_TEST
 
+START_TEST (test_insert_permissive_statement) {
+	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
+
+	struct policy_noed *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_permissive_statement(&cur, "unconfined_t", 5678));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_int_eq(NODE_PERMISSIVE, cur->flavor);
+	ck_assert_int_eq(5678, cur->lineno);
+	ck_assert_ptr_null(cur->next);
+	ck_assert_ptr_null(cur->parent);
+	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_eq(cur->prev, head);
+	ck_assert_str_eq("unconfined_t", cur->data);
+
+	free_policy_node(head);
+	cleanup_parsing();
+}
+END_TEST
+
 START_TEST (test_optional_policy) {
 
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
@@ -410,6 +431,7 @@ Suite *parse_functions_suite(void) {
 	tcase_add_test(tc_core, test_insert_av_rule);
 	tcase_add_test(tc_core, test_insert_type_transition);
 	tcase_add_test(tc_core, test_insert_interface_call);
+	tcase_add_test(tc_core, test_insert_permissive_statement);
 	suite_add_tcase(s, tc_core);
 
 	tcase_add_test(tc_blocks, test_optional_policy);

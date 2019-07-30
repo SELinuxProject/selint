@@ -218,6 +218,16 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_permissive_statement(struct policy_node **cur, char *domain, int lineno) {
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_PERMISSIVE, strdup(domain), lineno);
+	if (ret != SELINT_SUCCESS) {
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+	return SELINT_SUCCESS;
+}
+
 enum selint_error begin_block(struct policy_node **cur, enum node_flavor block_type, void *data, int lineno) {
 	enum selint_error ret = insert_policy_node_next(*cur, block_type, data, lineno);
 
