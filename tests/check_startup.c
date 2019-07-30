@@ -2,6 +2,7 @@
 
 #include "../src/startup.h"
 #include "../src/maps.h"
+#include "../src/selint_error.h"
 
 START_TEST (test_load_access_vectors_normal) {
 
@@ -20,6 +21,25 @@ START_TEST (test_load_access_vectors_normal) {
 }
 END_TEST
 
+START_TEST (test_load_modules_source) {
+
+	enum selint_error res = load_modules_source("sample_policy_files/modules.conf");
+
+	ck_assert_int_eq(SELINT_SUCCESS, res);
+
+	ck_assert_str_eq("base", look_up_in_mods_map("sysadm"));
+	ck_assert_str_eq("module", look_up_in_mods_map("sudo"));
+	ck_assert_str_eq("off", look_up_in_mods_map("games"));
+
+	res = load_modules_source("sample_policy_files/bad_modules.conf");
+
+	ck_assert_int_eq(SELINT_PARSE_ERROR, res);
+
+	free_all_maps();
+
+}
+END_TEST
+
 Suite *startup_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -29,6 +49,7 @@ Suite *startup_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_load_access_vectors_normal);
+	tcase_add_test(tc_core, test_load_modules_source);
 	suite_add_tcase(s, tc_core);
 
 	return s;

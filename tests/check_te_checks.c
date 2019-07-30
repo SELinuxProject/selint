@@ -6,7 +6,50 @@
 #include "../src/maps.h"
 
 START_TEST (test_check_module_if_call_in_optional) {
+	struct check_result *res;
 
+	char *foo_read_str = strdup("foo_read");
+	char *bar_read_str = strdup("bar_read");
+
+	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
+	cur->flavor = NODE_IF_CALL;
+	struct if_call_data *if_data = calloc(1, sizeof(struct if_call_data));
+	cur->data = if_data;
+	if_data->name = foo_read_str;
+	struct check_data *cd = calloc(1, sizeof(struct check_data));
+	cd->mod_name = "baz";
+
+	insert_into_ifs_map("foo_read", "foo");
+	insert_into_mods_map("foo", "module");
+
+	res = check_module_if_call_in_optional(cd, cur);
+
+	ck_assert_ptr_nonnull(res);
+	free_check_result(res);
+
+	if_data->name = bar_read_str;
+	insert_into_ifs_map("bar_read", "bar");
+	insert_into_mods_map("bar", "base");
+
+	res = check_module_if_call_in_optional(cd, cur);
+	ck_assert_ptr_null(res);
+
+	cur->parent = calloc(1, sizeof(struct policy_node));
+	cur->parent->flavor = NODE_OPTIONAL_POLICY;
+	cur->parent->first_child = cur;
+
+	res = check_module_if_call_in_optional(cd, cur);
+	ck_assert_ptr_null(res);
+
+	if_data->name = foo_read_str;
+
+	res = check_module_if_call_in_optional(cd, cur);
+	ck_assert_ptr_null(res);
+
+	free(bar_read_str);
+	free(cd);
+	free_all_maps();
+	free_policy_node(cur->parent);
 }
 END_TEST
 

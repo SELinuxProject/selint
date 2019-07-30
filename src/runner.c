@@ -5,6 +5,7 @@
 #include "runner.h"
 #include "fc_checks.h"
 #include "if_checks.h"
+#include "te_checks.h"
 #include "parse_fc.h"
 #include "util.h"
 
@@ -101,6 +102,9 @@ struct checks * register_checks(char level,
 			}
 			if (CHECK_ENABLED("W-004")) {
 				add_check(NODE_FC_ENTRY, ck, check_file_context_regex);
+			}
+			if (CHECK_ENABLED("W-005")) {
+				add_check(NODE_IF_CALL, ck, check_module_if_call_in_optional);
 			}
 		case 'E':
 			if (CHECK_ENABLED("E-002")) {

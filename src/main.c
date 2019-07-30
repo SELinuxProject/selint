@@ -211,6 +211,8 @@ int main(int argc, char **argv) {
 
 	FTSENT *file = fts_read(ftsp);
 
+	char *modules_conf_path = NULL;
+
 	while ( file ) {
 
 		char *suffix = file->fts_path + file->fts_pathlen - 3;
@@ -221,6 +223,9 @@ int main(int argc, char **argv) {
 			file_list_push_back(if_files, make_policy_file(file->fts_path, NULL));
 		} else if ( !strcmp(suffix, ".fc")) {
 			file_list_push_back(fc_files, make_policy_file(file->fts_path, NULL));
+		} else if ( source_flag && !strcmp(file->fts_name, "modules.conf")) {
+			// TODO: Make modules.conf name configurable
+			modules_conf_path = strdup(file->fts_path);
 		} else {
 			print_if_verbose("Skipping %s which is not a policy file\n", file->fts_path);
 			if (!recursive_scan) {
@@ -244,9 +249,22 @@ int main(int argc, char **argv) {
 	// Load object classes and permissions
 	if (source_flag) {
 		load_access_vectors_source();
+		if (modules_conf_path) {
+			enum selint_error res = load_modules_source(modules_conf_path);
+			if (res != SELINT_SUCCESS) {
+				printf("Error loading modules.conf: %d", res);
+			} else {
+				print_if_verbose("Loaded modules from %s\n", modules_conf_path);
+			}
+		} else {
+			printf("Failed to locate modules.conf file.\n");
+		}
 	} else {
 		load_access_vectors_normal("/sys/fs/selinux/class"); // TODO
+		load_modules_normal();
 	}
+
+	free(modules_conf_path);
 
 	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files);
 	switch (res) {

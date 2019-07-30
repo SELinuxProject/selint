@@ -278,6 +278,8 @@ enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor
 			return SELINT_BAD_ARG;
 	}
 
+	insert_into_ifs_map(name, get_current_module_name());
+
 	return begin_block(cur, flavor, (void *) strdup(name), lineno);
 }
 

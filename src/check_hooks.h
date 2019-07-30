@@ -15,7 +15,8 @@ enum style_ids {
 enum warn_ids {
 	W_ID_NO_REQ = 2,
 	W_ID_UNUSED_REQ = 3,
-	W_ID_FC_REGEX = 4
+	W_ID_FC_REGEX = 4,
+	W_ID_IF_CALL_OPTIONAL = 5
 };
 
 enum error_ids {

@@ -95,7 +95,7 @@ check_if_checks_LDADD = @CHECK_LIBS@ ${IF_CHECKS_OBJS}
 
 check_te_checks_SOURCES = check_te_checks.c ${TE_CHECKS_HEADS}
 check_te_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_te_checks_LDADD = @CHECK_LIBS@ ${IF_CHECKS_OBJS}
+check_te_checks_LDADD = @CHECK_LIBS@ ${TE_CHECKS_OBJS}
 
 check_runner_SOURCES = check_runner.c ${RUNNER_HEADS}
 check_runner_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}

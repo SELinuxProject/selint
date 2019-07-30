@@ -323,6 +323,8 @@ START_TEST (test_interface_def) {
 
 	struct policy_node *head = cur;
 
+	set_current_module_name("test");
+
 	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "foo_read_conf", 1234));
 
 	ck_assert_ptr_nonnull(cur);
@@ -365,6 +367,8 @@ START_TEST (test_wrong_block_end) {
 	cur->flavor = NODE_TE_FILE;
 
 	struct policy_node *head = cur;
+
+	set_current_module_name("test");
 
 	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur, 1234));
 

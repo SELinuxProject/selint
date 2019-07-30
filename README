@@ -125,8 +125,8 @@ CHECK IDS
 	W-002: Type, attribute or role used but not listed in require block in interface
 	W-003: Unused type, attribute or role listed in require block
 	W-004: Potentially unescaped regex character in file contexts paths
+	W-005: Interface call from module not in optional_policy block
 
-	E-001: Interface call from module not in optional_policy block
 	E-002: Bad file context format
 	E-003: Nonexistent user listed in fc file
 	E-004: Nonexistent role listed in fc file

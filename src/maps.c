@@ -7,6 +7,7 @@ struct hash_elem *attr_map = NULL;
 struct hash_elem *class_map = NULL;
 struct hash_elem *perm_map = NULL;
 struct hash_elem *mods_map = NULL;
+struct hash_elem *ifs_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
 struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor) {
@@ -116,6 +117,33 @@ char *look_up_in_mods_map(char *mod_name) {
 		return NULL;
 	} else {
 		return mod->val;
+	}
+}
+
+void insert_into_ifs_map(char *if_name, char *module) {
+
+	struct hash_elem *if_call;
+
+	HASH_FIND(hh_ifs, ifs_map, if_name, strlen(if_name), if_call);
+
+	if (!if_call) {
+		if_call = malloc(sizeof(struct hash_elem));
+		if_call->key = strdup(if_name);
+		if_call->val = strdup(module);
+		HASH_ADD_KEYPTR(hh_ifs, ifs_map, if_call->key, strlen(if_call->key), if_call);
+	}
+}
+
+char *look_up_in_ifs_map(char *if_name) {
+
+	struct hash_elem *if_call;
+
+	HASH_FIND(hh_ifs, ifs_map, if_name, strlen(if_name), if_call);
+
+	if (if_call == NULL) {
+		return NULL;
+	} else {
+		return if_call->val;
 	}
 }
 
@@ -254,6 +282,8 @@ void free_all_maps() {
 	FREE_MAP(perm);
 
 	FREE_MAP(mods);
+
+	FREE_MAP(ifs);
 
 	struct template_hash_elem *cur_template, *tmp_template;
 

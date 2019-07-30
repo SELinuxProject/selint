@@ -151,7 +151,13 @@ comment:
 			memset(cur, 0, sizeof(struct policy_node));
 			cur->flavor = NODE_IF_FILE;
 			ast = cur;
-			set_current_module_name(parsing_filename);
+			char *mod_name = strdup(basename(parsing_filename));
+			char *suffix = strrchr(mod_name, '.');
+			if (suffix) {
+				*suffix = '\0';
+			}
+			set_current_module_name(mod_name);
+			free(mod_name);
 		}
 		insert_comment(&cur, yylineno); }
 	;
@@ -688,7 +694,13 @@ start_interface:
 			memset(cur, 0, sizeof(struct policy_node));
 			cur->flavor = NODE_IF_FILE;
 			ast = cur;
-			set_current_module_name(parsing_filename);
+			char *mod_name = strdup(basename(parsing_filename));
+			char *suffix = strrchr(mod_name, '.');
+			if (suffix) {
+				*suffix = '\0';
+			}
+			set_current_module_name(mod_name);
+			free(mod_name);
 		}
 		begin_interface_def(&cur, $1, $4, yylineno); free($4); }
 	;
