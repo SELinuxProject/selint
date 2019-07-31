@@ -7,6 +7,6 @@ if COND_GCOV
 MAYBE_COVERAGE=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
 endif
 
-AM_CFLAGS = $(MAYBE_COVERAGE) -Wall
+AM_CFLAGS = $(MAYBE_COVERAGE) -Wall -DSYSCONFDIR='"$(sysconfdir)"'
 
 MOSTLYCLEANFILES = *.gcda *.gcno *.gcov

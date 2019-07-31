@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fts.h>
+#include <unistd.h>
 
 #include "runner.h"
 #include "parse.h"
@@ -172,6 +173,16 @@ int main(int argc, char **argv) {
 	if (source_flag) {
 		print_if_verbose("Source mode enabled\n");
 	}
+
+	if (!config_filename) {
+		config_filename = SYSCONFDIR "/selint.conf"; // Default install path
+		if(0 != access(config_filename, R_OK)) {
+			//No default config found
+			print_if_verbose("No config specified and could not find default config.");
+			config_filename = NULL;
+		}
+	}
+
 	if (config_filename) {
 		char cfg_severity;
 		parse_config(config_filename, source_flag, &cfg_severity, &config_disabled_checks, &config_enabled_checks);
