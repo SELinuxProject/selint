@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
 		if (modules_conf_path) {
 			enum selint_error res = load_modules_source(modules_conf_path);
 			if (res != SELINT_SUCCESS) {
-				printf("Error loading modules.conf: %d", res);
+				printf("Error loading modules.conf: %d\n", res);
 			} else {
 				print_if_verbose("Loaded modules from %s\n", modules_conf_path);
 			}
