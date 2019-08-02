@@ -84,6 +84,8 @@ enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavo
 
 enum selint_error insert_interface_call(struct policy_node **cur, char *name, struct string_list *args, int lineno);
 
+enum selint_error insert_permissive_statement(struct policy_node **cur, char *domain, int lineno);
+
 /**********************************
  * begin_optional_policy
  * Add an optional policy node at the next node in the tree.  Create its first child
