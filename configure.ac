@@ -56,6 +56,7 @@ AM_CONDITIONAL([HAVE_HELP2MAN], [test "x$HAVE_HELP2MAN" "=" "xtrue"])
 
 AX_VALGRIND_DFLT([drd], [off])
 AX_VALGRIND_DFLT([helgrind], [off])
+AX_VALGRIND_DFLT([sgcheck], [off])
 AX_VALGRIND_CHECK
 
 #AC_CONFIG_FILES([Makefile])

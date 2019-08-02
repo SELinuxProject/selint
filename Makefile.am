@@ -7,4 +7,3 @@ EXTRA_DIST = selint.conf
 
 check-valgrind:
 	CK_FORK=no $(MAKE) -C tests check-valgrind-memcheck-am
-	CK_FORK=no $(MAKE) -C tests check-valgrind-sgcheck-am
