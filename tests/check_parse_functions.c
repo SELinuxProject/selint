@@ -279,7 +279,7 @@ END_TEST
 START_TEST (test_insert_permissive_statement) {
 	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
 
-	struct policy_noed *head = cur;
+	struct policy_node *head = cur;
 
 	ck_assert_int_eq(SELINT_SUCCESS, insert_permissive_statement(&cur, "unconfined_t", 5678));
 

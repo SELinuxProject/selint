@@ -3,10 +3,21 @@
 
 #include "../src/check_hooks.h"
 
+int check_called;
+int check2_called;
+
 struct check_result * example_check(const struct check_data *check_data, const struct policy_node *node);
+struct check_result * example_check2(const struct check_data *check_data, const struct policy_node *node);
 
 struct check_result * example_check(__attribute__((unused)) const struct check_data *check_data, 
 				  __attribute__((unused)) const struct policy_node *node) {
+	check_called = 1;
+	return (struct check_result *) NULL;
+}
+
+struct check_result * example_check2(__attribute__((unused)) const struct check_data *check_data,
+				  __attribute__((unused)) const struct policy_node *node) {
+	check2_called = 1;
 	return (struct check_result *) NULL;
 }
 
@@ -14,13 +25,85 @@ START_TEST (test_add_check) {
 	struct checks *ck = malloc(sizeof(struct checks));
 	memset(ck, 0, sizeof(struct checks));
 
+	check_called = 0;
+
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, example_check));
+
+	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
+	ck_assert_ptr_null(ck->fc_entry_node_checks);
+	ck_assert_ptr_null(ck->error_node_checks);
+
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TT_RULE, ck, example_check));
+
+	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
+	ck_assert_ptr_nonnull(ck->tt_rule_node_checks);
+	ck_assert_ptr_null(ck->fc_entry_node_checks);
+	ck_assert_ptr_null(ck->error_node_checks);
+
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_DECL, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_DEF, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TEMP_DEF, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_CALL, ck, example_check));
+
+	ck_assert_ptr_nonnull(ck->decl_node_checks);
+	ck_assert_ptr_nonnull(ck->if_def_node_checks);
+	ck_assert_ptr_nonnull(ck->temp_def_node_checks);
+	ck_assert_ptr_nonnull(ck->if_call_node_checks);
+	ck_assert_ptr_null(ck->fc_entry_node_checks);
+	ck_assert_ptr_null(ck->error_node_checks);
+
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_FC_ENTRY, ck, example_check));
 
-	ck_assert_ptr_null(ck->error_node_checks);
+	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
 	ck_assert_ptr_nonnull(ck->fc_entry_node_checks);
+	ck_assert_ptr_null(ck->error_node_checks);
 
 	ck_assert_ptr_eq(ck->fc_entry_node_checks->check_function, example_check);
 
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_ERROR, ck, example_check));
+	ck_assert_ptr_nonnull(ck->error_node_checks);
+
+	ck_assert_int_eq(0, check_called);
+
+	free_checks(ck);
+
+}
+END_TEST
+
+START_TEST (test_call_checks) {
+	struct checks *ck = malloc(sizeof(struct checks));
+	memset(ck, 0, sizeof(struct checks));
+
+	check_called = 0;
+	check2_called = 0;
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, example_check));
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_AV_RULE;
+
+	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
+
+	ck_assert_int_eq(1, check_called);
+	ck_assert_int_eq(0, check2_called);
+
+	check_called = 0;
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, example_check2));
+
+	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
+
+	ck_assert_int_eq(1, check_called);
+	ck_assert_int_eq(1, check2_called);
+
+	node->flavor = NODE_TT_RULE;
+	check_called = 0;
+	check2_called = 0;
+
+	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
+
+	ck_assert_int_eq(0, check_called);
+	ck_assert_int_eq(0, check2_called);
+
+	free_policy_node(node);
 	free_checks(ck);
 
 }
@@ -35,6 +118,7 @@ Suite *check_hooks_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_add_check);
+	tcase_add_test(tc_core, test_call_checks);
 	suite_add_tcase(s, tc_core);
 
 	return s;

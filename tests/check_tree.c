@@ -176,6 +176,35 @@ START_TEST (test_get_types_in_node_dd) {
 }
 END_TEST
 
+START_TEST (test_get_types_in_node_if_call) {
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_IF_CALL;
+
+	node->data = calloc(1, sizeof(struct if_call_data));
+
+	struct if_call_data *if_data = (struct if_call_data *)node->data;
+
+	if_data->name = strdup("foo_read");
+	if_data->args = calloc(1, sizeof(struct string_list));
+	if_data->args->string = strdup("bar_t");
+	if_data->args->next = calloc(1, sizeof(struct string_list));
+	if_data->args->next->string = strdup("baz_t");
+
+	struct string_list *out = get_types_in_node(node);
+
+	ck_assert_ptr_nonnull(out);
+
+	ck_assert_str_eq(out->string, "bar_t");
+	ck_assert_str_eq(out->next->string, "baz_t");
+
+	ck_assert_ptr_null(out->next->next);
+
+	free_string_list(out);
+	free_policy_node(node);
+}
+END_TEST
+
 START_TEST (test_get_types_in_node_no_types) {
 
 	struct policy_node *node = calloc(1, sizeof(struct policy_node));
@@ -201,6 +230,7 @@ Suite *tree_suite(void) {
 	tcase_add_test(tc_core, test_get_types_in_node_av);
 	tcase_add_test(tc_core, test_get_types_in_node_tt);
 	tcase_add_test(tc_core, test_get_types_in_node_dd);
+	tcase_add_test(tc_core, test_get_types_in_node_if_call);
 	tcase_add_test(tc_core, test_get_types_in_node_no_types);
 	suite_add_tcase(s, tc_core);
 

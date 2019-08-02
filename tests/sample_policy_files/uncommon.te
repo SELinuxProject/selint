@@ -7,11 +7,16 @@ require {
 	role system_r, user_r;
 }
 
+type baz_t alias { old_baz_t older_baz_t };
+type this_shouldnt_be_allowed_t alias other_name_t, attr_name;
+
 permissive foo_t;
 
 sid netmsg gen_context(system_u:object_r:netlabel_peer_t,mls_systemhigh)
 
 portcon udp 7007 gen_context(system_u:object_r:afs_bos_port_t,s0)
+portcon udp 7007 gen_context(system_u:object_r:afs_bos_port_t,s0:c2)
+portcon udp 7007 gen_context(system_u:object_r:afs_bos_port_t,s0,s1:c0.c225)
 portcon udp 7007-7008 gen_context(system_u:object_r:afs_bos_port_t,s0)
 fs_use_trans devtmpfs gen_context(system_u:object_r:device_t,s0);
 genfscon sysfs /devices/system/cpu/online gen_context(system_u:object_r:cpu_online_t,s0)
@@ -32,9 +37,13 @@ optional_policy(`
 
 netifcon lo gen_context(system_u:object_r:lo_netif_t,s0 - mls_systemhigh) gen_context(system_u:object_r:unlabeled_t,s0 - mls_systemhigh)
 
+nodecon ::5 ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff gen_context(system_u:object_r:system_t:s0)
+
 if (!bool_one) {
 	allow foo_t bar_t:file open;
 }
 
 # Interface with a missing comma
 foo_if(foo_t, bar_t baz_t)
+
+allow system_r user_r;
