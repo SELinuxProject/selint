@@ -597,6 +597,11 @@ netifcon:
 
 nodecon:
 	NODECON two_ip_addrs GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
+	// Below is grammatically valid, but causes a shift reduce conflict with the end of an ipv6
+	// address and a context.  I'm not sure how to solve it without passing in whitespace from
+	// the lexer, which will hugely complicate the rest of the grammar.
+	//|
+	//NODECON two_ip_addrs context
 	;
 
 two_ip_addrs:
