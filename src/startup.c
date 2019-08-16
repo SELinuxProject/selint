@@ -72,7 +72,14 @@ enum selint_error load_modules_source(char *modules_conf_path) {
 		if (len_read <= 1 || line[0] == '#') {
 			continue;
 		}
-		char *pos = strtok(line, "=");
+		char *pos = line;
+		while (*pos != '\0' && is_space(*pos)) {
+			pos++;
+		}
+		if ( pos[0] == '#' || pos[0] == '\0') {
+			continue;
+		}
+		pos = strtok(line, "=");
 		if (!pos) {
 			free(line);
 			return SELINT_PARSE_ERROR;
