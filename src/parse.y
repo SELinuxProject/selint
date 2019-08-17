@@ -79,6 +79,7 @@
 %token TYPEBOUNDS;
 %token INTERFACE;
 %token TEMPLATE;
+%token USERDEBUG_OR_ENG;
 %token OPEN_PAREN;
 %token COMMA;
 %token PERIOD;
@@ -430,6 +431,8 @@ m4_call:
 	ifelse
 	|
 	refpolicywarn
+	|
+	userdebug_or_eng
 	;
 
 ifdef:
@@ -456,6 +459,10 @@ ifelse:
 
 refpolicywarn:
 	REFPOLICYWARN OPEN_PAREN BACKTICK arbitrary_m4_string SINGLE_QUOTE CLOSE_PAREN
+	;
+
+userdebug_or_eng:
+	USERDEBUG_OR_ENG OPEN_PAREN BACKTICK lines SINGLE_QUOTE CLOSE_PAREN
 	;
 
 arbitrary_m4_string:

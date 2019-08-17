@@ -57,6 +57,7 @@ permissive { return PERMISSIVE; }
 typebounds { return TYPEBOUNDS; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
+userdebug_or_eng { return USERDEBUG_OR_ENG; }
 s[0-9]+(\.s[0-9]+)?(:c?[0-9]+(.c?[0-9]+)?)? { yylval.string = strdup(yytext); return MLS_LEVEL; }
 [0-9]+\.[0-9]+(\.[0-9]+)? { yylval.string = strdup(yytext); return VERSION_NO; }
 [0-9]+ { yylval.string = strdup(yytext); return NUMBER; }
