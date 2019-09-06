@@ -182,7 +182,7 @@ struct policy_node * parse_fc_file(char *filename) {
 
 	char *line = NULL;
 
-	size_t len_read = 0;
+	ssize_t len_read = 0;
 	size_t buf_len = 0;
 	int lineno = 0;
 	while ((len_read = getline(&line, &buf_len, fd)) != -1) {

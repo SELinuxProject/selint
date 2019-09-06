@@ -8,7 +8,7 @@
 #define READ_STRING_LIST_FROM_CONFIG(slp, config_name) \
 	if (slp) {\
 		struct string_list *end = NULL;\
-		for (int i = 0; i < cfg_size(cfg, config_name); i++) {\
+		for (unsigned int i = 0; i < cfg_size(cfg, config_name); i++) {\
 			struct string_list *cur = calloc(1, sizeof(struct string_list));\
 			cur->string = strdup(cfg_getnstr(cfg, config_name, i));\
 			cur->next = NULL;\
@@ -22,7 +22,7 @@
 	}\
 
 void insert_config_declarations(cfg_t *cfg, char *config_item, enum decl_flavor flavor) {
-	for (int i = 0; i < cfg_size(cfg, config_item); i++) {
+	for (unsigned int i = 0; i < cfg_size(cfg, config_item); i++) {
 		insert_into_decl_map(cfg_getnstr(cfg, config_item, i), "__assumed__", flavor);
 	}
 }

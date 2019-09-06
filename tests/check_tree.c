@@ -5,6 +5,7 @@
 #include "test_utils.h"
 
 #include "../src/tree.h"
+#include "../src/maps.h"
 
 START_TEST (test_insert_policy_node_child) {
 

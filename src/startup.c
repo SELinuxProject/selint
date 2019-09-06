@@ -66,7 +66,7 @@ enum selint_error load_modules_source(char *modules_conf_path) {
 	}
 
 	char *line = NULL;
-	size_t len_read = 0;
+	ssize_t len_read = 0;
 	size_t buf_len = 0;
 	while ((len_read = getline(&line, &buf_len, fd)) != -1) {
 		if (len_read <= 1 || line[0] == '#') {
