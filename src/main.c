@@ -19,7 +19,7 @@ extern int verbose_flag;
 
 void usage() {
 
-	printf("Usage: selint [OPTIONS] [FILE] [...]\n"\
+	printf("Usage: selint [OPTIONS] FILE [...]\n"\
 		"Perform static code analysis on SELinux policy source.\n\n");
 	printf("  -c CONFIGFILE, --config=CONFIGFILE\tOverride default config with config\n"\
 		"\t\t\t\t\tspecified on command line.  See\n"\
