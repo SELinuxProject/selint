@@ -10,6 +10,10 @@
 #define SEVERITY_ERROR_FILENAME CONFIGS_DIR "severity_error.conf"
 #define SEVERITY_FATAL_FILENAME CONFIGS_DIR "severity_fatal.conf"
 #define CHECKS_FILENAME CONFIGS_DIR "check_config.conf"
+#define BAD_FORMAT_1 CONFIGS_DIR "bad_format.conf"
+#define BAD_FORMAT_2 CONFIGS_DIR "bad_format_2.conf"
+#define BAD_OPTION CONFIGS_DIR "invalid_option.conf"
+#define BAD_SEVERITY CONFIGS_DIR "severity_invalid.conf"
 
 START_TEST (test_parse_config_severity) {
 	char severity = '\0';
@@ -66,6 +70,34 @@ START_TEST (test_parse_config_checks) {
 }
 END_TEST
 
+START_TEST (test_bad_configs) {
+	char severity = '\0';
+	struct string_list *dis = NULL;
+	struct string_list *en = NULL;
+
+	ck_assert_int_eq(SELINT_CONFIG_PARSE_ERROR, parse_config(BAD_FORMAT_1, 0, &severity, &dis, &en));
+	ck_assert_ptr_null(dis);
+	ck_assert_ptr_null(en);
+	ck_assert_int_eq('\0', severity);
+
+	ck_assert_int_eq(SELINT_CONFIG_PARSE_ERROR, parse_config(BAD_FORMAT_2, 0, &severity, &dis, &en));
+	ck_assert_ptr_null(dis);
+	ck_assert_ptr_null(en);
+	ck_assert_int_eq('\0', severity);
+
+	ck_assert_int_eq(SELINT_CONFIG_PARSE_ERROR, parse_config(BAD_OPTION, 0, &severity, &dis, &en));
+	ck_assert_ptr_null(dis);
+	ck_assert_ptr_null(en);
+	ck_assert_int_eq('\0', severity);
+
+	ck_assert_int_eq(SELINT_CONFIG_PARSE_ERROR, parse_config(BAD_SEVERITY, 0, &severity, &dis, &en));
+	ck_assert_ptr_null(dis);
+	ck_assert_ptr_null(en);
+	ck_assert_int_eq('\0', severity);
+
+}
+END_TEST
+
 Suite *selint_config_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -76,6 +108,7 @@ Suite *selint_config_suite(void) {
 
 	tcase_add_test(tc_core, test_parse_config_severity);
 	tcase_add_test(tc_core, test_parse_config_checks);
+	tcase_add_test(tc_core, test_bad_configs);
 	suite_add_tcase(s, tc_core);
 
 	return s;
