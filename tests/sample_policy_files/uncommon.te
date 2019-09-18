@@ -35,6 +35,13 @@ optional_policy(`
 ;
 ')
 
+optional_policy(`
+	foo_read(bar_t)
+',`
+	# else
+	foo_write(bar_t)
+')
+
 netifcon lo gen_context(system_u:object_r:lo_netif_t,s0 - mls_systemhigh) gen_context(system_u:object_r:unlabeled_t,s0 - mls_systemhigh)
 
 nodecon ::5 ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff gen_context(system_u:object_r:system_t:s0)
@@ -47,3 +54,17 @@ if (!bool_one) {
 foo_if(foo_t, bar_t baz_t)
 
 allow system_r user_r;
+
+empty_interfaces_are_legal()
+
+gen_require(
+	type no_backticks_t;
+	role no_backticks_r;
+)
+
+gen_tunable(`hello',world)
+gen_tunable(hello,world)
+
+define(yes, no)
+
+typebounds foo_t bar_t;

@@ -31,6 +31,12 @@
 %token <symbol> SYMBOL;
 %token <string> VERSION_NO;
 
+%destructor { free($$); } STRING
+%destructor { free($$); } NUM_STRING
+%destructor { free($$); } NUMBER
+%destructor { free($$); } QUOTED_STRING
+%destructor { free($$); } VERSION_NO
+
 %token POLICY_MODULE;
 %token MODULE;
 %token TYPE;
@@ -411,7 +417,7 @@ require:
 	|
 	// TODO: This is bad and should be checked
 	gen_require_begin
-	line CLOSE_PAREN { end_gen_require(&cur); }
+	lines CLOSE_PAREN { end_gen_require(&cur); }
 	|
 	REQUIRE OPEN_CURLY { begin_require(&cur, yylineno); }
 	lines CLOSE_CURLY { end_require(&cur); }
@@ -595,6 +601,8 @@ port_range:
 	|
 	NUMBER { free($1); }
 	|
+	// TODO: This only happens with whitespace around the dash.  NUM_STRING catches "1000-1001" type
+	// names.  Is that actually a valid scenario?
 	NUMBER DASH NUMBER { free($1); free($3); }
 	;
 

@@ -11,6 +11,7 @@
 #define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"
 #define BLOCKS_TE_FILENAME POLICIES_DIR "blocks.te"
 #define EMPTY_TE_FILENAME POLICIES_DIR "empty.te"
+#define SYNTAX_ERROR_FILENAME POLICIES_DIR "syntax_error.te"
 
 extern FILE * yyin;
 extern int yyparse();
@@ -205,6 +206,20 @@ START_TEST (test_parse_empty_file) {
 }
 END_TEST
 
+START_TEST (test_syntax_error) {
+
+	ast = NULL;
+
+	yyin = fopen(SYNTAX_ERROR_FILENAME, "r");
+	ck_assert_int_eq(1, yyparse());
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(yyin);
+
+}
+END_TEST
+
 Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -218,6 +233,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_uncommon_constructs);
 	tcase_add_test(tc_core, test_parse_blocks);
 	tcase_add_test(tc_core, test_parse_empty_file);
+	tcase_add_test(tc_core, test_syntax_error);
 	suite_add_tcase(s, tc_core);
 
 	return s;

@@ -74,6 +74,33 @@ START_TEST (test_replace_m4_too_few_args) {
 }
 END_TEST
 
+START_TEST (test_replace_m4_nothing_to_replace) {
+	struct string_list *args = calloc(1, sizeof(struct string_list));
+	args->string = strdup("foo");
+
+	char *orig = "bar_t";
+
+	char *res = replace_m4(orig, args);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_str_eq("bar_t", res);
+
+	free(res);
+	free_string_list(args);
+}
+END_TEST
+
+START_TEST (test_replace_m4_bad_dollar_sign) {
+	struct string_list *args = calloc(1, sizeof(struct string_list));
+	args->string = strdup("foo");
+
+	char *orig = "$string";
+
+	ck_assert_ptr_null(replace_m4(orig, args));
+
+	free_string_list(args);
+}
+END_TEST
+
 START_TEST (test_replace_m4_list) {
 
 	struct string_list *caller_args = calloc(1,sizeof(struct string_list));
@@ -146,6 +173,8 @@ Suite *template_suite(void) {
 
 	tcase_add_test(tc_core, test_replace_m4);
 	tcase_add_test(tc_core, test_replace_m4_too_few_args);
+	tcase_add_test(tc_core, test_replace_m4_nothing_to_replace);
+	tcase_add_test(tc_core, test_replace_m4_bad_dollar_sign);
 	tcase_add_test(tc_core, test_replace_m4_list);
 	tcase_add_test(tc_core, test_nested_template_declarations);
 	suite_add_tcase(s, tc_core);

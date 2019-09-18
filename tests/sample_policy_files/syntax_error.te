@@ -1,0 +1,5 @@
+policy_module(syntax_error, 1.0
+
+type no_semicolon_t
+
+allow no_semicolon_t other_thing_t:file { read write };
