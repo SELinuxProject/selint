@@ -39,6 +39,10 @@ char *replace_m4(char *orig, struct string_list *args) {
 		}
 		orig_pos += after_num_pos;
 		cur = args;
+		if (!cur) {
+			free(ret);
+			return NULL;
+		}
 		while (arg_num > 1 ) {
 			cur = cur->next;
 			arg_num--;

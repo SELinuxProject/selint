@@ -112,24 +112,37 @@ struct string_list * get_types_in_node(const struct policy_node *node) {
 		case NODE_AV_RULE:
 			av_data = (struct av_rule_data *)node->data;
 			cur = ret = copy_string_list(av_data->sources);
-			while (cur && cur->next) {
-				cur = cur->next;
+			if (cur) {
+				while (cur->next) {
+					cur = cur->next;
+				}
+				cur->next = copy_string_list(av_data->targets);
+			} else {
+				ret = copy_string_list(av_data->targets);
 			}
-			cur->next = copy_string_list(av_data->targets);
 			break;
 
 		case NODE_TT_RULE:
 			tt_data = (struct type_transition_data *)node->data;
 			cur = ret = copy_string_list(tt_data->sources);
-			while (cur && cur->next) {
-				cur = cur->next;
+			if (cur) {
+				while (cur->next) {
+					cur = cur->next;
+				}
+				cur->next = copy_string_list(tt_data->targets);
+			} else {
+				cur = ret = copy_string_list(tt_data->targets);
 			}
-			cur->next = copy_string_list(tt_data->targets);
-			while (cur && cur->next) {
-				cur = cur->next;
+			if (cur) {
+				while (cur->next) {
+					cur = cur->next;
+				}
+				cur->next = calloc(1,sizeof(struct string_list));
+				cur->next->string = strdup(tt_data->default_type);
+			} else {
+				cur = ret = calloc(1,sizeof(struct string_list));
+				cur->string = strdup(tt_data->default_type);
 			}
-			cur->next = calloc(1,sizeof(struct string_list));
-			cur->next->string = strdup(tt_data->default_type);
 			break;
 
 		case NODE_DECL:

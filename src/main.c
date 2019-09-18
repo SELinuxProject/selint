@@ -254,6 +254,10 @@ int main(int argc, char **argv) {
 	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled);
 	if (!ck) {
 		printf("Failed to register checks (bad configuration)\n");
+		free_file_list(te_files);
+		free_file_list(if_files);
+		free_file_list(fc_files);
+		free(modules_conf_path);
 		return -1;
 	}
 

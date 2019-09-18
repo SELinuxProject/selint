@@ -114,7 +114,7 @@ struct policy_node {
 	struct policy_node *first_child;
 	enum node_flavor flavor;
 	void *data;
-	int lineno;
+	unsigned int lineno;
 };
 
 enum selint_error insert_policy_node_child(struct policy_node *parent, enum node_flavor flavor, void *data, int lineno);

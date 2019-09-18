@@ -10,9 +10,11 @@
 				loc = ck->nl;\
 				while (loc->next) { loc = loc->next; }\
 				loc->next = malloc(sizeof(struct check_node));\
+				if (!loc->next) { return SELINT_OUT_OF_MEM; }\
 				loc = loc->next;\
 			} else {\
 				ck->nl = malloc(sizeof(struct check_node));\
+				if (!ck->nl) { return SELINT_OUT_OF_MEM; }\
 				loc = ck->nl;\
 			}
 
