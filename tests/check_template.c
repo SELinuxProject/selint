@@ -73,6 +73,7 @@ START_TEST (test_replace_m4_too_few_args) {
 	ck_assert_str_eq("_t", ret);
 
 	free_string_list(args);
+	free(ret);
 
 }
 END_TEST
