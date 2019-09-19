@@ -50,6 +50,14 @@ if (!bool_one) {
 	allow foo_t bar_t:file open;
 }
 
+if (bool_one && ( bool_three || ( bool_four != bool_five))) {
+	allow foo_t baz_t:file write;
+}
+
+if (bool_one == bool_two) {
+	allow foo_t baz_t:file relabelto;
+}
+
 # Interface with a missing comma
 foo_if(foo_t, bar_t baz_t)
 

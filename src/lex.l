@@ -80,9 +80,9 @@ s[0-9]+(\.s[0-9]+)?(:c?[0-9]+(.c?[0-9]+)?)? { yylval.string = strdup(yytext); re
 \&\& { return AND; }
 \|\| { return OR; }
 \^ { return XOR; }
+\!\= { return NOT_EQUAL; }
 \! { return NOT; }
 \=\= { return EQUAL; }
-\!\= { return NOT_EQUAL; }
 ^\#.*\n { yylineno++; return COMMENT; }
 (\#.*)?\n { yylineno++; }
 dnl(.*)?\n { yylineno++; }
