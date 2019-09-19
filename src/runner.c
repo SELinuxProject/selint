@@ -255,5 +255,5 @@ enum selint_error run_analysis(struct checks *ck, struct policy_file_list *te_fi
 out:
 	cleanup_parsing();
 
-	return SELINT_SUCCESS;
+	return res;
 }
