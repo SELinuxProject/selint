@@ -67,7 +67,10 @@ START_TEST (test_replace_m4_too_few_args) {
 	
 	char *orig = "$3_t";
 
-	ck_assert_ptr_null(replace_m4(orig, args));
+	char *ret = replace_m4(orig, args);
+
+	ck_assert_ptr_nonnull(ret);
+	ck_assert_str_eq("_t", ret);
 
 	free_string_list(args);
 
@@ -130,6 +133,24 @@ START_TEST (test_replace_m4_list) {
 }
 END_TEST
 
+START_TEST (test_replace_m4_list_too_few_args) {
+
+	struct string_list *caller_args = calloc(1,sizeof(struct string_list));
+	caller_args->string = strdup("foo");
+	struct string_list *called_args = calloc(1,sizeof(struct string_list));
+	called_args->string = strdup("$5");
+
+	struct string_list *ret = replace_m4_list(caller_args, called_args);
+	ck_assert_ptr_nonnull(ret);
+	ck_assert_ptr_nonnull(ret->string);
+	ck_assert_str_eq("", ret->string);
+
+	free_string_list(caller_args);
+	free_string_list(called_args);
+	free_string_list(ret);
+}
+END_TEST
+
 struct policy_node *ast;
 
 START_TEST (test_nested_template_declarations) {
@@ -176,6 +197,7 @@ Suite *template_suite(void) {
 	tcase_add_test(tc_core, test_replace_m4_nothing_to_replace);
 	tcase_add_test(tc_core, test_replace_m4_bad_dollar_sign);
 	tcase_add_test(tc_core, test_replace_m4_list);
+	tcase_add_test(tc_core, test_replace_m4_list_too_few_args);
 	tcase_add_test(tc_core, test_nested_template_declarations);
 	suite_add_tcase(s, tc_core);
 

@@ -17,6 +17,7 @@ char *replace_m4(char *orig, struct string_list *args) {
 	// len_to_malloc is now overestimated, because the length of the original
 	// arguments wasn't subtracted and not all args are necessarily substituted
 	char *ret = malloc(len_to_malloc);
+	*ret = '\0'; // If the string is only a substitution that there is no argument for, we need to be terminated
 	char* orig_pos = orig;
 	char* ret_pos = ret;
 	while (*orig_pos) {
@@ -39,20 +40,15 @@ char *replace_m4(char *orig, struct string_list *args) {
 		}
 		orig_pos += after_num_pos;
 		cur = args;
-		if (!cur) {
-			free(ret);
-			return NULL;
-		}
-		while (arg_num > 1 ) {
+		while ( cur && arg_num > 1 ) {
 			cur = cur->next;
 			arg_num--;
-			if (!cur) {
-				free(ret);
-				return NULL;
-			}
 		}
-		strcpy(ret_pos, cur->string);
-		ret_pos += strlen(cur->string);
+		if (cur) {
+			strcpy(ret_pos, cur->string);
+			ret_pos += strlen(cur->string);
+		}
+		// Otherwise, we are inserting the empty string
 	}
 	return ret;
 }
