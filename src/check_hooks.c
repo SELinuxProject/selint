@@ -115,7 +115,7 @@ void display_check_result(struct check_result *res, struct check_data *data) {
 }
 
 struct check_result * alloc_internal_error(char *string) {
-	return make_check_result('F', F_ID_INTERNAL, strdup(string));
+	return make_check_result('F', F_ID_INTERNAL, string);
 }
 
 void free_check_result(struct check_result *res) {

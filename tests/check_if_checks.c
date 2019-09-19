@@ -32,6 +32,16 @@ START_TEST (test_check_interface_defs_have_comment) {
 	ck_assert_int_eq(C_ID_IF_COMMENT, res->check_id);
 
 	free_check_result(res);
+
+	head->next->flavor = NODE_AV_RULE;
+
+	res = check_interface_definitions_have_comment(NULL, head->next);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq('F', res->severity);
+	ck_assert_int_eq(F_ID_INTERNAL, res->check_id);
+
+	free_check_result(res);
+
 	free_policy_node(head);
 }
 END_TEST
