@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <fts.h>
 #include <unistd.h>
+#include <sysexits.h>
 
 #include "runner.h"
 #include "parse.h"
@@ -48,6 +49,7 @@ int main(int argc, char **argv) {
 	int source_flag = 0;
 	int recursive_scan = 0;
 	int only_enabled = 0;
+	int exit_code = EX_OK;
 
 	struct string_list *config_disabled_checks = NULL;
 	struct string_list *config_enabled_checks = NULL;
@@ -162,7 +164,7 @@ int main(int argc, char **argv) {
 
 			case '?':
 				usage();
-				exit(129);
+				exit(EX_USAGE);
 				break;
 		}
 
@@ -199,7 +201,7 @@ int main(int argc, char **argv) {
 
 	if (optind == argc) {
 		usage();
-		exit(0);
+		exit(EX_USAGE);
 	}
 
 	struct policy_file_list *te_files = malloc(sizeof(struct policy_file_list));
@@ -258,7 +260,7 @@ int main(int argc, char **argv) {
 		free_file_list(if_files);
 		free_file_list(fc_files);
 		free(modules_conf_path);
-		return -1;
+		return EX_CONFIG;
 	}
 
 	// Load object classes and permissions
@@ -287,9 +289,11 @@ int main(int argc, char **argv) {
 			break;
 		case SELINT_PARSE_ERROR:
 			printf("Error during parsing\n");
+			exit_code = EX_SOFTWARE;
 			break;
 		default:
 			printf("Internal error: %d\n", res);
+			exit_code = EX_SOFTWARE;
 	}
 
 	if (config_enabled_checks) {
@@ -311,5 +315,5 @@ int main(int argc, char **argv) {
 	free_file_list(if_files);
 	free_file_list(fc_files);
 
-	return 0;
+	return exit_code;
 }
