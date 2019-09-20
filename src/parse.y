@@ -99,19 +99,13 @@
 %token TILDA;
 %token STAR;
 %token DASH;
-%token AND;
-%token OR;
-%token XOR;
-%token NOT;
-%token EQUAL;
-%token NOT_EQUAL;
+%left AND;
+%left OR;
+%left XOR;
+%right NOT;
+%left EQUAL;
+%left NOT_EQUAL;
 %token COMMENT;
-
-%left OR
-%left XOR
-%left AND
-%right NOT
-%left EQUAL NOT_EQUAL
 
 %type<sl> string_list
 %type<sl> comma_string_list
@@ -500,21 +494,17 @@ condition:
 	|
 	NOT condition
 	|
-	condition binary_operator condition
+	condition AND condition
+	|
+	condition OR condition
+	|
+	condition XOR condition
+	|
+	condition EQUAL condition
+	|
+	condition NOT_EQUAL condition
 	|
 	OPEN_PAREN condition CLOSE_PAREN
-	;
-
-binary_operator:
-	AND
-	|
-	OR
-	|
-	XOR
-	|
-	EQUAL
-	|
-	NOT_EQUAL
 	;
 
 m4_args:
