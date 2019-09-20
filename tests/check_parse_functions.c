@@ -191,6 +191,26 @@ START_TEST (test_insert_av_rule) {
 }
 END_TEST
 
+START_TEST (test_insert_role_allow) {
+
+	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
+
+	struct policy_node *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_role_allow(&cur, "staff_r", "dbadm_r", 20));
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_int_eq(NODE_ROLE_ALLOW, cur->flavor);
+	struct role_allow_data *ra = (struct role_allow_data *)(cur->data);
+	ck_assert_str_eq("staff_r", ra->from);
+	ck_assert_str_eq("dbadm_r", ra->to);
+
+	free_policy_node(head);
+
+	cleanup_parsing();
+}
+END_TEST
+
 START_TEST (test_insert_type_transition) {
 	struct policy_node *cur = malloc(sizeof(struct policy_node));
 	memset(cur, 0, sizeof(struct policy_node));
@@ -429,6 +449,7 @@ Suite *parse_functions_suite(void) {
 	tcase_add_test(tc_core, test_insert_aliases);
 	tcase_add_test(tc_core, test_insert_type_alias);
 	tcase_add_test(tc_core, test_insert_av_rule);
+	tcase_add_test(tc_core, test_insert_role_allow);
 	tcase_add_test(tc_core, test_insert_type_transition);
 	tcase_add_test(tc_core, test_insert_interface_call);
 	tcase_add_test(tc_core, test_insert_permissive_statement);

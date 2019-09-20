@@ -12,6 +12,7 @@
 #define BLOCKS_TE_FILENAME POLICIES_DIR "blocks.te"
 #define EMPTY_TE_FILENAME POLICIES_DIR "empty.te"
 #define SYNTAX_ERROR_FILENAME POLICIES_DIR "syntax_error.te"
+#define BAD_RA_FILENAME POLICIES_DIR "bad_role_allow.te"
 
 extern FILE * yyin;
 extern int yyparse();
@@ -220,6 +221,20 @@ START_TEST (test_syntax_error) {
 }
 END_TEST
 
+START_TEST (test_parse_bad_role_allow) {
+
+	ast = NULL;
+
+	yyin = fopen(BAD_RA_FILENAME, "r");
+	ck_assert_int_eq(1, yyparse());
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(yyin);
+
+}
+END_TEST
+
 Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -234,6 +249,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_blocks);
 	tcase_add_test(tc_core, test_parse_empty_file);
 	tcase_add_test(tc_core, test_syntax_error);
+	tcase_add_test(tc_core, test_parse_bad_role_allow);
 	suite_add_tcase(s, tc_core);
 
 	return s;

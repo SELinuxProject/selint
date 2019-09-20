@@ -168,6 +168,23 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_role_allow(struct policy_node **cur, char *from_role, char *to_role, int lineno) {
+	struct role_allow_data *ra_data = malloc(sizeof(struct role_allow_data));
+
+	ra_data->from = strdup(from_role);
+	ra_data->to = strdup(to_role);
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_ROLE_ALLOW, ra_data, lineno);
+	if (ret != SELINT_SUCCESS) {
+		free_ra_data(ra_data);
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+
+	return SELINT_SUCCESS;
+}
+
 enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno) {
 
 	struct type_transition_data *tt_data = malloc(sizeof(struct type_transition_data));

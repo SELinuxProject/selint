@@ -1,0 +1,4 @@
+policy_module(bad_role_allow, 1.0)
+
+# Not legal
+dontaudit staff_r sysadm_r;

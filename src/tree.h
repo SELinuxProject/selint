@@ -12,6 +12,7 @@ enum node_flavor {
 	NODE_TT_RULE,
 	NODE_TM_RULE,
 	NODE_TC_RULE,
+	NODE_ROLE_ALLOW,
 	NODE_DECL,
 	NODE_ALIAS,
 	NODE_TYPE_ALIAS,
@@ -61,6 +62,11 @@ struct av_rule_data {
 	struct string_list *targets;
 	struct string_list *object_classes;
 	struct string_list *perms;
+};
+
+struct role_allow_data {
+	char *from;
+	char *to;
 };
 
 struct type_transition_data {
@@ -133,6 +139,8 @@ struct string_list * get_types_required(const struct policy_node *node);
 enum selint_error free_policy_node(struct policy_node *to_free);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
+
+enum selint_error free_ra_data(struct role_allow_data *to_free);
 
 enum selint_error free_type_transition_data(struct type_transition_data *to_free);
 

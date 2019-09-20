@@ -359,9 +359,11 @@ comma_string_list:
 	;
 
 role_allow:
-	// It is an error for this to be anything other than ALLOW, but using av_type
-	// instead seems like the cleanest way to avoid ambiguities in the grammar
-	av_type string_list string_list SEMICOLON { free_string_list($2); free_string_list($3); }
+	// It is an error for this to be anything other than "ALLOW STRING STRING", but it
+	// is impossible for the parser to parse such a grammar since it doesn't know until
+	// getting to the semicolon whether to classify the tokens specifically or generically.
+	// So, we can just parse generically and then check for the failure case
+	av_type string_list string_list SEMICOLON { if ($1 != AV_RULE_ALLOW || $2->next != NULL || $3->next != NULL) { YYERROR; } insert_role_allow(&cur, $2->string, $3->string, yylineno); free_string_list($2); free_string_list($3);}
 	;
 
 type_transition:
