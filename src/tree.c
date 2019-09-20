@@ -107,6 +107,7 @@ struct string_list * get_types_in_node(const struct policy_node *node) {
 	struct type_transition_data *tt_data;
 	struct declaration_data *d_data;
 	struct if_call_data *ifc_data;
+	struct role_allow_data *ra_data;
 
 	switch (node->flavor) {
 		case NODE_AV_RULE:
@@ -157,6 +158,13 @@ struct string_list * get_types_in_node(const struct policy_node *node) {
 			ret = copy_string_list(ifc_data->args);
 			break;
 
+		case NODE_ROLE_ALLOW:
+			ra_data = (struct role_allow_data *)node->data;
+			ret = calloc(1, sizeof(struct string_list));
+			ret->string = strdup(ra_data->from);
+			ret->next = calloc(1, sizeof(struct string_list));
+			ret->next->string = strdup(ra_data->to);
+			break;
 /*
 		NODE_M4_CALL,
 		NODE_OPTIONAL_POLICY,
