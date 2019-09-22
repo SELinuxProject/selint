@@ -8,6 +8,7 @@ extern void yyerror(char *);
 %}
 %option nounput
 %option noinput
+%s return_whitespace
 %%
 policy_module { return POLICY_MODULE; }
 module { return MODULE; }
@@ -46,7 +47,7 @@ genfscon { return GENFSCON; }
 sid { return SID; }
 portcon { return PORTCON; }
 netifcon { return NETIFCON; }
-nodecon { return NODECON; }
+nodecon { BEGIN(return_whitespace); return NODECON; }
 fs_use_trans { return FS_USE_TRANS; }
 fs_use_xattr { return FS_USE_XATTR; }
 fs_use_task { return FS_USE_TASK; }
@@ -71,7 +72,7 @@ s[0-9]+(\.s[0-9]+)?(:c?[0-9]+(.c?[0-9]+)?)? { yylval.string = strdup(yytext); re
 \{ { return OPEN_CURLY; }
 \} { return CLOSE_CURLY; }
 \: { return COLON; }
-\; { return SEMICOLON; }
+\; { return SEMICOLON; BEGIN(INITIAL);}
 \` { return BACKTICK; }
 \' { return SINGLE_QUOTE; }
 \~ { return TILDA; }
@@ -83,10 +84,14 @@ s[0-9]+(\.s[0-9]+)?(:c?[0-9]+(.c?[0-9]+)?)? { yylval.string = strdup(yytext); re
 \!\= { return NOT_EQUAL; }
 \! { return NOT; }
 \=\= { return EQUAL; }
+<return_whitespace>[ \t] { return WHITESPACE; }
+<return_whitespace>^\#.*\n { yylineno++; BEGIN(INITIAL); return COMMENT; }
+<return_whitespace>(\#.*)?\n { yylineno++; BEGIN(INITIAL); return NEWLINE; }
+<return_whitespace>dnl(.*)?\n { yylineno++; BEGIN(INITIAL); return NEWLINE; }
 ^\#.*\n { yylineno++; return COMMENT; }
 (\#.*)?\n { yylineno++; }
 dnl(.*)?\n { yylineno++; }
-[ \t] ; /* skip whitespace */
+[ \t] ; /* normally skip whitespace */
 \% { yyerror("Invalid character: %%"); /* will be run through printf again */ }
 . { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); }
 

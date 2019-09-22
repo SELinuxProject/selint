@@ -99,6 +99,8 @@
 %token TILDA;
 %token STAR;
 %token DASH;
+%token WHITESPACE;
+%token NEWLINE;
 %left AND;
 %left OR;
 %left XOR;
@@ -603,18 +605,15 @@ netifcon:
 	;
 
 nodecon:
-	NODECON two_ip_addrs GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN
-	// Below is grammatically valid, but causes a shift reduce conflict with the end of an ipv6
-	// address and a context.  I'm not sure how to solve it without passing in whitespace from
-	// the lexer, which will hugely complicate the rest of the grammar.
-	//|
-	//NODECON two_ip_addrs context
+	NODECON WHITESPACE two_ip_addrs WHITESPACE GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN NEWLINE
+	|
+	NODECON WHITESPACE two_ip_addrs WHITESPACE context NEWLINE
 	;
 
 two_ip_addrs:
-	NUM_STRING NUM_STRING { free($1); free($2); }
+	NUM_STRING WHITESPACE NUM_STRING { free($1); free($3); }
 	|
-	ipv6
+	ipv6 WHITESPACE ipv6
 	;
 
 ipv6:
