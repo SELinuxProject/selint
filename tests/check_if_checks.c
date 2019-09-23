@@ -69,7 +69,7 @@ START_TEST(test_check_type_used_but_not_required_in_if) {
 
 	cur->flavor = NODE_DECL;
 
-	struct declaration_data *data = calloc(1, sizeof(struct policy_node));
+	struct declaration_data *data = calloc(1, sizeof(struct declaration_data));
 
 	cur->data = data;
 
@@ -131,7 +131,7 @@ START_TEST (test_check_type_required_but_not_used_in_if) {
 
 	cur->flavor = NODE_DECL;
 
-	struct declaration_data *data = calloc(1, sizeof(struct policy_node));
+	struct declaration_data *data = calloc(1, sizeof(struct declaration_data));
 
 	cur->data = data;
 
