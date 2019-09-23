@@ -13,7 +13,7 @@
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name, int yylineno);
+enum selint_error begin_parsing_te(struct policy_node **cur, char *module_name, unsigned int lineno);
 
 /**********************************
  * Set the name of the current module to mn
@@ -34,7 +34,7 @@ char *get_current_module_name();
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_comment(struct policy_node **cur, int lineno);
+enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno);
 
 /**********************************
  * insert_declaration
@@ -47,7 +47,7 @@ enum selint_error insert_comment(struct policy_node **cur, int lineno);
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, struct string_list *attrs, int lineno);
+enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, struct string_list *attrs, unsigned int lineno);
 
 /**********************************
  * insert_aliases
@@ -59,7 +59,7 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_aliases(struct policy_node **cur, struct string_list *aliases, enum decl_flavor flavor, int lineno);
+enum selint_error insert_aliases(struct policy_node **cur, struct string_list *aliases, enum decl_flavor flavor, unsigned int lineno);
 
 /**********************************
  * insert_type_alias
@@ -72,7 +72,7 @@ enum selint_error insert_aliases(struct policy_node **cur, struct string_list *a
  * Returns - SELINT error code
  **********************************/
 
-enum selint_error insert_type_alias(struct policy_node **cur, char *type, int lineno);
+enum selint_error insert_type_alias(struct policy_node **cur, char *type, unsigned int lineno);
 
 /**********************************
  * insert_av_rule
@@ -88,7 +88,7 @@ enum selint_error insert_type_alias(struct policy_node **cur, char *type, int li
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms, int lineno);
+enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms, unsigned int lineno);
 
 /**********************************
  * insert_role_allow
@@ -101,7 +101,7 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_role_allow(struct policy_node **cur, char *from_role, char *to_role, int lineno);
+enum selint_error insert_role_allow(struct policy_node **cur, char *from_role, char *to_role, unsigned int lineno);
 
 /**********************************
  * insert_type_transition
@@ -119,11 +119,11 @@ enum selint_error insert_role_allow(struct policy_node **cur, char *from_role, c
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno);
+enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, unsigned int lineno);
 
-enum selint_error insert_interface_call(struct policy_node **cur, char *name, struct string_list *args, int lineno);
+enum selint_error insert_interface_call(struct policy_node **cur, char *name, struct string_list *args, unsigned int lineno);
 
-enum selint_error insert_permissive_statement(struct policy_node **cur, char *domain, int lineno);
+enum selint_error insert_permissive_statement(struct policy_node **cur, char *domain, unsigned int lineno);
 
 /**********************************
  * begin_optional_policy
@@ -136,7 +136,7 @@ enum selint_error insert_permissive_statement(struct policy_node **cur, char *do
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error begin_optional_policy(struct policy_node **cur, int lineno);
+enum selint_error begin_optional_policy(struct policy_node **cur, unsigned int lineno);
 
 /**********************************
  * end_optional_policy
@@ -159,7 +159,7 @@ enum selint_error end_optional_policy(struct policy_node **cur);
  *
  * Returns - SELINT error code
  **********************************/
-enum selint_error begin_optional_else(struct policy_node **cur, int lineno);
+enum selint_error begin_optional_else(struct policy_node **cur, unsigned int lineno);
 
 /**********************************
  * end_optional_policy
@@ -171,15 +171,15 @@ enum selint_error begin_optional_else(struct policy_node **cur, int lineno);
  **********************************/
 enum selint_error end_optional_else(struct policy_node **cur);
 
-enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name, int lineno);
+enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name, unsigned int lineno);
 
 enum selint_error end_interface_def(struct policy_node **cur);
 
-enum selint_error begin_gen_require(struct policy_node **cur, int lineno);
+enum selint_error begin_gen_require(struct policy_node **cur, unsigned int lineno);
 
 enum selint_error end_gen_require(struct policy_node **cur);
 
-enum selint_error begin_require(struct policy_node **cur, int lineno);
+enum selint_error begin_require(struct policy_node **cur, unsigned int lineno);
 
 enum selint_error end_require(struct policy_node **cur);
 

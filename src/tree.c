@@ -8,7 +8,7 @@
 enum selint_error insert_policy_node_child(struct policy_node *parent,
 				enum node_flavor flavor,
 				void *data,
-				int lineno) {
+				unsigned int lineno) {
 
 	if (parent == NULL) {
 		return SELINT_BAD_ARG;
@@ -48,7 +48,7 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 enum selint_error insert_policy_node_next(struct policy_node *prev,
 				enum node_flavor flavor,
 				void *data,
-				int lineno) {
+				unsigned int lineno) {
 
 	if (prev == NULL) {
 		return SELINT_BAD_ARG;

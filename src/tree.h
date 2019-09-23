@@ -123,9 +123,9 @@ struct policy_node {
 	unsigned int lineno;
 };
 
-enum selint_error insert_policy_node_child(struct policy_node *parent, enum node_flavor flavor, void *data, int lineno);
+enum selint_error insert_policy_node_child(struct policy_node *parent, enum node_flavor flavor, void *data, unsigned int lineno);
 
-enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_flavor flavor, void *data, int lineno);
+enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_flavor flavor, void *data, unsigned int lineno);
 
 // Returns 1 if the node is a template call, and 0 if not
 int is_template_call(struct policy_node *node);
