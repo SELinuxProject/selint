@@ -113,6 +113,10 @@ void display_check_result(struct check_result *res, struct check_data *data);
  *********************************************/
 struct check_result *make_check_result(char severity, unsigned int check_id, char *format, ...);
 
+/*********************************************
+ * Generates a check result for an internal error (F-002)
+ * string - The error message to display
+ *********************************************/
 struct check_result *alloc_internal_error(char *string);
 
 void free_check_result(struct check_result *);

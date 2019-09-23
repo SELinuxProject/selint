@@ -1,8 +1,6 @@
 #ifndef PARSING_FUNCTIONS_H
 #define PARSING_FUNCTIONS_H
 
-#include <uthash.h>
-
 #include "selint_error.h"
 #include "tree.h"
 #include "maps.h"
@@ -63,6 +61,17 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
  **********************************/
 enum selint_error insert_aliases(struct policy_node **cur, struct string_list *aliases, enum decl_flavor flavor, int lineno);
 
+/**********************************
+ * insert_type_alias
+ * Add a typealias rule node at the next node in the tree, allocating all memory for it
+ * cur (in, out) - The current spot in the tree.  Will be updated to point to
+ *	the newly allocated av rule node
+ * type (in) - The name of the type in the node.
+ * lineno (in) - The line number
+ *
+ * Returns - SELINT error code
+ **********************************/
+
 enum selint_error insert_type_alias(struct policy_node **cur, char *type, int lineno);
 
 /**********************************
@@ -75,6 +84,7 @@ enum selint_error insert_type_alias(struct policy_node **cur, char *type, int li
  * targets (in) - (memory allocated by caller) the targets in the rule
  * object_classes (in) - (memory allocated by caller) the object classes in the rule
  * perms (in) - (memory allocated by caller) the perms in the rule
+ * lineno (in) - The line number
  *
  * Returns - SELINT error code
  **********************************/
@@ -93,6 +103,22 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
  **********************************/
 enum selint_error insert_role_allow(struct policy_node **cur, char *from_role, char *to_role, int lineno);
 
+/**********************************
+ * insert_type_transition
+ * Add a type transition node at the next node in the tree, allocating all memory for it
+ * cur (in, out) - The current spot in the tree.  Will be updated to point to
+ *	the newly allocated av rule node
+ * flavor (in) - The variety of type transition role.  The normal case is type_transition (TT_TT),
+ * but other options include type_member (TT_TM), type_change (TT_TC) and range_transition (TT_RT)
+ * sources (in) - (memory allocated by caller) The sources in the rule
+ * targets (in) - (memory allocated by caller) the targets in the rule
+ * object_classes (in) - (memory allocated by caller) the object classes in the rule
+ * default_type (in) - The type to transition to
+ * name (in) - The name of the file for named transitions.  Can be NULL if not specified.
+ * lineno (in) - The line number of the rule
+ *
+ * Returns - SELINT error code
+ **********************************/
 enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, int lineno);
 
 enum selint_error insert_interface_call(struct policy_node **cur, char *name, struct string_list *args, int lineno);
@@ -106,6 +132,7 @@ enum selint_error insert_permissive_statement(struct policy_node **cur, char *do
  * both nodes.
  * cur (in, out) - The current spot in the tree.  Will be updated to point to the
  * first child of the optional_policy node
+ * lineno (in) - The line number
  *
  * Returns - SELINT error code
  **********************************/
@@ -128,6 +155,7 @@ enum selint_error end_optional_policy(struct policy_node **cur);
  * both nodes.
  * cur (in, out) - The current spot in the tree.  Will be updated to point to the
  * first child of the optional_policy node
+ * lineno (in) - The line number
  *
  * Returns - SELINT error code
  **********************************/
@@ -142,7 +170,6 @@ enum selint_error begin_optional_else(struct policy_node **cur, int lineno);
  * Returns - SELINT error code
  **********************************/
 enum selint_error end_optional_else(struct policy_node **cur);
-
 
 enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name, int lineno);
 
