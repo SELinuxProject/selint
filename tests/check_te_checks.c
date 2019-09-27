@@ -5,6 +5,39 @@
 #include "../src/check_hooks.h"
 #include "../src/maps.h"
 
+START_TEST (test_check_require_block) {
+	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
+	cur->flavor = NODE_REQUIRE;
+	struct check_data *cd = calloc(1, sizeof(struct check_data));
+
+	cd->flavor = FILE_IF_FILE;
+	ck_assert_ptr_null(check_require_block(cd, cur));
+
+	cd->flavor = FILE_FC_FILE;
+	ck_assert_ptr_null(check_require_block(cd, cur));
+
+	cd->flavor = FILE_TE_FILE;
+	struct check_result *res = check_require_block(cd, cur);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'S');
+	ck_assert_int_eq(res->check_id, S_ID_REQUIRE);
+
+	free_check_result(res);
+
+	cur->flavor = NODE_GEN_REQ;
+
+	res = check_require_block(cd, cur);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'S');
+	ck_assert_int_eq(res->check_id, S_ID_REQUIRE);
+
+	free_check_result(res);
+	free(cd);
+	free_policy_node(cur);
+}
+END_TEST
+
 START_TEST (test_check_module_if_call_in_optional) {
 	struct check_result *res;
 
@@ -62,6 +95,7 @@ Suite *te_checks_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_check_module_if_call_in_optional);
+	tcase_add_test(tc_core, test_check_require_block);
 	suite_add_tcase(s, tc_core);
 
 	return s;

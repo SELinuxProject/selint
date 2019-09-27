@@ -13,6 +13,7 @@
 	extern char *parsing_filename;
 
 	struct policy_node *cur;
+	#define YYDEBUG 1
 %}
 
 %union {

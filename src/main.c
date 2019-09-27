@@ -14,6 +14,8 @@
 #include "selint_config.h"
 #include "startup.h"
 
+int yydebug = 0;
+
 extern int yyparse();
 
 extern int verbose_flag;

@@ -48,6 +48,14 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, st
 			ALLOC_NODE(if_call_node_checks);
 			break;
 
+		case NODE_REQUIRE:
+			ALLOC_NODE(require_node_checks);
+			break;
+
+		case NODE_GEN_REQ:
+			ALLOC_NODE(gen_req_node_checks);
+			break;
+
 		case NODE_FC_ENTRY:
 			ALLOC_NODE(fc_entry_node_checks);
 			break;
@@ -81,6 +89,10 @@ enum selint_error call_checks(struct checks *ck, struct check_data *data, struct
 			return call_checks_for_node_type(ck->temp_def_node_checks, data, node);
 		case NODE_IF_CALL:
 			return call_checks_for_node_type(ck->if_call_node_checks, data, node);
+		case NODE_REQUIRE:
+			return call_checks_for_node_type(ck->require_node_checks, data, node);
+		case NODE_GEN_REQ:
+			return call_checks_for_node_type(ck->gen_req_node_checks, data, node);
 		case NODE_FC_ENTRY:
 			return call_checks_for_node_type(ck->fc_entry_node_checks, data, node);
 		case NODE_ERROR:
@@ -161,6 +173,12 @@ void free_checks(struct checks *to_free) {
 	}
 	if (to_free->if_call_node_checks) {
 		free_check_node(to_free->if_call_node_checks);
+	}
+	if (to_free->require_node_checks) {
+		free_check_node(to_free->require_node_checks);
+	}
+	if (to_free->gen_req_node_checks) {
+		free_check_node(to_free->gen_req_node_checks);
 	}
 	if (to_free->fc_entry_node_checks) {
 		free_check_node(to_free->fc_entry_node_checks);

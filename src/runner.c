@@ -88,6 +88,10 @@ struct checks * register_checks(char level,
 				add_check(NODE_TEMP_DEF, ck, check_interface_definitions_have_comment);
 			}
 		case 'S':
+			if (CHECK_ENABLED("S-001")) {
+				add_check(NODE_REQUIRE, ck, check_require_block);
+				add_check(NODE_GEN_REQ, ck, check_require_block);
+			}
 			if (CHECK_ENABLED("S-002")) {
 				add_check(NODE_FC_ENTRY, ck, check_file_context_types_in_mod);
 			}

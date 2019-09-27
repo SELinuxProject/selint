@@ -9,6 +9,7 @@ enum convention_ids {
 };
 
 enum style_ids {
+	S_ID_REQUIRE = 1,
 	S_ID_FC_TYPE = 2
 };
 
@@ -64,6 +65,8 @@ struct checks {
 	struct check_node *if_def_node_checks;
 	struct check_node *temp_def_node_checks;
 	struct check_node *if_call_node_checks;
+	struct check_node *require_node_checks;
+	struct check_node *gen_req_node_checks;
 	struct check_node *fc_entry_node_checks;
 	struct check_node *error_node_checks;
 };
