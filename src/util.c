@@ -5,7 +5,8 @@
 
 int verbose_flag;
 
-void print_if_verbose(const char *format, ...) {
+void print_if_verbose(const char *format, ...)
+{
 	va_list args;
 	va_start(args, format);
 	if (verbose_flag) {

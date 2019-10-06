@@ -8,13 +8,14 @@
 // "gen_context("
 #define GEN_CONTEXT_LEN 12
 
-struct fc_entry * parse_fc_line(char *line) {
+struct fc_entry *parse_fc_line(char *line)
+{
 	char whitespace[] = " \t";
 
 	struct fc_entry *out = malloc(sizeof(struct fc_entry));
 	memset(out, 0, sizeof(struct fc_entry));
 
-	char *orig_line = strdup(line); // If the object class is ommitted, we need to revert
+	char *orig_line = strdup(line);	// If the object class is ommitted, we need to revert
 
 	char *pos = strtok(line, whitespace);
 
@@ -27,32 +28,31 @@ struct fc_entry * parse_fc_line(char *line) {
 	}
 
 	if (pos[0] == '-') {
-		if ( pos[2] != '\0') {
+		if (pos[2] != '\0') {
 			goto cleanup;
 		}
 		out->obj = pos[1];
 		pos = strtok(NULL, whitespace);
-		if (pos == NULL ) {
+		if (pos == NULL) {
 			goto cleanup;
 		}
 	}
-
 	// pos points to the start of the context, but spaces in the context may have been
 	// overwitten by strtok
 	strcpy(line, orig_line);
 
 	if (strncmp("gen_context(", pos, GEN_CONTEXT_LEN) == 0) {
-		pos += GEN_CONTEXT_LEN; // Next character
+		pos += GEN_CONTEXT_LEN;	// Next character
 		char *context_part = strtok(pos, ",");
 		if (context_part == NULL) {
 			goto cleanup;
 		}
 
-		char *maybe_s = strtok(NULL,",");
-		if ( maybe_s == NULL ) {
+		char *maybe_s = strtok(NULL, ",");
+		if (maybe_s == NULL) {
 			goto cleanup;
 		}
-		char *maybe_c = strtok(NULL,",");
+		char *maybe_c = strtok(NULL, ",");
 		int i = 0;
 		while (maybe_s[i] != '\0' && maybe_s[i] != ')') {
 			i++;
@@ -64,7 +64,8 @@ struct fc_entry * parse_fc_line(char *line) {
 			}
 		}
 		maybe_s[i] = '\0';
-		while (maybe_s[0] != '\0' && (maybe_s[0] == ' ' || maybe_s[0] == '\t')) {
+		while (maybe_s[0] != '\0'
+		       && (maybe_s[0] == ' ' || maybe_s[0] == '\t')) {
 			// trim beginning whitespace
 			maybe_s++;
 		}
@@ -78,26 +79,29 @@ struct fc_entry * parse_fc_line(char *line) {
 				goto cleanup;
 			}
 			maybe_c[i] = '\0';
-			while (maybe_c[0] != '\0' && (maybe_c[0] == ' ' || maybe_c[0] == '\t')) {
+			while (maybe_c[0] != '\0'
+			       && (maybe_c[0] == ' ' || maybe_c[0] == '\t')) {
 				// trim beginning whitespace
 				maybe_c++;
 			}
 		}
 
 		out->context = parse_context(context_part);
-		if (out ->context == NULL) {
+		if (out->context == NULL) {
 			goto cleanup;
 		}
 		out->context->has_gen_context = 1;
 		if (maybe_c) {
-			out->context->range = malloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
-			strcpy(out->context->range,maybe_s);
-			strcat(out->context->range,":");
-			strcat(out->context->range,maybe_c);
+			out->context->range =
+			    malloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
+			strcpy(out->context->range, maybe_s);
+			strcat(out->context->range, ":");
+			strcat(out->context->range, maybe_c);
 		} else {
 			out->context->range = strdup(maybe_s);
 		}
-	} else if (strcmp("<<none>>\n", pos) == 0 || strcmp("<<none>>\r\n", pos) == 0) {
+	} else if (strcmp("<<none>>\n", pos) == 0
+		   || strcmp("<<none>>\r\n", pos) == 0) {
 		out->context = NULL;
 	} else {
 		out->context = parse_context(pos);
@@ -111,13 +115,14 @@ struct fc_entry * parse_fc_line(char *line) {
 	free(orig_line);
 	return out;
 
-cleanup:
+ cleanup:
 	free(orig_line);
 	free_fc_entry(out);
 	return NULL;
 }
 
-struct sel_context * parse_context(char *context_str) {
+struct sel_context *parse_context(char *context_str)
+{
 
 	if (strchr(context_str, '(')) {
 		return NULL;
@@ -156,19 +161,20 @@ struct sel_context * parse_context(char *context_str) {
 
 	if (pos) {
 		context->range = strdup(pos);
-		if(strtok(NULL, ":")) {
+		if (strtok(NULL, ":")) {
 			goto cleanup;
 		}
 	}
 
 	return context;
 
-cleanup:
+ cleanup:
 	free_sel_context(context);
 	return NULL;
 }
 
-struct policy_node * parse_fc_file(char *filename) {
+struct policy_node *parse_fc_file(char *filename)
+{
 	FILE *fd = fopen(filename, "r");
 	if (!fd) {
 		return NULL;
@@ -190,17 +196,15 @@ struct policy_node * parse_fc_file(char *filename) {
 		if (len_read <= 1 || line[0] == '#') {
 			continue;
 		}
-
 		// Skip over m4 constructs
 		if (strncmp(line, "ifdef", 5) == 0 ||
-			strncmp(line, "ifndef", 6) == 0 ||
-			strncmp(line, "')", 2) == 0 ||
-			strncmp(line, "', `", 4) == 0 ||
-			strncmp(line, "',`", 3) == 0 ) {
+		    strncmp(line, "ifndef", 6) == 0 ||
+		    strncmp(line, "')", 2) == 0 ||
+		    strncmp(line, "', `", 4) == 0 ||
+		    strncmp(line, "',`", 3) == 0) {
 
 			continue;
 		}
-
 		// TODO: Right now whitespace parses as an error
 		// We may want to detect it and report a lower severity issue
 
@@ -211,7 +215,8 @@ struct policy_node * parse_fc_file(char *filename) {
 		} else {
 			flavor = NODE_FC_ENTRY;
 		}
-		if ( insert_policy_node_next(cur, flavor, entry, lineno) != SELINT_SUCCESS ) {
+		if (insert_policy_node_next(cur, flavor, entry, lineno) !=
+		    SELINT_SUCCESS) {
 			free_policy_node(head);
 			fclose(fd);
 			return NULL;
@@ -221,9 +226,8 @@ struct policy_node * parse_fc_file(char *filename) {
 		line = NULL;
 		buf_len = 0;
 	}
-	free(line); // getline alloc must be freed even if getline failed
+	free(line);		// getline alloc must be freed even if getline failed
 	fclose(fd);
 
 	return head;
 }
-

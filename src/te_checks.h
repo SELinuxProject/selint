@@ -11,7 +11,8 @@
  * node - the node to check
  * returns NULL if passed or check_result for issue S-001
  *********************************************/
-struct check_result *check_require_block(const struct check_data *data, const struct policy_node *node);
+struct check_result *check_require_block(const struct check_data *data,
+					 const struct policy_node *node);
 
 /*********************************************
  * Check for situations where interface or template calls into modules are not
@@ -21,6 +22,9 @@ struct check_result *check_require_block(const struct check_data *data, const st
  * node - the node to check
  * returns NULL if passed or check_result for issue E-001
  *********************************************/
-struct check_result *check_module_if_call_in_optional(const struct check_data *data, const struct policy_node *node);
+struct check_result *check_module_if_call_in_optional(const struct check_data
+						      *data,
+						      const struct policy_node
+						      *node);
 
 #endif

@@ -20,8 +20,10 @@ extern int yyparse();
 
 extern int verbose_flag;
 
-void usage() {
+void usage()
+{
 
+	/* *INDENT-OFF* */
 	printf("Usage: selint [OPTIONS] FILE [...]\n"\
 		"Perform static code analysis on SELinux policy source.\n\n");
 	printf("  -c CONFIGFILE, --config=CONFIGFILE\tOverride default config with config\n"\
@@ -41,10 +43,12 @@ void usage() {
 		"  -v, --verbose\t\t\t\tEnable verbose output\n"\
 		"  -V, --version\t\t\t\tShow version information and exit.\n"
 );
+	/* *INDENT-ON* */
 
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
 	char severity = '\0';
 	char *config_filename = NULL;
@@ -63,111 +67,118 @@ int main(int argc, char **argv) {
 
 	while (1) {
 
-		static struct option long_options[] =
-			{
-				{ "config", required_argument, NULL, 'c' },
-				{ "disable", required_argument, NULL, 'd' },
-				{ "enable", required_argument, NULL, 'e' },
-				{ "only-enabled", no_argument, NULL, 'E' },
-				{ "help", no_argument, NULL, 'h' },
-				{ "level", required_argument, NULL, 'l' },
-				{ "modules-conf", required_argument, NULL, 'm' },
-				{ "recursive", no_argument, NULL, 'r' },
-				{ "source", no_argument, NULL, 's' },
-				{ "version", no_argument, NULL, 'V' },
-				{ "verbose", no_argument, &verbose_flag, 1 },
-				{ 0, 0, 0, 0 }
-			};
+		static struct option long_options[] = {
+			{"config", required_argument, NULL, 'c'},
+			{"disable", required_argument, NULL, 'd'},
+			{"enable", required_argument, NULL, 'e'},
+			{"only-enabled", no_argument, NULL, 'E'},
+			{"help", no_argument, NULL, 'h'},
+			{"level", required_argument, NULL, 'l'},
+			{"modules-conf", required_argument, NULL, 'm'},
+			{"recursive", no_argument, NULL, 'r'},
+			{"source", no_argument, NULL, 's'},
+			{"version", no_argument, NULL, 'V'},
+			{"verbose", no_argument, &verbose_flag, 1},
+			{0, 0, 0, 0}
+		};
 
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "c:d:e:Ehl:mrsVv", long_options, &option_index);
+		int c = getopt_long(argc,
+		                    argv,
+		                    "c:d:e:Ehl:mrsVv",
+		                    long_options,
+		                    &option_index);
 
-		if ( c == -1 ) {
+		if (c == -1) {
 			break;
 		}
 
 		switch (c) {
 
 			//getopt returns 0 when a long option with no short equivalent is used
-			case 0:
-				break;
+		case 0:
+			break;
 
-			case 'c':
-				// Specify config file
-				config_filename = optarg;
-				break;
+		case 'c':
+			// Specify config file
+			config_filename = optarg;
+			break;
 
-			case 'd':
-				// Disable a given check
-				if (cl_d_cursor) {
-					cl_d_cursor->next = calloc(1, sizeof(struct string_list));
-					cl_d_cursor = cl_d_cursor->next;
-				} else {
-					cl_d_cursor = calloc(1, sizeof(struct string_list));
-					cl_disabled_checks = cl_d_cursor;
-				}
-				cl_d_cursor->string = strdup(optarg);
-				break;
+		case 'd':
+			// Disable a given check
+			if (cl_d_cursor) {
+				cl_d_cursor->next =
+				    calloc(1, sizeof(struct string_list));
+				cl_d_cursor = cl_d_cursor->next;
+			} else {
+				cl_d_cursor =
+				    calloc(1, sizeof(struct string_list));
+				cl_disabled_checks = cl_d_cursor;
+			}
+			cl_d_cursor->string = strdup(optarg);
+			break;
 
-			case 'e':
-				// Enable a given check
-				if (cl_e_cursor) {
-					cl_e_cursor->next = calloc(1, sizeof(struct string_list));
-					cl_e_cursor = cl_e_cursor->next;
-				} else {
-					cl_e_cursor = calloc(1, sizeof(struct string_list));
-					cl_enabled_checks = cl_e_cursor;
-				}
-				cl_e_cursor->string = strdup(optarg);
-				break;
+		case 'e':
+			// Enable a given check
+			if (cl_e_cursor) {
+				cl_e_cursor->next =
+				    calloc(1, sizeof(struct string_list));
+				cl_e_cursor = cl_e_cursor->next;
+			} else {
+				cl_e_cursor =
+				    calloc(1, sizeof(struct string_list));
+				cl_enabled_checks = cl_e_cursor;
+			}
+			cl_e_cursor->string = strdup(optarg);
+			break;
 
-			case 'E':
-				// Only run checks enabled by the --enable flag.
-				only_enabled = 1;
-				break;
+		case 'E':
+			// Only run checks enabled by the --enable flag.
+			only_enabled = 1;
+			break;
 
-			case 'h':
-				// Display usage info and exit
-				usage();
-				exit(0);
-				break;
+		case 'h':
+			// Display usage info and exit
+			usage();
+			exit(0);
+			break;
 
-			case 'l':
-				// Set the severity level
-				severity = optarg[0];
-				break;
+		case 'l':
+			// Set the severity level
+			severity = optarg[0];
+			break;
 
-			case 'm':
-				// Specify a modules.conf file.  (Not in the README)
-				printf("Flag m with value %s\n", optarg);
-				break;
+		case 'm':
+			// Specify a modules.conf file.  (Not in the README)
+			printf("Flag m with value %s\n", optarg);
+			break;
 
-			case 'r':
-				// Scan recursively for files to parse
-				recursive_scan = 1;
-				break;
+		case 'r':
+			// Scan recursively for files to parse
+			recursive_scan = 1;
+			break;
 
-			case 's':
-				// Run in source mode
-				source_flag = 1;
-				break;
+		case 's':
+			// Run in source mode
+			source_flag = 1;
+			break;
 
-			case 'V':
-				// Output version info and exit
-				printf("SELint Version %s\n", VERSION);
-				exit(0);
-				break;
+		case 'V':
+			// Output version info and exit
+			printf("SELint Version %s\n", VERSION);
+			exit(0);
+			break;
 
-			case 'v':
-				// Run in verbose mode
-				verbose_flag = 1;
-				break;
+		case 'v':
+			// Run in verbose mode
+			verbose_flag = 1;
+			break;
 
-			case '?':
-				usage();
-				exit(EX_USAGE);
-				break;
+		case '?':
+			usage();
+			exit(EX_USAGE);
+			break;
 		}
 
 	}
@@ -179,17 +190,19 @@ int main(int argc, char **argv) {
 	}
 
 	if (!config_filename) {
-		config_filename = SYSCONFDIR "/selint.conf"; // Default install path
-		if(0 != access(config_filename, R_OK)) {
+		config_filename = SYSCONFDIR "/selint.conf";	// Default install path
+		if (0 != access(config_filename, R_OK)) {
 			//No default config found
-			print_if_verbose("No config specified and could not find default config.");
+			print_if_verbose(
+			    "No config specified and could not find default config.");
 			config_filename = NULL;
 		}
 	}
 
 	if (config_filename) {
 		char cfg_severity;
-		parse_config(config_filename, source_flag, &cfg_severity, &config_disabled_checks, &config_enabled_checks);
+		parse_config(config_filename, source_flag, &cfg_severity,
+			     &config_disabled_checks, &config_enabled_checks);
 		if (severity == '\0') {
 			severity = cfg_severity;
 		}
@@ -206,17 +219,19 @@ int main(int argc, char **argv) {
 		exit(EX_USAGE);
 	}
 
-	struct policy_file_list *te_files = malloc(sizeof(struct policy_file_list));
-	memset(te_files, 0, sizeof(struct policy_file_list));
-	struct policy_file_list *if_files = malloc(sizeof(struct policy_file_list));
-	memset(if_files, 0, sizeof(struct policy_file_list));
-	struct policy_file_list *fc_files = malloc(sizeof(struct policy_file_list));
-	memset(fc_files, 0, sizeof(struct policy_file_list));
+	struct policy_file_list *te_files =
+	    calloc(1, sizeof(struct policy_file_list));
 
-	char **paths = malloc (sizeof(char*) * argc - optind + 1);
+	struct policy_file_list *if_files =
+	    calloc(1, sizeof(struct policy_file_list));
+
+	struct policy_file_list *fc_files =
+	    calloc(1, sizeof(struct policy_file_list));
+
+	char **paths = malloc(sizeof(char *) * argc - optind + 1);
 
 	int i = 0;
-	while (optind < argc ) {
+	while (optind < argc) {
 		paths[i++] = argv[optind++];
 	}
 
@@ -228,21 +243,30 @@ int main(int argc, char **argv) {
 
 	char *modules_conf_path = NULL;
 
-	while ( file ) {
+	while (file) {
 
 		char *suffix = file->fts_path + file->fts_pathlen - 3;
 
 		if (!strcmp(suffix, ".te")) {
-			file_list_push_back(te_files, make_policy_file(file->fts_path, NULL));
-		} else if ( !strcmp(suffix, ".if")) {
-			file_list_push_back(if_files, make_policy_file(file->fts_path, NULL));
-		} else if ( !strcmp(suffix, ".fc")) {
-			file_list_push_back(fc_files, make_policy_file(file->fts_path, NULL));
-		} else if ( source_flag && !strcmp(file->fts_name, "modules.conf")) {
+			file_list_push_back(te_files,
+					    make_policy_file(file->fts_path,
+							     NULL));
+		} else if (!strcmp(suffix, ".if")) {
+			file_list_push_back(if_files,
+					    make_policy_file(file->fts_path,
+							     NULL));
+		} else if (!strcmp(suffix, ".fc")) {
+			file_list_push_back(fc_files,
+					    make_policy_file(file->fts_path,
+							     NULL));
+		} else if (source_flag
+			   && !strcmp(file->fts_name, "modules.conf")) {
 			// TODO: Make modules.conf name configurable
 			modules_conf_path = strdup(file->fts_path);
 		} else {
-			print_if_verbose("Skipping %s which is not a policy file\n", file->fts_path);
+			print_if_verbose(
+			    "Skipping %s which is not a policy file\n",
+			     file->fts_path);
 			if (!recursive_scan) {
 				fts_set(ftsp, file, FTS_SKIP);
 			}
@@ -255,7 +279,13 @@ int main(int argc, char **argv) {
 
 	free(paths);
 
-	struct checks *ck = register_checks(severity, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled);
+	struct checks *ck = register_checks(severity,
+	                                    config_enabled_checks,
+	                                    config_disabled_checks,
+	                                    cl_enabled_checks,
+	                                    cl_disabled_checks,
+	                                    only_enabled);
+
 	if (!ck) {
 		printf("Failed to register checks (bad configuration)\n");
 		free_file_list(te_files);
@@ -264,22 +294,23 @@ int main(int argc, char **argv) {
 		free(modules_conf_path);
 		return EX_CONFIG;
 	}
-
 	// Load object classes and permissions
 	if (source_flag) {
 		load_access_vectors_source();
 		if (modules_conf_path) {
-			enum selint_error res = load_modules_source(modules_conf_path);
+			enum selint_error res =
+			    load_modules_source(modules_conf_path);
 			if (res != SELINT_SUCCESS) {
 				printf("Error loading modules.conf: %d\n", res);
 			} else {
-				print_if_verbose("Loaded modules from %s\n", modules_conf_path);
+				print_if_verbose("Loaded modules from %s\n",
+						 modules_conf_path);
 			}
 		} else {
 			printf("Failed to locate modules.conf file.\n");
 		}
 	} else {
-		load_access_vectors_normal("/sys/fs/selinux/class"); // TODO
+		load_access_vectors_normal("/sys/fs/selinux/class");	// TODO
 		load_modules_normal();
 	}
 
@@ -287,15 +318,15 @@ int main(int argc, char **argv) {
 
 	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files);
 	switch (res) {
-		case SELINT_SUCCESS:
-			break;
-		case SELINT_PARSE_ERROR:
-			printf("Error during parsing\n");
-			exit_code = EX_SOFTWARE;
-			break;
-		default:
-			printf("Internal error: %d\n", res);
-			exit_code = EX_SOFTWARE;
+	case SELINT_SUCCESS:
+		break;
+	case SELINT_PARSE_ERROR:
+		printf("Error during parsing\n");
+		exit_code = EX_SOFTWARE;
+		break;
+	default:
+		printf("Internal error: %d\n", res);
+		exit_code = EX_SOFTWARE;
 	}
 
 	if (config_enabled_checks) {

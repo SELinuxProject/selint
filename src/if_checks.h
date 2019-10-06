@@ -10,7 +10,11 @@
  * node - the node to check
  * returns NULL if passed or check_result for issue C-002
  *********************************************/
-struct check_result *check_interface_definitions_have_comment(const struct check_data *data, const struct policy_node *node);
+struct check_result *check_interface_definitions_have_comment(const struct
+							      check_data *data,
+							      const struct
+							      policy_node
+							      *node);
 
 /*********************************************
  * Check that all types referenced in interface are listed in its require block
@@ -20,7 +24,10 @@ struct check_result *check_interface_definitions_have_comment(const struct check
  * node - the node to check
  * returns NULL if passed or check_result for issue W-002
  *********************************************/
-struct check_result *check_type_used_but_not_required_in_if(const struct check_data *data, const struct policy_node *node);
+struct check_result *check_type_used_but_not_required_in_if(const struct
+							    check_data *data,
+							    const struct
+							    policy_node *node);
 
 /*********************************************
  * Check that all types listed in require block are actually used in the interface
@@ -29,6 +36,9 @@ struct check_result *check_type_used_but_not_required_in_if(const struct check_d
  * node - the node to check
  * returns NULL if passed or check_result for issue W-003
  *********************************************/
-struct check_result *check_type_required_but_not_used_in_if(const struct check_data *data, const struct policy_node *node);
+struct check_result *check_type_required_but_not_used_in_if(const struct
+							    check_data *data,
+							    const struct
+							    policy_node *node);
 
 #endif

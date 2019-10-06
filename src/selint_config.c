@@ -21,20 +21,23 @@
 		}\
 	}\
 
-void insert_config_declarations(cfg_t *cfg, char *config_item, enum decl_flavor flavor) {
+void insert_config_declarations(cfg_t * cfg, char *config_item,
+				enum decl_flavor flavor)
+{
 	for (unsigned int i = 0; i < cfg_size(cfg, config_item); i++) {
-		insert_into_decl_map(cfg_getnstr(cfg, config_item, i), "__assumed__", flavor);
+		insert_into_decl_map(cfg_getnstr(cfg, config_item, i),
+				     "__assumed__", flavor);
 	}
 }
 
 enum selint_error parse_config(char *config_filename,
-				int in_source_mode,
-				char *severity,
-				struct string_list **config_disabled_checks,
-				struct string_list **config_enabled_checks) {
+			       int in_source_mode,
+			       char *severity,
+			       struct string_list **config_disabled_checks,
+			       struct string_list **config_enabled_checks)
+{
 
-	cfg_opt_t opts[] =
-	{
+	cfg_opt_t opts[] = {
 		CFG_STR("severity", "convention", CFGF_NONE),
 		CFG_STR_LIST("disable", "{}", CFGF_NONE),
 		CFG_STR_LIST("enable_normal", "{}", CFGF_NONE),
@@ -48,11 +51,11 @@ enum selint_error parse_config(char *config_filename,
 
 	print_if_verbose("Loading configuration from: %s\n", config_filename);
 	if (cfg_parse(cfg, config_filename) == CFG_PARSE_ERROR) {
-		printf("Parse error when attempting to parse configuration file.\n");
+		printf
+		    ("Parse error when attempting to parse configuration file.\n");
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
 	}
-
 	// Not specified on command line.  Read from config
 	char *config_severity = cfg_getstr(cfg, "severity");
 
@@ -67,16 +70,20 @@ enum selint_error parse_config(char *config_filename,
 	} else if (strcmp(config_severity, "fatal") == 0) {
 		*severity = 'F';
 	} else {
-		printf("Invalid severity level (%s) specified in config.  Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"", config_severity);
+		printf
+		    ("Invalid severity level (%s) specified in config.  Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"",
+		     config_severity);
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
 	}
 
 	READ_STRING_LIST_FROM_CONFIG(config_disabled_checks, "disable")
-	if (in_source_mode) {
-		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks, "enable_source")
+	    if (in_source_mode) {
+		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks,
+					     "enable_source")
 	} else {
-		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks, "enable_normal")
+		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks,
+					     "enable_normal")
 
 	}
 

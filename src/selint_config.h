@@ -11,9 +11,9 @@
  * Return SELINT_SUCCESS or error code
  ********************************************************************/
 enum selint_error parse_config(char *config_filename,
-				int in_source_mode,
-				char *severity,
-				struct string_list **config_disabled_checks,
-				struct string_list **config_enabled_checks);
+			       int in_source_mode,
+			       char *severity,
+			       struct string_list **config_disabled_checks,
+			       struct string_list **config_enabled_checks);
 
 #endif

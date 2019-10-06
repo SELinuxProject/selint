@@ -9,7 +9,9 @@
 char *module_name = NULL;
 char *parsing_filename = NULL;
 
-enum selint_error begin_parsing_te(struct policy_node **cur, char *mn, unsigned int lineno) {
+enum selint_error begin_parsing_te(struct policy_node **cur, char *mn,
+				   unsigned int lineno)
+{
 
 	set_current_module_name(mn);
 
@@ -27,17 +29,21 @@ enum selint_error begin_parsing_te(struct policy_node **cur, char *mn, unsigned 
 	return SELINT_SUCCESS;
 }
 
-void set_current_module_name(char *mn) {
+void set_current_module_name(char *mn)
+{
 	if (module_name != NULL) {
 		free(module_name);
 	}
 	module_name = strdup(mn);
 }
 
-char * get_current_module_name() {
+char *get_current_module_name()
+{
 	return module_name;
 }
-int is_in_require(struct policy_node *cur) {
+
+int is_in_require(struct policy_node *cur)
+{
 	while (cur->parent) {
 		cur = cur->parent;
 		if (cur->flavor == NODE_GEN_REQ || cur->flavor == NODE_REQUIRE) {
@@ -47,8 +53,10 @@ int is_in_require(struct policy_node *cur) {
 	return 0;
 }
 
-enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno) {
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_COMMENT, NULL, lineno);
+enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno)
+{
+	enum selint_error ret =
+	    insert_policy_node_next(*cur, NODE_COMMENT, NULL, lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
 	}
@@ -57,7 +65,11 @@ enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno) 
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor flavor, char *name, struct string_list *attrs, unsigned int lineno) {
+enum selint_error insert_declaration(struct policy_node **cur,
+				     enum decl_flavor flavor, char *name,
+				     struct string_list *attrs,
+				     unsigned int lineno)
+{
 
 	if (!is_in_require(*cur)) {
 		// In a require block, the objects arent being declared
@@ -84,7 +96,8 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
 		}
 	}
 
-	struct declaration_data *data = (struct declaration_data *) malloc(sizeof(struct declaration_data));
+	struct declaration_data *data =
+	    (struct declaration_data *)malloc(sizeof(struct declaration_data));
 	if (!data) {
 		return SELINT_OUT_OF_MEM;
 	}
@@ -95,7 +108,8 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
 	data->name = strdup(name);
 	data->attrs = attrs;
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_DECL, data, lineno);
+	enum selint_error ret =
+	    insert_policy_node_next(*cur, NODE_DECL, data, lineno);
 
 	if (ret != SELINT_SUCCESS) {
 		free(data);
@@ -107,14 +121,18 @@ enum selint_error insert_declaration(struct policy_node **cur, enum decl_flavor 
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_aliases(struct policy_node **cur, struct string_list *aliases, enum decl_flavor flavor, unsigned int lineno) {
+enum selint_error insert_aliases(struct policy_node **cur,
+				 struct string_list *aliases,
+				 enum decl_flavor flavor, unsigned int lineno)
+{
 
 	struct string_list *alias = aliases;
 
 	while (alias) {
 		char *temp_name = get_name_if_in_template(*cur);
 		if (temp_name) {
-			insert_decl_into_template_map(temp_name, flavor, alias->string);
+			insert_decl_into_template_map(temp_name, flavor,
+						      alias->string);
 		} else {
 			char *mn = get_current_module_name();
 			if (!mn) {
@@ -124,7 +142,10 @@ enum selint_error insert_aliases(struct policy_node **cur, struct string_list *a
 
 			insert_into_decl_map(alias->string, mn, flavor);
 		}
-		enum selint_error ret = insert_policy_node_child(*cur, NODE_ALIAS, strdup(alias->string), lineno);
+		enum selint_error ret = insert_policy_node_child(*cur,
+		                                                 NODE_ALIAS,
+		                                                 strdup(alias->string),
+		                                                 lineno);
 		if (ret != SELINT_SUCCESS) {
 			return ret;
 		}
@@ -136,9 +157,14 @@ enum selint_error insert_aliases(struct policy_node **cur, struct string_list *a
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_type_alias(struct policy_node **cur, char *type, unsigned int lineno) {
+enum selint_error insert_type_alias(struct policy_node **cur, char *type,
+				    unsigned int lineno)
+{
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_TYPE_ALIAS, strdup(type), lineno);
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_TYPE_ALIAS,
+	                                                strdup(type),
+	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
 	}
@@ -147,7 +173,13 @@ enum selint_error insert_type_alias(struct policy_node **cur, char *type, unsign
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, struct string_list *perms, unsigned int lineno) {
+enum selint_error insert_av_rule(struct policy_node **cur,
+				 enum av_rule_flavor flavor,
+				 struct string_list *sources,
+				 struct string_list *targets,
+				 struct string_list *object_classes,
+				 struct string_list *perms, unsigned int lineno)
+{
 
 	struct av_rule_data *av_data = malloc(sizeof(struct av_rule_data));
 
@@ -157,8 +189,11 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
 	av_data->object_classes = object_classes;
 	av_data->perms = perms;
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_AV_RULE, av_data, lineno);
-	if ( ret != SELINT_SUCCESS) {
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_AV_RULE,
+	                                                av_data,
+	                                                lineno);
+	if (ret != SELINT_SUCCESS) {
 		free_av_rule_data(av_data);
 		return ret;
 	}
@@ -168,13 +203,17 @@ enum selint_error insert_av_rule(struct policy_node **cur, enum av_rule_flavor f
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_role_allow(struct policy_node **cur, char *from_role, char *to_role, unsigned int lineno) {
-	struct role_allow_data *ra_data = malloc(sizeof(struct role_allow_data));
+enum selint_error insert_role_allow(struct policy_node **cur, char *from_role,
+				    char *to_role, unsigned int lineno)
+{
+	struct role_allow_data *ra_data =
+	    malloc(sizeof(struct role_allow_data));
 
 	ra_data->from = strdup(from_role);
 	ra_data->to = strdup(to_role);
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_ROLE_ALLOW, ra_data, lineno);
+	enum selint_error ret =
+	    insert_policy_node_next(*cur, NODE_ROLE_ALLOW, ra_data, lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_ra_data(ra_data);
 		return ret;
@@ -185,9 +224,17 @@ enum selint_error insert_role_allow(struct policy_node **cur, char *from_role, c
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavor flavor, struct string_list *sources, struct string_list *targets, struct string_list *object_classes, char *default_type, char *name, unsigned int lineno) {
+enum selint_error insert_type_transition(struct policy_node **cur,
+					 enum tt_flavor flavor,
+					 struct string_list *sources,
+					 struct string_list *targets,
+					 struct string_list *object_classes,
+					 char *default_type, char *name,
+					 unsigned int lineno)
+{
 
-	struct type_transition_data *tt_data = malloc(sizeof(struct type_transition_data));
+	struct type_transition_data *tt_data =
+	    malloc(sizeof(struct type_transition_data));
 
 	tt_data->sources = sources;
 	tt_data->targets = targets;
@@ -200,8 +247,11 @@ enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavo
 	}
 	tt_data->flavor = flavor;
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_TT_RULE, tt_data, lineno);
-	if ( ret != SELINT_SUCCESS) {
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_TT_RULE,
+	                                                tt_data,
+	                                                lineno);
+	if (ret != SELINT_SUCCESS) {
 		free_type_transition_data(tt_data);
 		return ret;
 	}
@@ -211,7 +261,10 @@ enum selint_error insert_type_transition(struct policy_node **cur, enum tt_flavo
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_interface_call(struct policy_node **cur, char *if_name, struct string_list *args, unsigned int lineno) {
+enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
+					struct string_list *args,
+					unsigned int lineno)
+{
 	struct if_call_data *if_data = malloc(sizeof(struct if_call_data));
 	if_data->name = strdup(if_name);
 	if_data->args = args;
@@ -224,7 +277,10 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 		add_template_declarations(if_name, args, NULL, module_name);
 	}
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_IF_CALL, if_data, lineno);
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_IF_CALL,
+	                                                if_data,
+	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_if_call_data(if_data);
 		return ret;
@@ -235,8 +291,13 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_permissive_statement(struct policy_node **cur, char *domain, unsigned int lineno) {
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_PERMISSIVE, strdup(domain), lineno);
+enum selint_error insert_permissive_statement(struct policy_node **cur,
+					      char *domain, unsigned int lineno)
+{
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_PERMISSIVE,
+	                                                strdup(domain),
+	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
 	}
@@ -245,17 +306,23 @@ enum selint_error insert_permissive_statement(struct policy_node **cur, char *do
 	return SELINT_SUCCESS;
 }
 
-enum selint_error begin_block(struct policy_node **cur, enum node_flavor block_type, void *data, unsigned int lineno) {
-	enum selint_error ret = insert_policy_node_next(*cur, block_type, data, lineno);
+enum selint_error begin_block(struct policy_node **cur,
+			      enum node_flavor block_type, void *data,
+			      unsigned int lineno)
+{
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                block_type,
+	                                                data,
+	                                                lineno);
 
-	if ( ret != SELINT_SUCCESS) {
+	if (ret != SELINT_SUCCESS) {
 		return ret;
 	}
 
 	*cur = (*cur)->next;
 
 	ret = insert_policy_node_child(*cur, NODE_START_BLOCK, NULL, lineno);
-	if ( ret != SELINT_SUCCESS) {
+	if (ret != SELINT_SUCCESS) {
 		*cur = (*cur)->prev;
 		free_policy_node((*cur)->next);
 		return ret;
@@ -266,7 +333,9 @@ enum selint_error begin_block(struct policy_node **cur, enum node_flavor block_t
 	return SELINT_SUCCESS;
 }
 
-enum selint_error end_block(struct policy_node **cur, enum node_flavor block_type) {
+enum selint_error end_block(struct policy_node **cur,
+			    enum node_flavor block_type)
+{
 
 	if ((*cur)->parent == NULL || (*cur)->parent->flavor != block_type) {
 		return SELINT_NOT_IN_BLOCK;
@@ -276,66 +345,81 @@ enum selint_error end_block(struct policy_node **cur, enum node_flavor block_typ
 	return SELINT_SUCCESS;
 }
 
+enum selint_error begin_optional_policy(struct policy_node **cur,
+					unsigned int lineno)
+{
 
-enum selint_error begin_optional_policy(struct policy_node **cur, unsigned int lineno) {
-
-	return begin_block(cur, NODE_OPTIONAL_POLICY, (void *) NULL, lineno);
+	return begin_block(cur, NODE_OPTIONAL_POLICY, (void *)NULL, lineno);
 }
 
-enum selint_error end_optional_policy(struct policy_node **cur) {
+enum selint_error end_optional_policy(struct policy_node **cur)
+{
 
 	return end_block(cur, NODE_OPTIONAL_POLICY);
 }
 
-enum selint_error begin_optional_else(struct policy_node **cur, unsigned int lineno) {
-	return begin_block(cur, NODE_OPTIONAL_ELSE, (void *) NULL, lineno);
+enum selint_error begin_optional_else(struct policy_node **cur,
+				      unsigned int lineno)
+{
+	return begin_block(cur, NODE_OPTIONAL_ELSE, (void *)NULL, lineno);
 }
 
-enum selint_error end_optional_else(struct policy_node **cur) {
+enum selint_error end_optional_else(struct policy_node **cur)
+{
 	return end_block(cur, NODE_OPTIONAL_ELSE);
 }
 
-enum selint_error begin_interface_def(struct policy_node **cur, enum node_flavor flavor, char *name, unsigned int lineno) {
+enum selint_error begin_interface_def(struct policy_node **cur,
+				      enum node_flavor flavor, char *name,
+				      unsigned int lineno)
+{
 
-	switch(flavor) {
-		case NODE_IF_DEF:
-		case NODE_TEMP_DEF:
-			break;
-		default:
-			return SELINT_BAD_ARG;
+	switch (flavor) {
+	case NODE_IF_DEF:
+	case NODE_TEMP_DEF:
+		break;
+	default:
+		return SELINT_BAD_ARG;
 	}
 
 	insert_into_ifs_map(name, get_current_module_name());
 
-	return begin_block(cur, flavor, (void *) strdup(name), lineno);
+	return begin_block(cur, flavor, (void *)strdup(name), lineno);
 }
 
-enum selint_error end_interface_def(struct policy_node **cur) {
+enum selint_error end_interface_def(struct policy_node **cur)
+{
 
 	return end_block(cur, NODE_IF_DEF);
 }
 
-enum selint_error begin_gen_require(struct policy_node **cur, unsigned int lineno) {
+enum selint_error begin_gen_require(struct policy_node **cur,
+				    unsigned int lineno)
+{
 
-	return begin_block(cur, NODE_GEN_REQ, (void *) NULL, lineno);
+	return begin_block(cur, NODE_GEN_REQ, (void *)NULL, lineno);
 }
 
-enum selint_error end_gen_require(struct policy_node **cur) {
+enum selint_error end_gen_require(struct policy_node **cur)
+{
 
 	return end_block(cur, NODE_GEN_REQ);
 }
 
-enum selint_error begin_require(struct policy_node **cur, unsigned int lineno) {
+enum selint_error begin_require(struct policy_node **cur, unsigned int lineno)
+{
 
-	return begin_block(cur, NODE_REQUIRE, (void *) NULL, lineno);
+	return begin_block(cur, NODE_REQUIRE, (void *)NULL, lineno);
 }
 
-enum selint_error end_require(struct policy_node **cur) {
+enum selint_error end_require(struct policy_node **cur)
+{
 
 	return end_block(cur, NODE_REQUIRE);
 }
 
-void cleanup_parsing() {
+void cleanup_parsing()
+{
 	if (module_name) {
 		free(module_name);
 		module_name = NULL;

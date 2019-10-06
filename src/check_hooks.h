@@ -54,7 +54,9 @@ struct check_result {
 };
 
 struct check_node {
-	struct check_result * (*check_function)(const struct check_data *data, const struct policy_node *node);
+	struct check_result *(*check_function) (const struct check_data * data,
+						const struct policy_node *
+						node);
 	struct check_node *next;
 };
 
@@ -78,7 +80,13 @@ struct checks {
  * check_function - the check to add
  * returns SELINT_SUCCESS or an error code on failure
  *********************************************/
-enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, struct check_result * (*check_function)(const struct check_data *check_data, const struct policy_node *node));
+enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
+			    struct check_result *(*check_function) (const struct
+								    check_data *
+								    check_data,
+								    const struct
+								    policy_node
+								    * node));
 
 /*********************************************
  * Call all registered checks for node->flavor node types
@@ -88,7 +96,9 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck, st
  * node - the node to check
  * returns SELINT_SUCCESS or an error code on failure
  *********************************************/
-enum selint_error call_checks(struct checks *ck, struct check_data *data, struct policy_node *node);
+enum selint_error call_checks(struct checks *ck,
+			      struct check_data *data,
+			      struct policy_node *node);
 
 /*********************************************
  * Helper function for call_checks that takes the appropriate
@@ -98,7 +108,9 @@ enum selint_error call_checks(struct checks *ck, struct check_data *data, struct
  * node - the node to check
  * returns SELINT_SUCCESS or an error code on failure
  *********************************************/
-enum selint_error call_checks_for_node_type(struct check_node *ck_list, struct check_data *data, struct policy_node *node);
+enum selint_error call_checks_for_node_type(struct check_node *ck_list,
+					    struct check_data *data,
+					    struct policy_node *node);
 
 /*********************************************
  * Display a result message for a positive check finding
@@ -114,7 +126,9 @@ void display_check_result(struct check_result *res, struct check_data *data);
  * check_id - The check identifier
  * format - A printf style format string
  *********************************************/
-struct check_result *make_check_result(char severity, unsigned int check_id, char *format, ...);
+struct check_result *make_check_result(char severity,
+				       unsigned int check_id,
+				       char *format, ...);
 
 /*********************************************
  * Generates a check result for an internal error (F-002)

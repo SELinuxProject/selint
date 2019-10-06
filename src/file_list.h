@@ -18,9 +18,10 @@ struct policy_file_list {
 	struct policy_file_node *tail;
 };
 
-void file_list_push_back(struct policy_file_list *list, struct policy_file *file);
+void file_list_push_back(struct policy_file_list *list,
+			 struct policy_file *file);
 
-struct policy_file * make_policy_file(char *filename, struct policy_node *ast);
+struct policy_file *make_policy_file(char *filename, struct policy_node *ast);
 
 void free_file_list(struct policy_file_list *to_free);
 

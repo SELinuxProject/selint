@@ -3,15 +3,22 @@
 #include "tree.h"
 
 // TODO: Requires with only object classes are fine.
-struct check_result *check_require_block(const struct check_data *data, const struct policy_node *node) {
+struct check_result *check_require_block(const struct check_data *data,
+					 const struct policy_node *node)
+{
 	if (data->flavor != FILE_TE_FILE) {
 		return NULL;
 	}
 
-	return make_check_result('S', S_ID_REQUIRE, "Require block used in te file (use an interface call instead)");
+	return make_check_result('S', S_ID_REQUIRE,
+				 "Require block used in te file (use an interface call instead)");
 }
 
-struct check_result *check_module_if_call_in_optional(const struct check_data *check_data, const struct policy_node *node) {
+struct check_result *check_module_if_call_in_optional(const struct check_data
+						      *check_data,
+						      const struct policy_node
+						      *node)
+{
 
 	struct if_call_data *if_data = node->data;
 
@@ -44,7 +51,8 @@ struct check_result *check_module_if_call_in_optional(const struct check_data *c
 		}
 	}
 
-	return make_check_result('W', W_ID_IF_CALL_OPTIONAL, "Call to interface defined in module should be in optional_policy block");
+	return make_check_result('W', W_ID_IF_CALL_OPTIONAL,
+				 "Call to interface defined in module should be in optional_policy block");
 
 	return NULL;
 

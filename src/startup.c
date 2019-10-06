@@ -3,9 +3,10 @@
 
 #include "maps.h"
 
-void load_access_vectors_normal(char *av_path) {
+void load_access_vectors_normal(char *av_path)
+{
 
-	char ** paths = calloc(2, sizeof(char*));
+	char **paths = calloc(2, sizeof(char *));
 
 	paths[0] = av_path;
 
@@ -13,13 +14,16 @@ void load_access_vectors_normal(char *av_path) {
 
 	FTSENT *file = fts_read(ftsp);
 
-	while ( file ) {
+	while (file) {
 
-		if (file->fts_level != 0 && file->fts_info == FTS_D && 0 != strcmp(file->fts_name, "perms")) {
+		if (file->fts_level != 0 && file->fts_info == FTS_D
+		    && 0 != strcmp(file->fts_name, "perms")) {
 			// Directory being visited the first time
 
-			insert_into_decl_map(file->fts_name, "class", DECL_CLASS);
-		} else if (file->fts_info == FTS_F && 0 != strcmp(file->fts_name, "index")) {
+			insert_into_decl_map(file->fts_name, "class",
+					     DECL_CLASS);
+		} else if (file->fts_info == FTS_F
+			   && 0 != strcmp(file->fts_name, "index")) {
 			// File
 
 			insert_into_decl_map(file->fts_name, "perm", DECL_PERM);
@@ -30,19 +34,23 @@ void load_access_vectors_normal(char *av_path) {
 	free(paths);
 }
 
-void load_access_vectors_source() {
+void load_access_vectors_source()
+{
 
 }
 
-void load_modules_normal() {
+void load_modules_normal()
+{
 
 }
 
-static int is_space(char c) {
-	return ( c == ' ' || c == '\t' || c == '\n' || c == '\r');
+static int is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
 }
 
-static char *strip_space(char *str) {
+static char *strip_space(char *str)
+{
 
 	while (is_space(*str)) {
 		str++;
@@ -59,7 +67,8 @@ static char *strip_space(char *str) {
 	return str;
 }
 
-enum selint_error load_modules_source(char *modules_conf_path) {
+enum selint_error load_modules_source(char *modules_conf_path)
+{
 	FILE *fd = fopen(modules_conf_path, "r");
 	if (!fd) {
 		return SELINT_IO_ERROR;
@@ -76,7 +85,7 @@ enum selint_error load_modules_source(char *modules_conf_path) {
 		while (*pos != '\0' && is_space(*pos)) {
 			pos++;
 		}
-		if ( pos[0] == '#' || pos[0] == '\0') {
+		if (pos[0] == '#' || pos[0] == '\0') {
 			continue;
 		}
 		pos = strtok(line, "=");

@@ -30,7 +30,7 @@ enum node_flavor {
 	NODE_FC_ENTRY,
 	NODE_COMMENT,
 	NODE_EMPTY,
-	NODE_ERROR // When a parsing error occurs, save an error node in the tree
+	NODE_ERROR		// When a parsing error occurs, save an error node in the tree
 };
 
 enum av_rule_flavor {
@@ -100,7 +100,7 @@ struct decl_list {
 };
 
 struct sel_context {
-	int has_gen_context; // 1 if context is wrapped in gen_context, 0 if not
+	int has_gen_context;	// 1 if context is wrapped in gen_context, 0 if not
 	char *user;
 	char *role;
 	char *type;
@@ -123,18 +123,22 @@ struct policy_node {
 	unsigned int lineno;
 };
 
-enum selint_error insert_policy_node_child(struct policy_node *parent, enum node_flavor flavor, void *data, unsigned int lineno);
+enum selint_error insert_policy_node_child(struct policy_node *parent,
+					   enum node_flavor flavor, void *data,
+					   unsigned int lineno);
 
-enum selint_error insert_policy_node_next(struct policy_node *prev, enum node_flavor flavor, void *data, unsigned int lineno);
+enum selint_error insert_policy_node_next(struct policy_node *prev,
+					  enum node_flavor flavor, void *data,
+					  unsigned int lineno);
 
 // Returns 1 if the node is a template call, and 0 if not
 int is_template_call(struct policy_node *node);
 
 char *get_name_if_in_template(struct policy_node *cur);
 
-struct string_list * get_types_in_node(const struct policy_node *node);
+struct string_list *get_types_in_node(const struct policy_node *node);
 
-struct string_list * get_types_required(const struct policy_node *node);
+struct string_list *get_types_required(const struct policy_node *node);
 
 enum selint_error free_policy_node(struct policy_node *to_free);
 
@@ -142,7 +146,8 @@ enum selint_error free_av_rule_data(struct av_rule_data *to_free);
 
 enum selint_error free_ra_data(struct role_allow_data *to_free);
 
-enum selint_error free_type_transition_data(struct type_transition_data *to_free);
+enum selint_error free_type_transition_data(struct type_transition_data
+					    *to_free);
 
 enum selint_error free_if_call_data(struct if_call_data *to_free);
 
