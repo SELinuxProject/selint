@@ -117,8 +117,7 @@
 %type<sl> args
 %type<string> mls_range
 %type<string> mls_level
-%type<sl> string_list_or_mls
-%type<sl> string_list_or_mls_no_range
+%type<string> mls_component
 %type<av_flavor> av_type
 %type<node_flavor> if_keyword
 
@@ -377,8 +376,6 @@ type_transition:
 
 range_transition:
 	RANGE_TRANSITION string_list string_list COLON string_list mls_range SEMICOLON { insert_type_transition(&cur, TT_RT, $2, $3, $5, $6, NULL, yylineno); free($6); }
-	|
-	RANGE_TRANSITION string_list string_list COLON string_list mls_level SEMICOLON {  insert_type_transition(&cur, TT_RT, $2, $3, $5, $6, NULL, yylineno); free($6); }
 	;
 
 role_transition:
@@ -527,9 +524,9 @@ m4_argument:
 	;
 
 args:
-	string_list_or_mls_no_range
+	string_list
 	|
-	args COMMA string_list_or_mls_no_range
+	args COMMA string_list
 	{ struct string_list *cur = $1;
 	while (cur->next) { cur = cur->next; }
 	cur->next = $3;
@@ -544,30 +541,31 @@ args:
 	$$ = $1; }
 	;
 
-string_list_or_mls:
-	string_list_or_mls_no_range
-	|
-	mls_range { $$ = calloc(1, sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
-	;
-
-string_list_or_mls_no_range:
-	string_list
-	|
-	MLS_LEVEL { $$ = calloc(1, sizeof(struct string_list)); $$->next = NULL; $$->string = $1; }
-	;
-
-
 mls_range:
 	mls_level DASH mls_level { size_t len = strlen($1) + strlen($3) + 1 /* DASH */ + 1 /* NT */;
 				$$ = malloc(len);
 				snprintf($$, len, "%s-%s", $1, $3);
 				free($1); free($3); }
+	|
+	mls_level
 	;
 
 mls_level:
-	MLS_LEVEL { $$ = strdup($1); free($1); }
+	mls_component
 	|
+	mls_component COLON mls_component { size_t len = strlen($1) + strlen($3) + 1 /* COLON */ + 1 /* NT */;
+				$$ = malloc(len);
+				snprintf($$, len, "%s:%s", $1, $3);
+				free($1); free($3); }
+	;
+
+mls_component:
 	STRING { $$ = strdup($1); free($1); }
+	|
+	STRING PERIOD STRING { size_t len = strlen($1) + strlen($3) + 1 /* PERIOD */ + 1 /* NT */;
+				$$ = malloc(len);
+				snprintf($$, len, "%s.%s", $1, $3);
+				free($1); free($3); }
 	;
 
 cond_expr:
@@ -650,16 +648,14 @@ gen_user:
 context:
 	STRING COLON STRING COLON STRING { free($1); free($3); free($5); }
 	|
-	STRING COLON STRING COLON STRING COLON string_list_or_mls { free($1); free($3); free($5); free_string_list($7); }
+	STRING COLON STRING COLON STRING COLON mls_range { free($1); free($3); free($5); free($7); }
 	|
-	STRING COLON STRING COLON STRING COLON string_list_or_mls COLON string_list_or_mls { free($1); free($3); free($5); free_string_list($7); free_string_list($9); }
+	STRING COLON STRING COLON STRING COMMA mls_range { free($1); free($3); free($5); free($7); }
 	|
-	STRING COLON STRING COLON STRING COMMA string_list_or_mls { free($1); free($3); free($5); free_string_list($7); }
-	|
-	STRING COLON STRING COLON STRING COMMA string_list_or_mls COMMA string_list_or_mls { free($1); free($3); free($5); free_string_list($7); free_string_list($9); }
+	STRING COLON STRING COLON STRING COMMA mls_range COMMA mls_range { free($1); free($3); free($5); free($7); free($9); }
 	|
 	// because m4
-	STRING COLON STRING COLON STRING COMMA string_list_or_mls COMMA { free($1); free($3); free($5); free_string_list($7); }
+	STRING COLON STRING COLON STRING COMMA mls_range COMMA { free($1); free($3); free($5); free($7); }
 	;
 
 permissive:
