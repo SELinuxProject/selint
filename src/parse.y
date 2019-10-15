@@ -576,17 +576,17 @@ cond_expr:
 	;
 
 genfscon:
-	GENFSCON STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); free($3); }
+	GENFSCON STRING STRING context { free($2); free($3); }
 	|
-	GENFSCON NUM_STRING STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); free($3); }
+	GENFSCON NUM_STRING STRING context { free($2); free($3); }
 	;
 
 sid:
-	SID STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); }
+	SID STRING context { free($2); }
 	;
 
 portcon:
-	PORTCON STRING port_range GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); }
+	PORTCON STRING port_range context { free($2); }
 	;
 
 port_range:
@@ -600,12 +600,10 @@ port_range:
 	;
 
 netifcon:
-	NETIFCON STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN { free($2); }
+	NETIFCON STRING context context { free($2); }
 	;
 
 nodecon:
-	NODECON WHITESPACE two_ip_addrs WHITESPACE GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN NEWLINE
-	|
 	NODECON WHITESPACE two_ip_addrs WHITESPACE context NEWLINE
 	;
 
@@ -630,11 +628,11 @@ ipv6_item:
 	;
 
 fs_use:
-	FS_USE_TRANS STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON { free($2); }
+	FS_USE_TRANS STRING context SEMICOLON { free($2); }
 	|
-	FS_USE_XATTR STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON { free($2); }
+	FS_USE_XATTR STRING context SEMICOLON { free($2); }
 	|
-	FS_USE_TASK STRING GEN_CONTEXT OPEN_PAREN context CLOSE_PAREN SEMICOLON { free($2); }
+	FS_USE_TASK STRING context SEMICOLON { free($2); }
 	;
 
 define:
@@ -646,16 +644,21 @@ gen_user:
 	;
 
 context:
+	raw_context
+	|
+	GEN_CONTEXT OPEN_PAREN raw_context CLOSE_PAREN
+	|
+	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range CLOSE_PAREN { free($5); }
+	|
+	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA mls_range CLOSE_PAREN { free($5); free($7); }
+	|
+	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA CLOSE_PAREN { free($5); }
+	;
+
+raw_context:
 	STRING COLON STRING COLON STRING { free($1); free($3); free($5); }
 	|
 	STRING COLON STRING COLON STRING COLON mls_range { free($1); free($3); free($5); free($7); }
-	|
-	STRING COLON STRING COLON STRING COMMA mls_range { free($1); free($3); free($5); free($7); }
-	|
-	STRING COLON STRING COLON STRING COMMA mls_range COMMA mls_range { free($1); free($3); free($5); free($7); free($9); }
-	|
-	// because m4
-	STRING COLON STRING COLON STRING COMMA mls_range COMMA { free($1); free($3); free($5); free($7); }
 	;
 
 permissive:
