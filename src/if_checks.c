@@ -21,7 +21,7 @@ struct check_result *check_interface_definitions_have_comment(const struct
 	if (!(node->prev) || node->prev->flavor != NODE_COMMENT) {
 		return make_check_result('C', C_ID_IF_COMMENT,
 					 "No comment before interface definition for %s",
-					 (char *)node->data);
+					 node->data.str);
 
 	} else {
 		return NULL;
@@ -114,7 +114,7 @@ struct check_result *check_type_required_but_not_used_in_if(const struct
 							    policy_node *node)
 {
 
-	struct declaration_data *dd = (struct declaration_data *)node->data;
+	struct declaration_data *dd = node->data.d_data;
 
 	char *flavor = "";
 

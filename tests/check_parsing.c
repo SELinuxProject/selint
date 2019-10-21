@@ -35,7 +35,7 @@ START_TEST (test_parse_basic_te) {
 	
 	cur = ast->next;
 	ck_assert_int_eq(NODE_DECL, cur->flavor);
-	struct declaration_data *dd = (struct declaration_data *)(cur->data);
+	struct declaration_data *dd = cur->data.d_data;
 	ck_assert_int_eq(DECL_TYPE, dd->flavor);
 	ck_assert_str_eq("basic_t", dd->name);
 	ck_assert_ptr_nonnull(cur->next);
@@ -43,7 +43,7 @@ START_TEST (test_parse_basic_te) {
 
 	cur = cur->next;
 	ck_assert_int_eq(NODE_DECL, cur->flavor);
-	dd = (struct declaration_data *)(cur->data);
+	dd = cur->data.d_data;
 	ck_assert_int_eq(DECL_TYPE, dd->flavor);
 	ck_assert_str_eq("basic_exec_t", dd->name);
 	ck_assert_ptr_nonnull(cur->next);
@@ -103,7 +103,7 @@ START_TEST (test_parse_basic_if) {
 
 	ck_assert_int_eq(NODE_IF_DEF, cur->flavor);
 	ck_assert_ptr_nonnull(cur->first_child);
-	ck_assert_str_eq("basic_domtrans", (char *) cur->data);
+	ck_assert_str_eq("basic_domtrans", cur->data.str);
 
 	cur = cur->first_child;
 

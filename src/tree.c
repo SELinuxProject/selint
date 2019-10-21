@@ -7,7 +7,7 @@
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,
 					   enum node_flavor flavor,
-					   void *data, unsigned int lineno)
+					   union node_data data, unsigned int lineno)
 {
 
 	if (parent == NULL) {
@@ -47,7 +47,7 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 
 enum selint_error insert_policy_node_next(struct policy_node *prev,
 					  enum node_flavor flavor,
-					  void *data, unsigned int lineno)
+					  union node_data data, unsigned int lineno)
 {
 
 	if (prev == NULL) {
@@ -74,7 +74,7 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 
 int is_template_call(struct policy_node *node)
 {
-	if (node == NULL || node->data == NULL) {
+	if (node == NULL || node->data.ic_data == NULL) {
 		return 0;
 	}
 
@@ -82,7 +82,7 @@ int is_template_call(struct policy_node *node)
 		return 0;
 	}
 
-	char *call_name = ((struct if_call_data *)(node->data))->name;
+	char *call_name = node->data.ic_data->name;
 
 	if (look_up_in_template_map(call_name)) {
 		return 1;
@@ -95,7 +95,7 @@ char *get_name_if_in_template(struct policy_node *cur)
 	while (cur->parent) {
 		cur = cur->parent;
 		if (cur->flavor == NODE_TEMP_DEF) {
-			return cur->data;
+			return cur->data.str;
 		}
 	}
 	return NULL;
@@ -114,7 +114,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 
 	switch (node->flavor) {
 	case NODE_AV_RULE:
-		av_data = (struct av_rule_data *)node->data;
+		av_data = node->data.av_data;
 		cur = ret = copy_string_list(av_data->sources);
 		if (cur) {
 			while (cur->next) {
@@ -127,7 +127,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		break;
 
 	case NODE_TT_RULE:
-		tt_data = (struct type_transition_data *)node->data;
+		tt_data = node->data.tt_data;
 		cur = ret = copy_string_list(tt_data->sources);
 		if (cur) {
 			while (cur->next) {
@@ -150,19 +150,19 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		break;
 
 	case NODE_DECL:
-		d_data = (struct declaration_data *)node->data;
+		d_data = node->data.d_data;
 		ret = calloc(1, sizeof(struct string_list));
 		ret->string = strdup(d_data->name);
 		ret->next = copy_string_list(d_data->attrs);
 		break;
 
 	case NODE_IF_CALL:
-		ifc_data = (struct if_call_data *)node->data;
+		ifc_data = node->data.ic_data;
 		ret = copy_string_list(ifc_data->args);
 		break;
 
 	case NODE_ROLE_ALLOW:
-		ra_data = (struct role_allow_data *)node->data;
+		ra_data = node->data.ra_data;
 		ret = calloc(1, sizeof(struct string_list));
 		ret->string = strdup(ra_data->from);
 		ret->next = calloc(1, sizeof(struct string_list));
@@ -217,26 +217,26 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 
 	switch (to_free->flavor) {
 	case NODE_AV_RULE:
-		free_av_rule_data(to_free->data);
+		free_av_rule_data(to_free->data.av_data);
 		break;
 	case NODE_ROLE_ALLOW:
-		free_ra_data(to_free->data);
+		free_ra_data(to_free->data.ra_data);
 		break;
 	case NODE_TT_RULE:
-		free_type_transition_data(to_free->data);
+		free_type_transition_data(to_free->data.tt_data);
 		break;
 	case NODE_IF_CALL:
-		free_if_call_data(to_free->data);
+		free_if_call_data(to_free->data.ic_data);
 		break;
 	case NODE_DECL:
-		free_declaration_data(to_free->data);
+		free_declaration_data(to_free->data.d_data);
 		break;
 	case NODE_FC_ENTRY:
-		free_fc_entry(to_free->data);
+		free_fc_entry(to_free->data.fc_data);
 		break;
 	default:
-		if (to_free->data != NULL) {
-			free(to_free->data);
+		if (to_free->data.str != NULL) {
+			free(to_free->data.str);
 		}
 		break;
 	}

@@ -113,22 +113,32 @@ struct fc_entry {
 	struct sel_context *context;
 };
 
+union node_data {
+		struct av_rule_data *av_data;
+		struct role_allow_data *ra_data;
+		struct type_transition_data *tt_data;
+		struct if_call_data *ic_data;
+		struct declaration_data *d_data;
+		struct fc_entry *fc_data;
+		char *str;
+};
+
 struct policy_node {
 	struct policy_node *parent;
 	struct policy_node *next;
 	struct policy_node *prev;
 	struct policy_node *first_child;
 	enum node_flavor flavor;
-	void *data;
+	union node_data data;
 	unsigned int lineno;
 };
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,
-					   enum node_flavor flavor, void *data,
+					   enum node_flavor flavor, union node_data data,
 					   unsigned int lineno);
 
 enum selint_error insert_policy_node_next(struct policy_node *prev,
-					  enum node_flavor flavor, void *data,
+					  enum node_flavor flavor, union node_data data,
 					  unsigned int lineno);
 
 // Returns 1 if the node is a template call, and 0 if not

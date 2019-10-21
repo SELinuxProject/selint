@@ -20,7 +20,7 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
 						      *node)
 {
 
-	struct if_call_data *if_data = node->data;
+	struct if_call_data *if_data = node->data.ic_data;
 
 	char *if_mod_name = look_up_in_ifs_map(if_data->name);
 	if (!if_mod_name) {

@@ -71,7 +71,7 @@ START_TEST(test_check_type_used_but_not_required_in_if) {
 
 	struct declaration_data *data = calloc(1, sizeof(struct declaration_data));
 
-	cur->data = data;
+	cur->data.d_data = data;
 
 	data->flavor = DECL_TYPE;
 	data->name = strdup("bar_t");
@@ -85,13 +85,13 @@ START_TEST(test_check_type_used_but_not_required_in_if) {
 	cur = cur->next;
 
 	cur->flavor = NODE_AV_RULE;
-	cur->data = make_example_av_rule();
+	cur->data.av_data = make_example_av_rule();
 
 	insert_into_decl_map("foo_t", "test", DECL_TYPE);
 	insert_into_decl_map("bar_t", "test", DECL_TYPE);
 	insert_into_decl_map("baz_t", "test", DECL_TYPE);
 
-	struct av_rule_data *av_data = cur->data;
+	struct av_rule_data *av_data = cur->data.av_data;
 	free(av_data->sources->string);
 	av_data->sources->string = strdup("$1");
 
@@ -133,7 +133,7 @@ START_TEST (test_check_type_required_but_not_used_in_if) {
 
 	struct declaration_data *data = calloc(1, sizeof(struct declaration_data));
 
-	cur->data = data;
+	cur->data.d_data = data;
 
 	data->flavor = DECL_TYPE;
 	data->name = strdup("bar_t");
@@ -147,7 +147,7 @@ START_TEST (test_check_type_required_but_not_used_in_if) {
 	cur = cur->next;
 
 	cur->flavor = NODE_AV_RULE;
-	cur->data = make_example_av_rule();
+	cur->data.av_data = make_example_av_rule();
 
 	cur = cur->prev->first_child->next; // the declaration
 

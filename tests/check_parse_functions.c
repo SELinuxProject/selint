@@ -21,7 +21,7 @@ START_TEST (test_begin_parsing_te) {
 	ck_assert_ptr_null(cur->prev);
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
-	ck_assert_str_eq(cur->data, "example");
+	ck_assert_str_eq(cur->data.str, "example");
 	ck_assert_str_eq(get_current_module_name(), "example");
 	ck_assert_int_eq(cur->lineno, 1);
 
@@ -45,7 +45,7 @@ START_TEST (test_insert_comment) {
 	ck_assert_ptr_eq(cur->prev, prev);
 	ck_assert_int_eq(cur->flavor, NODE_COMMENT);
 	ck_assert_int_eq(cur->lineno, 12345);
-	ck_assert_ptr_null(cur->data);
+	ck_assert_ptr_null(cur->data.str);
 
 	ck_assert_int_eq(SELINT_SUCCESS,free_policy_node(prev));
 }
@@ -58,7 +58,7 @@ START_TEST (test_insert_declaration) {
 
 	cur->flavor = NODE_TE_FILE;
 	cur->parent = NULL; 
-	cur->data = NULL;
+	cur->data.d_data = NULL;
 	cur->first_child = NULL;
 	cur->next = NULL;
 
@@ -77,10 +77,10 @@ START_TEST (test_insert_declaration) {
 	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_ptr_null(prev->first_child);
-	ck_assert_ptr_nonnull((struct declation *) cur->data);
-	ck_assert_int_eq(((struct declaration_data *)cur->data)->flavor, DECL_TYPE);
-	ck_assert_str_eq(((struct declaration_data *)cur->data)->name, "foo_t");
-	ck_assert_ptr_eq(((struct declaration_data *)cur->data)->attrs, attrs);
+	ck_assert_ptr_nonnull(cur->data.d_data);
+	ck_assert_int_eq(cur->data.d_data->flavor, DECL_TYPE);
+	ck_assert_str_eq(cur->data.d_data->name, "foo_t");
+	ck_assert_ptr_eq(cur->data.d_data->attrs, attrs);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(prev));
 
@@ -119,7 +119,7 @@ START_TEST (test_insert_aliases) {
 	cur = cur->first_child;
 
 	ck_assert_int_eq(cur->flavor, NODE_ALIAS);
-	ck_assert_str_eq((char *) cur->data, "foo_t");
+	ck_assert_str_eq(cur->data.str, "foo_t");
 	ck_assert_ptr_null(cur->prev);
 	ck_assert_ptr_eq(cur->parent, orig);
 	ck_assert_ptr_nonnull(cur->next);
@@ -128,7 +128,7 @@ START_TEST (test_insert_aliases) {
 	cur = cur->next;
 
 	ck_assert_int_eq(cur->flavor, NODE_ALIAS);
-	ck_assert_str_eq((char *) cur->data, "bar_t");
+	ck_assert_str_eq(cur->data.str, "bar_t");
 	ck_assert_ptr_nonnull(cur->prev);
 	ck_assert_ptr_eq(cur->parent, orig);
 	ck_assert_ptr_null(cur->next);
@@ -176,7 +176,7 @@ START_TEST (test_insert_av_rule) {
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_AV_RULE, cur->flavor);
-	struct av_rule_data *avd = (struct av_rule_data *)(cur->data);
+	struct av_rule_data *avd = cur->data.av_data;
 	ck_assert_int_eq(AV_RULE_AUDITALLOW, avd->flavor);
 	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_ptr_null(avd->sources);
@@ -201,7 +201,7 @@ START_TEST (test_insert_role_allow) {
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_ROLE_ALLOW, cur->flavor);
-	struct role_allow_data *ra = (struct role_allow_data *)(cur->data);
+	struct role_allow_data *ra = cur->data.ra_data;
 	ck_assert_str_eq("staff_r", ra->from);
 	ck_assert_str_eq("dbadm_r", ra->to);
 
@@ -222,7 +222,7 @@ START_TEST (test_insert_type_transition) {
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_TT_RULE, cur->flavor);
 	ck_assert_int_eq(cur->lineno, 1234);
-	struct type_transition_data *ttd = (struct type_transition_data *)(cur->data);
+	struct type_transition_data *ttd = cur->data.tt_data;
 	ck_assert_ptr_null(ttd->sources);
 	ck_assert_ptr_null(ttd->targets);
 	ck_assert_ptr_null(ttd->object_classes);
@@ -248,7 +248,7 @@ START_TEST (test_insert_named_type_transition) {
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_TT_RULE, cur->flavor);
 	ck_assert_int_eq(cur->lineno, 1234);
-	struct type_transition_data *ttd = (struct type_transition_data *)(cur->data);
+	struct type_transition_data *ttd = cur->data.tt_data;
 	ck_assert_ptr_null(ttd->sources);
 	ck_assert_ptr_null(ttd->targets);
 	ck_assert_ptr_null(ttd->object_classes);
@@ -284,7 +284,7 @@ START_TEST (test_insert_interface_call) {
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_ptr_nonnull(cur->prev);
 
-	struct if_call_data *if_data = cur->data;
+	struct if_call_data *if_data = cur->data.ic_data;
 
 	ck_assert_str_eq("do_things", if_data->name);
 	ck_assert_str_eq("foo_t", if_data->args->string);
@@ -310,7 +310,7 @@ START_TEST (test_insert_permissive_statement) {
 	ck_assert_ptr_null(cur->parent);
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_ptr_eq(cur->prev, head);
-	ck_assert_str_eq("unconfined_t", cur->data);
+	ck_assert_str_eq("unconfined_t", cur->data.str);
 
 	free_policy_node(head);
 	cleanup_parsing();
@@ -374,7 +374,7 @@ START_TEST (test_interface_def) {
 	ck_assert_int_eq(cur->flavor, NODE_START_BLOCK);
 	ck_assert_int_eq(cur->parent->flavor, NODE_IF_DEF);
 	ck_assert_ptr_eq(cur->parent->first_child, cur);
-	ck_assert_str_eq(cur->parent->data, "foo_read_conf");
+	ck_assert_str_eq(cur->parent->data.str, "foo_read_conf");
 	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_int_eq(cur->parent->lineno, 1234);
 	ck_assert_ptr_null(cur->next);

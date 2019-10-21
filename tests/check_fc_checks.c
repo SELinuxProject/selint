@@ -23,7 +23,7 @@ START_TEST (test_check_file_context_types_exist) {
 
 	entry->context->type = strdup("foo_t");
 
-	node->data = entry;
+	node->data.fc_data = entry;
 
 	struct check_result *res = check_file_context_types_exist(data, node);
 
@@ -90,7 +90,7 @@ START_TEST (test_check_file_context_types_in_mod) {
 
 	entry->context->type = strdup("foo_t");
 
-	node->data = entry;
+	node->data.fc_data = entry;
 
 	struct check_result *res = check_file_context_types_in_mod(data, node);
 
@@ -140,7 +140,7 @@ START_TEST (test_check_file_context_roles) {
 
 	entry->context->role = strdup("object_r");
 
-	node->data = entry;
+	node->data.fc_data = entry;
 
 	struct check_result *res = check_file_context_roles(data, node);
 
@@ -184,7 +184,7 @@ START_TEST (test_check_file_context_users) {
 
 	entry->context->user = strdup("system_u");
 
-	node->data = entry;
+	node->data.fc_data = entry;
 
 	struct check_result *res = check_file_context_users(data, node);
 
@@ -257,7 +257,7 @@ START_TEST (test_fc_checks_handle_null_context_fields) {
 	struct fc_entry *entry = malloc(sizeof(struct fc_entry));
 	memset(entry, 0, sizeof(struct fc_entry));
 
-	node->data = entry;
+	node->data.fc_data = entry;
 
 	ck_assert_ptr_null(check_file_context_types_exist(data, node));
 	ck_assert_ptr_null(check_file_context_types_in_mod(data, node));
@@ -287,7 +287,7 @@ START_TEST (test_check_file_context_regex) {
 	memset(entry->context, 0, sizeof(struct sel_context));
 	entry->path = strdup("path.with.unescpaed.dots");
 
-	node->data = entry;
+	node->data.fc_data = entry;
 
 	struct check_result *res = check_file_context_regex(data, node);
 

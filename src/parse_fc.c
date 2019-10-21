@@ -215,7 +215,10 @@ struct policy_node *parse_fc_file(char *filename)
 		} else {
 			flavor = NODE_FC_ENTRY;
 		}
-		if (insert_policy_node_next(cur, flavor, entry, lineno) !=
+
+		union node_data nd;
+		nd.fc_data = entry;
+		if (insert_policy_node_next(cur, flavor, nd, lineno) !=
 		    SELINT_SUCCESS) {
 			free_policy_node(head);
 			fclose(fd);

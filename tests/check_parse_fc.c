@@ -148,9 +148,9 @@ START_TEST (test_parse_m4) {
 	cur = cur->next;
 
 	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
-	ck_assert_ptr_nonnull(cur->data);
+	ck_assert_ptr_nonnull(cur->data.fc_data);
 
-	struct fc_entry *data = (struct fc_entry *) cur->data;
+	struct fc_entry *data = cur->data.fc_data;
 
 	ck_assert_ptr_nonnull(data->context);
 	ck_assert_str_eq(data->context->type, "hijklmn_t");
@@ -173,7 +173,7 @@ START_TEST (test_parse_none_context) {
 	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
 	ck_assert_ptr_null(cur->next);
 
-	struct fc_entry *data = (struct fc_entry *) cur->data;
+	struct fc_entry *data = cur->data.fc_data;
 
 	ck_assert_ptr_null(data->context);
 

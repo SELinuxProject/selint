@@ -6,7 +6,7 @@
 	if (node->flavor != NODE_FC_ENTRY) {\
 		return alloc_internal_error("File context type check called on non file context entry");\
 	}\
-	struct fc_entry *entry = (struct fc_entry *)node->data;\
+	struct fc_entry *entry = node->data.fc_data;\
 	if (!entry) {\
 		return alloc_internal_error("Policy node data field is NULL");\
 	}\
