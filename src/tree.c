@@ -168,17 +168,17 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		ret->next = calloc(1, sizeof(struct string_list));
 		ret->next->string = strdup(ra_data->to);
 		break;
-/*
-		NODE_M4_CALL,
-		NODE_OPTIONAL_POLICY,
-		NODE_OPTIONAL_ELSE,
-		NODE_M4_ARG,
-		NODE_START_BLOCK,
-		NODE_IF_DEF,
-		NODE_TEMP_DEF,
-		NODE_REQUIRE,
-		NODE_GEN_REQ,
-*/
+	/*
+	NODE_M4_CALL,
+	NODE_OPTIONAL_POLICY,
+	NODE_OPTIONAL_ELSE,
+	NODE_M4_ARG,
+	NODE_START_BLOCK,
+	NODE_IF_DEF,
+	NODE_TEMP_DEF,
+	NODE_REQUIRE,
+	NODE_GEN_REQ,
+	*/
 	default:
 		break;
 	}

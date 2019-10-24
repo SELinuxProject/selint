@@ -57,8 +57,7 @@ enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno)
 {
 	union node_data data;
 	data.str = NULL;
-	enum selint_error ret =
-	    insert_policy_node_next(*cur, NODE_COMMENT, data, lineno);
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_COMMENT, data, lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
 	}
@@ -98,8 +97,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 		}
 	}
 
-	struct declaration_data *data =
-	    (struct declaration_data *)malloc(sizeof(struct declaration_data));
+	struct declaration_data *data = (struct declaration_data *)malloc(sizeof(struct declaration_data));
 	if (!data) {
 		return SELINT_OUT_OF_MEM;
 	}
@@ -218,8 +216,7 @@ enum selint_error insert_av_rule(struct policy_node **cur,
 enum selint_error insert_role_allow(struct policy_node **cur, char *from_role,
 				    char *to_role, unsigned int lineno)
 {
-	struct role_allow_data *ra_data =
-	    malloc(sizeof(struct role_allow_data));
+	struct role_allow_data *ra_data = malloc(sizeof(struct role_allow_data));
 
 	ra_data->from = strdup(from_role);
 	ra_data->to = strdup(to_role);

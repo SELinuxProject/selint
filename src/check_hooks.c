@@ -19,12 +19,8 @@
 			}
 
 enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
-			    struct check_result *(*check_function) (const struct
-								    check_data *
-								    check_data,
-								    const struct
-								    policy_node
-								    * node))
+                            struct check_result *(*check_function) (const struct check_data *check_data,
+                                                                    const struct policy_node *node))
 {
 
 	struct check_node *loc;
@@ -86,35 +82,25 @@ enum selint_error call_checks(struct checks *ck, struct check_data *data,
 
 	switch (node->flavor) {
 	case NODE_AV_RULE:
-		return call_checks_for_node_type(ck->av_rule_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->av_rule_node_checks, data, node);
 	case NODE_TT_RULE:
-		return call_checks_for_node_type(ck->tt_rule_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->tt_rule_node_checks, data, node);
 	case NODE_DECL:
-		return call_checks_for_node_type(ck->decl_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->decl_node_checks, data, node);
 	case NODE_IF_DEF:
-		return call_checks_for_node_type(ck->if_def_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->if_def_node_checks, data, node);
 	case NODE_TEMP_DEF:
-		return call_checks_for_node_type(ck->temp_def_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->temp_def_node_checks, data, node);
 	case NODE_IF_CALL:
-		return call_checks_for_node_type(ck->if_call_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->if_call_node_checks, data, node);
 	case NODE_REQUIRE:
-		return call_checks_for_node_type(ck->require_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->require_node_checks, data, node);
 	case NODE_GEN_REQ:
-		return call_checks_for_node_type(ck->gen_req_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->gen_req_node_checks, data, node);
 	case NODE_FC_ENTRY:
-		return call_checks_for_node_type(ck->fc_entry_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->fc_entry_node_checks, data, node);
 	case NODE_ERROR:
-		return call_checks_for_node_type(ck->error_node_checks, data,
-						 node);
+		return call_checks_for_node_type(ck->error_node_checks, data, node);
 	default:
 		return SELINT_SUCCESS;
 	}
