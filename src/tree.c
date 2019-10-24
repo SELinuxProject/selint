@@ -6,8 +6,8 @@
 #include "selint_error.h"
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,
-					   enum node_flavor flavor,
-					   union node_data data, unsigned int lineno)
+                                           enum node_flavor flavor,
+                                           union node_data data, unsigned int lineno)
 {
 
 	if (parent == NULL) {
@@ -46,8 +46,8 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 }
 
 enum selint_error insert_policy_node_next(struct policy_node *prev,
-					  enum node_flavor flavor,
-					  union node_data data, unsigned int lineno)
+                                          enum node_flavor flavor,
+                                          union node_data data, unsigned int lineno)
 {
 
 	if (prev == NULL) {
@@ -169,16 +169,16 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		ret->next->string = strdup(ra_data->to);
 		break;
 	/*
-	NODE_M4_CALL,
-	NODE_OPTIONAL_POLICY,
-	NODE_OPTIONAL_ELSE,
-	NODE_M4_ARG,
-	NODE_START_BLOCK,
-	NODE_IF_DEF,
-	NODE_TEMP_DEF,
-	NODE_REQUIRE,
-	NODE_GEN_REQ,
-	*/
+	   NODE_M4_CALL,
+	   NODE_OPTIONAL_POLICY,
+	   NODE_OPTIONAL_ELSE,
+	   NODE_M4_ARG,
+	   NODE_START_BLOCK,
+	   NODE_IF_DEF,
+	   NODE_TEMP_DEF,
+	   NODE_REQUIRE,
+	   NODE_GEN_REQ,
+	 */
 	default:
 		break;
 	}
@@ -267,7 +267,7 @@ enum selint_error free_av_rule_data(struct av_rule_data *to_free)
 	free_string_list(to_free->perms);
 
 	to_free->sources = to_free->targets = to_free->object_classes =
-	    to_free->perms = NULL;
+		to_free->perms = NULL;
 
 	free(to_free);
 
@@ -289,7 +289,7 @@ enum selint_error free_ra_data(struct role_allow_data *to_free)
 }
 
 enum selint_error free_type_transition_data(struct type_transition_data
-					    *to_free)
+                                            *to_free)
 {
 
 	if (to_free == NULL) {

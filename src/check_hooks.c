@@ -6,21 +6,21 @@
 
 #include "check_hooks.h"
 
-#define ALLOC_NODE(nl)	if (ck->nl) {\
-				loc = ck->nl;\
-				while (loc->next) { loc = loc->next; }\
-				loc->next = malloc(sizeof(struct check_node));\
-				if (!loc->next) { return SELINT_OUT_OF_MEM; }\
-				loc = loc->next;\
-			} else {\
-				ck->nl = malloc(sizeof(struct check_node));\
-				if (!ck->nl) { return SELINT_OUT_OF_MEM; }\
-				loc = ck->nl;\
-			}
+#define ALLOC_NODE(nl)  if (ck->nl) { \
+		loc = ck->nl; \
+		while (loc->next) { loc = loc->next; } \
+		loc->next = malloc(sizeof(struct check_node)); \
+		if (!loc->next) { return SELINT_OUT_OF_MEM; } \
+		loc = loc->next; \
+} else { \
+		ck->nl = malloc(sizeof(struct check_node)); \
+		if (!ck->nl) { return SELINT_OUT_OF_MEM; } \
+		loc = ck->nl; \
+}
 
 enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
-                            struct check_result *(*check_function) (const struct check_data *check_data,
-                                                                    const struct policy_node *node))
+                            struct check_result *(*check_function)(const struct check_data *check_data,
+                                                                   const struct policy_node *node))
 {
 
 	struct check_node *loc;
@@ -77,7 +77,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 }
 
 enum selint_error call_checks(struct checks *ck, struct check_data *data,
-			      struct policy_node *node)
+                              struct policy_node *node)
 {
 
 	switch (node->flavor) {
@@ -107,8 +107,8 @@ enum selint_error call_checks(struct checks *ck, struct check_data *data,
 }
 
 enum selint_error call_checks_for_node_type(struct check_node *ck_list,
-					    struct check_data *data,
-					    struct policy_node *node)
+                                            struct check_data *data,
+                                            struct policy_node *node)
 {
 
 	struct check_node *cur = ck_list;
@@ -129,6 +129,7 @@ void display_check_result(struct check_result *res, struct check_data *data)
 {
 
 	int padding = 18 - strlen(data->filename);
+
 	if (padding < 0) {
 		padding = 0;
 	}
@@ -153,10 +154,11 @@ void free_check_result(struct check_result *res)
 
 __attribute__ ((format(printf, 3, 4)))
 struct check_result *make_check_result(char severity, unsigned int check_id,
-				       char *format, ...)
+                                       char *format, ...)
 {
 
 	struct check_result *res = malloc(sizeof(struct check_result));
+
 	res->severity = severity;
 	res->check_id = check_id;
 
@@ -166,7 +168,7 @@ struct check_result *make_check_result(char severity, unsigned int check_id,
 	if (vasprintf(&res->message, format, args) == -1) {
 		free(res);
 		res = alloc_internal_error(
-		    "Failed to generate check result message");
+			"Failed to generate check result message");
 	}
 
 	va_end(args);

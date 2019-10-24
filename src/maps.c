@@ -46,12 +46,12 @@ struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
 }
 
 void insert_into_decl_map(char *name, char *module_name,
-			  enum decl_flavor flavor)
+                          enum decl_flavor flavor)
 {
 
 	struct hash_elem *decl = look_up_hash_elem(name, flavor);
 
-	if (decl == NULL) {	// Item not in hash table already
+	if (decl == NULL) {     // Item not in hash table already
 
 		decl = malloc(sizeof(struct hash_elem));
 		decl->key = strdup(name);
@@ -60,27 +60,27 @@ void insert_into_decl_map(char *name, char *module_name,
 		switch (flavor) {
 		case DECL_TYPE:
 			HASH_ADD_KEYPTR(hh_type, type_map, decl->key,
-					strlen(decl->key), decl);
+			                strlen(decl->key), decl);
 			break;
 		case DECL_ROLE:
 			HASH_ADD_KEYPTR(hh_role, role_map, decl->key,
-					strlen(decl->key), decl);
+			                strlen(decl->key), decl);
 			break;
 		case DECL_USER:
 			HASH_ADD_KEYPTR(hh_user, user_map, decl->key,
-					strlen(decl->key), decl);
+			                strlen(decl->key), decl);
 			break;
 		case DECL_ATTRIBUTE:
 			HASH_ADD_KEYPTR(hh_attr, attr_map, decl->key,
-					strlen(decl->key), decl);
+			                strlen(decl->key), decl);
 			break;
 		case DECL_CLASS:
 			HASH_ADD_KEYPTR(hh_class, class_map, decl->key,
-					strlen(decl->key), decl);
+			                strlen(decl->key), decl);
 			break;
 		case DECL_PERM:
 			HASH_ADD_KEYPTR(hh_perm, perm_map, decl->key,
-					strlen(decl->key), decl);
+			                strlen(decl->key), decl);
 			break;
 		default:
 			free(decl->key);
@@ -88,7 +88,7 @@ void insert_into_decl_map(char *name, char *module_name,
 			free(decl);
 			return;
 		}
-	}	//TODO: else report error?
+	}       //TODO: else report error?
 }
 
 char *look_up_in_decl_map(char *name, enum decl_flavor flavor)
@@ -115,7 +115,7 @@ void insert_into_mods_map(char *mod_name, char *status)
 		mod->key = strdup(mod_name);
 		mod->val = strdup(status);
 		HASH_ADD_KEYPTR(hh_mods, mods_map, mod->key, strlen(mod->key),
-				mod);
+		                mod);
 	}
 }
 
@@ -145,7 +145,7 @@ void insert_into_ifs_map(char *if_name, char *module)
 		if_call->key = strdup(if_name);
 		if_call->val = strdup(module);
 		HASH_ADD_KEYPTR(hh_ifs, ifs_map, if_call->key,
-				strlen(if_call->key), if_call);
+		                strlen(if_call->key), if_call);
 	}
 }
 
@@ -210,8 +210,8 @@ void insert_call(struct template_hash_elem *template, void *new_node)
 }
 
 void insert_into_template_map(char *name, void *new_node,
-			      void (*insertion_func) (struct template_hash_elem
-						      *, void *))
+                              void (*insertion_func)(struct template_hash_elem
+                                                     *, void *))
 {
 
 	struct template_hash_elem *template;
@@ -225,7 +225,7 @@ void insert_into_template_map(char *name, void *new_node,
 		template->calls = NULL;
 
 		HASH_ADD_KEYPTR(hh, template_map, template->name,
-				strlen(template->name), template);
+		                strlen(template->name), template);
 
 	}
 
@@ -233,14 +233,15 @@ void insert_into_template_map(char *name, void *new_node,
 }
 
 void insert_decl_into_template_map(char *name, enum decl_flavor flavor,
-				   char *declaration)
+                                   char *declaration)
 {
 
 	struct declaration_data *new_data =
-	    malloc(sizeof(struct declaration_data));
+		malloc(sizeof(struct declaration_data));
+
 	new_data->flavor = flavor;
 	new_data->name = strdup(declaration);
-	new_data->attrs = NULL;	//Not needed
+	new_data->attrs = NULL; //Not needed
 
 	struct decl_list *new_node = malloc(sizeof(struct decl_list));
 	new_node->decl = new_data;
@@ -253,6 +254,7 @@ void insert_call_into_template_map(char *name, struct if_call_data *call)
 {
 
 	struct if_call_list *new_node = malloc(sizeof(struct if_call_list));
+
 	new_node->call = call;
 	new_node->next = NULL;
 
@@ -291,12 +293,12 @@ struct if_call_list *look_up_call_in_template_map(char *name)
 	}
 }
 
-#define FREE_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) {\
-		HASH_DELETE(hh_ ## mn, mn ## _map, cur_decl);\
-		free(cur_decl->key);\
-		free(cur_decl->val);\
-		free(cur_decl);\
-	}\
+#define FREE_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) { \
+		HASH_DELETE(hh_ ## mn, mn ## _map, cur_decl); \
+		free(cur_decl->key); \
+		free(cur_decl->val); \
+		free(cur_decl); \
+} \
 
 void free_all_maps()
 {

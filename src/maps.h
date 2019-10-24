@@ -10,7 +10,7 @@ struct hash_elem {
 	char *key;
 	char *val;
 	UT_hash_handle hh_type, hh_role, hh_user, hh_attr, hh_class, hh_perm,
-	    hh_mods, hh_ifs;
+	               hh_mods, hh_ifs;
 };
 
 struct template_hash_elem {
@@ -21,7 +21,7 @@ struct template_hash_elem {
 };
 
 void insert_into_decl_map(char *type, char *module_name,
-			  enum decl_flavor flavor);
+                          enum decl_flavor flavor);
 
 char *look_up_in_decl_map(char *type, enum decl_flavor flavor);
 
@@ -34,7 +34,7 @@ void insert_into_ifs_map(char *if_name, char *module);
 char *look_up_in_ifs_map(char *if_name);
 
 void insert_decl_into_template_map(char *name, enum decl_flavor flavor,
-				   char *declaration);
+                                   char *declaration);
 
 void insert_call_into_template_map(char *name, struct if_call_data *call);
 

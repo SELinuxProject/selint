@@ -6,53 +6,54 @@
 #include "selint_config.h"
 
 #define READ_STRING_LIST_FROM_CONFIG(slp, config_name) \
-	if (slp) {\
-		struct string_list *end = NULL;\
-		for (unsigned int i = 0; i < cfg_size(cfg, config_name); i++) {\
-			struct string_list *cur = calloc(1, sizeof(struct string_list));\
-			cur->string = strdup(cfg_getnstr(cfg, config_name, i));\
-			cur->next = NULL;\
-			if (!end) {\
-				*slp = end = cur;\
-			} else {\
-				end->next = cur;\
-				end = end->next;\
-			}\
-		}\
-	}\
+	if (slp) { \
+		struct string_list *end = NULL; \
+		for (unsigned int i = 0; i < cfg_size(cfg, config_name); i++) { \
+			struct string_list *cur = calloc(1, sizeof(struct string_list)); \
+			cur->string = strdup(cfg_getnstr(cfg, config_name, i)); \
+			cur->next = NULL; \
+			if (!end) { \
+				*slp = end = cur; \
+			} else { \
+				end->next = cur; \
+				end = end->next; \
+			} \
+		} \
+	} \
 
 void insert_config_declarations(cfg_t * cfg, char *config_item,
-				enum decl_flavor flavor)
+                                enum decl_flavor flavor)
 {
 	for (unsigned int i = 0; i < cfg_size(cfg, config_item); i++) {
 		insert_into_decl_map(cfg_getnstr(cfg, config_item, i),
-				     "__assumed__", flavor);
+		                     "__assumed__", flavor);
 	}
 }
 
 enum selint_error parse_config(char *config_filename,
-			       int in_source_mode,
-			       char *severity,
-			       struct string_list **config_disabled_checks,
-			       struct string_list **config_enabled_checks)
+                               int in_source_mode,
+                               char *severity,
+                               struct string_list **config_disabled_checks,
+                               struct string_list **config_enabled_checks)
 {
 
 	cfg_opt_t opts[] = {
-		CFG_STR("severity", "convention", CFGF_NONE),
-		CFG_STR_LIST("disable", "{}", CFGF_NONE),
-		CFG_STR_LIST("enable_normal", "{}", CFGF_NONE),
-		CFG_STR_LIST("enable_source", "{}", CFGF_NONE),
-		CFG_STR_LIST("assume_users", "{}", CFGF_NONE),
-		CFG_STR_LIST("assume_roles", "{}", CFGF_NONE),
+		CFG_STR("severity",           "convention", CFGF_NONE),
+		CFG_STR_LIST("disable",       "{}",         CFGF_NONE),
+		CFG_STR_LIST("enable_normal", "{}",         CFGF_NONE),
+		CFG_STR_LIST("enable_source", "{}",         CFGF_NONE),
+		CFG_STR_LIST("assume_users",  "{}",         CFGF_NONE),
+		CFG_STR_LIST("assume_roles",  "{}",         CFGF_NONE),
 		CFG_END()
 	};
 	cfg_t *cfg;
+
 	cfg = cfg_init(opts, CFGF_NONE);
 
 	print_if_verbose("Loading configuration from: %s\n", config_filename);
 	if (cfg_parse(cfg, config_filename) == CFG_PARSE_ERROR) {
 		printf
-		    ("Parse error when attempting to parse configuration file.\n");
+		        ("Parse error when attempting to parse configuration file.\n");
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
 	}
@@ -71,19 +72,19 @@ enum selint_error parse_config(char *config_filename,
 		*severity = 'F';
 	} else {
 		printf
-		    ("Invalid severity level (%s) specified in config.  Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"",
-		     config_severity);
+		        ("Invalid severity level (%s) specified in config.  Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"",
+		        config_severity);
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
 	}
 
 	READ_STRING_LIST_FROM_CONFIG(config_disabled_checks, "disable")
-	    if (in_source_mode) {
+	if (in_source_mode) {
 		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks,
-					     "enable_source")
+		                             "enable_source")
 	} else {
 		READ_STRING_LIST_FROM_CONFIG(config_enabled_checks,
-					     "enable_normal")
+		                             "enable_normal")
 
 	}
 

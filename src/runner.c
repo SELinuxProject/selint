@@ -11,7 +11,7 @@
 
 extern FILE *yyin;
 extern int yyparse();
-struct policy_node *ast;	// Must be global so the parser can access it
+struct policy_node *ast;        // Must be global so the parser can access it
 extern int yylineno;
 extern char *parsing_filename;
 
@@ -36,13 +36,13 @@ struct policy_node *parse_one_file(char *filename)
 }
 
 int is_check_enabled(const char *check_name,
-		     struct string_list *config_enabled_checks,
-		     struct string_list *config_disabled_checks,
-		     struct string_list *cl_enabled_checks,
-		     struct string_list *cl_disabled_checks, int only_enabled)
+                     struct string_list *config_enabled_checks,
+                     struct string_list *config_disabled_checks,
+                     struct string_list *cl_enabled_checks,
+                     struct string_list *cl_disabled_checks, int only_enabled)
 {
 
-	int is_enabled = 1;	// default to enabled
+	int is_enabled = 1;     // default to enabled
 
 	if (only_enabled) {
 		// if only_enabled is true, we only want to enable checks that are
@@ -72,23 +72,24 @@ int is_check_enabled(const char *check_name,
 }
 
 struct checks *register_checks(char level,
-			       struct string_list *config_enabled_checks,
-			       struct string_list *config_disabled_checks,
-			       struct string_list *cl_enabled_checks,
-			       struct string_list *cl_disabled_checks,
-			       int only_enabled)
+                               struct string_list *config_enabled_checks,
+                               struct string_list *config_disabled_checks,
+                               struct string_list *cl_enabled_checks,
+                               struct string_list *cl_disabled_checks,
+                               int only_enabled)
 {
 
 	struct checks *ck = malloc(sizeof(struct checks));
+
 	memset(ck, 0, sizeof(struct checks));
 
 	switch (level) {
 	case 'C':
 		if (CHECK_ENABLED("C-002")) {
 			add_check(NODE_IF_DEF, ck,
-				  check_interface_definitions_have_comment);
+			          check_interface_definitions_have_comment);
 			add_check(NODE_TEMP_DEF, ck,
-				  check_interface_definitions_have_comment);
+			          check_interface_definitions_have_comment);
 		}
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {
@@ -97,32 +98,32 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("S-002")) {
 			add_check(NODE_FC_ENTRY, ck,
-				  check_file_context_types_in_mod);
+			          check_file_context_types_in_mod);
 		}
 	case 'W':
 		if (CHECK_ENABLED("W-002")) {
 			add_check(NODE_AV_RULE, ck,
-				  check_type_used_but_not_required_in_if);
+			          check_type_used_but_not_required_in_if);
 			add_check(NODE_IF_CALL, ck,
-				  check_type_used_but_not_required_in_if);
+			          check_type_used_but_not_required_in_if);
 			add_check(NODE_TT_RULE, ck,
-				  check_type_used_but_not_required_in_if);
+			          check_type_used_but_not_required_in_if);
 		}
 		if (CHECK_ENABLED("W-003")) {
 			add_check(NODE_DECL, ck,
-				  check_type_required_but_not_used_in_if);
+			          check_type_required_but_not_used_in_if);
 		}
 		if (CHECK_ENABLED("W-004")) {
 			add_check(NODE_FC_ENTRY, ck, check_file_context_regex);
 		}
 		if (CHECK_ENABLED("W-005")) {
 			add_check(NODE_IF_CALL, ck,
-				  check_module_if_call_in_optional);
+			          check_module_if_call_in_optional);
 		}
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {
 			add_check(NODE_ERROR, ck,
-				  check_file_context_error_nodes);
+			          check_file_context_error_nodes);
 		}
 		if (CHECK_ENABLED("E-003")) {
 			add_check(NODE_FC_ENTRY, ck, check_file_context_users);
@@ -132,7 +133,7 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("E-005")) {
 			add_check(NODE_FC_ENTRY, ck,
-				  check_file_context_types_exist);
+			          check_file_context_types_exist);
 		}
 	case 'F':
 		break;
@@ -180,8 +181,8 @@ enum selint_error parse_all_fc_files_in_list(struct policy_file_list *files)
 }
 
 enum selint_error run_checks_on_one_file(struct checks *ck,
-					 struct check_data *data,
-					 struct policy_node *head)
+                                         struct check_data *data,
+                                         struct policy_node *head)
 {
 
 	struct policy_node *cur = head;
@@ -208,12 +209,13 @@ enum selint_error run_checks_on_one_file(struct checks *ck,
 }
 
 enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
-				 struct policy_file_list *files)
+                                 struct policy_file_list *files)
 {
 
 	struct policy_file_node *file = files->head;
 
 	struct check_data data;
+
 	data.flavor = flavor;
 
 	while (file) {
@@ -226,7 +228,7 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 		*suffix_ptr = '\0';
 
 		enum selint_error res =
-		    run_checks_on_one_file(ck, &data, file->file->ast);
+			run_checks_on_one_file(ck, &data, file->file->ast);
 		if (res != SELINT_SUCCESS) {
 			return res;
 		}
@@ -242,9 +244,9 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 }
 
 enum selint_error run_analysis(struct checks *ck,
-			       struct policy_file_list *te_files,
-			       struct policy_file_list *if_files,
-			       struct policy_file_list *fc_files)
+                               struct policy_file_list *te_files,
+                               struct policy_file_list *if_files,
+                               struct policy_file_list *fc_files)
 {
 
 	enum selint_error res;
@@ -279,7 +281,7 @@ enum selint_error run_analysis(struct checks *ck,
 		goto out;
 	}
 
- out:
+out:
 	cleanup_parsing();
 
 	return res;

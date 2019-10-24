@@ -19,7 +19,7 @@ struct policy_file_list {
 };
 
 void file_list_push_back(struct policy_file_list *list,
-			 struct policy_file *file);
+                         struct policy_file *file);
 
 struct policy_file *make_policy_file(char *filename, struct policy_node *ast);
 

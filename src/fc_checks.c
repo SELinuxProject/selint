@@ -3,21 +3,21 @@
 #include "tree.h"
 
 #define SETUP_FOR_FC_CHECK(node) \
-	if (node->flavor != NODE_FC_ENTRY) {\
-		return alloc_internal_error("File context type check called on non file context entry");\
-	}\
-	struct fc_entry *entry = node->data.fc_data;\
-	if (!entry) {\
-		return alloc_internal_error("Policy node data field is NULL");\
-	}\
-	if (!entry->context) {\
-		return NULL;\
-	}\
+	if (node->flavor != NODE_FC_ENTRY) { \
+		return alloc_internal_error("File context type check called on non file context entry"); \
+	} \
+	struct fc_entry *entry = node->data.fc_data; \
+	if (!entry) { \
+		return alloc_internal_error("Policy node data field is NULL"); \
+	} \
+	if (!entry->context) { \
+		return NULL; \
+	} \
 
 struct check_result *check_file_context_types_in_mod(const struct check_data
-						     *check_data,
-						     const struct policy_node
-						     *node)
+                                                     *check_data,
+                                                     const struct policy_node
+                                                     *node)
 {
 
 	SETUP_FOR_FC_CHECK(node)
@@ -39,17 +39,17 @@ struct check_result *check_file_context_types_in_mod(const struct check_data
 
 	if (strcmp(check_data->mod_name, type_decl_mod_name)) {
 		return make_check_result('S',
-					 S_ID_FC_TYPE,
-					 "Type %s is declared in module %s, but used in file context here.",
-					 entry->context->type,
-					 type_decl_mod_name);
+		                         S_ID_FC_TYPE,
+		                         "Type %s is declared in module %s, but used in file context here.",
+		                         entry->context->type,
+		                         type_decl_mod_name);
 	}
 
 	return NULL;
 }
 
 struct check_result *check_file_context_regex(const struct check_data *data,
-					      const struct policy_node *node)
+                                              const struct policy_node *node)
 {
 
 	SETUP_FOR_FC_CHECK(node)
@@ -86,10 +86,10 @@ struct check_result *check_file_context_regex(const struct check_data *data,
 
 		if (error) {
 			return make_check_result('W', W_ID_FC_REGEX,
-						 "File context path contains a potentially unescaped regex character '%c' at position %d: %s",
-						 cur,
-						 (int)(path - entry->path + 1),
-						 entry->path);
+			                         "File context path contains a potentially unescaped regex character '%c' at position %d: %s",
+			                         cur,
+			                         (int)(path - entry->path + 1),
+			                         entry->path);
 		}
 
 		prev = cur;
@@ -101,9 +101,9 @@ struct check_result *check_file_context_regex(const struct check_data *data,
 }
 
 struct check_result *check_file_context_error_nodes(const struct check_data
-						    *data,
-						    const struct policy_node
-						    *node)
+                                                    *data,
+                                                    const struct policy_node
+                                                    *node)
 {
 
 	if (node->flavor != NODE_ERROR) {
@@ -114,7 +114,7 @@ struct check_result *check_file_context_error_nodes(const struct check_data
 }
 
 struct check_result *check_file_context_users(const struct check_data *data,
-					      const struct policy_node *node)
+                                              const struct policy_node *node)
 {
 
 	SETUP_FOR_FC_CHECK(node)
@@ -124,15 +124,15 @@ struct check_result *check_file_context_users(const struct check_data *data,
 
 	if (!user_decl_filename) {
 		return make_check_result('E', E_ID_FC_USER,
-					 "Nonexistent user (%s) listed in fc_entry",
-					 entry->context->user);
+		                         "Nonexistent user (%s) listed in fc_entry",
+		                         entry->context->user);
 	}
 
 	return NULL;
 }
 
 struct check_result *check_file_context_roles(const struct check_data *data,
-					      const struct policy_node *node)
+                                              const struct policy_node *node)
 {
 
 	SETUP_FOR_FC_CHECK(node)
@@ -142,17 +142,17 @@ struct check_result *check_file_context_roles(const struct check_data *data,
 
 	if (!role_decl_filename) {
 		return make_check_result('E', E_ID_FC_ROLE,
-					 "Nonexistent role (%s) listed in fc_entry",
-					 entry->context->role);
+		                         "Nonexistent role (%s) listed in fc_entry",
+		                         entry->context->role);
 	}
 
 	return NULL;
 }
 
 struct check_result *check_file_context_types_exist(const struct check_data
-						    *check_data,
-						    const struct policy_node
-						    *node)
+                                                    *check_data,
+                                                    const struct policy_node
+                                                    *node)
 {
 
 	SETUP_FOR_FC_CHECK(node)
@@ -162,8 +162,8 @@ struct check_result *check_file_context_types_exist(const struct check_data
 
 	if (!type_decl_filename) {
 		return make_check_result('E', E_ID_FC_TYPE,
-					 "Nonexistent type (%s) listed in fc_entry",
-					 entry->context->type);
+		                         "Nonexistent type (%s) listed in fc_entry",
+		                         entry->context->type);
 	}
 
 	return NULL;

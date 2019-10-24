@@ -68,18 +68,18 @@ int main(int argc, char **argv)
 	while (1) {
 
 		static struct option long_options[] = {
-			{"config", required_argument, NULL, 'c'},
-			{"disable", required_argument, NULL, 'd'},
-			{"enable", required_argument, NULL, 'e'},
-			{"only-enabled", no_argument, NULL, 'E'},
-			{"help", no_argument, NULL, 'h'},
-			{"level", required_argument, NULL, 'l'},
-			{"modules-conf", required_argument, NULL, 'm'},
-			{"recursive", no_argument, NULL, 'r'},
-			{"source", no_argument, NULL, 's'},
-			{"version", no_argument, NULL, 'V'},
-			{"verbose", no_argument, &verbose_flag, 1},
-			{0, 0, 0, 0}
+			{ "config",       required_argument, NULL,          'c' },
+			{ "disable",      required_argument, NULL,          'd' },
+			{ "enable",       required_argument, NULL,          'e' },
+			{ "only-enabled", no_argument,       NULL,          'E' },
+			{ "help",         no_argument,       NULL,          'h' },
+			{ "level",        required_argument, NULL,          'l' },
+			{ "modules-conf", required_argument, NULL,          'm' },
+			{ "recursive",    no_argument,       NULL,          'r' },
+			{ "source",       no_argument,       NULL,          's' },
+			{ "version",      no_argument,       NULL,          'V' },
+			{ "verbose",      no_argument,       &verbose_flag, 1   },
+			{ 0,              0,                 0,             0   }
 		};
 
 		int option_index = 0;
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
 		switch (c) {
 
-			//getopt returns 0 when a long option with no short equivalent is used
+		//getopt returns 0 when a long option with no short equivalent is used
 		case 0:
 			break;
 
@@ -109,11 +109,11 @@ int main(int argc, char **argv)
 			// Disable a given check
 			if (cl_d_cursor) {
 				cl_d_cursor->next =
-				    calloc(1, sizeof(struct string_list));
+					calloc(1, sizeof(struct string_list));
 				cl_d_cursor = cl_d_cursor->next;
 			} else {
 				cl_d_cursor =
-				    calloc(1, sizeof(struct string_list));
+					calloc(1, sizeof(struct string_list));
 				cl_disabled_checks = cl_d_cursor;
 			}
 			cl_d_cursor->string = strdup(optarg);
@@ -123,11 +123,11 @@ int main(int argc, char **argv)
 			// Enable a given check
 			if (cl_e_cursor) {
 				cl_e_cursor->next =
-				    calloc(1, sizeof(struct string_list));
+					calloc(1, sizeof(struct string_list));
 				cl_e_cursor = cl_e_cursor->next;
 			} else {
 				cl_e_cursor =
-				    calloc(1, sizeof(struct string_list));
+					calloc(1, sizeof(struct string_list));
 				cl_enabled_checks = cl_e_cursor;
 			}
 			cl_e_cursor->string = strdup(optarg);
@@ -190,11 +190,11 @@ int main(int argc, char **argv)
 	}
 
 	if (!config_filename) {
-		config_filename = SYSCONFDIR "/selint.conf";	// Default install path
+		config_filename = SYSCONFDIR "/selint.conf";    // Default install path
 		if (0 != access(config_filename, R_OK)) {
 			//No default config found
 			print_if_verbose(
-			    "No config specified and could not find default config.");
+				"No config specified and could not find default config.");
 			config_filename = NULL;
 		}
 	}
@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 	if (config_filename) {
 		char cfg_severity;
 		parse_config(config_filename, source_flag, &cfg_severity,
-			     &config_disabled_checks, &config_enabled_checks);
+		             &config_disabled_checks, &config_enabled_checks);
 		if (severity == '\0') {
 			severity = cfg_severity;
 		}
@@ -220,13 +220,13 @@ int main(int argc, char **argv)
 	}
 
 	struct policy_file_list *te_files =
-	    calloc(1, sizeof(struct policy_file_list));
+		calloc(1, sizeof(struct policy_file_list));
 
 	struct policy_file_list *if_files =
-	    calloc(1, sizeof(struct policy_file_list));
+		calloc(1, sizeof(struct policy_file_list));
 
 	struct policy_file_list *fc_files =
-	    calloc(1, sizeof(struct policy_file_list));
+		calloc(1, sizeof(struct policy_file_list));
 
 	char **paths = malloc(sizeof(char *) * argc - optind + 1);
 
@@ -249,24 +249,24 @@ int main(int argc, char **argv)
 
 		if (!strcmp(suffix, ".te")) {
 			file_list_push_back(te_files,
-					    make_policy_file(file->fts_path,
-							     NULL));
+			                    make_policy_file(file->fts_path,
+			                                     NULL));
 		} else if (!strcmp(suffix, ".if")) {
 			file_list_push_back(if_files,
-					    make_policy_file(file->fts_path,
-							     NULL));
+			                    make_policy_file(file->fts_path,
+			                                     NULL));
 		} else if (!strcmp(suffix, ".fc")) {
 			file_list_push_back(fc_files,
-					    make_policy_file(file->fts_path,
-							     NULL));
+			                    make_policy_file(file->fts_path,
+			                                     NULL));
 		} else if (source_flag
-			   && !strcmp(file->fts_name, "modules.conf")) {
+		           && !strcmp(file->fts_name, "modules.conf")) {
 			// TODO: Make modules.conf name configurable
 			modules_conf_path = strdup(file->fts_path);
 		} else {
 			print_if_verbose(
-			    "Skipping %s which is not a policy file\n",
-			     file->fts_path);
+				"Skipping %s which is not a policy file\n",
+				file->fts_path);
 			if (!recursive_scan) {
 				fts_set(ftsp, file, FTS_SKIP);
 			}
@@ -299,18 +299,18 @@ int main(int argc, char **argv)
 		load_access_vectors_source();
 		if (modules_conf_path) {
 			enum selint_error res =
-			    load_modules_source(modules_conf_path);
+				load_modules_source(modules_conf_path);
 			if (res != SELINT_SUCCESS) {
 				printf("Error loading modules.conf: %d\n", res);
 			} else {
 				print_if_verbose("Loaded modules from %s\n",
-						 modules_conf_path);
+				                 modules_conf_path);
 			}
 		} else {
 			printf("Failed to locate modules.conf file.\n");
 		}
 	} else {
-		load_access_vectors_normal("/sys/fs/selinux/class");	// TODO
+		load_access_vectors_normal("/sys/fs/selinux/class");    // TODO
 		load_modules_normal();
 	}
 

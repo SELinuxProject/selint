@@ -11,6 +11,7 @@ char *replace_m4(char *orig, struct string_list *args)
 {
 	size_t len_to_malloc = strlen(orig) + 1;
 	struct string_list *cur = args;
+
 	while (cur) {
 		len_to_malloc += strlen(cur->string);
 		cur = cur->next;
@@ -18,7 +19,7 @@ char *replace_m4(char *orig, struct string_list *args)
 	// len_to_malloc is now overestimated, because the length of the original
 	// arguments wasn't subtracted and not all args are necessarily substituted
 	char *ret = malloc(len_to_malloc);
-	*ret = '\0';		// If the string is only a substitution that there is no argument for, we need to be terminated
+	*ret = '\0';            // If the string is only a substitution that there is no argument for, we need to be terminated
 	char *orig_pos = orig;
 	char *ret_pos = ret;
 	while (*orig_pos) {
@@ -35,8 +36,8 @@ char *replace_m4(char *orig, struct string_list *args)
 		orig_pos = dollar_pos;
 
 		int ret_count =
-		    sscanf(orig_pos, "$%d%n", &arg_num, &after_num_pos);
-		if (ret_count != 1) {	// %n doesn't count for return of sscanf
+			sscanf(orig_pos, "$%d%n", &arg_num, &after_num_pos);
+		if (ret_count != 1) {   // %n doesn't count for return of sscanf
 			free(ret);
 			return NULL;
 		}
@@ -56,7 +57,7 @@ char *replace_m4(char *orig, struct string_list *args)
 }
 
 struct string_list *replace_m4_list(struct string_list *replace_with,
-				    struct string_list *replace_from)
+                                    struct string_list *replace_from)
 {
 	struct string_list *ret = calloc(1, sizeof(struct string_list));
 	struct string_list *cur = ret;
@@ -76,11 +77,12 @@ struct string_list *replace_m4_list(struct string_list *replace_with,
 }
 
 enum selint_error add_template_declarations(char *template_name,
-					    struct string_list *args,
-					    struct string_list
-					    *parent_temp_names, char *mod_name)
+                                            struct string_list *args,
+                                            struct string_list
+                                            *parent_temp_names, char *mod_name)
 {
 	struct string_list *cur = parent_temp_names;
+
 	while (cur) {
 		if (strcmp(cur->string, template_name) == 0) {
 			// Loop
@@ -95,15 +97,15 @@ enum selint_error add_template_declarations(char *template_name,
 	cur->next = parent_temp_names;
 
 	struct if_call_list *calls =
-	    look_up_call_in_template_map(template_name);
+		look_up_call_in_template_map(template_name);
 
 	while (calls) {
 		struct string_list *new_args =
-		    replace_m4_list(args, calls->call->args);
+			replace_m4_list(args, calls->call->args);
 
 		enum selint_error res =
-		    add_template_declarations(calls->call->name, new_args, cur,
-					      mod_name);
+			add_template_declarations(calls->call->name, new_args, cur,
+			                          mod_name);
 		free_string_list(new_args);
 		if (res != SELINT_SUCCESS) {
 			return res;

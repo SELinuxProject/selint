@@ -13,9 +13,10 @@ struct fc_entry *parse_fc_line(char *line)
 	char whitespace[] = " \t";
 
 	struct fc_entry *out = malloc(sizeof(struct fc_entry));
+
 	memset(out, 0, sizeof(struct fc_entry));
 
-	char *orig_line = strdup(line);	// If the object class is ommitted, we need to revert
+	char *orig_line = strdup(line); // If the object class is ommitted, we need to revert
 
 	char *pos = strtok(line, whitespace);
 
@@ -42,7 +43,7 @@ struct fc_entry *parse_fc_line(char *line)
 	strcpy(line, orig_line);
 
 	if (strncmp("gen_context(", pos, GEN_CONTEXT_LEN) == 0) {
-		pos += GEN_CONTEXT_LEN;	// Next character
+		pos += GEN_CONTEXT_LEN; // Next character
 		char *context_part = strtok(pos, ",");
 		if (context_part == NULL) {
 			goto cleanup;
@@ -93,7 +94,7 @@ struct fc_entry *parse_fc_line(char *line)
 		out->context->has_gen_context = 1;
 		if (maybe_c) {
 			out->context->range =
-			    malloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
+				malloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
 			strcpy(out->context->range, maybe_s);
 			strcat(out->context->range, ":");
 			strcat(out->context->range, maybe_c);
@@ -101,7 +102,7 @@ struct fc_entry *parse_fc_line(char *line)
 			out->context->range = strdup(maybe_s);
 		}
 	} else if (strcmp("<<none>>\n", pos) == 0
-		   || strcmp("<<none>>\r\n", pos) == 0) {
+	           || strcmp("<<none>>\r\n", pos) == 0) {
 		out->context = NULL;
 	} else {
 		out->context = parse_context(pos);
@@ -115,7 +116,7 @@ struct fc_entry *parse_fc_line(char *line)
 	free(orig_line);
 	return out;
 
- cleanup:
+cleanup:
 	free(orig_line);
 	free_fc_entry(out);
 	return NULL;
@@ -168,7 +169,7 @@ struct sel_context *parse_context(char *context_str)
 
 	return context;
 
- cleanup:
+cleanup:
 	free_sel_context(context);
 	return NULL;
 }
@@ -176,6 +177,7 @@ struct sel_context *parse_context(char *context_str)
 struct policy_node *parse_fc_file(char *filename)
 {
 	FILE *fd = fopen(filename, "r");
+
 	if (!fd) {
 		return NULL;
 	}
@@ -229,7 +231,7 @@ struct policy_node *parse_fc_file(char *filename)
 		line = NULL;
 		buf_len = 0;
 	}
-	free(line);		// getline alloc must be freed even if getline failed
+	free(line);             // getline alloc must be freed even if getline failed
 	fclose(fd);
 
 	return head;
