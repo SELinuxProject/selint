@@ -76,3 +76,6 @@ gen_tunable(hello,world)
 define(yes, no)
 
 typebounds foo_t bar_t;
+
+call_with_backtick_args(foo_t,bar_t,`in')
+dollar_sign_in_string("foo1-$3_$2")

@@ -114,6 +114,7 @@
 %type<sl> comma_string_list
 %type<sl> strings
 %type<string> sl_item
+%type<sl> arg
 %type<sl> args
 %type<string> mls_range
 %type<string> mls_level
@@ -523,10 +524,16 @@ m4_argument:
 	STRING { free($1); }
 	;
 
-args:
+arg:
 	string_list
 	|
-	args COMMA string_list
+	BACKTICK string_list SINGLE_QUOTE { $$ = $2; }
+	;
+
+args:
+	arg
+	|
+	args COMMA arg
 	{ struct string_list *cur = $1;
 	while (cur->next) { cur = cur->next; }
 	cur->next = $3;

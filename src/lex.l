@@ -63,7 +63,7 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 [0-9]+ { yylval.string = strdup(yytext); return NUMBER; }
 [a-zA-Z\$\/][a-zA-Z0-9_\$\*\.\/\-]* { yylval.string = strdup(yytext); return STRING; }
 [0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\.\/\-]* { yylval.string = strdup(yytext); return NUM_STRING; }
-\"[a-zA-Z0-9_\.\-\:~]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
+\"[a-zA-Z0-9_\.\-\:~\$]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
 \( { return OPEN_PAREN; }
 \) { return CLOSE_PAREN; }
 \, { return COMMA; }
