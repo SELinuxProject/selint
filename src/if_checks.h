@@ -8,7 +8,7 @@
 * Called on NODE_IF_DEF and NODE_TEMP_DEF nodes.
 * data - metadata about the file
 * node - the node to check
-* returns NULL if passed or check_result for issue C-002
+* returns NULL if passed or check_result for issue C-004
 *********************************************/
 struct check_result *check_interface_definitions_have_comment(const struct
                                                               check_data *data,

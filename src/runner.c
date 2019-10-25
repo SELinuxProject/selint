@@ -85,7 +85,7 @@ struct checks *register_checks(char level,
 
 	switch (level) {
 	case 'C':
-		if (CHECK_ENABLED("C-002")) {
+		if (CHECK_ENABLED("C-004")) {
 			add_check(NODE_IF_DEF, ck,
 			          check_interface_definitions_have_comment);
 			add_check(NODE_TEMP_DEF, ck,

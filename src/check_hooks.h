@@ -5,7 +5,7 @@
 #include "selint_error.h"
 
 enum convention_ids {
-	C_ID_IF_COMMENT = 2
+	C_ID_IF_COMMENT = 4
 };
 
 enum style_ids {

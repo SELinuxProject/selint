@@ -115,7 +115,7 @@ CHECK IDS
 	The following checks may be performed:
 
 	C-001: Violation of refpolicy te file ordering conventions
-	C-002: Interface does not have documentation comment
+	C-004: Interface does not have documentation comment
 
 	S-001: Require block used instead of interface call
 	S-002: File context file labels with type not declared in module
