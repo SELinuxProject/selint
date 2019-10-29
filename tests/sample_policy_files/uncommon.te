@@ -79,3 +79,9 @@ typebounds foo_t bar_t;
 
 call_with_backtick_args(foo_t,bar_t,`in')
 dollar_sign_in_string("foo1-$3_$2")
+
+ifdef(`test',`
+	gen_require(`
+		type nesting_t;
+	')
+')
