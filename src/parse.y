@@ -529,6 +529,8 @@ arg:
 	string_list
 	|
 	BACKTICK string_list SINGLE_QUOTE { $$ = $2; }
+	|
+	BACKTICK SINGLE_QUOTE { $$ = NULL; }
 	;
 
 args:

@@ -85,3 +85,5 @@ ifdef(`test',`
 		type nesting_t;
 	')
 ')
+
+foo_filter_template(synchronizer,synchronizer,`')
