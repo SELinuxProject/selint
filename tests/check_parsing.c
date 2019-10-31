@@ -226,6 +226,7 @@ START_TEST (test_parse_bad_role_allow) {
 	ast = NULL;
 
 	yyin = fopen(BAD_RA_FILENAME, "r");
+	yyrestart(yyin);
 	ck_assert_int_eq(1, yyparse());
 
 	free_policy_node(ast);

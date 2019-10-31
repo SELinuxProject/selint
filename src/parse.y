@@ -361,7 +361,15 @@ role_allow:
 	// is impossible for the parser to parse such a grammar since it doesn't know until
 	// getting to the semicolon whether to classify the tokens specifically or generically.
 	// So, we can just parse generically and then check for the failure case
-	av_type string_list string_list SEMICOLON { if ($1 != AV_RULE_ALLOW || $2->next != NULL || $3->next != NULL) { YYERROR; } insert_role_allow(&cur, $2->string, $3->string, yylineno); free_string_list($2); free_string_list($3);}
+	av_type string_list string_list SEMICOLON { if ($1 != AV_RULE_ALLOW
+                                                        || $2->next != NULL
+                                                        || $3->next != NULL) {
+								free_string_list($2);
+								free_string_list($3);
+								YYERROR; }
+	                                            insert_role_allow(&cur, $2->string, $3->string, yylineno);
+	                                            free_string_list($2);
+	                                            free_string_list($3);}
 	;
 
 type_transition:
