@@ -31,6 +31,7 @@
 %token <string> QUOTED_STRING;
 %token <symbol> SYMBOL;
 %token <string> VERSION_NO;
+%token <string> SELINT_COMMAND;
 
 %destructor { free($$); } STRING
 %destructor { free($$); } NUM_STRING
@@ -185,6 +186,12 @@ lines:
 	;
 
 line:
+	bare_line
+	|
+	bare_line SELINT_COMMAND { save_command(cur, $2); free($2); }
+	;
+
+bare_line:
 	declaration
 	|
 	type_attribute

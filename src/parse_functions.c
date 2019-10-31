@@ -445,6 +445,27 @@ enum selint_error end_require(struct policy_node **cur)
 	return end_block(cur, NODE_REQUIRE);
 }
 
+enum selint_error save_command(struct policy_node *cur, char *comm)
+{
+	if (comm == NULL || cur == NULL) {
+		return SELINT_BAD_ARG;
+	}
+	while (*comm != 's' && *comm != '\0') {
+		comm++;
+	}
+	if (0 != strncmp("selint-", comm, 7)) {
+		return SELINT_PARSE_ERROR;
+	}
+	comm += strlen("selint-");
+	if (0 == strncmp("disable:", comm, 8)) {
+		cur->exceptions = strdup(comm + strlen("disable:"));
+	} else {
+		return SELINT_PARSE_ERROR;
+	}
+
+	return SELINT_SUCCESS;
+}
+
 void cleanup_parsing()
 {
 	if (module_name) {

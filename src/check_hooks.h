@@ -56,6 +56,7 @@ struct check_result {
 struct check_node {
 	struct check_result *(*check_function) (const struct check_data * data,
 	                                        const struct policy_node * node);
+	char *check_id;
 	struct check_node *next;
 };
 
@@ -76,10 +77,12 @@ struct checks {
 * Add an check to be called on check_flavor nodes
 * check_flavor - The flavor of node to call the check for
 * ck - The check structure to add the check to
+* check_id - The ID code for the check
 * check_function - the check to add
 * returns SELINT_SUCCESS or an error code on failure
 *********************************************/
 enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
+                            const char *check_id,
                             struct check_result *(*check_function)(const struct
                                                                    check_data *
                                                                    check_data,

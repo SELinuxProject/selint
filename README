@@ -98,7 +98,7 @@ SELINT EXCEPTIONS
 
 	To eliminate a check on one line, add a comment containing a string in the
 	following format:
-	"--selint:E-003"
+	"selint-disable:E-003"
 
 OUTPUT
 

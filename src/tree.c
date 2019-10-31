@@ -24,6 +24,7 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 	to_insert->first_child = NULL;
 	to_insert->flavor = flavor;
 	to_insert->data = data;
+	to_insert->exceptions = NULL;
 	to_insert->lineno = lineno;
 
 	if (parent->first_child == NULL) {
@@ -67,6 +68,7 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 	to_insert->flavor = flavor;
 	to_insert->data = data;
 	to_insert->prev = prev;
+	to_insert->exceptions = NULL;
 	to_insert->lineno = lineno;
 
 	return SELINT_SUCCESS;
@@ -240,6 +242,9 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 		}
 		break;
 	}
+
+	free(to_free->exceptions);
+	to_free->exceptions = NULL;
 
 	free_policy_node(to_free->first_child);
 	to_free->first_child = NULL;

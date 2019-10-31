@@ -86,53 +86,53 @@ struct checks *register_checks(char level,
 	switch (level) {
 	case 'C':
 		if (CHECK_ENABLED("C-004")) {
-			add_check(NODE_IF_DEF, ck,
+			add_check(NODE_IF_DEF, ck, "C-004",
 			          check_interface_definitions_have_comment);
-			add_check(NODE_TEMP_DEF, ck,
+			add_check(NODE_TEMP_DEF, ck, "C-004",
 			          check_interface_definitions_have_comment);
 		}
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {
-			add_check(NODE_REQUIRE, ck, check_require_block);
-			add_check(NODE_GEN_REQ, ck, check_require_block);
+			add_check(NODE_REQUIRE, ck, "S-001", check_require_block);
+			add_check(NODE_GEN_REQ, ck, "S-001", check_require_block);
 		}
 		if (CHECK_ENABLED("S-002")) {
-			add_check(NODE_FC_ENTRY, ck,
+			add_check(NODE_FC_ENTRY, ck, "S-002",
 			          check_file_context_types_in_mod);
 		}
 	case 'W':
 		if (CHECK_ENABLED("W-002")) {
-			add_check(NODE_AV_RULE, ck,
+			add_check(NODE_AV_RULE, ck, "W-002",
 			          check_type_used_but_not_required_in_if);
-			add_check(NODE_IF_CALL, ck,
+			add_check(NODE_IF_CALL, ck, "W-002",
 			          check_type_used_but_not_required_in_if);
-			add_check(NODE_TT_RULE, ck,
+			add_check(NODE_TT_RULE, ck, "W-002",
 			          check_type_used_but_not_required_in_if);
 		}
 		if (CHECK_ENABLED("W-003")) {
-			add_check(NODE_DECL, ck,
+			add_check(NODE_DECL, ck, "W-003",
 			          check_type_required_but_not_used_in_if);
 		}
 		if (CHECK_ENABLED("W-004")) {
-			add_check(NODE_FC_ENTRY, ck, check_file_context_regex);
+			add_check(NODE_FC_ENTRY, ck, "W-004", check_file_context_regex);
 		}
 		if (CHECK_ENABLED("W-005")) {
-			add_check(NODE_IF_CALL, ck,
+			add_check(NODE_IF_CALL, ck, "W-005",
 			          check_module_if_call_in_optional);
 		}
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {
-			add_check(NODE_ERROR, ck,
+			add_check(NODE_ERROR, ck, "E-002",
 			          check_file_context_error_nodes);
 		}
 		if (CHECK_ENABLED("E-003")) {
-			add_check(NODE_FC_ENTRY, ck, check_file_context_users);
+			add_check(NODE_FC_ENTRY, ck, "E-003", check_file_context_users);
 		}
 		if (CHECK_ENABLED("E-004")) {
-			add_check(NODE_FC_ENTRY, ck, check_file_context_roles);
+			add_check(NODE_FC_ENTRY, ck, "E-004", check_file_context_roles);
 		}
 		if (CHECK_ENABLED("E-005")) {
-			add_check(NODE_FC_ENTRY, ck,
+			add_check(NODE_FC_ENTRY, ck, "E-005",
 			          check_file_context_types_exist);
 		}
 	case 'F':

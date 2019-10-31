@@ -434,6 +434,25 @@ START_TEST (test_wrong_block_end) {
 }
 END_TEST
 
+START_TEST (test_save_command) {
+
+	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
+	ck_assert_int_eq(SELINT_BAD_ARG, save_command(NULL, "foo"));
+	ck_assert_int_eq(SELINT_BAD_ARG, save_command(cur, NULL));
+
+	ck_assert_int_eq(SELINT_PARSE_ERROR, save_command(cur, "foo"));
+
+	ck_assert_int_eq(SELINT_PARSE_ERROR, save_command(cur, "selint-fake:W-001"));
+
+	ck_assert_ptr_null(cur->exceptions);
+	ck_assert_int_eq(SELINT_SUCCESS, save_command(cur, "selint-disable:W-001"));
+	ck_assert_str_eq("W-001", cur->exceptions);
+
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(cur));
+	cleanup_parsing();
+}
+END_TEST
+
 Suite *parse_functions_suite(void) {
 	Suite *s;
 	TCase *tc_core, *tc_blocks;
@@ -453,6 +472,7 @@ Suite *parse_functions_suite(void) {
 	tcase_add_test(tc_core, test_insert_type_transition);
 	tcase_add_test(tc_core, test_insert_interface_call);
 	tcase_add_test(tc_core, test_insert_permissive_statement);
+	tcase_add_test(tc_core, test_save_command);
 	suite_add_tcase(s, tc_core);
 
 	tcase_add_test(tc_blocks, test_optional_policy);

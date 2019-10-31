@@ -19,6 +19,7 @@
 }
 
 enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
+                            const char *check_id,
                             struct check_result *(*check_function)(const struct check_data *check_data,
                                                                    const struct policy_node *node))
 {
@@ -71,6 +72,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 	}
 
 	loc->check_function = check_function;
+	loc->check_id = strdup(check_id);
 	loc->next = NULL;
 
 	return SELINT_SUCCESS;
@@ -114,6 +116,10 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 	struct check_node *cur = ck_list;
 
 	while (cur) {
+		if (node->exceptions && strstr(node->exceptions, cur->check_id)) {
+			cur = cur->next;
+			continue;
+		}
 		struct check_result *res = cur->check_function(data, node);
 		if (res) {
 			res->lineno = node->lineno;
@@ -218,6 +224,7 @@ void free_check_node(struct check_node *to_free)
 	if (to_free->next) {
 		free_check_node(to_free->next);
 	}
+	free(to_free->check_id);
 	free(to_free);
 
 }

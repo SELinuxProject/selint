@@ -213,6 +213,20 @@ enum selint_error begin_require(struct policy_node **cur, unsigned int lineno);
 enum selint_error end_require(struct policy_node **cur);
 
 /**********************************
+* save_command
+* Save an selint control command in the tree.  These go at the end of lines
+* and modify selint behavior while checking that line.
+* Current commands are:
+* - selint-disable:[check-id]
+* cur (in) - The current spot in the tree.  Will be modified with information
+* about the command
+* comm (in) - What command string was in the comment
+*
+* Returns - SELint error code
+**********************************/
+enum selint_error save_command(struct policy_node *cur, char *comm);
+
+/**********************************
 * cleanup_parsing
 * Call after all parsing is done to free up memory
 **********************************/

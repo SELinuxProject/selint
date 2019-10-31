@@ -130,6 +130,7 @@ struct policy_node {
 	struct policy_node *first_child;
 	enum node_flavor flavor;
 	union node_data data;
+	char *exceptions;
 	unsigned int lineno;
 };
 

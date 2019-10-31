@@ -27,23 +27,23 @@ START_TEST (test_add_check) {
 
 	check_called = 0;
 
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, "E-999", example_check));
 
 	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
 	ck_assert_ptr_null(ck->fc_entry_node_checks);
 	ck_assert_ptr_null(ck->error_node_checks);
 
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TT_RULE, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TT_RULE, ck, "E-999", example_check));
 
 	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
 	ck_assert_ptr_nonnull(ck->tt_rule_node_checks);
 	ck_assert_ptr_null(ck->fc_entry_node_checks);
 	ck_assert_ptr_null(ck->error_node_checks);
 
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_DECL, ck, example_check));
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_DEF, ck, example_check));
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TEMP_DEF, ck, example_check));
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_CALL, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_DECL, ck, "E-999", example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_DEF, ck, "E-999", example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TEMP_DEF, ck, "E-999", example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_CALL, ck, "E-999", example_check));
 
 	ck_assert_ptr_nonnull(ck->decl_node_checks);
 	ck_assert_ptr_nonnull(ck->if_def_node_checks);
@@ -52,7 +52,7 @@ START_TEST (test_add_check) {
 	ck_assert_ptr_null(ck->fc_entry_node_checks);
 	ck_assert_ptr_null(ck->error_node_checks);
 
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_FC_ENTRY, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_FC_ENTRY, ck, "E-999", example_check));
 
 	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
 	ck_assert_ptr_nonnull(ck->fc_entry_node_checks);
@@ -60,7 +60,7 @@ START_TEST (test_add_check) {
 
 	ck_assert_ptr_eq(ck->fc_entry_node_checks->check_function, example_check);
 
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_ERROR, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_ERROR, ck, "E-999", example_check));
 	ck_assert_ptr_nonnull(ck->error_node_checks);
 
 	ck_assert_int_eq(0, check_called);
@@ -76,7 +76,7 @@ START_TEST (test_call_checks) {
 
 	check_called = 0;
 	check2_called = 0;
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, "E-999", example_check));
 
 	struct policy_node *node = calloc(1, sizeof(struct policy_node));
 	node->flavor = NODE_AV_RULE;
@@ -87,7 +87,7 @@ START_TEST (test_call_checks) {
 	ck_assert_int_eq(0, check2_called);
 
 	check_called = 0;
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, example_check2));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, "E-999", example_check2));
 
 	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
 
@@ -109,6 +109,32 @@ START_TEST (test_call_checks) {
 }
 END_TEST
 
+START_TEST (test_disable_check) {
+	struct checks *ck = calloc(1, sizeof(struct checks));
+
+	check_called = 0;
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, "E-999", example_check));
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_AV_RULE;
+
+	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
+	ck_assert_int_eq(1, check_called);
+
+	check_called = 0;
+
+	node->exceptions = strdup("E-999\n");
+
+	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
+	ck_assert_int_eq(0, check_called);
+
+	free_policy_node(node);
+	free_checks(ck);
+
+}
+END_TEST
+	
+
 Suite *check_hooks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -119,6 +145,7 @@ Suite *check_hooks_suite(void) {
 
 	tcase_add_test(tc_core, test_add_check);
 	tcase_add_test(tc_core, test_call_checks);
+	tcase_add_test(tc_core, test_disable_check);
 	suite_add_tcase(s, tc_core);
 
 	return s;

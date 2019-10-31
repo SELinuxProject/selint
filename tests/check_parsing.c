@@ -13,6 +13,7 @@
 #define EMPTY_TE_FILENAME POLICIES_DIR "empty.te"
 #define SYNTAX_ERROR_FILENAME POLICIES_DIR "syntax_error.te"
 #define BAD_RA_FILENAME POLICIES_DIR "bad_role_allow.te"
+#define DISABLE_COMMENT_FILENAME POLICIES_DIR "disable_comment.te"
 
 extern FILE * yyin;
 extern int yyparse();
@@ -236,6 +237,29 @@ START_TEST (test_parse_bad_role_allow) {
 }
 END_TEST
 
+START_TEST (test_disable_comment) {
+
+	ast = NULL;
+
+	yyin = fopen(DISABLE_COMMENT_FILENAME, "r");
+	yyrestart(yyin);
+	ck_assert_int_eq(0, yyparse());
+
+	ck_assert_ptr_nonnull(ast);
+	ck_assert_int_eq(NODE_TE_FILE, ast->flavor);
+	ck_assert_ptr_nonnull(ast->next);
+	ck_assert_int_eq(NODE_DECL, ast->next->flavor);
+	ck_assert_ptr_nonnull(ast->next->next);
+	ck_assert_int_eq(NODE_AV_RULE, ast->next->next->flavor);
+	ck_assert_str_eq("W-001\n", ast->next->next->exceptions);
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(yyin);
+
+}
+END_TEST
+
 Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -251,6 +275,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_empty_file);
 	tcase_add_test(tc_core, test_syntax_error);
 	tcase_add_test(tc_core, test_parse_bad_role_allow);
+	tcase_add_test(tc_core, test_disable_comment);
 	suite_add_tcase(s, tc_core);
 
 	return s;
