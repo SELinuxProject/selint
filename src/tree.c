@@ -236,6 +236,9 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	case NODE_FC_ENTRY:
 		free_fc_entry(to_free->data.fc_data);
 		break;
+	case NODE_TYPE_ATTRIBUTE:
+		free_type_attribute_data(to_free->data.ta_data);
+		break;
 	default:
 		if (to_free->data.str != NULL) {
 			free(to_free->data.str);
@@ -389,6 +392,17 @@ void free_sel_context(struct sel_context *to_free)
 	}
 	if (to_free->range) {
 		free(to_free->range);
+	}
+	free(to_free);
+}
+
+void free_type_attribute_data(struct type_attribute_data *to_free)
+{
+	if (to_free->type) {
+		free(to_free->type);
+	}
+	if (to_free->attrs) {
+		free_string_list(to_free->attrs);
 	}
 	free(to_free);
 }

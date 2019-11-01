@@ -227,6 +227,19 @@ enum selint_error end_require(struct policy_node **cur);
 enum selint_error save_command(struct policy_node *cur, char *comm);
 
 /**********************************
+* insert_type_attribute
+* Insert a type_attribute node into the tree
+* cur (in, out) - The current spot in the tree.  Will be updated to point to the
+* new node.
+* type (in) - The type specified in the statement
+* attrs (in) - The attributes specified in the statement
+* lineno (in) - The line number
+*
+* Returns - SELint error code
+**********************************/
+enum selint_error insert_type_attribute(struct policy_node **cur, char *type, struct string_list *attrs, unsigned int lineno);
+
+/**********************************
 * cleanup_parsing
 * Call after all parsing is done to free up memory
 **********************************/

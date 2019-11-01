@@ -453,6 +453,27 @@ START_TEST (test_save_command) {
 }
 END_TEST
 
+START_TEST (test_insert_type_attribute) {
+
+	struct policy_node *head = calloc(1, sizeof(struct policy_node));
+
+	struct policy_node *cur = head;
+
+	struct string_list *attrs = calloc(1, sizeof(struct string_list));
+	attrs->string = strdup("foo");
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_type_attribute(&cur, "foo_t", attrs, 1234));
+
+	ck_assert_ptr_eq(cur->prev, head);
+	ck_assert_str_eq(cur->data.ta_data->type, "foo_t");
+	ck_assert_str_eq(cur->data.ta_data->attrs->string, "foo");
+
+	free_policy_node(head);
+	cleanup_parsing();
+
+}
+END_TEST
+
 Suite *parse_functions_suite(void) {
 	Suite *s;
 	TCase *tc_core, *tc_blocks;
@@ -473,6 +494,7 @@ Suite *parse_functions_suite(void) {
 	tcase_add_test(tc_core, test_insert_interface_call);
 	tcase_add_test(tc_core, test_insert_permissive_statement);
 	tcase_add_test(tc_core, test_save_command);
+	tcase_add_test(tc_core, test_insert_type_attribute);
 	suite_add_tcase(s, tc_core);
 
 	tcase_add_test(tc_blocks, test_optional_policy);

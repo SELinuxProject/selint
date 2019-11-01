@@ -299,7 +299,7 @@ type_alias:
 	;
 
 type_attribute:
-	TYPE_ATTRIBUTE STRING comma_string_list SEMICOLON { free($2); free_string_list($3); }
+	TYPE_ATTRIBUTE STRING comma_string_list SEMICOLON { insert_type_attribute(&cur, $2, $3, yylineno); free($2); }
 	;
 
 role_attribute:

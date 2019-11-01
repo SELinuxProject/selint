@@ -16,6 +16,7 @@ enum node_flavor {
 	NODE_DECL,
 	NODE_ALIAS,
 	NODE_TYPE_ALIAS,
+	NODE_TYPE_ATTRIBUTE,
 	NODE_M4_CALL,
 	NODE_OPTIONAL_POLICY,
 	NODE_OPTIONAL_ELSE,
@@ -113,6 +114,11 @@ struct fc_entry {
 	struct sel_context *context;
 };
 
+struct type_attribute_data {
+	char *type;
+	struct string_list *attrs;
+};
+
 union node_data {
 	struct av_rule_data *av_data;
 	struct role_allow_data *ra_data;
@@ -120,6 +126,7 @@ union node_data {
 	struct if_call_data *ic_data;
 	struct declaration_data *d_data;
 	struct fc_entry *fc_data;
+	struct type_attribute_data *ta_data;
 	char *str;
 };
 

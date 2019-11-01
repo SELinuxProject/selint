@@ -466,6 +466,28 @@ enum selint_error save_command(struct policy_node *cur, char *comm)
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_type_attribute(struct policy_node **cur, char *type, struct string_list *attrs, unsigned int lineno)
+{
+	struct type_attribute_data *data = calloc(1, sizeof(struct type_attribute_data));
+	if (!data) {
+		return SELINT_OUT_OF_MEM;
+	}
+	union node_data nd;
+	nd.ta_data = data;
+
+	data->type = strdup(type);
+	data->attrs = attrs;
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_TYPE_ATTRIBUTE, nd, lineno);
+	if (ret != SELINT_SUCCESS) {
+		free(data);
+		return ret;
+	}
+	*cur = (*cur)->next;
+
+	return SELINT_SUCCESS;
+}
+
 void cleanup_parsing()
 {
 	if (module_name) {
