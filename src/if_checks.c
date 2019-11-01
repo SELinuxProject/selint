@@ -75,6 +75,13 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 
 	while (type_node) {
 		if (!str_in_sl(type_node->string, types_required)) {
+			if (0 == strcmp(type_node->string, "system_r")) {
+				// system_r is required by default in all modules
+				// so that is an exception that shouldn't be warned
+				// about.
+				type_node = type_node->next;
+				continue;
+			}
 			if (look_up_in_decl_map(type_node->string, DECL_TYPE)) {
 				flavor = "Type";
 			} else

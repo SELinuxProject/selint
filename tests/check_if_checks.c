@@ -165,6 +165,57 @@ START_TEST (test_check_type_required_but_not_used_in_if) {
 }
 END_TEST
 
+START_TEST (test_system_r_exception) {
+
+	insert_into_decl_map("system_r", "test", DECL_ROLE);
+
+	struct policy_node *head = calloc(1, sizeof(struct policy_node));
+	head->flavor = NODE_IF_DEF;
+
+	struct policy_node *cur = head->first_child = calloc(1, sizeof(struct policy_node));
+
+	cur->flavor = NODE_GEN_REQ;
+	cur->parent = head;
+
+	cur->first_child = calloc(1, sizeof(struct policy_node));
+	cur->first_child->parent = cur;
+	cur = cur->first_child;
+
+	cur->flavor = NODE_START_BLOCK;
+
+	cur->next = calloc(1, sizeof(struct policy_node));
+	cur->next->prev = cur;
+	cur->next->parent = cur->parent;
+	cur = cur->next;
+
+	cur->flavor = NODE_DECL;
+
+	struct declaration_data *data = calloc(1, sizeof(struct declaration_data));
+
+	cur->data.d_data = data;
+	data->flavor = DECL_ROLE;
+	data->name = strdup("staff_r");
+
+	cur = cur->parent;
+
+	cur->next = calloc(1, sizeof(struct policy_node));
+	cur->next->prev = cur;
+	cur->next->parent = cur->parent;
+
+	cur = cur->next;
+
+	cur->flavor = NODE_ROLE_ALLOW;
+	cur->data.ra_data = calloc(1, sizeof(struct role_allow_data));
+	cur->data.ra_data->from = strdup("system_r");
+	cur->data.ra_data->to = strdup("staff_r");
+
+	ck_assert_ptr_null(check_type_used_but_not_required_in_if(NULL, cur));
+
+	free_policy_node(head);
+	free_all_maps();
+}
+END_TEST
+
 Suite *if_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -176,6 +227,7 @@ Suite *if_checks_suite(void) {
 	tcase_add_test(tc_core, test_check_interface_defs_have_comment);
 	tcase_add_test(tc_core, test_check_type_used_but_not_required_in_if);
 	tcase_add_test(tc_core, test_check_type_required_but_not_used_in_if);
+	tcase_add_test(tc_core, test_system_r_exception);
 	suite_add_tcase(s, tc_core);
 
 	return s;
