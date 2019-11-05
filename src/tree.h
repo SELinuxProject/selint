@@ -180,4 +180,6 @@ void free_fc_entry(struct fc_entry *to_free);
 
 void free_sel_context(struct sel_context *to_free);
 
+void free_type_attribute_data(struct type_attribute_data *to_free);
+
 #endif
