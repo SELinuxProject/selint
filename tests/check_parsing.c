@@ -17,6 +17,7 @@
 
 extern FILE * yyin;
 extern int yyparse();
+extern int yyrestart();
 struct policy_node *ast;
 extern char *parsing_filename;
 
