@@ -2,7 +2,6 @@
 #include "maps.h"
 #include "tree.h"
 
-// TODO: Requires with only object classes are fine.
 struct check_result *check_require_block(const struct check_data *data,
                                          const struct policy_node *node)
 {
@@ -10,8 +9,21 @@ struct check_result *check_require_block(const struct check_data *data,
 		return NULL;
 	}
 
-	return make_check_result('S', S_ID_REQUIRE,
-	                         "Require block used in te file (use an interface call instead)");
+	struct policy_node *cur = node->first_child;
+	while (cur) {
+		if (cur->flavor != NODE_DECL) {
+			cur = cur->next;
+			continue;
+		}
+		if (cur->data.d_data->flavor != DECL_CLASS &&
+		    cur->data.d_data->flavor != DECL_PERM) {
+			return make_check_result('S', S_ID_REQUIRE,
+			                         "Require block used in te file (use an interface call instead)");
+		}
+		cur = cur->next;
+	}
+	// Require contained only object classes and permissions
+	return NULL;
 }
 
 struct check_result *check_module_if_call_in_optional(const struct check_data

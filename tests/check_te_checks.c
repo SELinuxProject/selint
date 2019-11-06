@@ -17,6 +17,10 @@ START_TEST (test_check_require_block) {
 	ck_assert_ptr_null(check_require_block(cd, cur));
 
 	cd->flavor = FILE_TE_FILE;
+	cur->first_child = calloc(1, sizeof(struct policy_node));
+	cur->first_child->flavor = NODE_DECL;
+	cur->first_child->data.d_data = calloc(1, sizeof(struct declaration_data));
+	cur->first_child->data.d_data->flavor = DECL_TYPE;
 	struct check_result *res = check_require_block(cd, cur);
 
 	ck_assert_ptr_nonnull(res);
