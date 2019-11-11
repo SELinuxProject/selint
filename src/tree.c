@@ -218,6 +218,19 @@ struct string_list *get_types_required(const struct policy_node *node)
 	return ret;
 }
 
+struct policy_node *dfs_next(const struct policy_node *node)
+{
+	if (node->first_child) {
+		return node->first_child;
+	} else if (node->next) {
+		return node->next;
+	} else if (node->parent) {
+		return node->parent->next;
+	} else {
+		return NULL;
+	}
+}
+
 enum selint_error free_policy_node(struct policy_node *to_free)
 {
 	if (to_free == NULL) {

@@ -193,16 +193,7 @@ enum selint_error run_checks_on_one_file(struct checks *ck,
 			return res;
 		}
 
-		if (cur->first_child) {
-			cur = cur->first_child;
-		} else if (cur->next) {
-			cur = cur->next;
-		} else {
-			cur = cur->parent;
-			if (cur) {
-				cur = cur->next;
-			}
-		}
+		cur = dfs_next(cur);
 	}
 
 	return SELINT_SUCCESS;

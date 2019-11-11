@@ -158,6 +158,9 @@ struct string_list *get_types_in_node(const struct policy_node *node);
 
 struct string_list *get_types_required(const struct policy_node *node);
 
+//Return the next node in a depth first search of the tree
+struct policy_node *dfs_next(const struct policy_node *node);
+
 enum selint_error free_policy_node(struct policy_node *to_free);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
