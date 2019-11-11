@@ -98,8 +98,8 @@ Suite *te_checks_suite(void) {
 
 	tc_core = tcase_create("Core");
 
-	tcase_add_test(tc_core, test_check_module_if_call_in_optional);
 	tcase_add_test(tc_core, test_check_require_block);
+	tcase_add_test(tc_core, test_check_module_if_call_in_optional);
 	suite_add_tcase(s, tc_core);
 
 	return s;
