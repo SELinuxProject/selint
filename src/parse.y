@@ -9,7 +9,7 @@
 	void yyerror(char *);
 
 	extern struct policy_node *ast;
-	extern int yylineno;
+	extern unsigned int yylineno;
 	extern char *parsing_filename;
 
 	struct policy_node *cur;
@@ -752,7 +752,6 @@ if_keyword:
 	;
 
 %%
-extern int yylineno;
 void yyerror(char* s) {
 	struct check_result *res = make_check_result('F', F_ID_POLICY_SYNTAX, s);
 	res->lineno = yylineno;
