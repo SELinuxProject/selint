@@ -154,9 +154,13 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 
 	case NODE_DECL:
 		d_data = node->data.d_data;
-		ret = calloc(1, sizeof(struct string_list));
-		ret->string = strdup(d_data->name);
-		ret->next = copy_string_list(d_data->attrs);
+		if (d_data->name) {
+			ret = calloc(1, sizeof(struct string_list));
+			ret->string = strdup(d_data->name);
+			ret->next = copy_string_list(d_data->attrs);
+		} else {
+			ret = copy_string_list(d_data->attrs);
+		}
 		break;
 
 	case NODE_IF_CALL:

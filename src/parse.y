@@ -261,7 +261,7 @@ declaration:
 	|
 	ATTRIBUTE_ROLE comma_string_list SEMICOLON { free_string_list($2); }
 	|
-	BOOL comma_string_list SEMICOLON { free_string_list($2); }
+	BOOL comma_string_list SEMICOLON { insert_declaration(&cur, DECL_BOOL, NULL, $2, yylineno); }
 	;
 
 type_declaration:

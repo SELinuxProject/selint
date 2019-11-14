@@ -83,7 +83,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 			// We are inside a template, so we need to save declarations in the template map
 			// TODO: What about nested templates?  This case may require some thought
 			insert_decl_into_template_map(temp_name, flavor, name);
-		} else if ('$' != name[0]) {
+		} else if (name && '$' != name[0]) {
 			// If the name starts with $ we're probably doing something like associating
 			// a role with types in interfaces
 
@@ -106,7 +106,11 @@ enum selint_error insert_declaration(struct policy_node **cur,
 	memset(data, 0, sizeof(struct declaration_data));
 
 	data->flavor = flavor;
-	data->name = strdup(name);
+	if (name) {
+		data->name = strdup(name);
+	} else {
+		data->name = NULL;
+	}
 	data->attrs = attrs;
 
 	union node_data nd;

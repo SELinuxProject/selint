@@ -47,7 +47,8 @@ enum decl_flavor {
 	DECL_ROLE,
 	DECL_USER,
 	DECL_CLASS,
-	DECL_PERM
+	DECL_PERM,
+	DECL_BOOL
 };
 
 enum tt_flavor {
