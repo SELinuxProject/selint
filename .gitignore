@@ -30,6 +30,7 @@ tests/check_string_list
 tests/check_runner
 tests/check_startup
 tests/check_te_checks
+tests/check_ordering
 tests/test-suite.log
 .deps
 depcomp
@@ -40,3 +41,5 @@ test-driver
 ylwrap
 stamp-h1
 man/selint.1
+tests/vgcore.*
+*.tar.gz

@@ -1,6 +1,6 @@
 @VALGRIND_CHECK_RULES@
 
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering
 check_PROGRAMS = ${TESTS}
 
 if COND_GCOV
@@ -42,6 +42,8 @@ TE_CHECKS_HEADS=$(top_builddir)/src/te_checks.h ${CHECK_HOOKS_HEADS}
 TE_CHECKS_OBJS=$(top_builddir)/src/te_checks.o ${CHECK_HOOKS_OBJS}
 RUNNER_HEADS=$(top_builddir)/src/runner.h ${PARSING_HEADS} ${UTIL_HEADS} $(top_builddir)/src/parse_fc.h $(top_builddir)/src/*_checks.h
 RUNNER_OBJS=$(top_builddir)/src/runner.o ${PARSING_OBJS} ${UTIL_OBJS} $(top_builddir)/src/parse_fc.o $(top_builddir)/src/*_checks.o
+ORDERING_HEADS=$(top_builddir)/src/ordering.h ${MAPS_HEADS}
+ORDERING_OBJS=$(top_builddir)/src/ordering.o ${MAPS_OBJS}
 
 check_string_list_SOURCES = check_string_list.c ${STRING_LIST_HEADS}
 check_string_list_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
@@ -102,5 +104,9 @@ check_te_checks_LDADD = @CHECK_LIBS@ ${TE_CHECKS_OBJS}
 check_runner_SOURCES = check_runner.c ${RUNNER_HEADS}
 check_runner_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
 check_runner_LDADD = @CHECK_LIBS@ ${RUNNER_OBJS}
+
+check_ordering_SOURCES = check_ordering.c ${ORDERING_HEADS} $(top_builddir)/src/selint_error.h
+check_ordering_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
+check_ordering_LDADD = @CHECK_LIBS@ ${ORDERING_OBJS}
 
 MOSTLYCLEANFILES = *.gcov *.gcda *.gcno

@@ -2,6 +2,13 @@
 #include "maps.h"
 #include "tree.h"
 
+struct check_result *check_refpolicy_te_order(const struct check_data *data,
+                                              const struct policy_node *node)
+{
+
+	return NULL;
+}
+
 struct check_result *check_require_block(const struct check_data *data,
                                          const struct policy_node *node)
 {
@@ -23,6 +30,12 @@ struct check_result *check_require_block(const struct check_data *data,
 		cur = cur->next;
 	}
 	// Require contained only object classes and permissions
+	return NULL;
+}
+
+struct check_result *check_no_explicit_declaration(const struct check_data *data,
+                                                   const struct policy_node *node)
+{
 	return NULL;
 }
 
