@@ -1,11 +1,52 @@
 #include "te_checks.h"
 #include "maps.h"
 #include "tree.h"
+#include "ordering.h"
 
-struct check_result *check_refpolicy_te_order(const struct check_data *data,
-                                              const struct policy_node *node)
+struct check_result *check_te_order(const struct check_data *data,
+                                    const struct policy_node *node)
 {
+	if (data->flavor != FILE_TE_FILE) {
+		return NULL;
+	}
 
+	static struct ordering_metadata *order_data;
+	static unsigned int order_node_arr_index;
+
+	switch (node->flavor) {
+	case NODE_TE_FILE:
+		order_data = prepare_ordering_metadata(node);
+		order_node_arr_index = 0;
+		if (!order_data) {
+			return alloc_internal_error("Failed to initialize ordering for C-001");
+		}
+		calculate_longest_increasing_subsequence(node, order_data, compare_nodes_refpolicy);
+		break;
+	case NODE_CLEANUP:
+		free_ordering_metadata(order_data);
+		order_data = NULL;
+		break;
+	default:
+		if (!order_data) {
+			return alloc_internal_error("Ordering data was not generated for C-001");
+		}
+		for (unsigned int i=order_node_arr_index; i < order_data->order_node_len; i++) {
+			if (order_data->nodes[i].node == node) {
+				order_node_arr_index = i;
+				if (order_data->nodes[i].in_order) {
+					return NULL;
+				} else {
+					char *reason_str = get_ordering_reason(order_data, order_node_arr_index);
+					struct check_result *to_ret = make_check_result('C',
+					                                                C_ID_TE_ORDER,
+					                                                reason_str);
+					free(reason_str);
+					return to_ret;
+				}
+			}
+		}
+		return alloc_internal_error("Could not find ordering info for line");
+	}
 	return NULL;
 }
 

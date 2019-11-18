@@ -27,6 +27,9 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 	struct check_node *loc;
 
 	switch (check_flavor) {
+	case NODE_TE_FILE:
+		ALLOC_NODE(te_file_node_checks);
+		break;
 	case NODE_AV_RULE:
 		ALLOC_NODE(av_rule_node_checks);
 		break;
@@ -67,6 +70,9 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 		ALLOC_NODE(error_node_checks);
 		break;
 
+	case NODE_CLEANUP:
+		ALLOC_NODE(cleanup_checks);
+		break;
 	default:
 		return SELINT_BAD_ARG;
 	}
@@ -83,6 +89,8 @@ enum selint_error call_checks(struct checks *ck, struct check_data *data,
 {
 
 	switch (node->flavor) {
+	case NODE_TE_FILE:
+		return call_checks_for_node_type(ck->te_file_node_checks, data, node);
 	case NODE_AV_RULE:
 		return call_checks_for_node_type(ck->av_rule_node_checks, data, node);
 	case NODE_TT_RULE:
@@ -103,6 +111,8 @@ enum selint_error call_checks(struct checks *ck, struct check_data *data,
 		return call_checks_for_node_type(ck->fc_entry_node_checks, data, node);
 	case NODE_ERROR:
 		return call_checks_for_node_type(ck->error_node_checks, data, node);
+	case NODE_CLEANUP:
+		return call_checks_for_node_type(ck->cleanup_checks, data, node);
 	default:
 		return SELINT_SUCCESS;
 	}
@@ -184,7 +194,9 @@ struct check_result *make_check_result(char severity, unsigned int check_id,
 
 void free_checks(struct checks *to_free)
 {
-
+	if (to_free->te_file_node_checks) {
+		free_check_node(to_free->te_file_node_checks);
+	}
 	if (to_free->av_rule_node_checks) {
 		free_check_node(to_free->av_rule_node_checks);
 	}
@@ -214,6 +226,9 @@ void free_checks(struct checks *to_free)
 	}
 	if (to_free->error_node_checks) {
 		free_check_node(to_free->error_node_checks);
+	}
+	if (to_free->cleanup_checks) {
+		free_check_node(to_free->cleanup_checks);
 	}
 	free(to_free);
 }

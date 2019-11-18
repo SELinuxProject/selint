@@ -407,7 +407,9 @@ enum selint_error begin_interface_def(struct policy_node **cur,
 
 	switch (flavor) {
 	case NODE_IF_DEF:
+		break;
 	case NODE_TEMP_DEF:
+		insert_template_into_template_map(name);
 		break;
 	default:
 		return SELINT_BAD_ARG;
@@ -421,7 +423,11 @@ enum selint_error begin_interface_def(struct policy_node **cur,
 enum selint_error end_interface_def(struct policy_node **cur)
 {
 
-	return end_block(cur, NODE_IF_DEF);
+	if (end_block(cur, NODE_IF_DEF) == SELINT_NOT_IN_BLOCK) {
+		return end_block(cur, NODE_TEMP_DEF);
+	} else {
+		return SELINT_SUCCESS;
+	}
 }
 
 enum selint_error begin_gen_require(struct policy_node **cur,
@@ -487,7 +493,16 @@ enum selint_error insert_type_attribute(struct policy_node **cur, char *type, st
 		free(data);
 		return ret;
 	}
+
 	*cur = (*cur)->next;
+
+	if ((*cur)->parent &&
+	    (*cur)->parent->flavor == NODE_IF_DEF &&
+	    (!(*cur)->prev ||
+	     (*cur)->prev->flavor == NODE_REQUIRE ||
+	     (*cur)->prev->flavor == NODE_GEN_REQ)) {
+		mark_transform_if((*cur)->parent->data.str);
+	}
 
 	return SELINT_SUCCESS;
 }

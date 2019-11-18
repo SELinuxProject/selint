@@ -1,7 +1,9 @@
 #include <fts.h>
 #include <stdio.h>
 
+#include "startup.h"
 #include "maps.h"
+#include "tree.h"
 
 void load_access_vectors_normal(char *av_path)
 {
@@ -108,6 +110,54 @@ enum selint_error load_modules_source(char *modules_conf_path)
 		}
 	}
 	free(line);
+
+	return SELINT_SUCCESS;
+}
+
+static int mark_transform_interfaces_one_file(struct policy_node *ast) {
+	int marked_transform = 0;
+	struct policy_node *cur = ast;
+	while (cur) {
+		if (cur->flavor == NODE_IF_DEF &&
+		    cur->first_child &&
+		    !is_transform_if(cur->data.str)) {
+			struct policy_node *child = cur->first_child;
+			while (child &&
+			       (child->flavor == NODE_START_BLOCK ||
+			        child->flavor == NODE_REQUIRE ||
+			        child->flavor == NODE_GEN_REQ)) {
+				child = child->next;
+			}
+			if (!child) {
+				// Nothing in interface besides possibly require
+				cur = dfs_next(cur);
+				continue;
+			}
+			if (child->flavor == NODE_IF_CALL) {
+				if (is_transform_if(child->data.ic_data->name)) {
+					mark_transform_if(cur->data.str);
+					marked_transform = 1;
+				}
+			}
+		}
+		cur = dfs_next(cur);
+	}
+	return marked_transform;
+}
+
+enum selint_error mark_transform_interfaces(struct policy_file_list *files)
+{
+	struct policy_file_node *cur;
+	int marked_transform;
+	do {
+		marked_transform = 0;
+		cur = files->head;
+		while (cur) {
+			marked_transform = marked_transform ||
+			                   mark_transform_interfaces_one_file(cur->file->ast);
+			cur = cur->next;
+		}
+	} while (marked_transform);
 
 	return SELINT_SUCCESS;
 }

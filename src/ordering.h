@@ -93,8 +93,9 @@ struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *he
 **********************************/
 void calculate_longest_increasing_subsequence(const struct policy_node *head,
                                               struct ordering_metadata *ordering,
-                                              int (*comp_func)(const struct policy_node *first,
-                                                               const struct policy_node *second));
+                                              enum order_difference_reason (*comp_func)(struct ordering_metadata *order_data,
+                                                                                        const struct policy_node *first,
+                                                                                        const struct policy_node *second));
 
 /**********************************
 * Add information about a line on lineno in section section_name
@@ -138,6 +139,14 @@ enum local_subsection get_local_subsection(const struct policy_node *node);
 enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *ordering_data,
                                                      const struct policy_node *first,
                                                      const struct policy_node *second);
+
+/**********************************
+* Get a string explaining why a node is out of order.
+* This is done by looking for the nearest node that is globally
+* in order and relatively out of order with this node and checking
+* what the reason for their out of order comparison is
+**********************************/
+char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index);
 
 void free_ordering_metadata(struct ordering_metadata *to_free);
 

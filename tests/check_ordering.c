@@ -4,21 +4,23 @@
 #include "../src/ordering.h"
 #include "../src/maps.h"
 
-int always_greater(__attribute__((unused)) const struct policy_node *first,
-                   __attribute__((unused)) const struct policy_node *second) {
+enum order_difference_reason always_greater(__attribute__((unused)) struct ordering_metadata *order_data,
+                                            __attribute__((unused)) const struct policy_node *first,
+                                            __attribute__((unused)) const struct policy_node *second) {
 	return 1;
 }
 
-int always_less(__attribute__((unused)) const struct policy_node *first,
-                   __attribute__((unused)) const struct policy_node *second) {
+enum order_difference_reason always_less(__attribute__((unused)) struct ordering_metadata *order_data,
+                                         __attribute__((unused)) const struct policy_node *first,
+                                         __attribute__((unused)) const struct policy_node *second) {
 	return -1;
 }
 
 START_TEST (test_prepare_ordering_metadata) {
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
-	head->first_child = calloc(1, sizeof(struct policy_node));
+	head->next = calloc(1, sizeof(struct policy_node));
 	head->flavor = NODE_TE_FILE;
-	struct policy_node *cur = head->first_child;
+	struct policy_node *cur = head->next;
 	cur->flavor = NODE_DECL;
 	cur->next = calloc(1, sizeof(struct policy_node));
 	cur = cur->next;
@@ -44,8 +46,8 @@ END_TEST
 START_TEST (test_calculate_longest_increasing_subsequence) {
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
 	head->flavor = NODE_TE_FILE;
-	head->first_child = calloc(1, sizeof(struct policy_node));
-	struct policy_node *cur = head->first_child;
+	head->next = calloc(1, sizeof(struct policy_node));
+	struct policy_node *cur = head->next;
 	cur->flavor = NODE_DECL;
 	cur->next = calloc(1, sizeof(struct policy_node));
 	cur = cur->next;
@@ -59,14 +61,14 @@ START_TEST (test_calculate_longest_increasing_subsequence) {
 
 	calculate_longest_increasing_subsequence(head, o, always_greater);
 
-	ck_assert_ptr_eq(o->nodes[0].node, head->first_child);
+	ck_assert_ptr_eq(o->nodes[0].node, head->next);
 	ck_assert_int_eq(o->nodes[0].in_order, 1);
 	
 	free_ordering_metadata(o);
 	o = prepare_ordering_metadata(head);
 
 	calculate_longest_increasing_subsequence(head, o, always_less);
-	ck_assert_ptr_eq(o->nodes[0].node, head->first_child);
+	ck_assert_ptr_eq(o->nodes[0].node, head->next);
 	ck_assert_int_eq(o->nodes[0].in_order, 0);
 
 	free_ordering_metadata(o);
@@ -143,6 +145,7 @@ START_TEST (test_get_section) {
 	node->first_child->next = calloc(1, sizeof(struct policy_node));
 	node->first_child->next->flavor = NODE_IF_CALL;
 	node->first_child->next->data.ic_data = calloc(1, sizeof(struct if_call_data));
+	node->first_child->next->data.ic_data->name = strdup("foo_read");
 	node->first_child->next->data.ic_data->args = calloc(1, sizeof(struct string_list));
 	node->first_child->next->data.ic_data->args->string = strdup("bar_t");
 
@@ -220,7 +223,7 @@ START_TEST (test_compare_nodes_refpolicy) {
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
 	struct policy_node *first = calloc(1, sizeof(struct policy_node));
 	struct policy_node *second = calloc(1, sizeof(struct policy_node));
-	head->first_child = first;
+	head->next = first;
 	first->next = second;
 
 	first->flavor = NODE_DECL;

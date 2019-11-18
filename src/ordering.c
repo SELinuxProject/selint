@@ -1,12 +1,13 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "ordering.h"
 #include "maps.h"
 
 struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *head)
 {
-	const struct policy_node *cur = head->first_child; // head is file.  Order the contents
+	const struct policy_node *cur = head->next; // head is file.  Order the contents
 	size_t count = 0;
 	struct section_data *sections = calloc(1, sizeof(struct section_data));
 
@@ -30,14 +31,15 @@ struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *he
 
 void calculate_longest_increasing_subsequence(const struct policy_node *head,
                                               struct ordering_metadata *ordering,
-                                              int (*comp_func)(const struct policy_node *first,
-                                                               const struct policy_node *second))
+                                              enum order_difference_reason (*comp_func)(struct ordering_metadata *o,
+                                                                                        const struct policy_node *first,
+                                                                                        const struct policy_node *second))
 {
 	struct order_node *nodes = ordering->nodes;
 	int longest_seq = 0;
 	int index = 0;
 
-	struct policy_node *cur = head->first_child;
+	struct policy_node *cur = head->next;
 
 	while (cur) {
 		// Save the node in the array
@@ -48,7 +50,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 		int high = longest_seq;
 		while (low <= high) {
 			int mid = (low + high + 1) / 2; // Ceiling
-			if (comp_func(nodes[nodes[mid].end_of_seq].node, nodes[index].node) >= 0) {
+			if (comp_func(ordering, nodes[nodes[mid].end_of_seq].node, nodes[index].node) >= 0) {
 				low = mid + 1;
 			} else {
 				high = mid - 1;
@@ -150,13 +152,26 @@ char *get_section(const struct policy_node *node)
 	case NODE_M4_ARG:
 		return "_non_ordered"; //TODO
 	case NODE_START_BLOCK:
-		return get_section(node->next);
+		if (node->next) {
+			return get_section(node->next);
+		} else {
+			return "_non_ordered"; // empty block
+		}
 	case NODE_IF_CALL:
-		return node->data.ic_data->args->string; // TODO: transform interfaces
-	// go in _declarations
+		if (look_up_in_template_map(node->data.ic_data->name) ||
+		    is_transform_if(node->data.ic_data->name)) {
+			// This only looks up templates that actually declare or
+			// call something.  This would result in an ordering issue
+			// if a template that doesn't do either of those is called.
+			// You shouldn't do that, but it should be reported more
+			// sanely.  TODO: Look up whether its a template in general
+			return "_declarations";
+		} else {
+			return node->data.ic_data->args->string;
+		}
 	case NODE_TEMP_DEF:
 	case NODE_IF_DEF:
-		return NULL; // if files only
+		return NULL;           // if files only
 	case NODE_REQUIRE:
 	case NODE_GEN_REQ:
 		return "_non_ordered"; // Not in style guide
@@ -214,6 +229,9 @@ int is_own_module_rule(const struct policy_node *node)
 	char *current_mod = look_up_in_decl_map(domain_name, DECL_TYPE);
 	if (!current_mod) {
 		current_mod = look_up_in_decl_map(domain_name, DECL_ATTRIBUTE);
+	}
+	if (!current_mod) {
+		return 0; // Our section isn't a valid type or attribute
 	}
 	if (node->flavor == NODE_IF_CALL) {
 		// These should actually be patterns, not real calls
@@ -342,6 +360,121 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 	// TODO: alphabetical
 
 	return ORDER_EQUAL;
+}
+
+char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index)
+{
+	unsigned int distance = 1;
+	unsigned int nearest_index = 0;
+	enum order_difference_reason reason;
+	while (nearest_index == 0) {
+		if (distance < index) {
+			reason = compare_nodes_refpolicy(order_data,
+							 order_data->nodes[index-distance].node,
+							 order_data->nodes[index].node);
+			if (reason < 0) {
+				nearest_index = index - distance;
+			}
+		} else if (index + distance < order_data->order_node_len) {
+			reason = compare_nodes_refpolicy(order_data,
+	                                                 order_data->nodes[index].node,
+	                                                 order_data->nodes[index+distance].node);
+			if (reason < 0) {
+				nearest_index = index + distance;
+			}
+		}
+		distance++;
+		if ((distance > index) &&
+		    (index + distance > order_data->order_node_len)) {
+			return NULL; // Error
+		}
+	}
+
+	char *before_after = NULL;
+	if (nearest_index > index) {
+		before_after = "before";
+	} else {
+		before_after = "after";
+	}
+
+	char *reason_str = NULL;
+	enum local_subsection other_lss;
+
+	switch (-reason) {
+	case ORDER_EQUAL:
+		return NULL; // Error
+	case ORDER_SECTION:
+		reason_str = "that is in a different section";
+		break;
+	case ORDER_DECLARATION_SUBSECTION:
+		reason_str = "that is associated with a different declaration";
+		break;
+	case ORDER_LAYERS:
+		// TODO
+		reason_str = "that is in another layer";
+		break;
+	case ORDER_LOCAL_SUBSECTION:
+		other_lss = get_local_subsection(order_data->nodes[nearest_index].node);
+		switch (other_lss) {
+		case LSS_SELF:
+			reason_str = "that is a self rule";
+			break;
+		case LSS_OWN:
+			reason_str = "that refers to types owned by this module";
+			break;
+		case LSS_KERNEL:
+			reason_str = "that calls an interface located in the kernel layer";
+			break;
+		case LSS_SYSTEM:
+			reason_str = "that calls an interface located in the system layer";
+			break;
+		case LSS_OTHER:
+			reason_str = "that calls a general interface";
+			break;
+		case LSS_BUILD_OPTION:
+			reason_str = "that is controled by a build option";
+			break;
+		case LSS_CONDITIONAL:
+			reason_str = "that is in a conditional policy block";
+			break;
+		case LSS_TUNABLE:
+			reason_str = "that is in a tunable block";
+			break;
+		case LSS_OPTIONAL:
+			reason_str = "that is in an optional block";
+			break;
+		case LSS_UNKNOWN:
+			return NULL; //Error
+		}
+		break;
+	case ORDER_ALPHABETICAL:
+		if (nearest_index > index) {
+			reason_str = "that is alphabetically earlier";
+		} else {
+			reason_str = "that is alphabetically later";
+		}
+		break;
+	case ORDERING_ERROR:
+		return NULL;
+	}
+	size_t str_len = strlen(reason_str) +
+	                 strlen(before_after) +
+	                 strlen("Line out of order.  It is ") +
+	                 strlen(" line ") +
+	                 13; // 13 is enough for the maximum
+	                     // length of an unsigned int (10)
+	                     // plus a final period, a space
+	                     // and a null terminator
+
+	char *ret = malloc(sizeof(char) * str_len);
+
+	snprintf(ret, str_len,
+	         "Line out of order.  It is %s line %u %s.",
+	         before_after,
+	         order_data->nodes[nearest_index].node->lineno,
+	         reason_str);
+
+	return ret;
 }
 
 void free_ordering_metadata(struct ordering_metadata *to_free)

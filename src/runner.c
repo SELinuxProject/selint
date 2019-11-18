@@ -8,6 +8,7 @@
 #include "te_checks.h"
 #include "parse_fc.h"
 #include "util.h"
+#include "startup.h"
 
 extern FILE *yyin;
 extern int yyparse();
@@ -85,6 +86,18 @@ struct checks *register_checks(char level,
 
 	switch (level) {
 	case 'C':
+		if (CHECK_ENABLED("C-001")) {
+			add_check(NODE_TE_FILE, ck, "C-001",
+			          check_te_order);
+			add_check(NODE_AV_RULE, ck, "C-001",
+			          check_te_order);
+			add_check(NODE_IF_CALL, ck, "C-001",
+			          check_te_order);
+			add_check(NODE_TT_RULE, ck, "C-001",
+			          check_te_order);
+			add_check(NODE_CLEANUP, ck, "C-001",
+			          check_te_order);
+		}
 		if (CHECK_ENABLED("C-004")) {
 			add_check(NODE_IF_DEF, ck, "C-004",
 			          check_interface_definitions_have_comment);
@@ -196,7 +209,12 @@ enum selint_error run_checks_on_one_file(struct checks *ck,
 		cur = dfs_next(cur);
 	}
 
-	return SELINT_SUCCESS;
+	// Give checks a change to clean up state
+	struct policy_node cleanup;
+	memset(&cleanup, 0, sizeof(struct policy_node));
+	cleanup.flavor = NODE_CLEANUP;
+
+	return call_checks(ck, data, &cleanup);
 }
 
 enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
@@ -246,6 +264,8 @@ enum selint_error run_analysis(struct checks *ck,
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}
+
+	mark_transform_interfaces(if_files);
 
 	res = parse_all_files_in_list(te_files);
 	if (res != SELINT_SUCCESS) {

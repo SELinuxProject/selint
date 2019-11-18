@@ -5,6 +5,7 @@
 #include "selint_error.h"
 
 enum convention_ids {
+	C_ID_TE_ORDER = 1,
 	C_ID_IF_COMMENT = 4
 };
 
@@ -61,6 +62,7 @@ struct check_node {
 };
 
 struct checks {
+	struct check_node *te_file_node_checks;
 	struct check_node *av_rule_node_checks;
 	struct check_node *tt_rule_node_checks;
 	struct check_node *decl_node_checks;
@@ -71,6 +73,7 @@ struct checks {
 	struct check_node *gen_req_node_checks;
 	struct check_node *fc_entry_node_checks;
 	struct check_node *error_node_checks;
+	struct check_node *cleanup_checks;
 };
 
 /*********************************************

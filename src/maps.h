@@ -10,7 +10,13 @@ struct hash_elem {
 	char *key;
 	char *val;
 	UT_hash_handle hh_type, hh_role, hh_user, hh_attr, hh_class, hh_perm,
-	               hh_mods, hh_ifs;
+	               hh_mods, hh_ifs, hh_mod_layers;
+};
+
+struct bool_hash_elem {
+	char *key;
+	int val;
+	UT_hash_handle hh_transform;
 };
 
 struct template_hash_elem {
@@ -29,9 +35,22 @@ void insert_into_mods_map(char *mod_name, char *status);
 
 char *look_up_in_mods_map(char *mod_name);
 
+void insert_into_mod_layers_map(char *mod_name, char *layer);
+
+char *look_up_in_mod_layers_map(char *mod_name);
+
 void insert_into_ifs_map(char *if_name, char *module);
 
 char *look_up_in_ifs_map(char *if_name);
+
+void mark_transform_if(char *if_name);
+
+int is_transform_if(char *if_name);
+
+// Just generate a template entry in the map, but don't save any calls
+// or decls to it.  This is helpful to know what is a template for certain
+// checks even if the template never calls or declares anything
+void insert_template_into_template_map(char *name);
 
 void insert_decl_into_template_map(char *name, enum decl_flavor flavor,
                                    char *declaration);

@@ -4,9 +4,9 @@
 #include "check_hooks.h"
 
 /*********************************************
-* Check for violations of refpolicy te file ordering conventions.
-* These are described at:
-* https://github.com/SELinuxProject/refpolicy/wiki/StyleGuide
+* Check for violations of te file ordering conventions.
+* The refpolicy conventions (which is all that can be checked as of now are
+* described at: https://github.com/SELinuxProject/refpolicy/wiki/StyleGuide
 * Called on all nodes except fc file nodes, error nodes, NODE_IF_FILE and
 * NODE_FC_FILE
 * On NODE_TE_FILE nodes, it generates the ordering information for that file
@@ -16,8 +16,8 @@
 * node - the node to check
 * returns NULL if passed or check_result for issue C-001
 *********************************************/
-struct check_result *check_refpolicy_te_order(const struct check_data *data,
-                                              const struct policy_node *node);
+struct check_result *check_te_order(const struct check_data *data,
+                                    const struct policy_node *node);
 
 /*********************************************
 * Check for the presence of require blocks in TE files.

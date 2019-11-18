@@ -7,7 +7,9 @@ struct hash_elem *attr_map = NULL;
 struct hash_elem *class_map = NULL;
 struct hash_elem *perm_map = NULL;
 struct hash_elem *mods_map = NULL;
+struct hash_elem *mod_layers_map = NULL;
 struct hash_elem *ifs_map = NULL;
+struct bool_hash_elem *transforms_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
 struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
@@ -133,6 +135,35 @@ char *look_up_in_mods_map(char *mod_name)
 	}
 }
 
+void insert_into_mod_layers_map(char *mod_name, char *layer)
+{
+	struct hash_elem *mod;
+
+	HASH_FIND(hh_mod_layers, mod_layers_map, mod_name, strlen(mod_name), mod);
+
+	if (!mod) {
+		mod = malloc(sizeof(struct hash_elem));
+		mod->key = strdup(mod_name);
+		mod->val = strdup(layer);
+		HASH_ADD_KEYPTR(hh_mod_layers, mod_layers_map, mod->key, strlen(mod->key),
+		                mod);
+	}
+
+}
+
+char *look_up_in_mod_layers_map(char *mod_name)
+{
+	struct hash_elem *mod;
+
+	HASH_FIND(hh_mod_layers, mod_layers_map, mod_name, strlen(mod_name), mod);
+
+	if (mod == NULL) {
+		return NULL;
+	} else {
+		return mod->val;
+	}
+}
+
 void insert_into_ifs_map(char *if_name, char *module)
 {
 
@@ -183,6 +214,34 @@ unsigned int decl_map_count(enum decl_flavor flavor)
 	}
 }
 
+void mark_transform_if(char *if_name)
+{
+	struct bool_hash_elem *transform_if;
+
+	HASH_FIND(hh_transform, transforms_map, if_name, strlen(if_name), transform_if);
+
+	if (!transform_if) {
+		transform_if = malloc(sizeof(struct bool_hash_elem));
+		transform_if->key = strdup(if_name);
+		transform_if->val = 1;
+		HASH_ADD_KEYPTR(hh_transform, transforms_map, transform_if->key,
+		                strlen(transform_if->key), transform_if);
+	} else {
+		transform_if->val = 1;
+	}
+}
+
+int is_transform_if(char *if_name)
+{
+	struct bool_hash_elem *transform_if;
+	HASH_FIND(hh_transform, transforms_map, if_name, strlen(if_name), transform_if);
+	if (transform_if && transform_if->val == 1) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 void insert_decl(struct template_hash_elem *template, void *new_node)
 {
 	if (template->declarations) {
@@ -209,6 +268,12 @@ void insert_call(struct template_hash_elem *template, void *new_node)
 	}
 }
 
+void insert_noop(__attribute__((unused)) struct template_hash_elem *template,
+                 __attribute__((unused)) void *new_node)
+{
+	return;
+}
+
 void insert_into_template_map(char *name, void *new_node,
                               void (*insertion_func)(struct template_hash_elem
                                                      *, void *))
@@ -230,6 +295,11 @@ void insert_into_template_map(char *name, void *new_node,
 	}
 
 	insertion_func(template, new_node);
+}
+
+void insert_template_into_template_map(char *name)
+{
+	insert_into_template_map(name, NULL, insert_noop);
 }
 
 void insert_decl_into_template_map(char *name, enum decl_flavor flavor,
@@ -318,6 +388,8 @@ void free_all_maps()
 	FREE_MAP(perm);
 
 	FREE_MAP(mods);
+
+	FREE_MAP(mod_layers);
 
 	FREE_MAP(ifs);
 

@@ -38,10 +38,10 @@ FC_CHECKS_HEADS=$(top_builddir)/src/fc_checks.h ${CHECK_HOOKS_HEADS}
 FC_CHECKS_OBJS=$(top_builddir)/src/fc_checks.o ${CHECK_HOOKS_OBJS}
 IF_CHECKS_HEADS=$(top_builddir)/src/if_checks.h ${CHECK_HOOKS_HEADS}
 IF_CHECKS_OBJS=$(top_builddir)/src/if_checks.o ${CHECK_HOOKS_OBJS}
-TE_CHECKS_HEADS=$(top_builddir)/src/te_checks.h ${CHECK_HOOKS_HEADS}
-TE_CHECKS_OBJS=$(top_builddir)/src/te_checks.o ${CHECK_HOOKS_OBJS}
+TE_CHECKS_HEADS=$(top_builddir)/src/te_checks.h ${CHECK_HOOKS_HEADS} $(top_builddir)/src/ordering.h
+TE_CHECKS_OBJS=$(top_builddir)/src/te_checks.o ${CHECK_HOOKS_OBJS} $(top_builddir)/src/ordering.o
 RUNNER_HEADS=$(top_builddir)/src/runner.h ${PARSING_HEADS} ${UTIL_HEADS} $(top_builddir)/src/parse_fc.h $(top_builddir)/src/*_checks.h
-RUNNER_OBJS=$(top_builddir)/src/runner.o ${PARSING_OBJS} ${UTIL_OBJS} $(top_builddir)/src/parse_fc.o $(top_builddir)/src/*_checks.o
+RUNNER_OBJS=$(top_builddir)/src/runner.o ${PARSING_OBJS} ${UTIL_OBJS} $(top_builddir)/src/parse_fc.o $(top_builddir)/src/*_checks.o $(top_builddir)/src/ordering.o $(top_builddir)/src/startup.o
 ORDERING_HEADS=$(top_builddir)/src/ordering.h ${MAPS_HEADS}
 ORDERING_OBJS=$(top_builddir)/src/ordering.o ${MAPS_OBJS}
 
