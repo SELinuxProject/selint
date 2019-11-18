@@ -228,10 +228,15 @@ struct policy_node *dfs_next(const struct policy_node *node)
 		return node->first_child;
 	} else if (node->next) {
 		return node->next;
-	} else if (node->parent) {
-		return node->parent->next;
 	} else {
-		return NULL;
+		while (node->parent && !node->parent->next) {
+			node = node->parent;
+		}
+		if (node->parent) {
+			return node->parent->next;
+		} else {
+			return NULL;
+		}
 	}
 }
 
