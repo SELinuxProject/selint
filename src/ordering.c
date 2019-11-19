@@ -50,7 +50,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 		int high = longest_seq;
 		while (low <= high) {
 			int mid = (low + high + 1) / 2; // Ceiling
-			if (comp_func(ordering, nodes[nodes[mid].end_of_seq].node, nodes[index].node) >= 0) {
+			if (comp_func(ordering, nodes[nodes[mid-1].end_of_seq].node, nodes[index].node) >= 0) {
 				low = mid + 1;
 			} else {
 				high = mid - 1;
@@ -374,13 +374,16 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 							 order_data->nodes[index].node);
 			if (reason < 0) {
 				nearest_index = index - distance;
+				break;
 			}
-		} else if (index + distance < order_data->order_node_len) {
+		}
+		if (index + distance < order_data->order_node_len) {
 			reason = compare_nodes_refpolicy(order_data,
 	                                                 order_data->nodes[index].node,
 	                                                 order_data->nodes[index+distance].node);
 			if (reason < 0) {
 				nearest_index = index + distance;
+				break;
 			}
 		}
 		distance++;
@@ -445,6 +448,9 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			break;
 		case LSS_UNKNOWN:
 			return NULL; //Error
+		default:
+			//Shouldn't happen
+			return NULL;
 		}
 		break;
 	case ORDER_ALPHABETICAL:
@@ -455,6 +461,9 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		}
 		break;
 	case ORDERING_ERROR:
+		return NULL;
+	default:
+		//Shouldn't happen
 		return NULL;
 	}
 	size_t str_len = strlen(reason_str) +
