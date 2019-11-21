@@ -265,6 +265,12 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 	}
 	tt_data->flavor = flavor;
 
+	if (!str_in_sl("process", object_classes) &&
+	    (*cur)->parent &&
+	    (*cur)->parent->flavor == NODE_IF_DEF) {
+		mark_filetrans_if((*cur)->parent->data.str);
+	}
+
 	union node_data nd;
 	nd.tt_data = tt_data;
 
@@ -297,6 +303,12 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 		insert_call_into_template_map(template_name, if_data);
 	} else {
 		add_template_declarations(if_name, args, NULL, module_name);
+	}
+
+	if (0 == strcmp(if_name, "filetrans_pattern") &&
+	    (*cur)->parent &&
+	    (*cur)->parent->flavor == NODE_IF_DEF) {
+		mark_filetrans_if((*cur)->parent->data.str);
 	}
 
 	union node_data nd;

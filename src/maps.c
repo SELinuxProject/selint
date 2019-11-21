@@ -9,7 +9,8 @@ struct hash_elem *perm_map = NULL;
 struct hash_elem *mods_map = NULL;
 struct hash_elem *mod_layers_map = NULL;
 struct hash_elem *ifs_map = NULL;
-struct bool_hash_elem *transforms_map = NULL;
+struct bool_hash_elem *transform_map = NULL;
+struct bool_hash_elem *filetrans_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
 struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
@@ -218,13 +219,13 @@ void mark_transform_if(char *if_name)
 {
 	struct bool_hash_elem *transform_if;
 
-	HASH_FIND(hh_transform, transforms_map, if_name, strlen(if_name), transform_if);
+	HASH_FIND(hh_transform, transform_map, if_name, strlen(if_name), transform_if);
 
 	if (!transform_if) {
 		transform_if = malloc(sizeof(struct bool_hash_elem));
 		transform_if->key = strdup(if_name);
 		transform_if->val = 1;
-		HASH_ADD_KEYPTR(hh_transform, transforms_map, transform_if->key,
+		HASH_ADD_KEYPTR(hh_transform, transform_map, transform_if->key,
 		                strlen(transform_if->key), transform_if);
 	} else {
 		transform_if->val = 1;
@@ -234,8 +235,36 @@ void mark_transform_if(char *if_name)
 int is_transform_if(char *if_name)
 {
 	struct bool_hash_elem *transform_if;
-	HASH_FIND(hh_transform, transforms_map, if_name, strlen(if_name), transform_if);
+	HASH_FIND(hh_transform, transform_map, if_name, strlen(if_name), transform_if);
 	if (transform_if && transform_if->val == 1) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+void mark_filetrans_if(char *if_name)
+{
+	struct bool_hash_elem *filetrans_if;
+
+	HASH_FIND(hh_filetrans, filetrans_map, if_name, strlen(if_name), filetrans_if);
+
+	if (!filetrans_if) {
+		filetrans_if = malloc(sizeof(struct bool_hash_elem));
+		filetrans_if->key = strdup(if_name);
+		filetrans_if->val = 1;
+		HASH_ADD_KEYPTR(hh_filetrans, filetrans_map, filetrans_if->key,
+		                strlen(filetrans_if->key), filetrans_if);
+	} else {
+		filetrans_if->val = 1;
+	}
+}
+
+int is_filetrans_if(char *if_name)
+{
+	struct bool_hash_elem *filetrans_if;
+	HASH_FIND(hh_filetrans, filetrans_map, if_name, strlen(if_name), filetrans_if);
+	if (filetrans_if && filetrans_if->val == 1) {
 		return 1;
 	} else {
 		return 0;
@@ -370,6 +399,12 @@ struct if_call_list *look_up_call_in_template_map(char *name)
 		free(cur_decl); \
 } \
 
+#define FREE_BOOL_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_bool, tmp_bool) { \
+		HASH_DELETE(hh_ ## mn, mn ## _map, cur_bool); \
+		free(cur_bool->key); \
+		free(cur_bool); \
+} \
+
 void free_all_maps()
 {
 
@@ -392,6 +427,12 @@ void free_all_maps()
 	FREE_MAP(mod_layers);
 
 	FREE_MAP(ifs);
+
+	struct bool_hash_elem *cur_bool, *tmp_bool;
+
+	FREE_BOOL_MAP(transform);
+
+	FREE_BOOL_MAP(filetrans);
 
 	struct template_hash_elem *cur_template, *tmp_template;
 

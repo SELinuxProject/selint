@@ -235,7 +235,8 @@ int is_own_module_rule(const struct policy_node *node)
 	}
 	if (node->flavor == NODE_IF_CALL) {
 		// These should actually be patterns, not real calls
-		if (look_up_in_ifs_map(node->data.ic_data->name)) {
+		if (look_up_in_ifs_map(node->data.ic_data->name) &&
+		    !is_filetrans_if(node->data.ic_data->name)) {
 			return 0;
 		}
 	}

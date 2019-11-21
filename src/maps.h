@@ -16,7 +16,7 @@ struct hash_elem {
 struct bool_hash_elem {
 	char *key;
 	int val;
-	UT_hash_handle hh_transform;
+	UT_hash_handle hh_transform, hh_filetrans;
 };
 
 struct template_hash_elem {
@@ -46,6 +46,10 @@ char *look_up_in_ifs_map(char *if_name);
 void mark_transform_if(char *if_name);
 
 int is_transform_if(char *if_name);
+
+void mark_filetrans_if(char *if_name);
+
+int is_filetrans_if(char *if_name);
 
 // Just generate a template entry in the map, but don't save any calls
 // or decls to it.  This is helpful to know what is a template for certain
