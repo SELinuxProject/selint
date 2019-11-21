@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -410,13 +411,27 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	}
 
 	char *reason_str = NULL;
+	char *followup_str = NULL;
 	enum local_subsection other_lss;
+	char *node_section = NULL;
+	char *other_section = NULL;
 
 	switch (-reason) {
 	case ORDER_EQUAL:
 		return NULL; // Error
 	case ORDER_SECTION:
-		reason_str = "that is in a different section";
+		node_section = get_section(order_data->nodes[index].node);
+		other_section = get_section(order_data->nodes[nearest_index].node);
+		if (0 == strcmp("_declarations", node_section)) {
+			// This is the first section
+			reason_str = "that is not a declaration";
+		} else if (0 == strcmp("_declarations", other_section)) {
+			// The other section is the first section
+			reason_str = "that is a declaration";
+		} else {
+			reason_str = "that is in a different section";
+			asprintf(&followup_str, ".  (This node is in the section for %s rules and the other is in the section for %s rules", node_section, other_section);
+		}
 		break;
 	case ORDER_DECLARATION_SUBSECTION:
 		reason_str = "that is associated with a different declaration";
@@ -483,15 +498,20 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	                     // length of an unsigned int (10)
 	                     // plus a final period, a space
 	                     // and a null terminator
+	if (followup_str) {
+		str_len += strlen(followup_str);
+	}
 
 	char *ret = malloc(sizeof(char) * str_len);
 
 	snprintf(ret, str_len,
-	         "Line out of order.  It is %s line %u %s.",
+	         "Line out of order.  It is %s line %u %s%s.",
 	         before_after,
 	         order_data->nodes[nearest_index].node->lineno,
-	         reason_str);
+	         reason_str,
+	         followup_str);
 
+	free(followup_str);
 	return ret;
 }
 
