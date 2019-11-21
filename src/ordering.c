@@ -444,7 +444,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			reason_str = "that is a declaration";
 		} else {
 			reason_str = "that is in a different section";
-			asprintf(&followup_str, ".  (This node is in the section for %s rules and the other is in the section for %s rules", node_section, other_section);
+			asprintf(&followup_str, "  (This node is in the section for %s rules and the other is in the section for %s rules.)", node_section, other_section);
 		}
 		break;
 	case ORDER_DECLARATION_SUBSECTION:
@@ -518,12 +518,15 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 
 	char *ret = malloc(sizeof(char) * str_len);
 
-	snprintf(ret, str_len,
-	         "Line out of order.  It is %s line %u %s%s.",
-	         before_after,
-	         order_data->nodes[nearest_index].node->lineno,
-	         reason_str,
-	         followup_str);
+	size_t written = snprintf(ret, str_len,
+	                          "Line out of order.  It is %s line %u %s.",
+	                          before_after,
+	                          order_data->nodes[nearest_index].node->lineno,
+	                          reason_str);
+
+	if (followup_str) {
+		strncat(ret, followup_str, str_len - written);
+	}
 
 	free(followup_str);
 	return ret;
