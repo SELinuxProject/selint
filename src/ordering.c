@@ -6,6 +6,8 @@
 #include "ordering.h"
 #include "maps.h"
 
+int is_optional(const struct policy_node *node);
+
 struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *head)
 {
 	const struct policy_node *cur = head->next; // head is file.  Order the contents
@@ -164,10 +166,11 @@ char *get_section(const struct policy_node *node)
 			return "_non_ordered"; // empty block
 		}
 	case NODE_IF_CALL:
-		if (look_up_in_template_map(node->data.ic_data->name) ||
-		    is_transform_if(node->data.ic_data->name) ||
-		    0 == strcmp(node->data.ic_data->name, "gen_bool") ||
-		    0 == strcmp(node->data.ic_data->name, "gen_tunable")) {
+		if (!is_optional(node) &&
+		    (look_up_in_template_map(node->data.ic_data->name) ||
+		     is_transform_if(node->data.ic_data->name) ||
+		     0 == strcmp(node->data.ic_data->name, "gen_bool") ||
+		     0 == strcmp(node->data.ic_data->name, "gen_tunable"))) {
 			return "_declarations";
 		} else {
 			return node->data.ic_data->args->string;
@@ -213,7 +216,8 @@ float get_avg_line_by_name(char *section_name, struct section_data *sections)
 
 int is_self_rule(const struct policy_node *node)
 {
-	return node->flavor == NODE_AV_RULE &&
+	return !is_optional(node) &&
+	       node->flavor == NODE_AV_RULE &&
 	       node->data.av_data &&
 	       node->data.av_data->targets &&
 	       0 == strcmp(node->data.av_data->targets->string, "self");
@@ -225,6 +229,10 @@ int is_own_module_rule(const struct policy_node *node)
 	    node->flavor != NODE_IF_CALL) {
 		return 0;
 	}
+	if (is_optional(node)) {
+		return 0;
+	}
+
 	char *domain_name = get_section(node);
 	if (!domain_name) {
 		return 0;
