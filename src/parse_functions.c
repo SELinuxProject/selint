@@ -420,6 +420,19 @@ enum selint_error end_optional_else(struct policy_node **cur)
 	return end_block(cur, NODE_OPTIONAL_ELSE);
 }
 
+enum selint_error begin_tunable_policy(struct policy_node **cur,
+                                       unsigned int lineno)
+{
+
+	return begin_block(cur, NODE_TUNABLE_POLICY, (char *)NULL, lineno);
+}
+
+enum selint_error end_tunable_policy(struct policy_node **cur)
+{
+
+	return end_block(cur, NODE_TUNABLE_POLICY);
+}
+
 enum selint_error begin_interface_def(struct policy_node **cur,
                                       enum node_flavor flavor, char *name,
                                       unsigned int lineno)

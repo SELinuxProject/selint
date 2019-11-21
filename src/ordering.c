@@ -156,6 +156,7 @@ char *get_section(const struct policy_node *node)
 	// complicated than this
 	case NODE_OPTIONAL_POLICY:
 	case NODE_OPTIONAL_ELSE:
+	case NODE_TUNABLE_POLICY:
 		return get_section(node->first_child);
 	case NODE_M4_ARG:
 		return "_non_ordered"; //TODO
@@ -560,6 +561,9 @@ int check_transform_interface_suffix(char *if_name)
 
 void free_ordering_metadata(struct ordering_metadata *to_free)
 {
+	if (to_free == NULL) {
+		return;
+	}
 	free_section_data(to_free->sections);
 	free(to_free);
 }
