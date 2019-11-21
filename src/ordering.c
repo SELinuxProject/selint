@@ -122,6 +122,11 @@ char *get_section(const struct policy_node *node)
 	case NODE_FC_FILE:
 		return NULL; // Should never happen
 	case NODE_AV_RULE:
+		if (node->data.av_data->perms &&
+		    (str_in_sl("associate", node->data.av_data->perms) ||
+		     str_in_sl("mounton", node->data.av_data->perms))) {
+			return "_non_ordered"; // Can be transform or with rules
+		}
 		// The case of multiple source types is weird.  For now
 		// just using the first one seems fine.
 		return node->data.av_data->sources->string;
@@ -159,12 +164,9 @@ char *get_section(const struct policy_node *node)
 		}
 	case NODE_IF_CALL:
 		if (look_up_in_template_map(node->data.ic_data->name) ||
-		    is_transform_if(node->data.ic_data->name)) {
-			// This only looks up templates that actually declare or
-			// call something.  This would result in an ordering issue
-			// if a template that doesn't do either of those is called.
-			// You shouldn't do that, but it should be reported more
-			// sanely.  TODO: Look up whether its a template in general
+		    is_transform_if(node->data.ic_data->name) ||
+		    0 == strcmp(node->data.ic_data->name, "gen_bool") ||
+		    0 == strcmp(node->data.ic_data->name, "gen_tunable")) {
 			return "_declarations";
 		} else {
 			return node->data.ic_data->args->string;
@@ -316,6 +318,12 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 	if (first_section_name == NULL || second_section_name == NULL) {
 		return ORDERING_ERROR;
 	}
+
+	if (0 == strcmp(first_section_name, "_non_ordered") ||
+	    0 == strcmp(second_section_name, "_non_ordered")) {
+		return ORDER_EQUAL;
+	}
+
 	if (0 != strcmp(first_section_name, second_section_name)) {
 		if ((get_avg_line_by_name(first_section_name, ordering_data->sections) >
 		     get_avg_line_by_name(second_section_name, ordering_data->sections)) ||
@@ -485,6 +493,22 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	         reason_str);
 
 	return ret;
+}
+
+int check_transform_interface_suffix(char *if_name)
+{
+	char *suffix = strrchr(if_name, '_');
+	if (suffix &&
+	    (0 == strcmp(suffix, "_type") ||
+	     0 == strcmp(suffix, "_file") ||
+	     0 == strcmp(suffix, "_domain") ||
+	     0 == strcmp(suffix, "_boolean") ||
+	     0 == strcmp(suffix, "_content") ||
+	     0 == strcmp(suffix, "_exemption"))) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 void free_ordering_metadata(struct ordering_metadata *to_free)

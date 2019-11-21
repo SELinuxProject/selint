@@ -5,6 +5,7 @@
 #include "selint_error.h"
 #include "tree.h"
 #include "template.h"
+#include "ordering.h"
 
 char *module_name = NULL;
 char *parsing_filename = NULL;
@@ -204,6 +205,13 @@ enum selint_error insert_av_rule(struct policy_node **cur,
 
 	union node_data nd;
 	nd.av_data = av_data;
+
+	if ((*cur)->parent && (*cur)->parent->flavor == NODE_IF_DEF &&
+	    check_transform_interface_suffix((*cur)->parent->data.str) &&
+	    (str_in_sl("associate", perms) ||
+	     str_in_sl("mounton", perms))) {
+		mark_transform_if((*cur)->parent->data.str);
+	}
 
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_AV_RULE,
@@ -510,9 +518,7 @@ enum selint_error insert_type_attribute(struct policy_node **cur, char *type, st
 
 	if ((*cur)->parent &&
 	    (*cur)->parent->flavor == NODE_IF_DEF &&
-	    (!(*cur)->prev ||
-	     (*cur)->prev->flavor == NODE_REQUIRE ||
-	     (*cur)->prev->flavor == NODE_GEN_REQ)) {
+	    check_transform_interface_suffix((*cur)->parent->data.str)) {
 		mark_transform_if((*cur)->parent->data.str);
 	}
 

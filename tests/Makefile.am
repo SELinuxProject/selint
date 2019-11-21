@@ -27,7 +27,7 @@ STARTUP_OBJS=$(top_builddir)/src/startup.o ${MAPS_OBJS}
 TEMPLATE_HEADS=$(top_builddir)/src/template.h ${MAPS_HEADS}
 TEMPLATE_OBJS=$(top_builddir)/src/template.o ${MAPS_OBJS}
 PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${TEMPLATE_HEADS}
-PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TEMPLATE_OBJS}
+PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TEMPLATE_OBJS} $(top_builddir)/src/ordering.o
 PARSING_HEADS=$(top_builddir)/src/parse.h ${PARSE_FUNCTIONS_HEADS} ${CHECK_HOOKS_HEADS}
 PARSING_OBJS=$(top_builddir)/src/parse.o $(top_builddir)/src/lex.o ${PARSE_FUNCTIONS_OBJS} $(top_builddir)/src/check_hooks.o
 PARSE_FC_HEADS = $(top_builddir)/src/parse_fc.h $(TREE_HEADS)
@@ -41,7 +41,7 @@ IF_CHECKS_OBJS=$(top_builddir)/src/if_checks.o ${CHECK_HOOKS_OBJS}
 TE_CHECKS_HEADS=$(top_builddir)/src/te_checks.h ${CHECK_HOOKS_HEADS} $(top_builddir)/src/ordering.h
 TE_CHECKS_OBJS=$(top_builddir)/src/te_checks.o ${CHECK_HOOKS_OBJS} $(top_builddir)/src/ordering.o
 RUNNER_HEADS=$(top_builddir)/src/runner.h ${PARSING_HEADS} ${UTIL_HEADS} $(top_builddir)/src/parse_fc.h $(top_builddir)/src/*_checks.h
-RUNNER_OBJS=$(top_builddir)/src/runner.o ${PARSING_OBJS} ${UTIL_OBJS} $(top_builddir)/src/parse_fc.o $(top_builddir)/src/*_checks.o $(top_builddir)/src/ordering.o $(top_builddir)/src/startup.o
+RUNNER_OBJS=$(top_builddir)/src/runner.o ${PARSING_OBJS} ${UTIL_OBJS} $(top_builddir)/src/parse_fc.o $(top_builddir)/src/*_checks.o $(top_builddir)/src/startup.o
 ORDERING_HEADS=$(top_builddir)/src/ordering.h ${MAPS_HEADS}
 ORDERING_OBJS=$(top_builddir)/src/ordering.o ${MAPS_OBJS}
 
