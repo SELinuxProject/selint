@@ -17,6 +17,7 @@
 int yydebug = 0;
 
 extern int yyparse();
+extern int yylex_destroy();
 
 extern int verbose_flag;
 
@@ -329,6 +330,8 @@ int main(int argc, char **argv)
 		exit_code = EX_SOFTWARE;
 	}
 
+	yylex_destroy();
+
 	if (config_enabled_checks) {
 		free_string_list(config_enabled_checks);
 	}
@@ -343,7 +346,6 @@ int main(int argc, char **argv)
 	}
 
 	free_checks(ck);
-
 	free_file_list(te_files);
 	free_file_list(if_files);
 	free_file_list(fc_files);
