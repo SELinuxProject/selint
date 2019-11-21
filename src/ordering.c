@@ -276,6 +276,18 @@ int is_system_layer_if_call(const struct policy_node *node)
 	return 0; //TODO
 }
 
+int is_optional(const struct policy_node *node)
+{
+	while (node->parent) {
+		if (node->parent->flavor == NODE_OPTIONAL_POLICY ||
+		    node->parent->flavor == NODE_OPTIONAL_ELSE) {
+			return 1;
+		}
+		node = node->parent;
+	}
+	return 0;
+}
+
 enum local_subsection get_local_subsection(const struct policy_node *node)
 {
 	if (!node) {
@@ -289,6 +301,8 @@ enum local_subsection get_local_subsection(const struct policy_node *node)
 		return LSS_KERNEL;
 	} else if (is_system_layer_if_call(node)) {
 		return LSS_SYSTEM;
+	} else if (is_optional(node)) {
+		return LSS_OPTIONAL;
 	} else if (node->flavor == NODE_IF_CALL) {
 		return LSS_OTHER;
 	} else {
