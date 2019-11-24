@@ -206,7 +206,7 @@ enum selint_error insert_av_rule(struct policy_node **cur,
 	union node_data nd;
 	nd.av_data = av_data;
 
-	if ((*cur)->parent && (*cur)->parent->flavor == NODE_IF_DEF &&
+	if ((*cur)->parent && (*cur)->parent->flavor == NODE_INTERFACE_DEF &&
 	    check_transform_interface_suffix((*cur)->parent->data.str) &&
 	    (str_in_sl("associate", perms) ||
 	     str_in_sl("mounton", perms))) {
@@ -275,7 +275,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 
 	if (!str_in_sl("process", object_classes) &&
 	    (*cur)->parent &&
-	    (*cur)->parent->flavor == NODE_IF_DEF) {
+	    (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
 		mark_filetrans_if((*cur)->parent->data.str);
 	}
 
@@ -315,7 +315,7 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 
 	if (0 == strcmp(if_name, "filetrans_pattern") &&
 	    (*cur)->parent &&
-	    (*cur)->parent->flavor == NODE_IF_DEF) {
+	    (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
 		mark_filetrans_if((*cur)->parent->data.str);
 	}
 
@@ -439,7 +439,7 @@ enum selint_error begin_interface_def(struct policy_node **cur,
 {
 
 	switch (flavor) {
-	case NODE_IF_DEF:
+	case NODE_INTERFACE_DEF:
 		break;
 	case NODE_TEMP_DEF:
 		insert_template_into_template_map(name);
@@ -456,7 +456,7 @@ enum selint_error begin_interface_def(struct policy_node **cur,
 enum selint_error end_interface_def(struct policy_node **cur)
 {
 
-	if (end_block(cur, NODE_IF_DEF) == SELINT_NOT_IN_BLOCK) {
+	if (end_block(cur, NODE_INTERFACE_DEF) == SELINT_NOT_IN_BLOCK) {
 		return end_block(cur, NODE_TEMP_DEF);
 	} else {
 		return SELINT_SUCCESS;
@@ -486,6 +486,16 @@ enum selint_error end_require(struct policy_node **cur)
 {
 
 	return end_block(cur, NODE_REQUIRE);
+}
+
+enum selint_error begin_ifdef(struct policy_node **cur, unsigned int lineno)
+{
+	return begin_block(cur, NODE_IFDEF, (char *)NULL, lineno);
+}
+
+enum selint_error end_ifdef(struct policy_node **cur)
+{
+	return end_block(cur, NODE_IFDEF);
 }
 
 enum selint_error save_command(struct policy_node *cur, char *comm)
@@ -530,7 +540,7 @@ enum selint_error insert_type_attribute(struct policy_node **cur, char *type, st
 	*cur = (*cur)->next;
 
 	if ((*cur)->parent &&
-	    (*cur)->parent->flavor == NODE_IF_DEF &&
+	    (*cur)->parent->flavor == NODE_INTERFACE_DEF &&
 	    check_transform_interface_suffix((*cur)->parent->data.str)) {
 		mark_transform_if((*cur)->parent->data.str);
 	}

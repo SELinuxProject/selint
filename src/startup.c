@@ -118,7 +118,7 @@ static int mark_transform_interfaces_one_file(struct policy_node *ast) {
 	int marked_transform = 0;
 	struct policy_node *cur = ast;
 	while (cur) {
-		if (cur->flavor == NODE_IF_DEF &&
+		if (cur->flavor == NODE_INTERFACE_DEF &&
 		    cur->first_child &&
 		    !is_transform_if(cur->data.str)) {
 			struct policy_node *child = cur->first_child;

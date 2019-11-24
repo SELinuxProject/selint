@@ -187,7 +187,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 	   NODE_OPTIONAL_ELSE,
 	   NODE_M4_ARG,
 	   NODE_START_BLOCK,
-	   NODE_IF_DEF,
+	   NODE_INTERFACE_DEF,
 	   NODE_TEMP_DEF,
 	   NODE_REQUIRE,
 	   NODE_GEN_REQ,

@@ -13,7 +13,7 @@ struct check_result *check_interface_definitions_have_comment(const struct
                                                               const struct
                                                               policy_node *node)
 {
-	if (node->flavor != NODE_IF_DEF && node->flavor != NODE_TEMP_DEF) {
+	if (node->flavor != NODE_INTERFACE_DEF && node->flavor != NODE_TEMP_DEF) {
 		return alloc_internal_error(
 			"Interface comment check called on non interface definition entry");
 	}
@@ -43,7 +43,7 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 	}
 
 	while (cur) {
-		if (cur->flavor == NODE_IF_DEF || cur->flavor == NODE_TEMP_DEF) {
+		if (cur->flavor == NODE_INTERFACE_DEF || cur->flavor == NODE_TEMP_DEF) {
 			break;
 		}
 		cur = cur->parent;
@@ -137,7 +137,7 @@ struct check_result *check_type_required_but_not_used_in_if(const struct
 
 	const struct policy_node *cur = node;
 	const struct policy_node *req_block_node = NULL;
-	while (cur->parent && cur->flavor != NODE_IF_DEF
+	while (cur->parent && cur->flavor != NODE_INTERFACE_DEF
 	       && cur->flavor != NODE_TEMP_DEF) {
 		if (cur->flavor == NODE_GEN_REQ || cur->flavor == NODE_REQUIRE) {
 			req_block_node = cur;
@@ -145,7 +145,7 @@ struct check_result *check_type_required_but_not_used_in_if(const struct
 		cur = cur->parent;
 	}
 
-	if ((cur->flavor != NODE_IF_DEF && cur->flavor != NODE_TEMP_DEF)
+	if ((cur->flavor != NODE_INTERFACE_DEF && cur->flavor != NODE_TEMP_DEF)
 	    || !req_block_node) {
 		// This check only applies to nodes in require blocks in interfaces
 		return NULL;

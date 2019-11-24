@@ -103,7 +103,7 @@ START_TEST (test_parse_basic_if) {
 
 	cur = cur->next;
 
-	ck_assert_int_eq(NODE_IF_DEF, cur->flavor);
+	ck_assert_int_eq(NODE_INTERFACE_DEF, cur->flavor);
 	ck_assert_ptr_nonnull(cur->first_child);
 	ck_assert_str_eq("basic_domtrans", cur->data.str);
 

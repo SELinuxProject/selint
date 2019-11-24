@@ -101,7 +101,7 @@ struct checks *register_checks(char level,
 			          check_te_order);
 		}
 		if (CHECK_ENABLED("C-004")) {
-			add_check(NODE_IF_DEF, ck, "C-004",
+			add_check(NODE_INTERFACE_DEF, ck, "C-004",
 			          check_interface_definitions_have_comment);
 			add_check(NODE_TEMP_DEF, ck, "C-004",
 			          check_interface_definitions_have_comment);

@@ -158,6 +158,7 @@ char *get_section(const struct policy_node *node)
 	case NODE_OPTIONAL_POLICY:
 	case NODE_OPTIONAL_ELSE:
 	case NODE_TUNABLE_POLICY:
+	case NODE_IFDEF:
 		return get_section(node->first_child);
 	case NODE_M4_ARG:
 		return "_non_ordered"; //TODO
@@ -178,7 +179,7 @@ char *get_section(const struct policy_node *node)
 			return node->data.ic_data->args->string;
 		}
 	case NODE_TEMP_DEF:
-	case NODE_IF_DEF:
+	case NODE_INTERFACE_DEF:
 		return NULL;           // if files only
 	case NODE_REQUIRE:
 	case NODE_GEN_REQ:

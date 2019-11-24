@@ -5,7 +5,7 @@
 
 /*********************************************
 * Check to make sure all interfaces and templates have a comment above them
-* Called on NODE_IF_DEF and NODE_TEMP_DEF nodes.
+* Called on NODE_INTERFACE_DEF and NODE_TEMP_DEF nodes.
 * data - metadata about the file
 * node - the node to check
 * returns NULL if passed or check_result for issue C-004

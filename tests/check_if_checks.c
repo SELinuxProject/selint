@@ -14,7 +14,7 @@ START_TEST (test_check_interface_defs_have_comment) {
 	head->next = calloc(1, sizeof(struct policy_node));
 	head->next->prev = head;
 
-	head->next->flavor = NODE_IF_DEF;
+	head->next->flavor = NODE_INTERFACE_DEF;
 
 	struct check_result *res = check_interface_definitions_have_comment(NULL, head->next);
 	ck_assert_ptr_null(res);
@@ -49,7 +49,7 @@ END_TEST
 START_TEST(test_check_type_used_but_not_required_in_if) {
 
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
-	head->flavor = NODE_IF_DEF;
+	head->flavor = NODE_INTERFACE_DEF;
 
 	struct policy_node *cur = head->first_child = calloc(1, sizeof(struct policy_node));
 
@@ -111,7 +111,7 @@ END_TEST
 
 START_TEST (test_check_type_required_but_not_used_in_if) {
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
-	head->flavor = NODE_IF_DEF;
+	head->flavor = NODE_INTERFACE_DEF;
 
 	struct policy_node *cur = head->first_child = calloc(1, sizeof(struct policy_node));
 
@@ -170,7 +170,7 @@ START_TEST (test_system_r_exception) {
 	insert_into_decl_map("system_r", "test", DECL_ROLE);
 
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
-	head->flavor = NODE_IF_DEF;
+	head->flavor = NODE_INTERFACE_DEF;
 
 	struct policy_node *cur = head->first_child = calloc(1, sizeof(struct policy_node));
 

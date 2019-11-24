@@ -42,7 +42,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 		ALLOC_NODE(decl_node_checks);
 		break;
 
-	case NODE_IF_DEF:
+	case NODE_INTERFACE_DEF:
 		ALLOC_NODE(if_def_node_checks);
 		break;
 
@@ -97,7 +97,7 @@ enum selint_error call_checks(struct checks *ck, struct check_data *data,
 		return call_checks_for_node_type(ck->tt_rule_node_checks, data, node);
 	case NODE_DECL:
 		return call_checks_for_node_type(ck->decl_node_checks, data, node);
-	case NODE_IF_DEF:
+	case NODE_INTERFACE_DEF:
 		return call_checks_for_node_type(ck->if_def_node_checks, data, node);
 	case NODE_TEMP_DEF:
 		return call_checks_for_node_type(ck->temp_def_node_checks, data, node);

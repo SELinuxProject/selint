@@ -366,13 +366,13 @@ START_TEST (test_interface_def) {
 
 	set_current_module_name("test");
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "foo_read_conf", 1234));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_INTERFACE_DEF, "foo_read_conf", 1234));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_nonnull(cur->parent);
 	ck_assert_ptr_eq(cur->parent->prev, head);
 	ck_assert_int_eq(cur->flavor, NODE_START_BLOCK);
-	ck_assert_int_eq(cur->parent->flavor, NODE_IF_DEF);
+	ck_assert_int_eq(cur->parent->flavor, NODE_INTERFACE_DEF);
 	ck_assert_ptr_eq(cur->parent->first_child, cur);
 	ck_assert_str_eq(cur->parent->data.str, "foo_read_conf");
 	ck_assert_int_eq(cur->lineno, 1234);
@@ -388,7 +388,7 @@ START_TEST (test_interface_def) {
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_eq(cur->prev, head);
-	ck_assert_int_eq(cur->flavor, NODE_IF_DEF);
+	ck_assert_int_eq(cur->flavor, NODE_INTERFACE_DEF);
 	ck_assert_int_eq(cur->lineno, 1234);
 	ck_assert_ptr_nonnull(cur->first_child);
 	ck_assert_int_eq(cur->first_child->lineno, 1234);
@@ -419,7 +419,7 @@ START_TEST (test_wrong_block_end) {
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_IF_DEF, "sample_interface", 1235));
+	ck_assert_int_eq(SELINT_SUCCESS, begin_interface_def(&cur, NODE_INTERFACE_DEF, "sample_interface", 1235));
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
 

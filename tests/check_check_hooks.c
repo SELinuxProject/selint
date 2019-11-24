@@ -41,7 +41,7 @@ START_TEST (test_add_check) {
 	ck_assert_ptr_null(ck->error_node_checks);
 
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_DECL, ck, "E-999", example_check));
-	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_DEF, ck, "E-999", example_check));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_INTERFACE_DEF, ck, "E-999", example_check));
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TEMP_DEF, ck, "E-999", example_check));
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_CALL, ck, "E-999", example_check));
 

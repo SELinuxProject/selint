@@ -455,7 +455,8 @@ m4_call:
 	;
 
 ifdef:
-	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA m4_args CLOSE_PAREN { free($4); }
+	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, yylineno); free($4);}
+	m4_args CLOSE_PAREN { end_ifdef(&cur); }
 	;
 
 if_or_ifn:
@@ -747,7 +748,7 @@ end_interface:
 	;
 
 if_keyword:
-	INTERFACE { $$ = NODE_IF_DEF; }
+	INTERFACE { $$ = NODE_INTERFACE_DEF; }
 	|
 	TEMPLATE { $$ = NODE_TEMP_DEF; }
 	;
