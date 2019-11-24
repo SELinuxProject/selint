@@ -60,7 +60,9 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 	while (cur && cur != node
 	       && (cur->flavor != NODE_GEN_REQ
 	           && cur->flavor != NODE_REQUIRE)) {
-		cur = cur->next;
+		cur = dfs_next(cur); // The normal case is that the gen_require block
+		                     // is at the top level, but it could be nested,
+		                     // for example in an ifdef
 	}
 
 	struct string_list *types_required;
