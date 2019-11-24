@@ -561,6 +561,11 @@ int check_transform_interface_suffix(char *if_name)
 	    (0 == strcmp(suffix, "_type") ||
 	     0 == strcmp(suffix, "_file") ||
 	     0 == strcmp(suffix, "_domain") ||
+	     0 == strcmp(suffix, "_node") ||
+	     // Next three are found in mta module
+	     0 == strcmp(suffix, "_agent") ||
+	     0 == strcmp(suffix, "_delivery") ||
+	     0 == strcmp(suffix, "_sender") ||
 	     0 == strcmp(suffix, "_boolean") ||
 	     0 == strcmp(suffix, "_content") ||
 	     0 == strcmp(suffix, "_constrained") ||
