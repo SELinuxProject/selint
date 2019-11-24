@@ -89,6 +89,8 @@ struct checks *register_checks(char level,
 		if (CHECK_ENABLED("C-001")) {
 			add_check(NODE_TE_FILE, ck, "C-001",
 			          check_te_order);
+			add_check(NODE_DECL, ck, "C-001",
+			          check_te_order);
 			add_check(NODE_AV_RULE, ck, "C-001",
 			          check_te_order);
 			add_check(NODE_IF_CALL, ck, "C-001",

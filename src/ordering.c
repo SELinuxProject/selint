@@ -349,9 +349,10 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 	}
 
 	if (0 != strcmp(first_section_name, second_section_name)) {
-		if ((get_avg_line_by_name(first_section_name, ordering_data->sections) >
-		     get_avg_line_by_name(second_section_name, ordering_data->sections)) ||
-		    0 == strcmp(second_section_name, "_declarations")) {
+		if (0 != strcmp(first_section_name, "_declarations") &&
+		    (0 == strcmp(second_section_name, "_declarations") ||
+		     (get_avg_line_by_name(first_section_name, ordering_data->sections) >
+		      get_avg_line_by_name(second_section_name, ordering_data->sections)))) {
 			return -ORDER_SECTION;
 		} else {
 			return ORDER_SECTION;
