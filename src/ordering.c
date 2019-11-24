@@ -306,12 +306,25 @@ int is_tunable(const struct policy_node *node)
 	return 0;
 }
 
+int is_in_ifdef(const struct policy_node *node)
+{
+	while (node->parent) {
+		if (node->parent->flavor == NODE_IFDEF) {
+			return 1;
+		}
+		node = node->parent;
+	}
+	return 0;
+}
+
 enum local_subsection get_local_subsection(const struct policy_node *node)
 {
 	if (!node) {
 		return LSS_UNKNOWN;
 	}
-	if (is_optional(node)) {
+	if (is_in_ifdef(node)) {
+		return LSS_BUILD_OPTION;
+	} else if (is_optional(node)) {
 		return LSS_OPTIONAL;
 	} else if (is_tunable(node)) {
 		return LSS_TUNABLE;
