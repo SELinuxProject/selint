@@ -412,7 +412,8 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	unsigned int nearest_index = 0;
 	enum order_difference_reason reason;
 	while (nearest_index == 0) {
-		if (distance < index) {
+		if (distance < index &&
+		    order_data->nodes[index-distance].in_order) {
 			reason = compare_nodes_refpolicy(order_data,
 							 order_data->nodes[index-distance].node,
 							 order_data->nodes[index].node);
@@ -421,7 +422,8 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 				break;
 			}
 		}
-		if (index + distance < order_data->order_node_len) {
+		if (index + distance < order_data->order_node_len &&
+		    order_data->nodes[index+distance].in_order) {
 			reason = compare_nodes_refpolicy(order_data,
 	                                                 order_data->nodes[index].node,
 	                                                 order_data->nodes[index+distance].node);
