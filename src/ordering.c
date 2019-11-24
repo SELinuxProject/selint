@@ -7,6 +7,7 @@
 #include "maps.h"
 
 int is_optional(const struct policy_node *node);
+int is_tunable(const struct policy_node *node);
 
 struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *head)
 {
@@ -217,8 +218,7 @@ float get_avg_line_by_name(char *section_name, struct section_data *sections)
 
 int is_self_rule(const struct policy_node *node)
 {
-	return !is_optional(node) &&
-	       node->flavor == NODE_AV_RULE &&
+	return node->flavor == NODE_AV_RULE &&
 	       node->data.av_data &&
 	       node->data.av_data->targets &&
 	       0 == strcmp(node->data.av_data->targets->string, "self");
@@ -228,9 +228,6 @@ int is_own_module_rule(const struct policy_node *node)
 {
 	if (node->flavor != NODE_AV_RULE &&
 	    node->flavor != NODE_IF_CALL) {
-		return 0;
-	}
-	if (is_optional(node)) {
 		return 0;
 	}
 
@@ -297,12 +294,27 @@ int is_optional(const struct policy_node *node)
 	return 0;
 }
 
+int is_tunable(const struct policy_node *node)
+{
+	while (node->parent) {
+		if (node->parent->flavor == NODE_TUNABLE_POLICY) {
+			return 1;
+		}
+		node = node->parent;
+	}
+	return 0;
+}
+
 enum local_subsection get_local_subsection(const struct policy_node *node)
 {
 	if (!node) {
 		return LSS_UNKNOWN;
 	}
-	if (is_self_rule(node)) {
+	if (is_optional(node)) {
+		return LSS_OPTIONAL;
+	} else if (is_tunable(node)) {
+		return LSS_TUNABLE;
+	} else if (is_self_rule(node)) {
 		return LSS_SELF;
 	} else if (is_own_module_rule(node)) {
 		return LSS_OWN;
@@ -310,8 +322,6 @@ enum local_subsection get_local_subsection(const struct policy_node *node)
 		return LSS_KERNEL;
 	} else if (is_system_layer_if_call(node)) {
 		return LSS_SYSTEM;
-	} else if (is_optional(node)) {
-		return LSS_OPTIONAL;
 	} else if (node->flavor == NODE_IF_CALL) {
 		return LSS_OTHER;
 	} else {
