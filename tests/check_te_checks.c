@@ -1,9 +1,60 @@
 #include <check.h>
 #include <stdlib.h>
 
+#include "test_utils.h"
+
 #include "../src/te_checks.h"
 #include "../src/check_hooks.h"
 #include "../src/maps.h"
+
+START_TEST (test_check_te_order) {
+	struct check_data *cd = calloc(1, sizeof(struct check_data));
+	cd->flavor = NODE_TE_FILE;
+
+	struct policy_node *head = calloc(1, sizeof(struct policy_node));
+	struct policy_node *cur = head;
+
+	head->flavor = NODE_TE_FILE;
+	head->next = calloc(1, sizeof(struct policy_node));
+	cur = head->next;
+
+	cur->flavor = NODE_DECL;
+	cur->data.d_data = calloc(1, sizeof(struct declaration_data));
+	cur->data.d_data->flavor = DECL_TYPE;
+	cur->data.d_data->name = strdup("foo_t");
+
+	cur->next = calloc(1, sizeof(struct policy_node));
+	cur = cur->next;
+	cur->flavor = NODE_IF_CALL;
+	cur->data.ic_data = calloc(1, sizeof(struct if_call_data));
+	cur->data.ic_data->name = strdup("domain_type");
+	cur->data.ic_data->args = calloc(1, sizeof(struct string_list));
+	cur->data.ic_data->args->string = strdup("foo_t");
+	mark_transform_if("domain_type");
+
+	cur->next = calloc(1, sizeof(struct policy_node));
+	cur = cur->next;
+	cur->flavor = NODE_AV_RULE;
+	cur->data.av_data = make_example_av_rule();
+
+	cur = head;
+
+	while (cur) {
+		ck_assert_ptr_null(check_te_order(cd, cur));
+		cur = dfs_next(cur);
+	}
+
+	struct policy_node *cleanup = calloc(1, sizeof(struct policy_node));
+	cleanup->flavor = NODE_CLEANUP;
+	ck_assert_ptr_null(check_te_order(cd, cleanup));
+
+	free(cd);
+	free_policy_node(head);
+	free_policy_node(cleanup);
+	free_all_maps();
+
+}
+END_TEST
 
 START_TEST (test_check_require_block) {
 	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
@@ -98,6 +149,7 @@ Suite *te_checks_suite(void) {
 
 	tc_core = tcase_create("Core");
 
+	tcase_add_test(tc_core, test_check_te_order);
 	tcase_add_test(tc_core, test_check_require_block);
 	tcase_add_test(tc_core, test_check_module_if_call_in_optional);
 	suite_add_tcase(s, tc_core);
