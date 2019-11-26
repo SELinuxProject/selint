@@ -414,6 +414,7 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 				// TODO: same subsection
 			}
 		}
+		return ORDER_EQUAL;
 	}
 
 	// Local policy rules sections
