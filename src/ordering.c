@@ -8,6 +8,7 @@
 
 int is_optional(const struct policy_node *node);
 int is_tunable(const struct policy_node *node);
+int is_in_ifdef(const struct policy_node *node);
 
 struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *head)
 {
@@ -273,14 +274,27 @@ int is_own_module_rule(const struct policy_node *node)
 	return 1;
 }
 
+int check_call_layer(const struct policy_node *node, char *layer_to_check)
+{
+	if (node->flavor != NODE_IF_CALL) {
+		return 0;
+	}
+	char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
+	if (!mod_name) {
+		// not an actual interface
+		return 0;
+	}
+	return (0 == strcmp(mod_name, layer_to_check));
+}
+
 int is_kernel_layer_if_call(const struct policy_node *node)
 {
-	return 0; //TODO
+	return check_call_layer(node, "kernel");
 }
 
 int is_system_layer_if_call(const struct policy_node *node)
 {
-	return 0; //TODO
+	return check_call_layer(node, "system");
 }
 
 int is_optional(const struct policy_node *node)

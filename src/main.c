@@ -252,6 +252,7 @@ int main(int argc, char **argv)
 			file_list_push_back(te_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
+			insert_into_mod_layers_map(file->fts_name, file->fts_parent->fts_name);
 		} else if (!strcmp(suffix, ".if")) {
 			file_list_push_back(if_files,
 			                    make_policy_file(file->fts_path,
