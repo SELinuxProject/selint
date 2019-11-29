@@ -48,6 +48,10 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 
 	while (cur) {
 		// Save the node in the array
+		if (cur->flavor == NODE_START_BLOCK) {
+			cur = dfs_next(cur);
+			continue;
+		}
 		nodes[index].node = cur;
 
 		// binary search sequences so far
@@ -304,9 +308,9 @@ int is_system_layer_if_call(const struct policy_node *node)
 
 int is_optional(const struct policy_node *node)
 {
-	while (node->parent) {
-		if (node->parent->flavor == NODE_OPTIONAL_POLICY ||
-		    node->parent->flavor == NODE_OPTIONAL_ELSE) {
+	while (node) {
+		if (node->flavor == NODE_OPTIONAL_POLICY ||
+		    node->flavor == NODE_OPTIONAL_ELSE) {
 			return 1;
 		}
 		node = node->parent;
@@ -316,8 +320,8 @@ int is_optional(const struct policy_node *node)
 
 int is_tunable(const struct policy_node *node)
 {
-	while (node->parent) {
-		if (node->parent->flavor == NODE_TUNABLE_POLICY) {
+	while (node) {
+		if (node->flavor == NODE_TUNABLE_POLICY) {
 			return 1;
 		}
 		node = node->parent;
@@ -327,8 +331,8 @@ int is_tunable(const struct policy_node *node)
 
 int is_in_ifdef(const struct policy_node *node)
 {
-	while (node->parent) {
-		if (node->parent->flavor == NODE_IFDEF) {
+	while (node) {
+		if (node->flavor == NODE_IFDEF) {
 			return 1;
 		}
 		node = node->parent;
