@@ -413,7 +413,7 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 			if (first->data.d_data->flavor != second->data.d_data->flavor) {
 				CHECK_FLAVOR_ORDERING(d_data, DECL_BOOL, ORDER_DECLARATION_SUBSECTION);
 				CHECK_FLAVOR_ORDERING(d_data, DECL_ATTRIBUTE, ORDER_DECLARATION_SUBSECTION);
-				CHECK_FLAVOR_ORDERING(d_data, DECL_TYPE, ORDER_DECLARATION_SUBSECTION);
+				// Types and roles should intersperse
 			} else {
 				// TODO: same subsection
 			}
@@ -508,7 +508,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		}
 		break;
 	case ORDER_DECLARATION_SUBSECTION:
-		reason_str = "that is associated with a different declaration";
+		reason_str = "that is associated with a different sort of declaration";
 		break;
 	case ORDER_LAYERS:
 		// TODO
