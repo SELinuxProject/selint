@@ -252,14 +252,14 @@ int main(int argc, char **argv)
 			file_list_push_back(te_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
-			char *mod_name = strdup(file->fts_name);
-			mod_name[file->fts_namelen - 3] = '\0';
-			insert_into_mod_layers_map(mod_name, file->fts_parent->fts_name);
-			free(mod_name);
 		} else if (!strcmp(suffix, ".if")) {
 			file_list_push_back(if_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
+			char *mod_name = strdup(file->fts_name);
+			mod_name[file->fts_namelen - 3] = '\0';
+			insert_into_mod_layers_map(mod_name, file->fts_parent->fts_name);
+			free(mod_name);
 		} else if (!strcmp(suffix, ".fc")) {
 			file_list_push_back(fc_files,
 			                    make_policy_file(file->fts_path,
