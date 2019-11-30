@@ -290,7 +290,6 @@ int check_call_layer(const struct policy_node *node, char *layer_to_check)
 	}
 	char *layer_name = look_up_in_mod_layers_map(mod_name);
 	if (!layer_name) {
-		printf("No layer found for %s\n", mod_name);
 		return 0;
 	}
 	return (0 == strcmp(layer_name, layer_to_check));
