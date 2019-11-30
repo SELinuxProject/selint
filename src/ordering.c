@@ -88,6 +88,17 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 		nodes[index].in_order = 1;
 		index = nodes[index].seq_prev;
 	}
+
+#ifdef DEBUG_INFO
+	for (int i=0; i< ordering->order_node_len; i++) {
+		if(nodes[i].node) {
+			printf("Line: %d, Section %s: LSS: %d\n",
+			       nodes[i].node->lineno,
+			       get_section(nodes[i].node),
+			       get_local_subsection(nodes[i].node));
+		}
+	}
+#endif
 }
 
 enum selint_error add_section_info(struct section_data *sections,
