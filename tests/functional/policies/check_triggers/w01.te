@@ -1,0 +1,5 @@
+policy_module(w01, 1.0)
+
+type bar_t;
+
+allow foo_t bar_t:file read;

@@ -88,6 +88,10 @@ test_one_check() {
 	test_one_check "S-002" "s02*"
 }
 
+@test "W-001" {
+	test_one_check "W-001" "w01*"
+}
+
 @test "W-002" {
 	test_one_check "W-002" "w02.*"
 	test_one_check "W-002" "w02_role.*"

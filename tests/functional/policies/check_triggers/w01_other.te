@@ -1,0 +1,3 @@
+policy_module(w01_other, 1.0)
+
+type foo_t;
