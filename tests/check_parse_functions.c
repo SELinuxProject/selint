@@ -11,7 +11,9 @@
 
 START_TEST (test_begin_parsing_te) {
 
-	struct policy_node *cur;
+	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
+	cur->flavor = NODE_TE_FILE;
+	cur->data.str = strdup("example");
 
 	ck_assert_int_eq(SELINT_SUCCESS, begin_parsing_te(&cur, "example", 1));
 
@@ -22,7 +24,6 @@ START_TEST (test_begin_parsing_te) {
 	ck_assert_ptr_null(cur->first_child);
 	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
 	ck_assert_str_eq(cur->data.str, "example");
-	ck_assert_str_eq(get_current_module_name(), "example");
 	ck_assert_int_eq(cur->lineno, 1);
 
 	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(cur));

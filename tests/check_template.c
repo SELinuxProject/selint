@@ -153,10 +153,13 @@ START_TEST (test_replace_m4_list_too_few_args) {
 END_TEST
 
 struct policy_node *ast;
+struct policy_node *cur;
 
 START_TEST (test_nested_template_declarations) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	ast->flavor = NODE_IF_FILE;
+	set_current_module_name("nested");
 
 	yyin = fopen(NESTED_IF_FILENAME, "r");
 	parsing_filename = "nested";

@@ -19,11 +19,14 @@ extern FILE * yyin;
 extern int yyparse();
 extern int yyrestart();
 struct policy_node *ast;
+struct policy_node *cur;
 extern char *parsing_filename;
 
 START_TEST (test_parse_basic_te) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	ast->flavor = NODE_TE_FILE;
+	set_current_module_name("basic");
 
 	yyin = fopen(BASIC_TE_FILENAME, "r");
 	ck_assert_int_eq(0, yyparse());
@@ -78,7 +81,9 @@ END_TEST
 
 START_TEST (test_parse_basic_if) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	ast->flavor = NODE_IF_FILE;
+	set_current_module_name("basic");
 
 	yyin = fopen(BASIC_IF_FILENAME, "r");
 	parsing_filename = "basic";
@@ -146,7 +151,8 @@ END_TEST
 
 START_TEST (test_parse_uncommon_constructs) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	set_current_module_name("uncommon");
 
 	yyin = fopen(UNCOMMON_TE_FILENAME, "r");
 	ck_assert_int_eq(0, yyparse());
@@ -161,7 +167,8 @@ END_TEST
 
 START_TEST (test_parse_blocks) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	set_current_module_name("blocks");
 
 	yyin = fopen(BLOCKS_TE_FILENAME, "r");
 	ck_assert_int_eq(0, yyparse());
@@ -191,7 +198,8 @@ END_TEST
 
 START_TEST (test_parse_empty_file) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	set_current_module_name("empty");
 
 	yyin = fopen(EMPTY_TE_FILENAME, "r");
 	ck_assert_int_eq(0, yyparse());
@@ -211,7 +219,8 @@ END_TEST
 
 START_TEST (test_syntax_error) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	set_current_module_name("syntax_error");
 
 	yyin = fopen(SYNTAX_ERROR_FILENAME, "r");
 	ck_assert_int_eq(1, yyparse());
@@ -225,7 +234,8 @@ END_TEST
 
 START_TEST (test_parse_bad_role_allow) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	set_current_module_name("bad_ra");
 
 	yyin = fopen(BAD_RA_FILENAME, "r");
 	yyrestart(yyin);
@@ -240,7 +250,8 @@ END_TEST
 
 START_TEST (test_disable_comment) {
 
-	ast = NULL;
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	set_current_module_name("disable_comment");
 
 	yyin = fopen(DISABLE_COMMENT_FILENAME, "r");
 	yyrestart(yyin);

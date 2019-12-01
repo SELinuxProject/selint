@@ -126,7 +126,7 @@
 %%
 selinux_file:
 	%empty
-	/* empty */ { ast = calloc(1, sizeof(struct policy_node)); ast->flavor = NODE_EMPTY; }
+	/* empty */ { ast->flavor = NODE_EMPTY; }
 	|
 	te_policy
 	|
@@ -152,27 +152,15 @@ comments:
 	;
 
 comment:
-	COMMENT { if (!ast) {
-			cur = malloc(sizeof(struct policy_node));
-			memset(cur, 0, sizeof(struct policy_node));
-			cur->flavor = NODE_IF_FILE;
-			ast = cur;
-			char *mod_name = strdup(basename(parsing_filename));
-			char *suffix = strrchr(mod_name, '.');
-			if (suffix) {
-				*suffix = '\0';
-			}
-			set_current_module_name(mod_name);
-			free(mod_name);
-		}
-		insert_comment(&cur, yylineno); }
+	COMMENT	{ if (!cur) { cur = ast; }
+	          insert_comment(&cur, yylineno); }
 	;
 
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { begin_parsing_te(&cur, $3, yylineno); if (ast) { free_policy_node(ast); } ast = cur; free($3); free($5);} // Version number isn't needed
+	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { cur = ast; begin_parsing_te(&cur, $3, yylineno); free($3); free($5);} // Version number isn't needed
 	|
-	MODULE STRING VERSION_NO SEMICOLON { begin_parsing_te(&cur, $2, yylineno); ast = cur; free($2); free($3); }
+	MODULE STRING VERSION_NO SEMICOLON { cur = ast; begin_parsing_te(&cur, $2, yylineno); free($2); free($3); }
 	;
 
 body:
@@ -726,19 +714,8 @@ interface_def:
 
 start_interface:
 	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK {
-		if (!ast) {
-			// Must set up the AST at the beginning
-			cur = malloc(sizeof(struct policy_node));
-			memset(cur, 0, sizeof(struct policy_node));
-			cur->flavor = NODE_IF_FILE;
-			ast = cur;
-			char *mod_name = strdup(basename(parsing_filename));
-			char *suffix = strrchr(mod_name, '.');
-			if (suffix) {
-				*suffix = '\0';
-			}
-			set_current_module_name(mod_name);
-			free(mod_name);
+		if (!cur) {
+			cur = ast;
 		}
 		begin_interface_def(&cur, $1, $4, yylineno); free($4); }
 	;

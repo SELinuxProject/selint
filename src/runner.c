@@ -18,10 +18,14 @@ extern char *parsing_filename;
 
 #define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
-struct policy_node *parse_one_file(char *filename)
+struct policy_node *parse_one_file(char *filename, enum node_flavor flavor)
 {
 
-	ast = NULL;
+	ast = calloc(1, sizeof(struct policy_node));
+	ast->flavor = flavor;
+	ast->data.str = strdup(basename(filename));
+	ast->data.str[strlen(ast->data.str) - 3] = '\0'; // Remove suffix
+	set_current_module_name(ast->data.str);
 	yylineno = 1;
 
 	yyin = fopen(filename, "r");
@@ -165,14 +169,14 @@ struct checks *register_checks(char level,
 	return ck;
 }
 
-enum selint_error parse_all_files_in_list(struct policy_file_list *files)
+enum selint_error parse_all_files_in_list(struct policy_file_list *files, enum node_flavor flavor)
 {
 
 	struct policy_file_node *cur = files->head;
 
 	while (cur) {
 		print_if_verbose("Parsing %s\n", cur->file->filename);
-		cur->file->ast = parse_one_file(cur->file->filename);
+		cur->file->ast = parse_one_file(cur->file->filename, flavor);
 		if (!cur->file->ast) {
 			return SELINT_PARSE_ERROR;
 		}
@@ -267,14 +271,14 @@ enum selint_error run_analysis(struct checks *ck,
 
 	enum selint_error res;
 
-	res = parse_all_files_in_list(if_files);
+	res = parse_all_files_in_list(if_files, NODE_IF_FILE);
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}
 
 	mark_transform_interfaces(if_files);
 
-	res = parse_all_files_in_list(te_files);
+	res = parse_all_files_in_list(te_files, NODE_TE_FILE);
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}

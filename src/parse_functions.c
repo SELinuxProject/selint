@@ -13,18 +13,6 @@ char *parsing_filename = NULL;
 enum selint_error begin_parsing_te(struct policy_node **cur, char *mn,
                                    unsigned int lineno)
 {
-
-	set_current_module_name(mn);
-
-	*cur = malloc(sizeof(struct policy_node));
-	if (!*cur) {
-		return SELINT_OUT_OF_MEM;
-	}
-
-	memset(*cur, 0, sizeof(struct policy_node));
-
-	(*cur)->flavor = NODE_TE_FILE;
-	(*cur)->data.str = strdup(mn);
 	(*cur)->lineno = lineno;
 
 	return SELINT_SUCCESS;

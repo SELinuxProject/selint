@@ -9,9 +9,10 @@
 /****************************************************
 * Parse a policy file
 * filename - The name of the files to parse.
+* flavor - The node type corresponding to the type of file (TE or IF)
 * Returns the head of the parsed AST or NULL on failure
 ****************************************************/
-struct policy_node *parse_one_file(char *filename);
+struct policy_node *parse_one_file(char *filename, enum node_flavor flavor);
 
 /****************************************************
 * Determine whether a specific check is enabled based on the
@@ -40,9 +41,10 @@ struct checks *register_checks(char level,
 * Parse all the provided te or if files, storing their parsed ASTs
 * in the provided list
 * files - The files to parse.  This list is updated with parsed ASTs
+* flavor - The node type corresponding to the sorts of files in this list
 * Returns SELINT_SUCCESS on success or an error code
 ****************************************************/
-enum selint_error parse_all_files_in_list(struct policy_file_list *files);
+enum selint_error parse_all_files_in_list(struct policy_file_list *files, enum node_flavor flavor);
 
 /****************************************************
 * Parse all the provided fc files, storing their parsed ASTs
