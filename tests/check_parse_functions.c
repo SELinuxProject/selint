@@ -13,7 +13,6 @@ START_TEST (test_begin_parsing_te) {
 
 	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
 	cur->flavor = NODE_TE_FILE;
-	cur->data.str = strdup("example");
 
 	ck_assert_int_eq(SELINT_SUCCESS, begin_parsing_te(&cur, "example", 1));
 

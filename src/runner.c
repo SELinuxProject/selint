@@ -23,10 +23,11 @@ struct policy_node *parse_one_file(char *filename, enum node_flavor flavor)
 
 	ast = calloc(1, sizeof(struct policy_node));
 	ast->flavor = flavor;
-	ast->data.str = strdup(basename(filename));
-	ast->data.str[strlen(ast->data.str) - 3] = '\0'; // Remove suffix
-	set_current_module_name(ast->data.str);
+	char *mod_name = strdup(basename(filename));
+	mod_name[strlen(mod_name) - 3] = '\0'; // Remove suffix
+	set_current_module_name(mod_name);
 	yylineno = 1;
+	free(mod_name);
 
 	yyin = fopen(filename, "r");
 	parsing_filename = filename;

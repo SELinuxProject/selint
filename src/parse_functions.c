@@ -13,6 +13,7 @@ char *parsing_filename = NULL;
 enum selint_error begin_parsing_te(struct policy_node **cur, char *mn,
                                    unsigned int lineno)
 {
+	(*cur)->data.str = strdup(mn);
 	(*cur)->lineno = lineno;
 
 	return SELINT_SUCCESS;
