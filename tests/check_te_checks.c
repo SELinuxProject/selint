@@ -93,6 +93,43 @@ START_TEST (test_check_require_block) {
 }
 END_TEST
 
+START_TEST (test_check_no_explicit_declaration) {
+	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
+	struct check_data *cd = calloc(1, sizeof(struct check_data));
+
+	cur->flavor = NODE_AV_RULE;
+	cur->data.av_data = make_example_av_rule();
+
+	cd->flavor = NODE_IF_FILE;
+	cd->mod_name = "foo";
+
+	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur));
+
+	cd->flavor = NODE_TE_FILE;
+
+	// If the type isn't found, we don't do anything
+	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur));
+
+	insert_into_decl_map("foo_t", "foo", DECL_TYPE);
+	insert_into_decl_map("other_t", "other", DECL_TYPE);
+
+	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur));
+
+	insert_into_decl_map("bar_t", "bar", DECL_TYPE);
+
+	struct check_result *res = check_no_explicit_declaration(cd, cur);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(W_ID_NO_EXPLICIT_DECL, res->check_id);
+
+	free_check_result(res);
+
+	free_all_maps();
+	free(cd);
+	free_policy_node(cur);
+}
+END_TEST
+
 START_TEST (test_check_module_if_call_in_optional) {
 	struct check_result *res;
 
@@ -151,6 +188,7 @@ Suite *te_checks_suite(void) {
 
 	tcase_add_test(tc_core, test_check_te_order);
 	tcase_add_test(tc_core, test_check_require_block);
+	tcase_add_test(tc_core, test_check_no_explicit_declaration);
 	tcase_add_test(tc_core, test_check_module_if_call_in_optional);
 	suite_add_tcase(s, tc_core);
 

@@ -77,6 +77,31 @@ struct check_result *check_require_block(const struct check_data *data,
 struct check_result *check_no_explicit_declaration(const struct check_data *data,
                                                    const struct policy_node *node)
 {
+	if (data->flavor != FILE_TE_FILE) {
+		return NULL;
+	}
+
+	struct string_list *types = get_types_in_node(node);
+	struct string_list *type = types;
+
+	while (type) {
+		char *mod_name = look_up_in_decl_map(type->string, DECL_TYPE);
+		if (!mod_name) {
+			//Not a type
+			type = type->next;
+			continue;
+		}
+		if (0 != strcmp(data->mod_name, mod_name)) {
+			struct check_result *to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
+			                                                "No explicit declaration for %s.  You should access it via interface call or use a require block.",
+			                                                type->string);
+			free_string_list(types);
+			return to_ret;
+		}
+		type = type->next;
+	}
+
+	free_string_list(types);
 	return NULL;
 }
 

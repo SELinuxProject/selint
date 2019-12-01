@@ -116,6 +116,11 @@ struct checks *register_checks(char level,
 			          check_file_context_types_in_mod);
 		}
 	case 'W':
+		if (CHECK_ENABLED("W-001")) {
+			add_check(NODE_AV_RULE, ck, "W-001", check_no_explicit_declaration);
+			add_check(NODE_IF_CALL, ck, "W-001", check_no_explicit_declaration);
+			add_check(NODE_TT_RULE, ck, "W-001", check_no_explicit_declaration);
+		}
 		if (CHECK_ENABLED("W-002")) {
 			add_check(NODE_AV_RULE, ck, "W-002",
 			          check_type_used_but_not_required_in_if);
