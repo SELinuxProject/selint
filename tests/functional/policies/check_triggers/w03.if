@@ -1,0 +1,35 @@
+########################################
+## <summary>
+##      Execute racoon and allow the specified role the domain.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed to transition.
+##      </summary>
+## </param>
+## <param name="role">
+##      <summary>
+##      Role allowed access.
+##      </summary>
+## </param>
+## <rolecap/>
+#
+# 
+interface(`ipsec_run_racoon',`
+        gen_require(`
+                type racoon_t;
+        ')
+
+        ipsec_domtrans_racoon($1)
+        role $2 types racoon_t;
+')
+
+# Comment
+interface(`this_one_fails',`
+	gen_require(`
+		type foo_t, bar_t;
+	')
+
+	allow $1 foo_t:file read;
+')
+

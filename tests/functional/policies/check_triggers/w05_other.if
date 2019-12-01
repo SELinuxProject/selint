@@ -1,0 +1,3 @@
+interface(`foo_read',`
+	read_files_patten($1, $1, $1)
+')

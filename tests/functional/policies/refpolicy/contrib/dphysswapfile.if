@@ -1,0 +1,19 @@
+## <summary>Set up, mount/unmount, and delete an swap file.</summary>
+
+########################################
+## <summary>
+##	Dontaudit acces to the swap file.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`dphysswapfile_dontaudit_read_swap',`
+	gen_require(`
+		type dphysswapfile_swap_t;
+	')
+
+	dontaudit $1 dphysswapfile_swap_t:file read_file_perms;
+')

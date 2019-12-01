@@ -1,0 +1,182 @@
+policy_module(domain, 1.14.0)
+
+########################################
+#
+# Declarations
+#
+
+## <desc>
+## <p>
+##	Control the ability to mmap a low area of the address space,
+##	as configured by /proc/sys/kernel/mmap_min_addr.
+## </p>
+## </desc>
+gen_tunable(mmap_low_allowed, false)
+
+# Mark process types as domains
+attribute domain;
+
+# Transitions only allowed from domains to other domains
+neverallow domain ~domain:process { transition dyntransition };
+
+# Domains that are unconfined
+attribute unconfined_domain_type;
+
+# Domains that can mmap low memory.
+attribute mmap_low_domain_type;
+neverallow { domain -mmap_low_domain_type } self:memprotect mmap_zero;
+
+# Domains that can set their current context
+# (perform dynamic transitions)
+attribute set_curr_context;
+
+# enabling setcurrent breaks process tranquility.  If you do not
+# know what this means or do not understand the implications of a
+# dynamic transition, you should not be using it!!!
+neverallow { domain -set_curr_context } self:process setcurrent;
+
+# No domain needs mac_override as it is unused by SELinux.
+neverallow domain self:capability2 mac_override;
+
+# entrypoint executables
+attribute entry_type;
+
+# widely-inheritable file descriptors
+attribute privfd;
+
+#
+# constraint related attributes
+#
+
+# [1] types that can change SELinux identity on transition
+attribute can_change_process_identity;
+
+# [2] types that can change SELinux role on transition
+attribute can_change_process_role;
+
+# [3] types that can change the SELinux identity on a filesystem
+# object or a socket object on a create or relabel
+attribute can_change_object_identity;
+
+# [3] types that can change to system_u:system_r
+attribute can_system_change;
+
+# [4] types that have attribute 1 can change the SELinux
+# identity only if the target domain has this attribute.
+# Types that have attribute 2 can change the SELinux role
+# only if the target domain has this attribute.
+attribute process_user_target;
+
+# For cron jobs
+# [5] types used for cron daemons
+attribute cron_source_domain;
+# [6] types used for cron jobs
+attribute cron_job_domain;
+
+# [7] types that are unconditionally exempt from
+# SELinux identity and role change constraints
+attribute process_uncond_exempt;	# add userhelperdomain to this one
+
+neverallow { domain unlabeled_t } ~{ domain unlabeled_t }:process *;
+neverallow ~{ domain unlabeled_t } *:process *;
+
+########################################
+#
+# Rules applied to all domains
+#
+
+# read /proc/(pid|self) entries
+allow domain self:dir list_dir_perms;
+allow domain self:lnk_file { read_lnk_file_perms lock ioctl };
+allow domain self:file rw_file_perms;
+kernel_read_proc_symlinks(domain)
+# Every domain gets the key ring, so we should default
+# to no one allowed to look at it; afs kernel support creates
+# a keyring
+kernel_dontaudit_search_key(domain)
+kernel_dontaudit_link_key(domain)
+
+# create child processes in the domain
+allow domain self:process { fork sigchld };
+
+# glibc get_nprocs requires read access to /sys/devices/system/cpu/online
+dev_read_cpu_online(domain)
+
+# Use trusted objects in /dev
+dev_rw_null(domain)
+dev_rw_zero(domain)
+term_use_controlling_term(domain)
+
+# list the root directory
+files_list_root(domain)
+
+ifdef(`hide_broken_symptoms',`
+	# This check is in the general socket
+	# listen code, before protocol-specific
+	# listen function is called, so bad calls
+	# to listen on UDP sockets should be silenced
+	dontaudit domain self:udp_socket listen;
+')
+
+ifdef(`init_systemd',`
+	optional_policy(`
+		shutdown_sigchld(domain)
+	')
+')
+
+tunable_policy(`global_ssp',`
+	# enable reading of urandom for all domains:
+	# this should be enabled when all programs
+	# are compiled with ProPolice/SSP
+	# stack smashing protection.
+	dev_read_urand(domain)
+')
+
+optional_policy(`
+	libs_use_ld_so(domain)
+	libs_use_shared_libs(domain)
+')
+
+optional_policy(`
+	setrans_translate_context(domain)
+')
+
+# xdm passes an open file descriptor to xsession-errors.log which is then audited by all confined domains.
+optional_policy(`
+	xserver_dontaudit_use_xdm_fds(domain)
+	xserver_dontaudit_rw_xdm_pipes(domain)
+')
+
+########################################
+#
+# Unconfined access to this module
+#
+
+# unconfined access also allows constraints, but this
+# is handled in the interface as typeattribute cannot
+# be used on an attribute.
+
+# Use/sendto/connectto sockets created by any domain.
+allow unconfined_domain_type domain:{ socket_class_set socket key_socket } *;
+
+# Use descriptors and pipes created by any domain.
+allow unconfined_domain_type domain:fd use;
+allow unconfined_domain_type domain:fifo_file rw_file_perms;
+
+# Act upon any other process.
+allow unconfined_domain_type domain:process ~{ transition dyntransition execmem execstack execheap };
+
+# Create/access any System V IPC objects.
+allow unconfined_domain_type domain:{ sem msgq shm } *;
+allow unconfined_domain_type domain:msg { send receive };
+
+# For /proc/pid
+allow unconfined_domain_type domain:dir list_dir_perms;
+allow unconfined_domain_type domain:file rw_file_perms;
+allow unconfined_domain_type domain:lnk_file { read_lnk_file_perms ioctl lock };
+
+# act on all domains keys
+allow unconfined_domain_type domain:key *;
+
+# receive from all domains over labeled networking
+domain_all_recvfrom_all_domains(unconfined_domain_type)

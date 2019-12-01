@@ -1,0 +1,1 @@
+/usr/bin/foo		--	gen_deadbeef(system_u:object_r:foo_exec_t, s0)

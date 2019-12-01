@@ -1,0 +1,5 @@
+policy_module(s01, 1.0)
+
+require {
+	type foo_t;
+}

@@ -1,0 +1,130 @@
+policy_module(userdomain, 4.13.0)
+
+########################################
+#
+# Declarations
+#
+
+## <desc>
+## <p>
+## Allow users to connect to mysql
+## </p>
+## </desc>
+gen_tunable(allow_user_mysql_connect, false)
+
+## <desc>
+## <p>
+## Allow users to connect to PostgreSQL
+## </p>
+## </desc>
+gen_tunable(allow_user_postgresql_connect, false)
+
+## <desc>
+## <p>
+## Allow regular users direct mouse access
+## </p>
+## </desc>
+gen_tunable(user_direct_mouse, false)
+
+## <desc>
+## <p>
+## Allow users to read system messages.
+## </p>
+## </desc>
+gen_tunable(user_dmesg, false)
+
+## <desc>
+## <p>
+## Allow user to r/w files on filesystems
+## that do not have extended attributes (FAT, CDROM, FLOPPY)
+## </p>
+## </desc>
+gen_tunable(user_rw_noexattrfile, false)
+
+## <desc>
+## <p>
+## Allow user to execute files on filesystems
+## that do not have extended attributes (FAT, CDROM, FLOPPY)
+## </p>
+## </desc>
+gen_tunable(user_exec_noexattrfile, false)
+
+## <desc>
+## <p>
+## Allow user to write files on removable
+## devices (e.g. external USB memory
+## devices or floppies)
+## </p>
+## </desc>
+gen_tunable(user_write_removable, false)
+
+## <desc>
+## <p>
+## Allow w to display everyone
+## </p>
+## </desc>
+gen_tunable(user_ttyfile_stat, false)
+
+attribute admindomain;
+
+# all user domains
+attribute userdomain;
+
+# unprivileged user domains
+attribute unpriv_userdomain;
+
+attribute user_home_content_type;
+
+type user_home_dir_t alias { staff_home_dir_t sysadm_home_dir_t secadm_home_dir_t auditadm_home_dir_t unconfined_home_dir_t };
+fs_associate_tmpfs(user_home_dir_t)
+files_type(user_home_dir_t)
+files_mountpoint(user_home_dir_t)
+files_associate_tmp(user_home_dir_t)
+files_poly(user_home_dir_t)
+files_poly_member(user_home_dir_t)
+files_poly_parent(user_home_dir_t)
+ubac_constrained(user_home_dir_t)
+
+type user_home_t alias { staff_home_t sysadm_home_t secadm_home_t auditadm_home_t unconfined_home_t };
+typealias user_home_t alias { staff_untrusted_content_t sysadm_untrusted_content_t secadm_untrusted_content_t auditadm_untrusted_content_t unconfined_untrusted_content_t };
+userdom_user_home_content(user_home_t)
+fs_associate_tmpfs(user_home_t)
+files_associate_tmp(user_home_t)
+files_poly_parent(user_home_t)
+files_mountpoint(user_home_t)
+
+type user_cert_t;
+userdom_user_home_content(user_cert_t)
+
+type user_devpts_t alias { staff_devpts_t sysadm_devpts_t secadm_devpts_t auditadm_devpts_t unconfined_devpts_t };
+dev_node(user_devpts_t)
+files_type(user_devpts_t)
+ubac_constrained(user_devpts_t)
+
+type user_tmp_t alias { staff_tmp_t sysadm_tmp_t secadm_tmp_t auditadm_tmp_t unconfined_tmp_t };
+typealias user_tmp_t alias { staff_untrusted_content_tmp_t sysadm_untrusted_content_tmp_t secadm_untrusted_content_tmp_t auditadm_untrusted_content_tmp_t unconfined_untrusted_content_tmp_t };
+files_tmp_file(user_tmp_t)
+userdom_user_home_content(user_tmp_t)
+
+type user_tmpfs_t alias { staff_tmpfs_t sysadm_tmpfs_t secadm_tmpfs_t auditadm_tmpfs_t unconfined_tmpfs_t };
+files_tmpfs_file(user_tmpfs_t)
+userdom_user_home_content(user_tmpfs_t)
+
+type user_tty_device_t alias { staff_tty_device_t sysadm_tty_device_t secadm_tty_device_t auditadm_tty_device_t unconfined_tty_device_t };
+dev_node(user_tty_device_t)
+ubac_constrained(user_tty_device_t)
+
+type user_runtime_root_t;
+fs_associate_tmpfs(user_runtime_root_t)
+files_mountpoint(user_runtime_root_t)
+files_poly_parent(user_runtime_root_t)
+
+type user_runtime_t;
+fs_associate_tmpfs(user_runtime_t)
+files_type(user_runtime_t)
+files_mountpoint(user_runtime_t)
+files_associate_tmp(user_runtime_t)
+files_poly(user_runtime_t)
+files_poly_member(user_runtime_t)
+files_poly_parent(user_runtime_t)
+ubac_constrained(user_runtime_t)

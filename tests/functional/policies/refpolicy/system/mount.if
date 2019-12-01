@@ -1,0 +1,211 @@
+## <summary>Policy for mount.</summary>
+
+########################################
+## <summary>
+##	Execute mount in the mount domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`mount_domtrans',`
+	gen_require(`
+		type mount_t, mount_exec_t;
+	')
+
+	domtrans_pattern($1, mount_exec_t, mount_t)
+')
+
+########################################
+## <summary>
+##	Execute mount in the mount domain, and
+##	allow the specified role the mount domain,
+##	and use the caller's terminal.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`mount_run',`
+	gen_require(`
+		attribute_role mount_roles;
+	')
+
+	mount_domtrans($1)
+	roleattribute $2 mount_roles;
+')
+
+########################################
+## <summary>
+##	Execute mount in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`mount_exec',`
+	gen_require(`
+		type mount_exec_t;
+	')
+
+	# cjp: this should be removed:
+	allow $1 mount_exec_t:dir list_dir_perms;
+
+	allow $1 mount_exec_t:lnk_file read_lnk_file_perms;
+	can_exec($1, mount_exec_t)
+')
+
+########################################
+## <summary>
+##	Send a generic signal to mount.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`mount_signal',`
+	gen_require(`
+		type mount_t;
+	')
+
+	allow $1 mount_t:process signal;
+')
+
+########################################
+## <summary>
+##	Use file descriptors for mount.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	The type of the process performing this action.
+##	</summary>
+## </param>
+#
+interface(`mount_use_fds',`
+	gen_require(`
+		type mount_t;
+	')
+
+	allow $1 mount_t:fd use;
+')
+
+########################################
+## <summary>
+##	Allow the mount domain to send nfs requests for mounting
+##	network drives
+## </summary>
+## <desc>
+##	<p>
+##	Allow the mount domain to send nfs requests for mounting
+##	network drives
+##	</p>
+##	<p>
+##	This interface has been deprecated as these rules were
+##	a side effect of leaked mount file descriptors.  This
+##	interface has no effect.
+##	</p>
+## </desc>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`mount_send_nfs_client_request',`
+	refpolicywarn(`$0($*) has been deprecated.')
+')
+
+########################################
+## <summary>
+##	Execute mount in the unconfined mount domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`mount_domtrans_unconfined',`
+	gen_require(`
+		type unconfined_mount_t, mount_exec_t;
+	')
+
+	domtrans_pattern($1, mount_exec_t, unconfined_mount_t)
+')
+
+########################################
+## <summary>
+##	Execute mount in the unconfined mount domain, and
+##	allow the specified role the unconfined mount domain,
+##	and use the caller's terminal.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`mount_run_unconfined',`
+	gen_require(`
+		type unconfined_mount_t;
+	')
+
+	mount_domtrans_unconfined($1)
+	role $2 types unconfined_mount_t;
+')
+
+########################################
+## <summary>
+##	Read loopback filesystem image files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`mount_read_loopback_files',`
+	gen_require(`
+		type mount_loopback_t;
+	')
+
+	allow $1 mount_loopback_t:file read_file_perms;
+')
+
+########################################
+## <summary>
+##	Read and write loopback filesystem image files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`mount_rw_loopback_files',`
+	gen_require(`
+		type mount_loopback_t;
+	')
+
+	allow $1 mount_loopback_t:file rw_file_perms;
+')

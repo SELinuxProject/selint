@@ -1,0 +1,230 @@
+policy_module(mount, 1.19.0)
+
+########################################
+#
+# Declarations
+#
+
+## <desc>
+## <p>
+## Allow the mount command to mount any directory or file.
+## </p>
+## </desc>
+gen_tunable(allow_mount_anyfile, false)
+
+attribute_role mount_roles;
+roleattribute system_r mount_roles;
+
+type mount_t;
+type mount_exec_t;
+init_system_domain(mount_t, mount_exec_t)
+role mount_roles types mount_t;
+
+type mount_loopback_t; # customizable
+files_type(mount_loopback_t)
+
+type mount_runtime_t;
+typealias mount_runtime_t alias mount_var_run_t;
+files_pid_file(mount_runtime_t)
+
+type mount_tmp_t;
+files_tmp_file(mount_tmp_t)
+
+# causes problems with interfaces when
+# this is optionally declared in monolithic
+# policy--duplicate type declaration
+type unconfined_mount_t;
+application_domain(unconfined_mount_t, mount_exec_t)
+
+########################################
+#
+# mount local policy
+#
+
+# setuid/setgid needed to mount cifs
+allow mount_t self:capability { ipc_lock sys_rawio sys_admin dac_override chown sys_tty_config setuid setgid };
+
+mount_read_loopback_files(mount_t)
+
+allow mount_t mount_tmp_t:file manage_file_perms;
+allow mount_t mount_tmp_t:dir manage_dir_perms;
+
+can_exec(mount_t, mount_exec_t)
+
+files_tmp_filetrans(mount_t, mount_tmp_t, { file dir })
+
+create_dirs_pattern(mount_t, mount_runtime_t, mount_runtime_t)
+create_files_pattern(mount_t, mount_runtime_t, mount_runtime_t)
+rw_files_pattern(mount_t, mount_runtime_t, mount_runtime_t)
+files_pid_filetrans(mount_t, mount_runtime_t, dir, "mount")
+
+kernel_read_system_state(mount_t)
+kernel_read_kernel_sysctls(mount_t)
+kernel_setsched(mount_t)
+kernel_dontaudit_getattr_core_if(mount_t)
+kernel_dontaudit_write_debugfs_dirs(mount_t)
+kernel_dontaudit_write_proc_dirs(mount_t)
+# To load binfmt_misc kernel module
+kernel_request_load_module(mount_t)
+
+# required for mount.smbfs
+corecmd_exec_bin(mount_t)
+
+dev_getattr_all_blk_files(mount_t)
+dev_list_all_dev_nodes(mount_t)
+dev_read_sysfs(mount_t)
+dev_dontaudit_write_sysfs_dirs(mount_t)
+dev_rw_lvm_control(mount_t)
+dev_rw_loop_control(mount_t)
+dev_dontaudit_getattr_all_chr_files(mount_t)
+dev_dontaudit_getattr_memory_dev(mount_t)
+dev_getattr_sound_dev(mount_t)
+# Early devtmpfs, before udev relabel
+dev_dontaudit_rw_generic_chr_files(mount_t)
+
+domain_use_interactive_fds(mount_t)
+
+files_search_all(mount_t)
+files_read_etc_files(mount_t)
+files_manage_etc_runtime_files(mount_t)
+files_etc_filetrans_etc_runtime(mount_t, file)
+files_mounton_all_mountpoints(mount_t)
+files_unmount_rootfs(mount_t)
+# These rules need to be generalized.  Only admin, initrc should have it:
+files_relabelto_all_file_type_fs(mount_t)
+files_mount_all_file_type_fs(mount_t)
+files_unmount_all_file_type_fs(mount_t)
+# For reading cert files
+files_read_usr_files(mount_t)
+files_list_all_mountpoints(mount_t)
+files_dontaudit_write_all_mountpoints(mount_t)
+files_dontaudit_setattr_all_mountpoints(mount_t)
+
+fs_getattr_xattr_fs(mount_t)
+fs_getattr_cifs(mount_t)
+fs_mount_all_fs(mount_t)
+fs_unmount_all_fs(mount_t)
+fs_remount_all_fs(mount_t)
+fs_relabelfrom_all_fs(mount_t)
+fs_rw_tmpfs_chr_files(mount_t)
+fs_read_tmpfs_symlinks(mount_t)
+fs_dontaudit_write_tmpfs_dirs(mount_t)
+
+mls_file_read_all_levels(mount_t)
+mls_file_write_all_levels(mount_t)
+
+selinux_get_enforce_mode(mount_t)
+
+storage_raw_read_fixed_disk(mount_t)
+storage_raw_write_fixed_disk(mount_t)
+storage_raw_read_removable_device(mount_t)
+storage_raw_write_removable_device(mount_t)
+storage_rw_fuse(mount_t)
+
+term_use_all_terms(mount_t)
+term_dontaudit_manage_pty_dirs(mount_t)
+
+auth_use_nsswitch(mount_t)
+
+init_use_fds(mount_t)
+init_use_script_ptys(mount_t)
+init_dontaudit_getattr_initctl(mount_t)
+
+logging_send_syslog_msg(mount_t)
+
+miscfiles_read_localization(mount_t)
+
+sysnet_use_portmap(mount_t)
+
+seutil_read_config(mount_t)
+selinux_getattr_fs(mount_t)
+
+userdom_use_all_users_fds(mount_t)
+
+ifdef(`distro_redhat',`
+	optional_policy(`
+		auth_read_pam_console_data(mount_t)
+		# mount config by default sets fscontext=removable_t
+		fs_relabelfrom_dos_fs(mount_t)
+	')
+')
+
+ifdef(`distro_ubuntu',`
+	optional_policy(`
+		unconfined_domain(mount_t)
+	')
+')
+
+tunable_policy(`allow_mount_anyfile',`
+	files_list_non_auth_dirs(mount_t)
+	files_read_non_auth_files(mount_t)
+	files_mounton_non_security(mount_t)
+')
+
+optional_policy(`
+	# for nfs
+	corenet_all_recvfrom_unlabeled(mount_t)
+	corenet_all_recvfrom_netlabel(mount_t)
+	corenet_tcp_sendrecv_all_if(mount_t)
+	corenet_raw_sendrecv_all_if(mount_t)
+	corenet_udp_sendrecv_all_if(mount_t)
+	corenet_tcp_sendrecv_all_nodes(mount_t)
+	corenet_raw_sendrecv_all_nodes(mount_t)
+	corenet_udp_sendrecv_all_nodes(mount_t)
+	corenet_tcp_sendrecv_all_ports(mount_t)
+	corenet_udp_sendrecv_all_ports(mount_t)
+	corenet_tcp_bind_all_nodes(mount_t)
+	corenet_udp_bind_all_nodes(mount_t)
+	corenet_tcp_bind_generic_port(mount_t)
+	corenet_udp_bind_generic_port(mount_t)
+	corenet_tcp_bind_reserved_port(mount_t)
+	corenet_udp_bind_reserved_port(mount_t)
+	corenet_tcp_bind_all_rpc_ports(mount_t)
+	corenet_udp_bind_all_rpc_ports(mount_t)
+	corenet_dontaudit_tcp_bind_all_reserved_ports(mount_t)
+	corenet_dontaudit_udp_bind_all_reserved_ports(mount_t)
+	corenet_tcp_connect_all_ports(mount_t)
+
+	fs_search_rpc(mount_t)
+
+	rpc_stub(mount_t)
+')
+
+optional_policy(`
+	apm_use_fds(mount_t)
+')
+
+optional_policy(`
+	ifdef(`hide_broken_symptoms',`
+		# for a bug in the X server
+		rhgb_dontaudit_rw_stream_sockets(mount_t)
+		term_dontaudit_use_ptmx(mount_t)
+	')
+')
+
+optional_policy(`
+	modutils_read_module_deps(mount_t)
+')
+
+optional_policy(`
+	puppet_rw_tmp(mount_t)
+')
+
+# for kernel package installation
+optional_policy(`
+	rpm_rw_pipes(mount_t)
+')
+
+optional_policy(`
+	samba_run_smbmount(mount_t, mount_roles)
+')
+
+########################################
+#
+# Unconfined mount local policy
+#
+
+optional_policy(`
+	files_etc_filetrans_etc_runtime(unconfined_mount_t, file)
+	unconfined_domain(unconfined_mount_t)
+')

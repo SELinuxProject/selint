@@ -1,0 +1,13 @@
+policy_module(simple, 1.0)
+
+type foo_t;
+
+type foo_data_t;
+
+manage_files_pattern(foo_t, foo_data_t, foo_data_t)
+
+kernel_read_system_state(foo_t)
+
+logging_search_logs(foo_t)
+
+domain_type(foo_t)

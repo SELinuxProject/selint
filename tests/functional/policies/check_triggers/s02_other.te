@@ -1,0 +1,3 @@
+policy_module(s02_other, 1.0)
+
+type foo_exec_t;

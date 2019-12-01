@@ -1,0 +1,88 @@
+## <summary>Openoffice suite.</summary>
+
+############################################################
+## <summary>
+##	Role access for openoffice.
+## </summary>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+## <param name="domain">
+##	<summary>
+##	User domain for the role.
+##	</summary>
+## </param>
+#
+interface(`ooffice_role',`
+	gen_require(`
+		attribute_role ooffice_roles;
+		type ooffice_t, ooffice_exec_t;
+        ')
+
+	roleattribute $1 ooffice_roles;
+
+	allow ooffice_t $2:unix_stream_socket connectto;
+
+	domtrans_pattern($2, ooffice_exec_t, ooffice_t)
+
+	allow $2 ooffice_t:process { ptrace signal_perms };
+	ps_process_pattern($2, ooffice_t)
+')
+
+########################################
+## <summary>
+##	Run openoffice in its own domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`ooffice_domtrans',`
+	gen_require(`
+		type ooffice_t, ooffice_exec_t;
+	')
+
+	domtrans_pattern($1, ooffice_exec_t, ooffice_t)
+')
+
+########################################
+## <summary>
+##	Read and write temporary
+##	openoffice files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`ooffice_rw_tmp_files',`
+	gen_require(`
+		type ooffice_tmp_t;
+	')
+
+	rw_files_pattern($1, ooffice_tmp_t, ooffice_tmp_t)
+')
+
+########################################
+## <summary>
+##	Do not audit attempts to execute
+##	files in temporary directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`ooffice_dontaudit_exec_tmp_files',`
+	gen_require(`
+		type ooffice_tmp_t;
+	')
+
+	dontaudit $1 ooffice_tmp_t:file exec_file_perms;
+')

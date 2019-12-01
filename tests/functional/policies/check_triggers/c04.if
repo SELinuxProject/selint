@@ -1,0 +1,6 @@
+interface(`foo_read',`
+	gen_require(`
+		type foo_t;
+	')
+	read_file_perms($1, foo_t, foo_t)
+')

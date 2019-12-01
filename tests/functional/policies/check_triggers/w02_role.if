@@ -1,0 +1,8 @@
+interface(`foo_do_things',`
+	gen_require(`
+		type foo_conf_t;
+	')
+
+	allow $1 foo_conf_t:file read;
+	do_role_access($1, foo_conf_t, foo_conf_r)
+')

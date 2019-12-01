@@ -1,0 +1,24 @@
+policy_module(interleaved, 1.0)
+
+type domA_t;
+domain_type(domA_t)
+
+type domB_t;
+domain_type(domB_t)
+
+type resource_t;
+files_type(resource_t)
+
+manage_files_pattern(domA_t, resource_t, resource_t)
+
+logging_send_audit_msgs(domA_t)
+logging_send_audit_msgs(domB_t)
+
+kernel_read_system_state(domA_t)
+
+optional_policy(`
+	apache_manage_config(domA_t)
+')
+
+manage_files_pattern(domB_t, resource_t, resource_t)
+

@@ -1,0 +1,7 @@
+#comment
+interface(`foo_do_things',`
+	gen_require(`
+		attribute foo_doer;
+	')
+	typeattribute $1 foo_doer;
+')

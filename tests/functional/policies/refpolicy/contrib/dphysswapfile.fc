@@ -1,0 +1,5 @@
+/etc/dphys-swapfile             --      gen_context(system_u:object_r:dphysswapfile_conf_t,s0)
+
+/sbin/dphys-swapfile            --      gen_context(system_u:object_r:dphysswapfile_exec_t,s0)
+
+/var/swap                       --      gen_context(system_u:object_r:dphysswapfile_swap_t,s0)

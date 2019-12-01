@@ -1,0 +1,4 @@
+policy_module(nesting, 1.0)
+
+type foo_log_t;
+type foo_data_t;

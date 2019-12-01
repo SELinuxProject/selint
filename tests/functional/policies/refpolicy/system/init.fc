@@ -1,0 +1,89 @@
+#
+# /etc
+#
+/etc/rc\.d/rc		--	gen_context(system_u:object_r:initrc_exec_t,s0)
+/etc/rc\.d/rc\.[^/]+	--	gen_context(system_u:object_r:initrc_exec_t,s0)
+
+/etc/rc\.d/init\.d/.*	--	gen_context(system_u:object_r:initrc_exec_t,s0)
+/etc/sysconfig/network-scripts/ifup-ipsec -- gen_context(system_u:object_r:initrc_exec_t,s0)
+
+/etc/X11/prefdm		--	gen_context(system_u:object_r:initrc_exec_t,s0)
+
+ifdef(`distro_gentoo',`
+/etc/vmware/init\.d/vmware --	gen_context(system_u:object_r:initrc_exec_t,s0)
+/etc/x11/startDM\.sh	--	gen_context(system_u:object_r:initrc_exec_t,s0)
+')
+
+#
+# /dev
+#
+/dev/initctl		-p	gen_context(system_u:object_r:initctl_t,s0)
+
+#
+# /lib
+#
+/lib/systemd/systemd	--	gen_context(system_u:object_r:init_exec_t,s0)
+
+ifdef(`distro_gentoo', `
+/lib/rc/init\.d(/.*)?		gen_context(system_u:object_r:initrc_state_t,s0)
+')
+
+#
+# /sbin
+#
+/sbin/init(ng)?		--	gen_context(system_u:object_r:init_exec_t,s0)
+# because nowadays, /sbin/init is often a symlink to /sbin/upstart
+/sbin/upstart		--	gen_context(system_u:object_r:init_exec_t,s0)
+
+ifdef(`distro_gentoo', `
+/sbin/rc		--	gen_context(system_u:object_r:rc_exec_t,s0)
+')
+
+#
+# /usr
+#
+/usr/bin/sepg_ctl	--	gen_context(system_u:object_r:initrc_exec_t,s0)
+
+/usr/lib/systemd/systemd --	gen_context(system_u:object_r:init_exec_t,s0)
+/usr/lib/systemd/system-preset(/.*)? gen_context(system_u:object_r:systemd_unit_t,s0)
+/usr/lib/systemd/user-preset(/.*)? gen_context(system_u:object_r:systemd_unit_t,s0)
+/usr/lib/systemd/ntp-units\.d -d gen_context(system_u:object_r:systemd_unit_t,s0)
+/usr/lib/systemd/system(/.*)?	gen_context(system_u:object_r:systemd_unit_t,s0)
+
+/usr/libexec/dcc/start-.* --	gen_context(system_u:object_r:initrc_exec_t,s0)
+/usr/libexec/dcc/stop-.* --	gen_context(system_u:object_r:initrc_exec_t,s0)
+
+/usr/sbin/apachectl	-- 	gen_context(system_u:object_r:initrc_exec_t,s0)
+/usr/sbin/init(ng)?	--	gen_context(system_u:object_r:init_exec_t,s0)
+/usr/sbin/open_init_pty	--	gen_context(system_u:object_r:initrc_exec_t,s0)
+/usr/sbin/upstart	--	gen_context(system_u:object_r:init_exec_t,s0)
+
+#
+# /var
+#
+/var/lib/systemd(/.*)?		gen_context(system_u:object_r:init_var_lib_t,s0)
+
+/run/initctl	-p	gen_context(system_u:object_r:initctl_t,s0)
+/run/utmp		--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/runlevel\.dir		gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/random-seed	--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/setmixer_flag	--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/systemd(/.*)?		gen_context(system_u:object_r:init_var_run_t,s0)
+
+ifdef(`distro_debian',`
+/run/hotkey-setup	--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/kdm/.*		--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+')
+
+ifdef(`distro_gentoo', `
+/var/lib/init\.d(/.*)?		gen_context(system_u:object_r:initrc_state_t,s0)
+/run/svscan\.pid	--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+')
+
+ifdef(`distro_suse', `
+/run/bootsplashctl	-p	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/keymap		--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/numlock-on	--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/setleds-on	--	gen_context(system_u:object_r:initrc_var_run_t,s0)
+/run/sysconfig(/.*)?	gen_context(system_u:object_r:initrc_var_run_t,s0)
+')

@@ -1,0 +1,5 @@
+policy_module(w05, 1.0)
+
+type bar_t;
+
+foo_read(bar_t)
