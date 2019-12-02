@@ -158,7 +158,7 @@ comment:
 
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { cur = ast; begin_parsing_te(&cur, $3, yylineno); free($3); free($5);} // Version number isn't needed
+	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { if(!cur) { cur = ast; } begin_parsing_te(&cur, $3, yylineno); free($3); free($5);} // Version number isn't needed
 	|
 	MODULE STRING VERSION_NO SEMICOLON { cur = ast; begin_parsing_te(&cur, $2, yylineno); free($2); free($3); }
 	;
