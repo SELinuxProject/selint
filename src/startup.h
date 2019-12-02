@@ -12,6 +12,8 @@ void load_modules_normal();
 
 enum selint_error load_modules_source(char *modules_conf_path);
 
+enum selint_error load_devel_headers(struct policy_file_list *context_files);
+
 enum selint_error mark_transform_interfaces(struct policy_file_list *files);
 
 #endif

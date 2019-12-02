@@ -86,5 +86,6 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 enum selint_error run_analysis(struct checks *ck,
                                struct policy_file_list *te_files,
                                struct policy_file_list *if_files,
-                               struct policy_file_list *fc_files);
+                               struct policy_file_list *fc_files,
+                               struct policy_file_list *context_files);
 #endif

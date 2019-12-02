@@ -15,6 +15,7 @@ extern int yyparse();
 struct policy_node *ast;        // Must be global so the parser can access it
 extern int yylineno;
 extern char *parsing_filename;
+extern struct policy_node *cur;
 
 #define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
@@ -36,6 +37,7 @@ struct policy_node *parse_one_file(char *filename, enum node_flavor flavor)
 		return NULL;
 	}
 	fclose(yyin);
+	cur = NULL;
 
 	// dont run cleanup_parsing until everything is done because it frees the maps
 	return ast;
@@ -178,6 +180,7 @@ enum selint_error parse_all_files_in_list(struct policy_file_list *files, enum n
 	while (cur) {
 		print_if_verbose("Parsing %s\n", cur->file->filename);
 		cur->file->ast = parse_one_file(cur->file->filename, flavor);
+		ast = NULL;
 		if (!cur->file->ast) {
 			return SELINT_PARSE_ERROR;
 		}
@@ -209,7 +212,6 @@ enum selint_error run_checks_on_one_file(struct checks *ck,
                                          struct check_data *data,
                                          struct policy_node *head)
 {
-
 	struct policy_node *cur = head;
 
 	while (cur) {
@@ -267,12 +269,19 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 enum selint_error run_analysis(struct checks *ck,
                                struct policy_file_list *te_files,
                                struct policy_file_list *if_files,
-                               struct policy_file_list *fc_files)
+                               struct policy_file_list *fc_files,
+                               struct policy_file_list *context_files)
 {
 
 	enum selint_error res;
 
 	res = parse_all_files_in_list(if_files, NODE_IF_FILE);
+	if (res != SELINT_SUCCESS) {
+		goto out;
+	}
+
+	res = parse_all_files_in_list(context_files, NODE_IF_FILE); //TODO: This can eventually
+	                                                            // include te files too
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}

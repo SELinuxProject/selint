@@ -145,6 +145,31 @@ static int mark_transform_interfaces_one_file(struct policy_node *ast) {
 	return marked_transform;
 }
 
+enum selint_error load_devel_headers(struct policy_file_list *context_files)
+{
+	char *header_loc = "/usr/share/selinux/devel";
+	char *paths[2] = {header_loc, 0};
+	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+
+	FTSENT *file = fts_read(ftsp);
+	while (file) {
+		char *suffix = file->fts_path + file->fts_pathlen - 3;
+		if (!strcmp(suffix, ".if")) {
+			file_list_push_back(context_files,
+			                    make_policy_file(file->fts_path,
+			                                     NULL));
+			char *mod_name = strdup(file->fts_name);
+			mod_name[file->fts_namelen - 3] = '\0';
+			insert_into_mod_layers_map(mod_name, file->fts_parent->fts_name);
+			free(mod_name);
+		}
+		file = fts_read(ftsp);
+	}
+
+	fts_close(ftsp);
+	return SELINT_SUCCESS;
+}
+
 enum selint_error mark_transform_interfaces(struct policy_file_list *files)
 {
 	struct policy_file_node *cur;
