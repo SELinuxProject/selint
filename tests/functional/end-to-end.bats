@@ -74,6 +74,7 @@ test_one_check() {
 @test "C-001" {
 	test_ordering "simple"
 	test_ordering "interleaved"
+	test_ordering "optional"
 }
 
 @test "C-004" {

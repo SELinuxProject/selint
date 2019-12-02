@@ -1,0 +1,17 @@
+policy_module(optional, 1.0)
+
+type foo_t;
+domain_type(foo_t)
+
+allow foo_t self:capability dac_override;
+
+kernel_read_system_state(foo_t)
+
+optional_policy(`
+	mta_read_mail_home_files(foo_t)
+')
+
+tunable_policy(`foo_read_audit',`
+	logging_read_audit_log(foo_t)
+	logging_set_audit_parameters(foo_t)
+')
