@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "../src/parse_functions.h"
 #include "../src/template.h"
 #include "../src/parse.h"
 #include "../src/maps.h"
