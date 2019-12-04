@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 
 		case 'm':
 			// Specify a modules.conf file.  (Not in the README)
-			printf("Flag m with value %s\n", optarg);
+			// TODO
 			break;
 
 		case 'r':
