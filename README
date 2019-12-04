@@ -71,9 +71,9 @@ OPTIONS
 
 CONFIGURATION
 
-	A global configuration is specified at [TODO: Global config location].  This
-	can be overridden by a user config at ~/.selint.conf, or on the command line
-	using the -c option.
+	A global configuration is specified at the install prefix supplied to
+	./configure (typically /usr/local/etc).  This can be overridden on the command
+	line using the -c option.
 
 	Options specified on the command line override options from the config file.
 
