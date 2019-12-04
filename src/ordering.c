@@ -194,7 +194,12 @@ char *get_section(const struct policy_node *node)
 		} else if (is_filetrans_if(node->data.ic_data->name)) {
 			return "_non_ordered";
 		} else {
-			return node->data.ic_data->args->string;
+			if (node->data.ic_data->args) {
+				return node->data.ic_data->args->string;
+			} else {
+				// Empty interface call
+				return "_non_ordered";
+			}
 		}
 	case NODE_TEMP_DEF:
 	case NODE_INTERFACE_DEF:

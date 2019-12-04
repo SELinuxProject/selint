@@ -1,6 +1,7 @@
 #include <check.h>
 #include <stdlib.h>
 
+#include "../src/runner.h"
 #include "../src/ordering.h"
 #include "../src/maps.h"
 
@@ -40,6 +41,29 @@ START_TEST (test_prepare_ordering_metadata) {
 
 	free_ordering_metadata(o);
 	free_policy_node(head);
+}
+END_TEST
+
+#define POLICIES_DIR "sample_policy_files/"
+#define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"
+
+START_TEST (test_ordering_uncommon_policy) {
+	struct policy_node *head = parse_one_file(UNCOMMON_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(head);
+
+	struct ordering_metadata *o = prepare_ordering_metadata(head);
+
+	ck_assert_ptr_nonnull(o);
+
+	calculate_longest_increasing_subsequence(head, o, always_greater);
+
+	ck_assert_ptr_eq(o->nodes[0].node, head->next);
+	ck_assert_int_eq(o->nodes[0].in_order, 1);
+
+	free_ordering_metadata(o);
+
+	free_policy_node(head);
+	cleanup_parsing();
 }
 END_TEST
 
@@ -265,6 +289,7 @@ Suite *ordering_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_prepare_ordering_metadata);
+	tcase_add_test(tc_core, test_ordering_uncommon_policy);
 	tcase_add_test(tc_core, test_calculate_longest_increasing_subsequence);
 	tcase_add_test(tc_core, test_add_section_info);
 	tcase_add_test(tc_core, test_get_section);
