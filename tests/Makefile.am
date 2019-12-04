@@ -12,101 +12,102 @@ TEST_UTILS_OBJS=test_utils.o $(top_builddir)/src/tree.o $(top_builddir)/src/stri
 
 UTIL_HEADS=$(top_builddir)/src/util.h
 UTIL_OBJS=$(top_builddir)/src/util.o
+SELINT_ERROR_HEADS=$(top_builddir)/src/selint_error.h
 STRING_LIST_HEADS=$(top_builddir)/src/string_list.h
 STRING_LIST_OBJS=$(top_builddir)/src/string_list.o
-SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${UTIL_HEADS} ${MAPS_HEADS}
-SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${UTIL_OBJS} ${MAPS_OBJS}
-TREE_HEADS=${TEST_UTILS_HEADS} $(top_builddir)/src/maps.h
-TREE_OBJS=${TEST_UTILS_OBJS} $(top_builddir)/src/maps.o
+SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${SELINT_ERROR_HEADS} ${STRING_LIST_HEADS} ${TREE_HEADS} ${MAPS_HEADS}
+SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${STRING_LIST_OBJS} ${TREE_OBJS} ${MAPS_OBJS} ${UTIL_OBJS}
+TREE_HEADS=$(top_builddir)/src/tree.h ${SELINT_ERROR_HEADS} ${STRING_LIST_HEADS}
+TREE_OBJS=$(top_builddir)/src/tree.o ${STRING_LIST_OBJS} $(top_builddir)/src/maps.o
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
 FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}
-MAPS_HEADS=$(top_builddir)/src/maps.h ${TREE_HEADS}
-MAPS_OBJS=${TREE_OBJS}
-STARTUP_HEADS=$(top_builddir)/src/startup.h ${FILE_LIST_HEADS}
+MAPS_HEADS=$(top_builddir)/src/maps.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
+MAPS_OBJS=$(top_builddir)/src/maps.o ${TREE_OBJS}
+STARTUP_HEADS=$(top_builddir)/src/startup.h ${SELINT_ERROR_HEADS} ${FILE_LIST_HEADS}
 STARTUP_OBJS=$(top_builddir)/src/startup.o ${FILE_LIST_OBJS} 
-TEMPLATE_HEADS=$(top_builddir)/src/template.h ${MAPS_HEADS}
-TEMPLATE_OBJS=$(top_builddir)/src/template.o ${MAPS_OBJS}
-PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${TEMPLATE_HEADS}
-PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TEMPLATE_OBJS} $(top_builddir)/src/ordering.o
-PARSING_HEADS=$(top_builddir)/src/parse.h ${PARSE_FUNCTIONS_HEADS} ${CHECK_HOOKS_HEADS}
-PARSING_OBJS=$(top_builddir)/src/parse.o $(top_builddir)/src/lex.o ${PARSE_FUNCTIONS_OBJS} $(top_builddir)/src/check_hooks.o
+TEMPLATE_HEADS=$(top_builddir)/src/template.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
+TEMPLATE_OBJS=$(top_builddir)/src/template.o ${TREE_OBJS}
+PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${SELINT_ERROR_HEADS} ${TREE_HEADS} ${MAPS_HEADS}
+PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TREE_HEADS} ${MAPS_HEADS} ${TEMPLATE_OBJS} ${ORDERING_OBJS}
+PARSE_HEADS=$(top_builddir)/src/parse.h ${PARSE_FUNCTIONS_HEADS}
+PARSE_OBJS=$(top_builddir)/src/parse.o $(top_builddir)/src/lex.o ${CHECK_HOOKS_OBJS} ${PARSE_FUNCTIONS_OBJS}
 PARSE_FC_HEADS = $(top_builddir)/src/parse_fc.h $(TREE_HEADS)
 PARSE_FC_OBJS = $(top_builddir)/src/parse_fc.o $(TREE_OBJS)
-CHECK_HOOKS_HEADS=$(top_builddir)/src/check_hooks.h ${TREE_HEADS}
+CHECK_HOOKS_HEADS=$(top_builddir)/src/check_hooks.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
 CHECK_HOOKS_OBJS=$(top_builddir)/src/check_hooks.o ${TREE_OBJS}
 FC_CHECKS_HEADS=$(top_builddir)/src/fc_checks.h ${CHECK_HOOKS_HEADS}
 FC_CHECKS_OBJS=$(top_builddir)/src/fc_checks.o ${CHECK_HOOKS_OBJS}
 IF_CHECKS_HEADS=$(top_builddir)/src/if_checks.h ${CHECK_HOOKS_HEADS}
 IF_CHECKS_OBJS=$(top_builddir)/src/if_checks.o ${CHECK_HOOKS_OBJS}
-TE_CHECKS_HEADS=$(top_builddir)/src/te_checks.h ${CHECK_HOOKS_HEADS} $(top_builddir)/src/ordering.h
+TE_CHECKS_HEADS=$(top_builddir)/src/te_checks.h ${CHECK_HOOKS_HEADS}
 TE_CHECKS_OBJS=$(top_builddir)/src/te_checks.o ${CHECK_HOOKS_OBJS} $(top_builddir)/src/ordering.o
-RUNNER_HEADS=$(top_builddir)/src/runner.h ${PARSING_HEADS} ${UTIL_HEADS} $(top_builddir)/src/parse_fc.h $(top_builddir)/src/*_checks.h
-RUNNER_OBJS=$(top_builddir)/src/runner.o ${PARSING_OBJS} ${UTIL_OBJS} $(top_builddir)/src/parse_fc.o $(top_builddir)/src/*_checks.o $(top_builddir)/src/startup.o $(top_builddir)/src/file_list.o
-ORDERING_HEADS=$(top_builddir)/src/ordering.h ${MAPS_HEADS}
-ORDERING_OBJS=$(top_builddir)/src/ordering.o ${MAPS_OBJS}
+RUNNER_HEADS=$(top_builddir)/src/runner.h ${SELINT_ERROR_HEADS} ${CHECK_HOOKS_HEADS} ${PARSE_FUNCTIONS_HEADS} ${FILE_LIST_HEADS}
+RUNNER_OBJS=$(top_builddir)/src/runner.o ${CHECK_HOOKS_OBJS} ${PARSE_FUNCTIONS_OBJS} ${FILE_LIST_OBJS} ${FC_CHECKS_OBJS} ${IF_CHECKS_OBJS} ${TE_CHECKS_OBJS} ${PARSE_FC_OBJS} ${UTIL_OBJS} ${STARTUP_OBJS} ${PARSE_OBJS}
+ORDERING_HEADS=$(top_builddir)/src/ordering.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
+ORDERING_OBJS=$(top_builddir)/src/ordering.o ${TREE_OBJS} ${MAPS_OBJS}
 
 check_string_list_SOURCES = check_string_list.c ${STRING_LIST_HEADS}
 check_string_list_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_string_list_LDADD = @CHECK_LIBS@ ${STRING_LIST_OBJS}
+check_string_list_LDADD = @CHECK_LIBS@ $(sort ${STRING_LIST_OBJS})
 
-check_selint_config_SOURCES = check_selint_config.c ${SELINT_CONFIG_HEADS}
+check_selint_config_SOURCES = check_selint_config.c ${SELINT_CONFIG_HEADS} ${STRING_LIST_HEADS}
 check_selint_config_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_selint_config_LDADD = @CHECK_LIBS@ ${SELINT_CONFIG_OBJS}
+check_selint_config_LDADD = @CHECK_LIBS@ $(sort ${SELINT_CONFIG_OBJS} ${STRING_LIST_OBJS})
 
 check_maps_SOURCES = check_maps.c ${MAPS_HEADS}
 check_maps_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_maps_LDADD = @CHECK_LIBS@ ${MAPS_OBJS}
+check_maps_LDADD = @CHECK_LIBS@ $(sort ${MAPS_OBJS})
 
-check_startup_SOURCES = check_startup.c ${STARTUP_HEADS}
+check_startup_SOURCES = check_startup.c ${STARTUP_HEADS} ${MAPS_HEADS} ${SELINT_ERROR_HEADS}
 check_startup_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_startup_LDADD = @CHECK_LIBS@ ${STARTUP_OBJS}
+check_startup_LDADD = @CHECK_LIBS@ $(sort ${STARTUP_OBJS} ${MAPS_OBJS})
 
-check_tree_SOURCES = check_tree.c ${TREE_HEADS} $(top_builddir)/src/selint_error.h
+check_tree_SOURCES = check_tree.c ${TREE_HEADS} ${TEST_UTILS_HEADS}
 check_tree_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_tree_LDADD = @CHECK_LIBS@ ${TREE_OBJS}
+check_tree_LDADD = @CHECK_LIBS@ $(sort ${TREE_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OBJS})
 
 check_file_list_SOURCES = check_file_list.c ${FILE_LIST_HEADS}
 check_file_list_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_file_list_LDADD = @CHECK_LIBS@ ${FILE_LIST_OBJS}
+check_file_list_LDADD = @CHECK_LIBS@ $(sort ${FILE_LIST_OBJS})
 
-check_parse_functions_SOURCES = check_parse_functions.c ${PARSE_FUNCTIONS_HEADS} $(top_builddir)/src/selint_error.h
+check_parse_functions_SOURCES = check_parse_functions.c ${PARSE_FUNCTIONS_HEADS} ${MAPS_HEADS} ${SELINT_ERROR_HEADS}
 check_parse_functions_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_parse_functions_LDADD = @CHECK_LIBS@ ${PARSE_FUNCTIONS_OBJS}
+check_parse_functions_LDADD = @CHECK_LIBS@ $(sort ${PARSE_FUNCTIONS_OBJS} ${MAPS_OBJS})
 
-check_parsing_SOURCES = check_parsing.c ${PARSING_HEADS} $(top_builddir)/src/selint_error.h
+check_parsing_SOURCES = check_parsing.c ${PARSE_HEADS} ${TREE_HEADS} ${PARSE_FUNCTIONS_HEADS} ${SELINT_ERROR_HEADS}
 check_parsing_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_parsing_LDADD = @CHECK_LIBS@ ${PARSING_OBJS}
+check_parsing_LDADD = @CHECK_LIBS@ $(sort ${PARSE_OBJS} ${TREE_OBJS} ${PARSE_FUNCTIONS_OBJS})
 
-check_parse_fc_SOURCES = check_parse_fc.c ${PARSE_FC_HEADS}
+check_parse_fc_SOURCES = check_parse_fc.c ${PARSE_FC_HEADS} ${TREE_HEADS}
 check_parse_fc_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_parse_fc_LDADD = @CHECK_LIBS@ ${PARSE_FC_OBJS}
+check_parse_fc_LDADD = @CHECK_LIBS@ $(sort ${PARSE_FC_OBJS} ${TREE_OBJS})
 
-check_template_SOURCES = check_template.c ${PARSING_HEADS}
+check_template_SOURCES = check_template.c ${PARSE_FUNCTIONS_HEADS} ${TEMPLATE_HEADS} ${PARSE_HEADS} ${MAPS_HEADS}
 check_template_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_template_LDADD = @CHECK_LIBS@ ${PARSING_OBJS}
+check_template_LDADD = @CHECK_LIBS@ $(sort ${PARSE_FUNCTIONS_OBJS} ${TEMPLATE_OBJS} ${PARSE_OBJS} ${MAPS_OBJS})
 
 check_check_hooks_SOURCES = check_check_hooks.c ${CHECK_HOOKS_HEADS}
 check_check_hooks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_check_hooks_LDADD = @CHECK_LIBS@ ${CHECK_HOOKS_OBJS}
+check_check_hooks_LDADD = @CHECK_LIBS@ $(sort ${CHECK_HOOKS_OBJS})
 
-check_fc_checks_SOURCES = check_fc_checks.c ${FC_CHECKS_HEADS}
+check_fc_checks_SOURCES = check_fc_checks.c ${FC_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS}
 check_fc_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_fc_checks_LDADD = @CHECK_LIBS@ ${FC_CHECKS_OBJS}
+check_fc_checks_LDADD = @CHECK_LIBS@ $(sort ${FC_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS})
 
-check_if_checks_SOURCES = check_if_checks.c ${IF_CHECKS_HEADS}
+check_if_checks_SOURCES = check_if_checks.c ${IF_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS} ${TEST_UTILS_HEADS}
 check_if_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_if_checks_LDADD = @CHECK_LIBS@ ${IF_CHECKS_OBJS}
+check_if_checks_LDADD = @CHECK_LIBS@ $(sort ${IF_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OBJS})
 
-check_te_checks_SOURCES = check_te_checks.c ${TE_CHECKS_HEADS}
+check_te_checks_SOURCES = check_te_checks.c ${TE_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS} ${TEST_UTILS_HEADS}
 check_te_checks_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_te_checks_LDADD = @CHECK_LIBS@ ${TE_CHECKS_OBJS}
+check_te_checks_LDADD = @CHECK_LIBS@ $(sort ${TE_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OBJS})
 
-check_runner_SOURCES = check_runner.c ${RUNNER_HEADS}
+check_runner_SOURCES = check_runner.c ${STRING_LIST_HEADS} ${RUNNER_HEADS}
 check_runner_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_runner_LDADD = @CHECK_LIBS@ ${RUNNER_OBJS}
+check_runner_LDADD = @CHECK_LIBS@ $(sort ${STRING_LIST_OBJS} ${RUNNER_OBJS})
 
-check_ordering_SOURCES = check_ordering.c ${ORDERING_HEADS} $(top_builddir)/src/selint_error.h
+check_ordering_SOURCES = check_ordering.c ${ORDERING_HEADS} ${RUNNER_HEADS} ${MAPS_HEADS}
 check_ordering_CFLAGS = @CHECK_CFLAGS@ ${EXTRA_CFLAGS}
-check_ordering_LDADD = @CHECK_LIBS@ ${ORDERING_OBJS}
+check_ordering_LDADD = @CHECK_LIBS@ $(sort ${ORDERING_OBJS} ${RUNNER_OBJS} ${MAPS_OBJS})
 
 MOSTLYCLEANFILES = *.gcov *.gcda *.gcno
