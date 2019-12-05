@@ -140,6 +140,15 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
                                                      const struct policy_node *first,
                                                      const struct policy_node *second);
 
+
+/**********************************
+* Get a string describing the local subsection.
+* The strings for kernel and system will be inserted
+* into a description by get_ordering_reason, so if they
+* are modified, that code should be modified as well.
+**********************************/
+char *lss_to_string(enum local_subsection lss);
+
 /**********************************
 * Get a string explaining why a node is out of order.
 * This is done by looking for the nearest node that is globally

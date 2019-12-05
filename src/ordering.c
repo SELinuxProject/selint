@@ -460,6 +460,33 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 	return ORDER_EQUAL;
 }
 
+char *lss_to_string(enum local_subsection lss)
+{
+	switch (lss) {
+	case LSS_SELF:
+		return "self";
+	case LSS_OWN:
+		return "own module rules";
+	case LSS_KERNEL:
+		return "kernel";
+	case LSS_SYSTEM:
+		return "system";
+	case LSS_OTHER:
+		return "general interfaces";
+	case LSS_BUILD_OPTION:
+		return "build options";
+	case LSS_CONDITIONAL:
+		return "conditional blocks";
+	case LSS_TUNABLE:
+		return "tunable policy blocks";
+	case LSS_OPTIONAL:
+		return "optional policy blocks";
+	case LSS_UNKNOWN:
+	default:
+		return "unknown subsection";
+	}
+}
+
 char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index)
 {
 	unsigned int distance = 1;
@@ -565,6 +592,15 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		default:
 			//Shouldn't happen
 			return NULL;
+		}
+		if (other_lss == LSS_KERNEL || other_lss == LSS_SYSTEM || other_lss == LSS_OTHER) {
+			enum local_subsection this_lss = get_local_subsection(order_data->nodes[index].node);
+			if (this_lss == LSS_KERNEL || this_lss == LSS_SYSTEM) {
+				asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
+			} else if (this_lss == LSS_OTHER) {
+				followup_str = strdup("  (This interface is in a layer other than kernel or system)");
+			}
+			// Otherwise, it's not an interface call and is hopefully obvious to the user what layer its in
 		}
 		break;
 	case ORDER_ALPHABETICAL:
