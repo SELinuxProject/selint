@@ -142,6 +142,15 @@ char *get_section(const struct policy_node *node)
 	case NODE_FC_FILE:
 		return NULL; // Should never happen
 	case NODE_AV_RULE:
+		if (node->data.av_data->flavor == AV_RULE_NEVERALLOW) {
+			// These are somewhat of a unique situation, and the style guide
+			// doesn't mention them explicitely.  Maybe they should just group
+			// like other av rules, but they can often have multiple types.
+			// Additionally, the below code assumes that the first string in
+			// the sources is a type or attribute, but in the case of neverallows
+			// it can be "~"
+			return "_non_ordered";
+		}
 		if (node->data.av_data->perms &&
 		    (str_in_sl("associate", node->data.av_data->perms) ||
 		     str_in_sl("mounton", node->data.av_data->perms))) {
