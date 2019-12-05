@@ -197,6 +197,7 @@ char *get_section(const struct policy_node *node)
 		if (!is_optional(node) &&
 		    (look_up_in_template_map(node->data.ic_data->name) ||
 		     is_transform_if(node->data.ic_data->name) ||
+		     is_role_if(node->data.ic_data->name) ||
 		     0 == strcmp(node->data.ic_data->name, "gen_bool") ||
 		     0 == strcmp(node->data.ic_data->name, "gen_tunable"))) {
 			return "_declarations";

@@ -1,0 +1,11 @@
+policy_module(role_ifs, 1.0)
+
+type foo_t;
+role_ifs_associate_role(foo_t)
+
+type bar_t;
+
+allow foo_t self:capability mac_override;
+allow foo_t bar_t:process signal;
+
+role_ifs_associate_role(bar_t)

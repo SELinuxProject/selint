@@ -75,6 +75,7 @@ test_one_check() {
 	test_ordering "simple"
 	test_ordering "interleaved"
 	test_ordering "optional"
+	test_ordering "role_ifs"
 }
 
 @test "C-004" {

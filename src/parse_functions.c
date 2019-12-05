@@ -87,6 +87,9 @@ enum selint_error insert_declaration(struct policy_node **cur,
 
 		}
 	}
+	if (flavor == DECL_ROLE && (*cur)->parent && (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
+		mark_role_if((*cur)->parent->data.str);
+	}
 
 	struct declaration_data *data = (struct declaration_data *)malloc(sizeof(struct declaration_data));
 	if (!data) {

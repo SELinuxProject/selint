@@ -11,6 +11,7 @@ struct hash_elem *mod_layers_map = NULL;
 struct hash_elem *ifs_map = NULL;
 struct bool_hash_elem *transform_map = NULL;
 struct bool_hash_elem *filetrans_map = NULL;
+struct bool_hash_elem *role_if_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
 struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
@@ -271,6 +272,34 @@ int is_filetrans_if(char *if_name)
 	}
 }
 
+void mark_role_if(char *if_name)
+{
+	struct bool_hash_elem *role_if;
+
+	HASH_FIND(hh_role_if, role_if_map, if_name, strlen(if_name), role_if);
+
+	if (!role_if) {
+		role_if = malloc(sizeof(struct bool_hash_elem));
+		role_if->key = strdup(if_name);
+		role_if->val = 1;
+		HASH_ADD_KEYPTR(hh_role_if, role_if_map, role_if->key,
+		                strlen(role_if->key), role_if);
+	} else {
+		role_if->val = 1;
+	}
+}
+
+int is_role_if(char *if_name)
+{
+	struct bool_hash_elem *role_if;
+	HASH_FIND(hh_role_if, role_if_map, if_name, strlen(if_name), role_if);
+	if (role_if && role_if->val == 1) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 void insert_decl(struct template_hash_elem *template, void *new_node)
 {
 	if (template->declarations) {
@@ -433,6 +462,8 @@ void free_all_maps()
 	FREE_BOOL_MAP(transform);
 
 	FREE_BOOL_MAP(filetrans);
+
+	FREE_BOOL_MAP(role_if);
 
 	struct template_hash_elem *cur_template, *tmp_template;
 

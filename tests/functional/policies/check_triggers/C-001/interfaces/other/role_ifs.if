@@ -1,0 +1,6 @@
+interface(`role_ifs_associate_role',`
+	gen_require(`
+		role some_role;
+	')
+	role some_role types $1;
+')
