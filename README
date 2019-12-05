@@ -99,6 +99,7 @@ SELINT EXCEPTIONS
 	To eliminate a check on one line, add a comment containing a string in the
 	following format:
 	"selint-disable:E-003"
+	This is currently only supported in te and if files
 
 OUTPUT
 
