@@ -529,6 +529,9 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		}
 	}
 
+	const struct policy_node *this_node = order_data->nodes[index].node;
+	const struct policy_node *other_node = order_data->nodes[nearest_index].node;
+
 	char *before_after = NULL;
 	if (nearest_index > index) {
 		before_after = "before";
@@ -546,14 +549,18 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	case ORDER_EQUAL:
 		return NULL; // Error
 	case ORDER_SECTION:
-		node_section = get_section(order_data->nodes[index].node);
-		other_section = get_section(order_data->nodes[nearest_index].node);
+		node_section = get_section(this_node);
+		other_section = get_section(other_node);
 		if (0 == strcmp("_declarations", node_section)) {
 			// This is the first section
 			reason_str = "that is not a declaration";
 		} else if (0 == strcmp("_declarations", other_section)) {
 			// The other section is the first section
-			reason_str = "that is a declaration";
+			if (other_node->flavor == NODE_IF_CALL && is_transform_if(other_node->data.ic_data->name)) {
+				reason_str = "that is a transform interface";
+			} else {
+				reason_str = "that is a declaration";
+			}
 		} else {
 			reason_str = "that is in a different section";
 			asprintf(&followup_str, "  (This node is in the section for %s rules and the other is in the section for %s rules.)", node_section, other_section);
@@ -567,7 +574,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		reason_str = "that is in another layer";
 		break;
 	case ORDER_LOCAL_SUBSECTION:
-		other_lss = get_local_subsection(order_data->nodes[nearest_index].node);
+		other_lss = get_local_subsection(other_node);
 		switch (other_lss) {
 		case LSS_SELF:
 			reason_str = "that is a self rule";
@@ -603,7 +610,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			return NULL;
 		}
 		if (other_lss == LSS_KERNEL || other_lss == LSS_SYSTEM || other_lss == LSS_OTHER) {
-			enum local_subsection this_lss = get_local_subsection(order_data->nodes[index].node);
+			enum local_subsection this_lss = get_local_subsection(this_node);
 			if (this_lss == LSS_KERNEL || this_lss == LSS_SYSTEM) {
 				asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
 			} else if (this_lss == LSS_OTHER) {
@@ -642,7 +649,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	size_t written = snprintf(ret, str_len,
 	                          "Line out of order.  It is %s line %u %s.",
 	                          before_after,
-	                          order_data->nodes[nearest_index].node->lineno,
+	                          other_node->lineno,
 	                          reason_str);
 
 	if (followup_str) {
