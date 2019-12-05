@@ -87,8 +87,18 @@ enum selint_error insert_declaration(struct policy_node **cur,
 
 		}
 	}
-	if (flavor == DECL_ROLE && (*cur)->parent && (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
-		mark_role_if((*cur)->parent->data.str);
+	if (flavor == DECL_ROLE &&
+	    (*cur)->parent &&
+	    (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
+		struct string_list *cur_sl_item = attrs;
+		while (cur_sl_item) {
+			if (cur_sl_item->string[0] == '$') {
+				// Role interfaces are only those where the types are passed in, not the roles
+				mark_role_if((*cur)->parent->data.str);
+				break;
+			}
+			cur_sl_item = cur_sl_item->next;
+		}
 	}
 
 	struct declaration_data *data = (struct declaration_data *)malloc(sizeof(struct declaration_data));
