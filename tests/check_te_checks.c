@@ -150,6 +150,7 @@ START_TEST (test_check_no_explicit_declaration) {
 	ck_assert_ptr_nonnull(res);
 	ck_assert_int_eq(W_ID_NO_EXPLICIT_DECL, res->check_id);
 
+	free_check_result(res);
 	free_all_maps();
 	free(cd);
 	free_policy_node(cur);
