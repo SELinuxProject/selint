@@ -74,6 +74,42 @@ struct check_result *check_require_block(const struct check_data *data,
 	return NULL;
 }
 
+// Helper for check_no_explicit_declaration.  Returns 1 is there is a require block
+// for type_name earlier in the file, and 0 otherwise
+int has_require(const struct policy_node *node, char *type_name)
+{
+	const struct policy_node *cur = node;
+	while (cur) {
+		if (cur->flavor == NODE_REQUIRE || cur->flavor == NODE_GEN_REQ) {
+			cur = cur->first_child;
+			while (1) {
+				if (cur->flavor == NODE_DECL && cur->data.d_data->flavor == DECL_TYPE) {
+					if (0 == strcmp(type_name, cur->data.d_data->name)) {
+						return 1;
+					}
+				}
+				if (cur->next) {
+					cur = cur->next;
+				} else {
+					break;
+				}
+			}
+			// Not found in this require block, keep going
+			cur = cur->parent;
+			if (!cur) {
+				break;
+			}
+		}
+		if (cur->prev) {
+			cur = cur->prev;
+		} else {
+			cur = cur->parent;
+		}
+	}
+	return 0;
+}
+
+
 struct check_result *check_no_explicit_declaration(const struct check_data *data,
                                                    const struct policy_node *node)
 {
@@ -92,11 +128,16 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 			continue;
 		}
 		if (0 != strcmp(data->mod_name, mod_name)) {
-			struct check_result *to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
-			                                                "No explicit declaration for %s.  You should access it via interface call or use a require block.",
-			                                                type->string);
-			free_string_list(types);
-			return to_ret;
+			// It may be required
+			if (!has_require(node, type->string)) {
+				// We didn't find a require block with this type
+				struct check_result *to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
+										"No explicit declaration for %s.  You should access it via interface call or use a require block.",
+										type->string);
+				free_string_list(types);
+				return to_ret;
+			}
+			// Otherwise, keep checking other types in this node
 		}
 		type = type->next;
 	}

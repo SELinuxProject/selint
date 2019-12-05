@@ -124,6 +124,32 @@ START_TEST (test_check_no_explicit_declaration) {
 
 	free_check_result(res);
 
+	// Require block
+	cur->prev = calloc(1, sizeof(struct policy_node));
+	cur->prev->next = cur;
+	cur = cur->prev;
+	cur->flavor = NODE_REQUIRE;
+	union node_data nd;
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(cur, NODE_START_BLOCK, nd, 0));
+	nd.d_data = calloc(1, sizeof(struct declaration_data));
+	nd.d_data->flavor = DECL_TYPE;
+	nd.d_data->name = strdup("bar_t");
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(cur, NODE_DECL, nd, 0));
+
+	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur->next));
+
+	cur->flavor = NODE_GEN_REQ;
+
+	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur->next));
+
+	free(cur->first_child->next->data.d_data->name);
+	cur->first_child->next->data.d_data->name = strdup("baz_t");
+
+	res = check_no_explicit_declaration(cd, cur->next);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(W_ID_NO_EXPLICIT_DECL, res->check_id);
+
 	free_all_maps();
 	free(cd);
 	free_policy_node(cur);
