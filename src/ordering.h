@@ -22,6 +22,7 @@ enum order_difference_reason {
 enum local_subsection {
 	LSS_SELF,
 	LSS_OWN,
+	LSS_KERNEL_MOD,
 	LSS_KERNEL,
 	LSS_SYSTEM,
 	LSS_OTHER,

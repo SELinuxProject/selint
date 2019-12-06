@@ -1,0 +1,13 @@
+policy_module(kernel_module_first, 1.0)
+
+type foo_t;
+domain_type(foo_t)
+
+allow foo_t self:capability { sys_admin net_admin lease };
+
+domain_manage_all_entry_files(foo_t)
+domain_relabel_all_entry_files(foo_t)
+
+kernel_read_system_state(foo_t)
+
+mta_manage_queue(foo_t) 

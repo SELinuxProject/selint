@@ -309,6 +309,21 @@ int is_own_module_rule(const struct policy_node *node)
 	return 1;
 }
 
+int is_kernel_mod_if_call(const struct policy_node *node)
+{
+	if (node->flavor != NODE_IF_CALL) {
+		return 0;
+	}
+	char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
+	if (!mod_name) {
+		return 0;
+	}
+	if (0 == strcmp("kernel", mod_name)) {
+		return 1;
+	}
+	return 0;
+}
+
 int check_call_layer(const struct policy_node *node, char *layer_to_check)
 {
 	if (node->flavor != NODE_IF_CALL) {
@@ -385,6 +400,8 @@ enum local_subsection get_local_subsection(const struct policy_node *node)
 		return LSS_SELF;
 	} else if (is_own_module_rule(node)) {
 		return LSS_OWN;
+	} else if (is_kernel_mod_if_call(node)) {
+		return LSS_KERNEL_MOD;
 	} else if (is_kernel_layer_if_call(node)) {
 		return LSS_KERNEL;
 	} else if (is_system_layer_if_call(node)) {
@@ -461,6 +478,7 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 
 	CHECK_ORDERING(lss_first, lss_second, LSS_SELF, ORDER_LOCAL_SUBSECTION);
 	CHECK_ORDERING(lss_first, lss_second, LSS_OWN, ORDER_LOCAL_SUBSECTION);
+	CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL_MOD, ORDER_LOCAL_SUBSECTION);
 	CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL, ORDER_LOCAL_SUBSECTION);
 	CHECK_ORDERING(lss_first, lss_second, LSS_SYSTEM, ORDER_LOCAL_SUBSECTION);
 	CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
@@ -481,6 +499,8 @@ char *lss_to_string(enum local_subsection lss)
 		return "self";
 	case LSS_OWN:
 		return "own module rules";
+	case LSS_KERNEL_MOD:
+		return "kernel_mod";
 	case LSS_KERNEL:
 		return "kernel";
 	case LSS_SYSTEM:
@@ -587,6 +607,9 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		case LSS_OWN:
 			reason_str = "that refers to types owned by this module";
 			break;
+		case LSS_KERNEL_MOD:
+			reason_str = "that calls an interface located in the kernel module";
+			break;
 		case LSS_KERNEL:
 			reason_str = "that calls an interface located in the kernel layer";
 			break;
@@ -620,6 +643,8 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 				asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
 			} else if (this_lss == LSS_OTHER) {
 				followup_str = strdup("  (This interface is in a layer other than kernel or system)");
+			} else if (this_lss == LSS_KERNEL_MOD) {
+				followup_str = strdup("  (This interface is in the kernel module.)");
 			}
 			// Otherwise, it's not an interface call and is hopefully obvious to the user what layer its in
 		}
