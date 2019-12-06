@@ -163,6 +163,12 @@ struct string_list *get_types_in_node(const struct policy_node *node);
 
 struct string_list *get_types_required(const struct policy_node *node);
 
+/**********************************
+* Return 1 if the node is in a require block
+* and 0 otherwise
+**********************************/
+int is_in_require(const struct policy_node *cur);
+
 //Return the next node in a depth first search of the tree
 struct policy_node *dfs_next(const struct policy_node *node);
 

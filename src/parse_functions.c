@@ -32,17 +32,6 @@ char *get_current_module_name()
 	return module_name;
 }
 
-int is_in_require(struct policy_node *cur)
-{
-	while (cur->parent) {
-		cur = cur->parent;
-		if (cur->flavor == NODE_GEN_REQ || cur->flavor == NODE_REQUIRE) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
 enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno)
 {
 	union node_data data;

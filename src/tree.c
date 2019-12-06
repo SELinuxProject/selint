@@ -222,6 +222,17 @@ struct string_list *get_types_required(const struct policy_node *node)
 	return ret;
 }
 
+int is_in_require(const struct policy_node *cur)
+{
+	while (cur->parent) {
+		cur = cur->parent;
+		if (cur->flavor == NODE_GEN_REQ || cur->flavor == NODE_REQUIRE) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 struct policy_node *dfs_next(const struct policy_node *node)
 {
 	if (node->first_child) {

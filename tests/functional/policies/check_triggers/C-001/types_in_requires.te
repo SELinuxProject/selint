@@ -1,0 +1,11 @@
+policy_module(types_in_requires, 1.0)
+
+type foo_t;
+
+allow foo_t self:process setuid;
+
+require {
+	type bar_log_t;
+}
+
+append_files_pattern(foo_t, bar_log_t, bar_log_t)

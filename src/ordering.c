@@ -176,7 +176,11 @@ char *get_section(const struct policy_node *node)
 	case NODE_ALIAS:
 	case NODE_TYPE_ALIAS:
 	case NODE_TYPE_ATTRIBUTE:
-		return "_declarations";
+		if (is_in_require(node)) {
+			return "_non_ordered";
+		} else {
+			return "_declarations";
+		}
 	case NODE_M4_CALL:
 		return "_non_ordered"; // TODO: It's probably way more
 	// complicated than this
