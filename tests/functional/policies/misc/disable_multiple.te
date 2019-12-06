@@ -1,0 +1,6 @@
+policy_module(disable_multiple, 1.0)
+
+allow foo_t self:capability kill; #selint-disable:C-001,W-001
+
+type bar_t;
+type baz_t;

@@ -206,16 +206,17 @@ test_one_check() {
 	echo "Status: $status, Count: $count (expected 0)"
 	echo $output
 	[ "$count" -eq 0 ]
+
+	run ${SELINT_PATH} -c configs/default.conf policies/misc/disable_multiple*
+	[ "$status" -eq 0 ]
+	[ "$output" == "" ]
 }
 
 @test "nonexistent file" {
 	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.te
-	echo "$status"
 	[ "$status" -eq 70 ]
 	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.if
-	echo "$status"
 	[ "$status" -eq 70 ]
 	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.fc
-	echo "$status"
 	[ "$status" -eq 70 ]
 }

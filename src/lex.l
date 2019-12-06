@@ -88,7 +88,7 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 <return_whitespace>(\#.*)?\n { yylineno++; BEGIN(INITIAL); return NEWLINE; }
 <return_whitespace>dnl(.*)?\n { yylineno++; BEGIN(INITIAL); return NEWLINE; }
 ^\#.*\n { yylineno++; return COMMENT; }
-\#selint\-disable\:[CSWEF]\-[0-9]+\n { yylineno++; yylval.string = strdup(yytext); return SELINT_COMMAND; }
+\#selint\-disable\:[CSWEF]\-[0-9]+(\,[CSWEF]\-[0-9]+)*\n { yylineno++; yylval.string = strdup(yytext); return SELINT_COMMAND; }
 (\#.*)?\n { yylineno++; }
 dnl(.*)?\n { yylineno++; }
 [ \t] ; /* normally skip whitespace */
