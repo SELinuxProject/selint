@@ -31,6 +31,10 @@ struct policy_node *parse_one_file(char *filename, enum node_flavor flavor)
 	free(mod_name);
 
 	yyin = fopen(filename, "r");
+	if (!yyin) {
+		printf("Error opening %s\n", filename);
+		return NULL;
+	}
 	parsing_filename = filename;
 	if (0 != yyparse()) {
 		free_policy_node(ast);

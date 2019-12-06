@@ -207,3 +207,15 @@ test_one_check() {
 	echo $output
 	[ "$count" -eq 0 ]
 }
+
+@test "nonexistent file" {
+	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.te
+	echo "$status"
+	[ "$status" -eq 70 ]
+	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.if
+	echo "$status"
+	[ "$status" -eq 70 ]
+	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.fc
+	echo "$status"
+	[ "$status" -eq 70 ]
+}
