@@ -33,6 +33,7 @@ struct policy_node *parse_one_file(char *filename, enum node_flavor flavor)
 	yyin = fopen(filename, "r");
 	if (!yyin) {
 		printf("Error opening %s\n", filename);
+		free_policy_node(ast);
 		return NULL;
 	}
 	parsing_filename = filename;

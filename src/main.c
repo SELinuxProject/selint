@@ -202,8 +202,12 @@ int main(int argc, char **argv)
 
 	if (config_filename) {
 		char cfg_severity;
-		parse_config(config_filename, source_flag, &cfg_severity,
-		             &config_disabled_checks, &config_enabled_checks);
+		if (SELINT_SUCCESS != parse_config(config_filename, source_flag,
+		                                   &cfg_severity, &config_disabled_checks,
+		                                   &config_enabled_checks)) {
+			// Error message printed by parse_config()
+			exit(EX_CONFIG);
+		}
 		if (severity == '\0') {
 			severity = cfg_severity;
 		}
@@ -299,6 +303,7 @@ int main(int argc, char **argv)
 		free_file_list(te_files);
 		free_file_list(if_files);
 		free_file_list(fc_files);
+		free_file_list(context_files);
 		free(modules_conf_path);
 		return EX_CONFIG;
 	}

@@ -226,3 +226,8 @@ test_one_check() {
 	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.fc
 	[ "$status" -eq 70 ]
 }
+
+@test "Broken config" {
+	run valgrind --leak-check=full --error-exitcode=1 ${SELINT_PATH} -c configs/broken.conf -rs policies/refpolicy
+	[ "$status" -eq 78 ]
+}
