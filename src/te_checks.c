@@ -87,6 +87,15 @@ int has_require(const struct policy_node *node, char *type_name)
 					if (0 == strcmp(type_name, cur->data.d_data->name)) {
 						return 1;
 					}
+					struct string_list *other_types = cur->data.d_data->attrs; // In requires these
+					                                                           // are types, not
+					                                                           // attributes
+					while (other_types) {
+						if (0 == strcmp(type_name, other_types->string)) {
+							return 1;
+						}
+						other_types = other_types->next;
+					}
 				}
 				if (cur->next) {
 					cur = cur->next;
