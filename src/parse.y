@@ -410,11 +410,16 @@ optional_block:
 
 optional_open:
 	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, yylineno); }
+	|
+	OPTIONAL_POLICY OPEN_PAREN BACKTICK SELINT_COMMAND { begin_optional_policy(&cur, yylineno); save_command(cur->parent, $4); free($4); }
 	;
 
 require:
 	gen_require_begin
 	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
+	|
+	gen_require_begin
+	BACKTICK SELINT_COMMAND lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); save_command(cur, $3); free($3); }
 	|
 	// TODO: This is bad and should be checked
 	gen_require_begin
@@ -422,10 +427,15 @@ require:
 	|
 	REQUIRE OPEN_CURLY { begin_require(&cur, yylineno); }
 	lines CLOSE_CURLY { end_require(&cur); }
+	|
+	REQUIRE OPEN_CURLY SELINT_COMMAND { begin_require(&cur, yylineno); save_command(cur->parent, $3); free($3); }
+	lines CLOSE_CURLY { end_require(&cur); }
 	;
 
 gen_require_begin:
 	GEN_REQUIRE OPEN_PAREN { begin_gen_require(&cur, yylineno); }
+	|
+	GEN_REQUIRE OPEN_PAREN SELINT_COMMAND { begin_gen_require(&cur, yylineno); save_command(cur->parent, $3); free($3); }
 	;
 
 m4_call:

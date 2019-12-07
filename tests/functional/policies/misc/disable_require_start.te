@@ -1,0 +1,13 @@
+policy_module(disable_require_start, 1.0)
+
+require { #selint-disable:S-001
+	type foo_t;
+}
+
+gen_require( #selint-disable:S-001
+	type bar_t;
+)
+
+gen_require(` #selint-disable:S-001
+	type baz_t;
+')

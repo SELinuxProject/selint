@@ -212,6 +212,10 @@ test_one_check() {
 	run ${SELINT_PATH} -c configs/default.conf policies/misc/disable_multiple*
 	[ "$status" -eq 0 ]
 	[ "$output" == "" ]
+
+	run ${SELINT_PATH} -c configs/default.conf policies/misc/disable_require_start.*
+	[ "$status" -eq 0 ]
+	[ "$output" == "" ]
 }
 
 @test "nonexistent file" {
