@@ -94,22 +94,26 @@ enum selint_error load_modules_source(char *modules_conf_path)
 		pos = strtok(line, "=");
 		if (!pos) {
 			free(line);
+			fclose(fd);
 			return SELINT_PARSE_ERROR;
 		}
 		char *mod_name = strip_space(pos);
 		pos = strtok(NULL, "=");
 		if (!pos) {
 			free(line);
+			fclose(fd);
 			return SELINT_PARSE_ERROR;
 		}
 		char *status = strip_space(pos);
 		insert_into_mods_map(mod_name, status);
 		if (strtok(NULL, "=")) {
 			free(line);
+			fclose(fd);
 			return SELINT_PARSE_ERROR;
 		}
 	}
 	free(line);
+	fclose(fd);
 
 	return SELINT_SUCCESS;
 }
