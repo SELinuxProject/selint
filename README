@@ -4,9 +4,9 @@ SUMMARY
 	source files 
 	
 
-INSTALLING
+INSTALLING FROM TAR DOWNLOAD
 
-	To install, first install the following dependencies:
+	To install from a downloaded tarball, first install the following dependencies:
 
 	On rpm based distros:
 		uthash-devel
@@ -25,6 +25,12 @@ INSTALLING
 	./configure
 	make
 	make install
+
+INSTALLING FROM GIT
+
+	If you are building from a git repo checkout, you'll also need the
+	autoconf-archive package.  Then you can run ./autogen.sh to set up
+	autotools and then follow the steps above.
 
 USAGE
 
