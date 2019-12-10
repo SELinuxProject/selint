@@ -1,2 +1,0 @@
-/sys/kernel/debug	-d	gen_context(system_u:object_r:debugfs_t,s0)
-/sys/kernel/debug/.*		<<none>>

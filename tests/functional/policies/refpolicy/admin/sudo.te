@@ -1,9 +1,0 @@
-policy_module(sudo, 1.11.0)
-
-########################################
-#
-# Declarations
-attribute sudodomain;
-
-type sudo_exec_t;
-application_executable_file(sudo_exec_t)
