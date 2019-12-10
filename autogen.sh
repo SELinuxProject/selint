@@ -2,4 +2,4 @@
 aclocal \
 && autoconf \
 && autoheader \
-&& automake
+&& automake --add-missing -Wno-portability
