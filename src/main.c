@@ -183,7 +183,7 @@ int main(int argc, char **argv)
 
 		case 'V':
 			// Output version info and exit
-			printf("SELint Version %s\n", VERSION);
+			printf("SELint %s\n", VERSION);
 			exit(0);
 			break;
 
