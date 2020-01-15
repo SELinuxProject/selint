@@ -73,19 +73,26 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 
 	cur = cur->first_child;
 
-	while (cur && cur != node
-	       && (cur->flavor != NODE_GEN_REQ
-	           && cur->flavor != NODE_REQUIRE)) {
+	struct string_list *types_required = NULL;
+	struct string_list *types_required_tail = NULL;
+
+	while (cur && cur != node) {
+	       if (cur->flavor == NODE_GEN_REQ
+	           || cur->flavor == NODE_REQUIRE) {
+			if (!types_required) {
+				types_required = get_types_required(cur);
+				types_required_tail = types_required;
+			} else {
+				types_required_tail->next = get_types_required(cur);
+			}
+			while (types_required_tail && types_required_tail->next) {
+				types_required_tail = types_required_tail->next;
+			}
+		}
+
 		cur = dfs_next(cur); // The normal case is that the gen_require block
 		                     // is at the top level, but it could be nested,
 		                     // for example in an ifdef
-	}
-
-	struct string_list *types_required;
-	if (!cur || cur == node) {
-		types_required = NULL;
-	} else {
-		types_required = get_types_required(cur);
 	}
 
 	struct string_list *type_node = types_in_current_node;
