@@ -343,3 +343,9 @@ out:
 
 	return res;
 }
+
+void display_run_summary(struct checks *ck)
+{
+	printf("Found the following issue counts:\n");
+	display_check_issue_counts(ck);
+}

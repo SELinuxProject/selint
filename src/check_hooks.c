@@ -45,6 +45,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 
 	loc->check_function = check_function;
 	loc->check_id = strdup(check_id);
+	loc->issues_found = 0;
 	loc->next = NULL;
 
 	return SELINT_SUCCESS;
@@ -70,6 +71,7 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 		}
 		struct check_result *res = cur->check_function(data, node);
 		if (res) {
+			cur->issues_found++;
 			res->lineno = node->lineno;
 			display_check_result(res, data);
 			free_check_result(res);
@@ -143,6 +145,125 @@ int is_valid_check(const char *check_str)
 	} else {
 		return 0;
 	}
+}
+
+// Return the number of check nodes in the checks structure
+static unsigned int count_check_nodes(const struct checks *ck)
+{
+	unsigned int count = 0;
+	for (int i=0; i <= NODE_ERROR; i++) {
+		if (ck->check_nodes[i]) {
+			struct check_node *cur = ck->check_nodes[i];
+			while (cur) {
+				count++;
+				cur = cur->next;
+			}
+		}
+	}
+	return count;
+}
+
+#define COMPARE_IDS(node1_id, node2_id)\
+if (node1_id == node2_id) {\
+	return 0;\
+} else {\
+	return (node1_id > node2_id?1:-1);\
+}
+
+// Return negative if n1 goes before n2, positive if n1 goes after n2 or equal if they are equivalent
+static int comp_check_nodes(const void *n1, const void *n2)
+{
+	const struct check_node *node1 = *(struct check_node **)n1;
+	const struct check_node *node2 = *(struct check_node **)n2;
+
+	unsigned int node1_id = atoi(node1->check_id + 2);
+	unsigned int node2_id = atoi(node2->check_id + 2);
+
+	switch (node1->check_id[0]) {
+	case 'C':
+		if (node2->check_id[0] == 'C') {
+			COMPARE_IDS(node1_id, node2_id);
+		} else {
+			return -1;
+		}
+	case 'S':
+		if (node2->check_id[0] == 'C') {
+			return 1;
+		} else if (node2->check_id[0] == 'S') {
+			COMPARE_IDS(node1_id, node2_id);
+		} else {
+			return -1;
+		}
+	case 'W':
+		if (node2->check_id[0] == 'C' || node2->check_id[0] == 'S') {
+			return 1;
+		} else if (node2->check_id[0] == 'W') {
+			COMPARE_IDS(node1_id, node2_id);
+		} else {
+			return 1;
+		}
+	case 'E':
+		if (node2->check_id[0] == 'E') {
+			COMPARE_IDS(node1_id, node2_id);
+		} else {
+			return 1;
+		}
+	default:
+		return 0; //Should never happen, but no way to return an error
+	}
+}
+
+void display_check_issue_counts(const struct checks *ck)
+{
+	size_t num_nodes = count_check_nodes(ck);
+	unsigned int printed_something = 0;
+
+	// Build flat array of check nodes
+	struct check_node **node_arr = calloc(num_nodes, sizeof(struct check_node *));
+	unsigned int node_arr_index = 0;
+	for (int i=0; i <= NODE_ERROR; i++) {
+		if (ck->check_nodes[i]) {
+			struct check_node *cur = ck->check_nodes[i];
+			while (cur) {
+				node_arr[node_arr_index] = cur;
+				cur = cur->next;
+				node_arr_index++;
+			}
+		}
+	}
+
+	qsort((void *) node_arr, num_nodes, sizeof(struct check_node *), comp_check_nodes);
+
+	unsigned int issue_count = 0;
+	char *old_issue_name = NULL;
+	for (unsigned int i=0; i < num_nodes; i++) {
+		if (old_issue_name && 0 != strcmp(old_issue_name, node_arr[i]->check_id)) {
+			// New issue.  Print the old info
+			if (issue_count != 0) {
+				printf("%s: %u\n", old_issue_name, issue_count);
+				printed_something = 1;
+			}
+
+			// Start counting new
+			issue_count = node_arr[i]->issues_found;
+		} else {
+			// Same issue as previous element
+			issue_count += node_arr[i]->issues_found;
+		}
+		old_issue_name = node_arr[i]->check_id;
+	}
+
+	// Possible print last issue
+	if (issue_count != 0) {
+		printf("%s: %u\n", old_issue_name, issue_count);
+		printed_something = 1;
+	}
+
+	if (!printed_something) {
+		printf("(none)\n");
+	}
+
+	free(node_arr);
 }
 
 void free_check_result(struct check_result *res)

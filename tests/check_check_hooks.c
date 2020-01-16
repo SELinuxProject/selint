@@ -24,6 +24,7 @@ int check2_called;
 
 struct check_result * example_check(const struct check_data *check_data, const struct policy_node *node);
 struct check_result * example_check2(const struct check_data *check_data, const struct policy_node *node);
+struct check_result * returns_blank_result(const struct check_data *check_data, const struct policy_node *node);
 
 struct check_result * example_check(__attribute__((unused)) const struct check_data *check_data, 
 				  __attribute__((unused)) const struct policy_node *node) {
@@ -35,6 +36,11 @@ struct check_result * example_check2(__attribute__((unused)) const struct check_
 				  __attribute__((unused)) const struct policy_node *node) {
 	check2_called = 1;
 	return (struct check_result *) NULL;
+}
+
+struct check_result * returns_blank_result(__attribute__((unused)) const struct check_data *check_data,
+                                        __attribute__((unused)) const struct policy_node *node) {
+	return calloc(1, sizeof(struct check_result));
 }
 
 START_TEST (test_add_check) {
@@ -106,6 +112,9 @@ START_TEST (test_call_checks) {
 
 	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
 
+	ck_assert_int_eq(0, ck->check_nodes[NODE_AV_RULE]->issues_found);
+	ck_assert_int_eq(0, ck->check_nodes[NODE_AV_RULE]->next->issues_found);
+
 	ck_assert_int_eq(1, check_called);
 	ck_assert_int_eq(1, check2_called);
 
@@ -114,6 +123,9 @@ START_TEST (test_call_checks) {
 	check2_called = 0;
 
 	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, NULL, node));
+
+	ck_assert_int_eq(0, ck->check_nodes[NODE_AV_RULE]->issues_found);
+	ck_assert_int_eq(0, ck->check_nodes[NODE_AV_RULE]->next->issues_found);
 
 	ck_assert_int_eq(0, check_called);
 	ck_assert_int_eq(0, check2_called);
@@ -164,6 +176,31 @@ START_TEST (test_is_valid_check) {
 }
 END_TEST
 
+START_TEST (test_increment_issues) {
+	struct checks *ck = calloc(1, sizeof(struct checks));
+	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, "E-999", returns_blank_result));
+
+	struct check_data *data = calloc(1, sizeof(struct checks));
+	data->filename = strdup("example.te");
+
+	ck_assert_int_eq(0, ck->check_nodes[NODE_AV_RULE]->issues_found);
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_AV_RULE;
+
+	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, data, node));
+	ck_assert_int_eq(1, ck->check_nodes[NODE_AV_RULE]->issues_found);
+
+	ck_assert_int_eq(SELINT_SUCCESS, call_checks(ck, data, node));
+	ck_assert_int_eq(2, ck->check_nodes[NODE_AV_RULE]->issues_found);
+
+	free_policy_node(node);
+	free(data->filename);
+	free(data);
+	free_checks(ck);
+}
+END_TEST
+
 Suite *check_hooks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -176,6 +213,7 @@ Suite *check_hooks_suite(void) {
 	tcase_add_test(tc_core, test_call_checks);
 	tcase_add_test(tc_core, test_disable_check);
 	tcase_add_test(tc_core, test_is_valid_check);
+	tcase_add_test(tc_core, test_increment_issues);
 	suite_add_tcase(s, tc_core);
 
 	return s;

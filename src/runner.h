@@ -104,4 +104,12 @@ enum selint_error run_analysis(struct checks *ck,
                                struct policy_file_list *if_files,
                                struct policy_file_list *fc_files,
                                struct policy_file_list *context_files);
+
+/****************************************************
+* Display a summary of the analysis that was just run
+* ck - The checks structure
+* no return
+****************************************************/
+void display_run_summary(struct checks *ck);
+
 #endif
