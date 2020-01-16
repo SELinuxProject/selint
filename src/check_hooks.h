@@ -79,6 +79,7 @@ struct check_node {
 	struct check_result *(*check_function) (const struct check_data * data,
 	                                        const struct policy_node * node);
 	char *check_id;
+	unsigned int issues_found;
 	struct check_node *next;
 };
 
@@ -158,6 +159,14 @@ struct check_result *alloc_internal_error(const char *string);
 * returns 1 if it is a valid check and 0 otherwise
 *********************************************/
 int is_valid_check(const char *check_str);
+
+/*********************************************
+* Display a count of issues found in a run, but check ID.
+* Don't display checks with no issues found
+* ck - The checks structure, which should be already populated with issues_found
+* from an analysis run
+*********************************************/
+void display_check_issue_counts(const struct checks *ck);
 
 void free_check_result(struct check_result *);
 

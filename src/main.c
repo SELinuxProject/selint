@@ -55,6 +55,7 @@ static void usage(void)
 		"\t\t\t\t\tW (warning), E (error), F (fatal error).\n"\
 		"  -s, --source\t\t\t\tRun in \"source mode\" to scan a policy source repository\n"\
 		"\t\t\t\t\tthat is designed to compile into a full system policy.\n"\
+		"  -S, --summary\t\t\t\tDisplay a summary of issues found after running the analysis\n"\
 		"  -r, --recursive\t\t\tScan recursively and check all SELinux policy files found.\n"\
 		"  -v, --verbose\t\t\t\tEnable verbose output\n"\
 		"  -V, --version\t\t\t\tShow version information and exit.\n"
@@ -77,6 +78,7 @@ int main(int argc, char **argv)
 	int recursive_scan = 0;
 	int only_enabled = 0;
 	int exit_code = EX_OK;
+	int summary_flag = 0;
 
 	struct string_list *config_disabled_checks = NULL;
 	struct string_list *config_enabled_checks = NULL;
@@ -98,6 +100,7 @@ int main(int argc, char **argv)
 			{ "modules-conf", required_argument, NULL,          'm' },
 			{ "recursive",    no_argument,       NULL,          'r' },
 			{ "source",       no_argument,       NULL,          's' },
+			{ "summary",      no_argument,       NULL,          'S' },
 			{ "version",      no_argument,       NULL,          'V' },
 			{ "verbose",      no_argument,       &verbose_flag, 1   },
 			{ 0,              0,                 0,             0   }
@@ -107,7 +110,7 @@ int main(int argc, char **argv)
 
 		int c = getopt_long(argc,
 		                    argv,
-		                    "c:d:e:Ehl:mrsVv",
+		                    "c:d:e:Ehl:mrsSVv",
 		                    long_options,
 		                    &option_index);
 
@@ -184,6 +187,11 @@ int main(int argc, char **argv)
 		case 's':
 			// Run in source mode
 			source_flag = 1;
+			break;
+
+		case 'S':
+			// Display a summary at the end of the run
+			summary_flag = 1;
 			break;
 
 		case 'V':
@@ -366,6 +374,9 @@ int main(int argc, char **argv)
 	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_files);
 	switch (res) {
 	case SELINT_SUCCESS:
+		if (summary_flag) {
+			display_run_summary(ck);
+		}
 		break;
 	case SELINT_PARSE_ERROR:
 		printf("Error during parsing\n");
