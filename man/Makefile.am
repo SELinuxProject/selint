@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SOURCES=selint.h2m
+
 if HAVE_HELP2MAN
 man1_MANS=$(MANPAGES)
 EXTRA_DIST=$(man_MANS)

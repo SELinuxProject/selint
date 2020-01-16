@@ -1,0 +1,99 @@
+# Copyright 2020 Tresys Technology, LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: C/C++ CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: install-deps
+      run: |
+        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind
+        # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
+        # ck_assert_ptr_nonnull were added in 0.11.0
+        git clone https://github.com/libcheck/check.git --branch 0.13.0
+        cd check
+        autoreconf --install
+        ./configure --prefix=/usr
+        make
+        sudo make install
+        sudo ldconfig
+        cd ..
+        rm -rf check
+        # Install bats.  Ubuntu is on 0.4.0 and the latest is 1.1.0.  This is to work around
+        # a bug with running a program multiple times in the same test
+        git clone https://github.com/bats-core/bats-core.git
+        cd bats-core
+        sudo ./install.sh /usr/local
+        cd ..
+        rm -rf bats-core
+    - name: autogen
+      run: ./autogen.sh
+    - name: configure
+      run: ./configure
+    - name: make
+      run: make
+    - name: make check
+      run: make check
+    - name: make check-valgrind
+      run: make check-valgrind
+    - name: make dist
+      run: make dist
+    - name: functional tests
+      run : |
+        cd ./tests/functional
+        bats end-to-end.bats
+
+    - name: Release Info
+      id: release_info
+      run: |
+        if [[ '${{ github.ref }}' == refs/tags/v* ]]
+        then
+          echo ::set-output name=is_release::true
+          echo ::set-output name=tag::$(echo ${{ github.ref }} | cut -dv -f2)
+        else
+          echo ::set-output name=is_release::false
+        fi
+      shell: bash
+
+    - name: Create Release
+      id: create_release
+      if: steps.release_info.outputs.is_release == 'true'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: v${{ steps.release_info.outputs.tag }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Artifact
+      if: steps.release_info.outputs.is_release == 'true'
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to
+        # get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./selint-${{ steps.release_info.outputs.tag }}.tar.gz
+        asset_name: selint-${{ steps.release_info.outputs.tag }}.tar.gz
+        asset_content_type: application/tar+gzip
+

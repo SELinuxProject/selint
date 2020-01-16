@@ -17,6 +17,8 @@
 TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering
 check_PROGRAMS = ${TESTS}
 
+EXTRA_DIST = test_utils.c
+
 if COND_GCOV
 EXTRA_CFLAGS=--coverage -fno-inline -fno-inline-small-functions -fno-default-inline
 endif
