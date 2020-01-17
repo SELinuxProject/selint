@@ -74,6 +74,8 @@ AX_VALGRIND_DFLT([helgrind], [off])
 AX_VALGRIND_DFLT([sgcheck], [off])
 AX_VALGRIND_CHECK
 
+AC_CHECK_HEADER([uthash.h], [], [AC_MSG_ERROR([Unable to find uthash header])])
+
 #AC_CONFIG_FILES([Makefile])
 AC_OUTPUT(Makefile src/Makefile tests/Makefile man/Makefile)
 
