@@ -217,7 +217,9 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 	while (cur) {
 		if (cur->string[0] == '-') {
 			// memmove is safe for overlapping strings
-			memmove(cur->string, cur->string + 1, strlen(cur->string) + 1);
+			// Length is strlen exactly because it doesn't copy the first
+			// character, but does copy the null terminator
+			memmove(cur->string, cur->string + 1, strlen(cur->string));
 		}
 		cur = cur->next;
 	}
