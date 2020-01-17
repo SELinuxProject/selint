@@ -22,12 +22,14 @@
 
 enum convention_ids {
 	C_ID_TE_ORDER = 1,
-	C_ID_IF_COMMENT = 4
+	C_ID_IF_COMMENT = 4,
+	C_END
 };
 
 enum style_ids {
 	S_ID_REQUIRE = 1,
-	S_ID_FC_TYPE = 2
+	S_ID_FC_TYPE = 2,
+	S_END
 };
 
 enum warn_ids {
@@ -35,14 +37,16 @@ enum warn_ids {
 	W_ID_NO_REQ           = 2,
 	W_ID_UNUSED_REQ       = 3,
 	W_ID_FC_REGEX         = 4,
-	W_ID_IF_CALL_OPTIONAL = 5
+	W_ID_IF_CALL_OPTIONAL = 5,
+	W_END
 };
 
 enum error_ids {
 	E_ID_FC_ERROR = 2,
 	E_ID_FC_USER  = 3,
 	E_ID_FC_ROLE  = 4,
-	E_ID_FC_TYPE  = 5
+	E_ID_FC_TYPE  = 5,
+	E_END
 };
 
 enum fatal_ids {
@@ -157,6 +161,14 @@ struct check_result *make_check_result(char severity,
 * string - The error message to display
 *********************************************/
 struct check_result *alloc_internal_error(char *string);
+
+/*********************************************
+* Determine if a string represents a valid check.
+* This compares vs all checks that are defined in the ids enums
+* check_str - The string to check
+* returns 1 if it is a valid check and 0 otherwise
+*********************************************/
+int is_valid_check(char *check_str);
 
 void free_check_result(struct check_result *);
 
