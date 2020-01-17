@@ -235,6 +235,28 @@ START_TEST (test_get_types_in_node_no_types) {
 }
 END_TEST
 
+START_TEST (test_get_types_in_node_exclusion) {
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_AV_RULE;
+
+	node->data.av_data = calloc(1, sizeof(struct av_rule_data));
+	node->data.av_data->sources = calloc(1, sizeof(struct string_list));
+	node->data.av_data->sources->string = strdup("domain");
+	node->data.av_data->sources->next = calloc(1, sizeof(struct string_list));
+	node->data.av_data->sources->next->string = strdup("-init_t");
+
+	struct string_list *out = get_types_in_node(node);
+	ck_assert_ptr_nonnull(out);
+
+	ck_assert_str_eq(out->string, "domain");
+	ck_assert_str_eq(out->next->string, "init_t"); // Strip "-"
+	ck_assert_ptr_null(out->next->next);
+
+	free_string_list(out);
+	free_policy_node(node);
+}
+END_TEST
+
 Suite *tree_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -251,6 +273,7 @@ Suite *tree_suite(void) {
 	tcase_add_test(tc_core, test_get_types_in_node_dd);
 	tcase_add_test(tc_core, test_get_types_in_node_if_call);
 	tcase_add_test(tc_core, test_get_types_in_node_no_types);
+	tcase_add_test(tc_core, test_get_types_in_node_exclusion);
 	suite_add_tcase(s, tc_core);
 
 	return s;

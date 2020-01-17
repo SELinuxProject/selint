@@ -211,6 +211,17 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 	default:
 		break;
 	}
+
+	// Check if any of the types are exclusions
+	cur = ret;
+	while (cur) {
+		if (cur->string[0] == '-') {
+			// memmove is safe for overlapping strings
+			memmove(cur->string, cur->string + 1, strlen(cur->string) + 1);
+		}
+		cur = cur->next;
+	}
+
 	return ret;
 
 }
