@@ -149,7 +149,21 @@ START_TEST (test_disable_check) {
 
 }
 END_TEST
-	
+
+START_TEST (test_is_valid_check) {
+	ck_assert_int_eq(1, is_valid_check("W-001"));
+	ck_assert_int_eq(1, is_valid_check("W-005"));
+	ck_assert_int_eq(0, is_valid_check("W-006"));
+	ck_assert_int_eq(0, is_valid_check("foobar"));
+	ck_assert_int_eq(1, is_valid_check("C-001"));
+	ck_assert_int_eq(1, is_valid_check("S-001"));
+	ck_assert_int_eq(1, is_valid_check("E-001"));
+	ck_assert_int_eq(1, is_valid_check("F-001"));
+	ck_assert_int_eq(0, is_valid_check("C-005"));
+	ck_assert_int_eq(0, is_valid_check("X-001"));
+	ck_assert_int_eq(0, is_valid_check("C-101"));
+}
+END_TEST
 
 Suite *check_hooks_suite(void) {
 	Suite *s;
@@ -162,6 +176,7 @@ Suite *check_hooks_suite(void) {
 	tcase_add_test(tc_core, test_add_check);
 	tcase_add_test(tc_core, test_call_checks);
 	tcase_add_test(tc_core, test_disable_check);
+	tcase_add_test(tc_core, test_is_valid_check);
 	suite_add_tcase(s, tc_core);
 
 	return s;

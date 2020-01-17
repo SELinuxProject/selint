@@ -178,6 +178,48 @@ struct check_result *alloc_internal_error(char *string)
 	return make_check_result('F', F_ID_INTERNAL, string);
 }
 
+int is_valid_check(char *check_str)
+{
+	if (!check_str) {
+		return 0;
+	}
+
+	if (check_str[1] != '-') {
+		return 0;
+	}
+
+	int max_id = 0;
+
+	char severity = check_str[0];
+
+	switch (severity) {
+	case 'C':
+		max_id = C_END - 1;
+		break;
+	case 'S':
+		max_id = S_END - 1;
+		break;
+	case 'W':
+		max_id = W_END - 1;
+		break;
+	case 'E':
+		max_id = E_END - 1;
+		break;
+	case 'F':
+		max_id = 2;
+		break;
+	default:
+		return 0;
+	}
+
+	int check_id = atoi(check_str+2);
+	if (check_id > 0 && check_id <= max_id) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 void free_check_result(struct check_result *res)
 {
 	free(res->message);

@@ -229,3 +229,25 @@ test_one_check() {
 	run valgrind --leak-check=full --error-exitcode=1 ${SELINT_PATH} -c configs/broken.conf -rs policies/check_triggers
 	[ "$status" -eq 78 ]
 }
+
+@test "Bad check ids" {
+	run ${SELINT_PATH} -c configs/default.conf policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	[ "$count" -eq 0 ]
+
+	run ${SELINT_PATH} -c configs/default.conf -e foo policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	[ "$count" -eq 1 ]
+
+	run ${SELINT_PATH} -c configs/default.conf -d foo policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	[ "$count" -eq 1 ]
+
+	run ${SELINT_PATH} -c configs/bad_ids.conf policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	[ "$count" -eq 2 ]
+
+	run ${SELINT_PATH} -c configs/bad_ids.conf -e foo -d bar -d baz policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	[ "$count" -eq 5 ]
+}
