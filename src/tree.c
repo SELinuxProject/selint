@@ -197,6 +197,10 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		ret->string = strdup(ta_data->type);
 		ret->next = copy_string_list(ta_data->attrs);
 		break;
+	case NODE_ALIAS:
+		ret = calloc(1, sizeof(struct string_list));
+		ret->string = strdup(node->data.str);
+		break;
 	/*
 	   NODE_M4_CALL,
 	   NODE_OPTIONAL_POLICY,

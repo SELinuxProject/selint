@@ -1,0 +1,6 @@
+template(`foo_alias_domain',`
+	gen_require(`
+		type foo_t;
+	')
+	type $1_t alias foo_t;
+')

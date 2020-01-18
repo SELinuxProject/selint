@@ -103,6 +103,7 @@ test_one_check() {
 	test_one_check "W-003" "w03.if"
 	test_one_check "W-003" "w03_role.if"
 	test_one_check_expect "W-003" "w03_ta.if" 0
+	test_one_check_expect "W-003" "w03_alias.if" 0
 }
 
 @test "W-004" {
