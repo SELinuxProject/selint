@@ -16,7 +16,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(selint, 1.0.0, dburgener@tresys.com)
+AC_INIT([selint], [1.0.0], [dburgener@tresys.com])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([config.h])
 
@@ -76,6 +76,5 @@ AX_VALGRIND_CHECK
 
 AC_CHECK_HEADER([uthash.h], [], [AC_MSG_ERROR([Unable to find uthash header])])
 
-#AC_CONFIG_FILES([Makefile])
-AC_OUTPUT(Makefile src/Makefile tests/Makefile man/Makefile)
-
+AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile man/Makefile])
+AC_OUTPUT()
