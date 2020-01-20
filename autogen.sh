@@ -14,7 +14,4 @@
 # limitations under the License.
 
 
-aclocal \
-&& autoconf \
-&& autoheader \
-&& automake --add-missing -Wno-portability
+autoreconf -fiv -Wall -Wno-portability
