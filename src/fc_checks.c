@@ -64,7 +64,7 @@ struct check_result *check_file_context_types_in_mod(const struct check_data
 	return NULL;
 }
 
-struct check_result *check_file_context_regex(const struct check_data *data,
+struct check_result *check_file_context_regex(__attribute__((unused)) const struct check_data *data,
                                               const struct policy_node *node)
 {
 
@@ -116,7 +116,7 @@ struct check_result *check_file_context_regex(const struct check_data *data,
 	return NULL;
 }
 
-struct check_result *check_file_context_error_nodes(const struct check_data
+struct check_result *check_file_context_error_nodes(__attribute__((unused)) const struct check_data
                                                     *data,
                                                     const struct policy_node
                                                     *node)
@@ -129,7 +129,7 @@ struct check_result *check_file_context_error_nodes(const struct check_data
 	return make_check_result('E', E_ID_FC_ERROR, "Bad file context format");
 }
 
-struct check_result *check_file_context_users(const struct check_data *data,
+struct check_result *check_file_context_users(__attribute__((unused)) const struct check_data *data,
                                               const struct policy_node *node)
 {
 
@@ -147,7 +147,7 @@ struct check_result *check_file_context_users(const struct check_data *data,
 	return NULL;
 }
 
-struct check_result *check_file_context_roles(const struct check_data *data,
+struct check_result *check_file_context_roles(__attribute__((unused)) const struct check_data *data,
                                               const struct policy_node *node)
 {
 
@@ -165,7 +165,7 @@ struct check_result *check_file_context_roles(const struct check_data *data,
 	return NULL;
 }
 
-struct check_result *check_file_context_types_exist(const struct check_data
+struct check_result *check_file_context_types_exist(__attribute__((unused)) const struct check_data
                                                     *check_data,
                                                     const struct policy_node
                                                     *node)
