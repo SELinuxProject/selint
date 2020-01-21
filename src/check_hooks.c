@@ -160,10 +160,13 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 void display_check_result(struct check_result *res, struct check_data *data)
 {
 
-	int padding = 18 - strlen(data->filename);
+	const size_t len = strlen(data->filename);
+	unsigned int padding;
 
-	if (padding < 0) {
+	if (18 < len) {
 		padding = 0;
+	} else {
+		padding = 18 - len;
 	}
 
 	printf("%s:%*u: (%c): %s (%c-%03u)\n",
