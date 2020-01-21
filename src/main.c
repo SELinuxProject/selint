@@ -165,7 +165,6 @@ int main(int argc, char **argv)
 			// Display usage info and exit
 			usage();
 			exit(0);
-			break;
 
 		case 'l':
 			// Set the severity level
@@ -191,7 +190,6 @@ int main(int argc, char **argv)
 			// Output version info and exit
 			printf("SELint %s\n", VERSION);
 			exit(0);
-			break;
 
 		case 'v':
 			// Run in verbose mode
@@ -201,7 +199,6 @@ int main(int argc, char **argv)
 		case '?':
 			usage();
 			exit(EX_USAGE);
-			break;
 		}
 
 	}
