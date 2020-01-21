@@ -443,8 +443,8 @@ require:
 	REQUIRE OPEN_CURLY { begin_require(&cur, yylineno); }
 	lines CLOSE_CURLY { end_require(&cur); }
 	|
-	REQUIRE OPEN_CURLY SELINT_COMMAND { begin_require(&cur, yylineno); save_command(cur->parent, $3); free($3); }
-	lines CLOSE_CURLY { end_require(&cur); }
+	REQUIRE OPEN_CURLY SELINT_COMMAND { begin_require(&cur, yylineno); save_command(cur->parent, $3); }
+	lines CLOSE_CURLY { end_require(&cur); free($3); }
 	;
 
 gen_require_begin:
@@ -468,8 +468,8 @@ m4_call:
 	;
 
 ifdef:
-	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, yylineno); free($4);}
-	m4_args CLOSE_PAREN { end_ifdef(&cur); }
+	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, yylineno); }
+	m4_args CLOSE_PAREN { end_ifdef(&cur); free($4); }
 	;
 
 if_or_ifn:
