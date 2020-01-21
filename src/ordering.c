@@ -270,7 +270,7 @@ float get_avg_line_by_name(char *section_name, struct section_data *sections)
 	return sections->avg_line;
 }
 
-int is_self_rule(const struct policy_node *node)
+static int is_self_rule(const struct policy_node *node)
 {
 	return node->flavor == NODE_AV_RULE &&
 	       node->data.av_data &&
@@ -278,7 +278,7 @@ int is_self_rule(const struct policy_node *node)
 	       0 == strcmp(node->data.av_data->targets->string, "self");
 }
 
-int is_own_module_rule(const struct policy_node *node)
+static int is_own_module_rule(const struct policy_node *node)
 {
 	if (node->flavor != NODE_AV_RULE &&
 	    node->flavor != NODE_IF_CALL) {
@@ -325,7 +325,7 @@ int is_own_module_rule(const struct policy_node *node)
 	return 1;
 }
 
-int is_kernel_mod_if_call(const struct policy_node *node)
+static int is_kernel_mod_if_call(const struct policy_node *node)
 {
 	if (node->flavor != NODE_IF_CALL) {
 		return 0;
@@ -340,7 +340,7 @@ int is_kernel_mod_if_call(const struct policy_node *node)
 	return 0;
 }
 
-int check_call_layer(const struct policy_node *node, char *layer_to_check)
+static int check_call_layer(const struct policy_node *node, char *layer_to_check)
 {
 	if (node->flavor != NODE_IF_CALL) {
 		return 0;
@@ -357,12 +357,12 @@ int check_call_layer(const struct policy_node *node, char *layer_to_check)
 	return (0 == strcmp(layer_name, layer_to_check));
 }
 
-int is_kernel_layer_if_call(const struct policy_node *node)
+static int is_kernel_layer_if_call(const struct policy_node *node)
 {
 	return check_call_layer(node, "kernel");
 }
 
-int is_system_layer_if_call(const struct policy_node *node)
+static int is_system_layer_if_call(const struct policy_node *node)
 {
 	return check_call_layer(node, "system");
 }

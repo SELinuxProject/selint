@@ -37,7 +37,7 @@
 		} \
 	} \
 
-void insert_config_declarations(cfg_t * cfg, char *config_item,
+static void insert_config_declarations(cfg_t * cfg, char *config_item,
                                 enum decl_flavor flavor)
 {
 	for (unsigned int i = 0; i < cfg_size(cfg, config_item); i++) {

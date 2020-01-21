@@ -30,7 +30,7 @@ struct bool_hash_elem *filetrans_map = NULL;
 struct bool_hash_elem *role_if_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
-struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
+static struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
 {
 
 	if (!name) {
@@ -316,7 +316,7 @@ int is_role_if(char *if_name)
 	}
 }
 
-void insert_decl(struct template_hash_elem *template, void *new_node)
+static void insert_decl(struct template_hash_elem *template, void *new_node)
 {
 	if (template->declarations) {
 		struct decl_list *cur = template->declarations;
@@ -329,7 +329,7 @@ void insert_decl(struct template_hash_elem *template, void *new_node)
 	}
 }
 
-void insert_call(struct template_hash_elem *template, void *new_node)
+static void insert_call(struct template_hash_elem *template, void *new_node)
 {
 	if (template->calls) {
 		struct if_call_list *cur = template->calls;
@@ -342,13 +342,13 @@ void insert_call(struct template_hash_elem *template, void *new_node)
 	}
 }
 
-void insert_noop(__attribute__((unused)) struct template_hash_elem *template,
+static void insert_noop(__attribute__((unused)) struct template_hash_elem *template,
                  __attribute__((unused)) void *new_node)
 {
 	return;
 }
 
-void insert_into_template_map(char *name, void *new_node,
+static void insert_into_template_map(char *name, void *new_node,
                               void (*insertion_func)(struct template_hash_elem
                                                      *, void *))
 {
