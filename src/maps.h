@@ -89,6 +89,6 @@ struct if_call_list *look_up_call_in_template_map(char *name);
 
 unsigned int decl_map_count(enum decl_flavor flavor);
 
-void free_all_maps();
+void free_all_maps(void);
 
 #endif
