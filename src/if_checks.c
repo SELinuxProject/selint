@@ -24,7 +24,7 @@
 
 #define NOT_REQ_MESSAGE "%s %s is used in interface but not required"
 
-struct check_result *check_interface_definitions_have_comment(const struct
+struct check_result *check_interface_definitions_have_comment(__attribute__((unused)) const struct
                                                               check_data *data,
                                                               const struct
                                                               policy_node *node)
@@ -44,7 +44,7 @@ struct check_result *check_interface_definitions_have_comment(const struct
 	}
 }
 
-struct check_result *check_type_used_but_not_required_in_if(const struct
+struct check_result *check_type_used_but_not_required_in_if(__attribute__((unused)) const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node)
@@ -140,7 +140,7 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 	return NULL;
 }
 
-struct check_result *check_type_required_but_not_used_in_if(const struct
+struct check_result *check_type_required_but_not_used_in_if(__attribute__((unused)) const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node)

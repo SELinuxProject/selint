@@ -134,6 +134,7 @@ struct checks *register_checks(char level,
 			add_check(NODE_TEMP_DEF, ck, "C-004",
 			          check_interface_definitions_have_comment);
 		}
+		// FALLTHRU
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {
 			add_check(NODE_REQUIRE, ck, "S-001", check_require_block);
@@ -143,6 +144,7 @@ struct checks *register_checks(char level,
 			add_check(NODE_FC_ENTRY, ck, "S-002",
 			          check_file_context_types_in_mod);
 		}
+		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {
 			add_check(NODE_AV_RULE, ck, "W-001", check_no_explicit_declaration);
@@ -168,6 +170,7 @@ struct checks *register_checks(char level,
 			add_check(NODE_IF_CALL, ck, "W-005",
 			          check_module_if_call_in_optional);
 		}
+		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {
 			add_check(NODE_ERROR, ck, "E-002",
