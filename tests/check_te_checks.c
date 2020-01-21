@@ -28,11 +28,10 @@ START_TEST (test_check_te_order) {
 	cd->flavor = FILE_TE_FILE;
 
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
-	struct policy_node *cur = head;
 
 	head->flavor = NODE_TE_FILE;
 	head->next = calloc(1, sizeof(struct policy_node));
-	cur = head->next;
+	struct policy_node *cur = head->next;
 
 	cur->flavor = NODE_DECL;
 	cur->data.d_data = calloc(1, sizeof(struct declaration_data));
