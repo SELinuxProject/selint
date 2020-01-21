@@ -541,7 +541,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 {
 	unsigned int distance = 1;
 	unsigned int nearest_index = 0;
-	enum order_difference_reason reason;
+	enum order_difference_reason reason = ORDER_EQUAL;
 	while (nearest_index == 0) {
 		if (distance < index &&
 		    order_data->nodes[index-distance].in_order) {
