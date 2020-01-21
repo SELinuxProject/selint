@@ -27,7 +27,7 @@
 #include "startup.h"
 
 extern FILE *yyin;
-extern int yyparse();
+extern int yyparse(void);
 struct policy_node *ast;        // Must be global so the parser can access it
 extern int yylineno;
 extern char *parsing_filename;

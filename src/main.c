@@ -32,8 +32,7 @@
 
 int yydebug = 0;
 
-extern int yyparse();
-extern int yylex_destroy();
+extern int yylex_destroy(void);
 
 extern int verbose_flag;
 

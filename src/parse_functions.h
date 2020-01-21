@@ -40,7 +40,7 @@ void set_current_module_name(char *mn);
 /**********************************
 * Return the name of the current module
 **********************************/
-char *get_current_module_name();
+char *get_current_module_name(void);
 
 /**********************************
 * insert_comment
@@ -268,6 +268,6 @@ enum selint_error insert_type_attribute(struct policy_node **cur, char *type, st
 * cleanup_parsing
 * Call after all parsing is done to free up memory
 **********************************/
-void cleanup_parsing();
+void cleanup_parsing(void);
 
 #endif
