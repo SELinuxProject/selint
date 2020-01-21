@@ -23,7 +23,6 @@ extern void yyerror(char *);
 %}
 %option nounput
 %option noinput
-%s return_whitespace
 %%
 policy_module { return POLICY_MODULE; }
 module { return MODULE; }
@@ -62,7 +61,7 @@ genfscon { return GENFSCON; }
 sid { return SID; }
 portcon { return PORTCON; }
 netifcon { return NETIFCON; }
-nodecon { BEGIN(return_whitespace); return NODECON; }
+nodecon { return NODECON; }
 fs_use_trans { return FS_USE_TRANS; }
 fs_use_xattr { return FS_USE_XATTR; }
 fs_use_task { return FS_USE_TASK; }
@@ -78,6 +77,8 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 [0-9]+ { yylval.string = strdup(yytext); return NUMBER; }
 [a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval.string = strdup(yytext); return STRING; }
 [0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval.string = strdup(yytext); return NUM_STRING; }
+[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval.string = strdup(yytext); return IPV4; }
+([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})? { yylval.string = strdup(yytext); return IPV6; }
 \"[a-zA-Z0-9_\.\-\:~\$]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
 \( { return OPEN_PAREN; }
 \) { return CLOSE_PAREN; }
@@ -98,10 +99,6 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 \!\= { return NOT_EQUAL; }
 \! { return NOT; }
 \=\= { return EQUAL; }
-<return_whitespace>[ \t] { return WHITESPACE; }
-<return_whitespace>^\#.*\n { yylineno++; BEGIN(INITIAL); return COMMENT; }
-<return_whitespace>(\#.*)?\n { yylineno++; BEGIN(INITIAL); return NEWLINE; }
-<return_whitespace>dnl(.*)?\n { yylineno++; BEGIN(INITIAL); return NEWLINE; }
 ^\#.*\n { yylineno++; return COMMENT; }
 \#selint\-disable\:[CSWEF]\-[0-9]+(\,[CSWEF]\-[0-9]+)*\n { yylineno++; yylval.string = strdup(yytext); return SELINT_COMMAND; }
 (\#.*)?\n { yylineno++; }
