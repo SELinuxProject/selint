@@ -604,7 +604,10 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			}
 		} else {
 			reason_str = "that is in a different section";
-			asprintf(&followup_str, "  (This node is in the section for %s rules and the other is in the section for %s rules.)", node_section, other_section);
+			int r = asprintf(&followup_str, "  (This node is in the section for %s rules and the other is in the section for %s rules.)", node_section, other_section);
+			if (r == -1) {
+				return NULL; //ERROR
+			}
 		}
 		break;
 	case ORDER_DECLARATION_SUBSECTION:
@@ -656,7 +659,10 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		if (other_lss == LSS_KERNEL || other_lss == LSS_SYSTEM || other_lss == LSS_OTHER) {
 			enum local_subsection this_lss = get_local_subsection(this_node);
 			if (this_lss == LSS_KERNEL || this_lss == LSS_SYSTEM) {
-				asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
+				int r = asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
+				if (r == -1) {
+					return NULL; //ERROR
+				}
 			} else if (this_lss == LSS_OTHER) {
 				followup_str = strdup("  (This interface is in a layer other than kernel or system)");
 			} else if (this_lss == LSS_KERNEL_MOD) {
