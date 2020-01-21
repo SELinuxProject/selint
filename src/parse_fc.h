@@ -25,5 +25,5 @@ struct fc_entry *parse_fc_line(char *line);
 struct sel_context *parse_context(char *context_str);
 
 // Parse an fc file and return a pointer to an abstract syntax tree representing the file
-struct policy_node *parse_fc_file(char *filename);
+struct policy_node *parse_fc_file(const char *filename);
 #endif

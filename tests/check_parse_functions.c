@@ -73,7 +73,7 @@ START_TEST (test_insert_declaration) {
 	memset(cur, 0, sizeof(struct policy_node));
 
 	cur->flavor = NODE_TE_FILE;
-	cur->parent = NULL; 
+	cur->parent = NULL;
 	cur->data.d_data = NULL;
 	cur->first_child = NULL;
 	cur->next = NULL;
@@ -106,7 +106,7 @@ START_TEST (test_insert_declaration) {
 
 	ck_assert_ptr_nonnull(mn);
 
-	cleanup_parsing();	
+	cleanup_parsing();
 }
 END_TEST
 
@@ -507,6 +507,7 @@ Suite *parse_functions_suite(void) {
 	tcase_add_test(tc_core, test_insert_av_rule);
 	tcase_add_test(tc_core, test_insert_role_allow);
 	tcase_add_test(tc_core, test_insert_type_transition);
+	tcase_add_test(tc_core, test_insert_named_type_transition);
 	tcase_add_test(tc_core, test_insert_interface_call);
 	tcase_add_test(tc_core, test_insert_permissive_statement);
 	tcase_add_test(tc_core, test_save_command);

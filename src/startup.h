@@ -26,7 +26,7 @@ void load_access_vectors_source(void);
 
 void load_modules_normal(void);
 
-enum selint_error load_modules_source(char *modules_conf_path);
+enum selint_error load_modules_source(const char *modules_conf_path);
 
 enum selint_error load_devel_headers(struct policy_file_list *context_files);
 

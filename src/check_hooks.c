@@ -178,7 +178,7 @@ struct check_result *alloc_internal_error(const char *string)
 	return make_check_result('F', F_ID_INTERNAL, string);
 }
 
-int is_valid_check(char *check_str)
+int is_valid_check(const char *check_str)
 {
 	if (!check_str) {
 		return 0;

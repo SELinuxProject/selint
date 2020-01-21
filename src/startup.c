@@ -88,7 +88,7 @@ static char *strip_space(char *str)
 	return str;
 }
 
-enum selint_error load_modules_source(char *modules_conf_path)
+enum selint_error load_modules_source(const char *modules_conf_path)
 {
 	FILE *fd = fopen(modules_conf_path, "r");
 

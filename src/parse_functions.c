@@ -26,7 +26,7 @@
 char *module_name = NULL;
 char *parsing_filename = NULL;
 
-enum selint_error begin_parsing_te(struct policy_node **cur, char *mn,
+enum selint_error begin_parsing_te(struct policy_node **cur, const char *mn,
                                    unsigned int lineno)
 {
 	(*cur)->data.str = strdup(mn);
@@ -35,7 +35,7 @@ enum selint_error begin_parsing_te(struct policy_node **cur, char *mn,
 	return SELINT_SUCCESS;
 }
 
-void set_current_module_name(char *mn)
+void set_current_module_name(const char *mn)
 {
 	if (module_name != NULL) {
 		free(module_name);
@@ -63,7 +63,7 @@ enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno)
 }
 
 enum selint_error insert_declaration(struct policy_node **cur,
-                                     enum decl_flavor flavor, char *name,
+                                     enum decl_flavor flavor, const char *name,
                                      struct string_list *attrs,
                                      unsigned int lineno)
 {
@@ -181,7 +181,7 @@ enum selint_error insert_aliases(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_type_alias(struct policy_node **cur, char *type,
+enum selint_error insert_type_alias(struct policy_node **cur, const char *type,
                                     unsigned int lineno)
 {
 
@@ -240,8 +240,8 @@ enum selint_error insert_av_rule(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_role_allow(struct policy_node **cur, char *from_role,
-                                    char *to_role, unsigned int lineno)
+enum selint_error insert_role_allow(struct policy_node **cur, const char *from_role,
+                                    const char *to_role, unsigned int lineno)
 {
 	struct role_allow_data *ra_data = malloc(sizeof(struct role_allow_data));
 
@@ -268,7 +268,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
                                          struct string_list *sources,
                                          struct string_list *targets,
                                          struct string_list *object_classes,
-                                         char *default_type, char *name,
+                                         const char *default_type, const char *name,
                                          unsigned int lineno)
 {
 
@@ -309,7 +309,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
+enum selint_error insert_interface_call(struct policy_node **cur, const char *if_name,
                                         struct string_list *args,
                                         unsigned int lineno)
 {
@@ -318,7 +318,7 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 	if_data->name = strdup(if_name);
 	if_data->args = args;
 
-	char *template_name = get_name_if_in_template(*cur);
+	const char *template_name = get_name_if_in_template(*cur);
 
 	if (template_name) {
 		insert_call_into_template_map(template_name, if_data);
@@ -349,7 +349,7 @@ enum selint_error insert_interface_call(struct policy_node **cur, char *if_name,
 }
 
 enum selint_error insert_permissive_statement(struct policy_node **cur,
-                                              char *domain, unsigned int lineno)
+                                              const char *domain, unsigned int lineno)
 {
 	union node_data nd;
 
@@ -447,7 +447,7 @@ enum selint_error end_tunable_policy(struct policy_node **cur)
 }
 
 enum selint_error begin_interface_def(struct policy_node **cur,
-                                      enum node_flavor flavor, char *name,
+                                      enum node_flavor flavor, const char *name,
                                       unsigned int lineno)
 {
 
@@ -511,7 +511,7 @@ enum selint_error end_ifdef(struct policy_node **cur)
 	return end_block(cur, NODE_IFDEF);
 }
 
-enum selint_error save_command(struct policy_node *cur, char *comm)
+enum selint_error save_command(struct policy_node *cur, const char *comm)
 {
 	if (comm == NULL || cur == NULL) {
 		return SELINT_BAD_ARG;
@@ -532,7 +532,7 @@ enum selint_error save_command(struct policy_node *cur, char *comm)
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_type_attribute(struct policy_node **cur, char *type, struct string_list *attrs, unsigned int lineno)
+enum selint_error insert_type_attribute(struct policy_node **cur, const char *type, struct string_list *attrs, unsigned int lineno)
 {
 	struct type_attribute_data *data = calloc(1, sizeof(struct type_attribute_data));
 	if (!data) {

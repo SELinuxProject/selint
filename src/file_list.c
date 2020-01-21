@@ -34,7 +34,7 @@ void file_list_push_back(struct policy_file_list *list,
 	list->tail->next = NULL;
 }
 
-struct policy_file *make_policy_file(char *filename, struct policy_node *ast)
+struct policy_file *make_policy_file(const char *filename, struct policy_node *ast)
 {
 	struct policy_file *ret = malloc(sizeof(struct policy_file));
 
