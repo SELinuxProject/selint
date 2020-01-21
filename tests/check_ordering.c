@@ -103,7 +103,7 @@ START_TEST (test_calculate_longest_increasing_subsequence) {
 
 	ck_assert_ptr_eq(o->nodes[0].node, head->next);
 	ck_assert_int_eq(o->nodes[0].in_order, 1);
-	
+
 	free_ordering_metadata(o);
 	o = prepare_ordering_metadata(head);
 
@@ -113,7 +113,7 @@ START_TEST (test_calculate_longest_increasing_subsequence) {
 
 	free_ordering_metadata(o);
 	free_policy_node(head);
-	
+
 }
 END_TEST
 
@@ -225,7 +225,7 @@ START_TEST (test_get_local_subsection) {
 	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection(NULL));
 	struct policy_node *node = calloc(1, sizeof(struct policy_node));
 	node->flavor = NODE_AV_RULE;
-	node->data.av_data = calloc(1, sizeof(struct policy_node));
+	node->data.av_data = calloc(1, sizeof(struct av_rule_data));
 	node->data.av_data->targets = calloc(1, sizeof(struct string_list));
 	node->data.av_data->targets->string = strdup("self");
 
