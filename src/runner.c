@@ -196,16 +196,16 @@ struct checks *register_checks(char level,
 enum selint_error parse_all_files_in_list(struct policy_file_list *files, enum node_flavor flavor)
 {
 
-	struct policy_file_node *cur = files->head;
+	struct policy_file_node *current = files->head;
 
-	while (cur) {
-		print_if_verbose("Parsing %s\n", cur->file->filename);
-		cur->file->ast = parse_one_file(cur->file->filename, flavor);
+	while (current) {
+		print_if_verbose("Parsing %s\n", current->file->filename);
+		current->file->ast = parse_one_file(current->file->filename, flavor);
 		ast = NULL;
-		if (!cur->file->ast) {
+		if (!current->file->ast) {
 			return SELINT_PARSE_ERROR;
 		}
-		cur = cur->next;
+		current = current->next;
 	}
 
 	return SELINT_SUCCESS;
@@ -215,15 +215,15 @@ enum selint_error parse_all_files_in_list(struct policy_file_list *files, enum n
 enum selint_error parse_all_fc_files_in_list(struct policy_file_list *files)
 {
 
-	struct policy_file_node *cur = files->head;
+	struct policy_file_node *current = files->head;
 
-	while (cur) {
-		print_if_verbose("Parsing fc file %s\n", cur->file->filename);
-		cur->file->ast = parse_fc_file(cur->file->filename);
-		if (!cur->file->ast) {
+	while (current) {
+		print_if_verbose("Parsing fc file %s\n", current->file->filename);
+		current->file->ast = parse_fc_file(current->file->filename);
+		if (!current->file->ast) {
 			return SELINT_PARSE_ERROR;
 		}
-		cur = cur->next;
+		current = current->next;
 	}
 
 	return SELINT_SUCCESS;
@@ -233,15 +233,15 @@ enum selint_error run_checks_on_one_file(struct checks *ck,
                                          struct check_data *data,
                                          struct policy_node *head)
 {
-	struct policy_node *cur = head;
+	struct policy_node *current = head;
 
-	while (cur) {
-		enum selint_error res = call_checks(ck, data, cur);
+	while (current) {
+		enum selint_error res = call_checks(ck, data, current);
 		if (res != SELINT_SUCCESS) {
 			return res;
 		}
 
-		cur = dfs_next(cur);
+		current = dfs_next(current);
 	}
 
 	// Give checks a change to clean up state
