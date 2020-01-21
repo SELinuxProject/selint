@@ -366,7 +366,7 @@ enum selint_error insert_permissive_statement(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
-enum selint_error begin_block(struct policy_node **cur,
+static enum selint_error begin_block(struct policy_node **cur,
                               enum node_flavor block_type, char *data,
                               unsigned int lineno)
 {
@@ -397,7 +397,7 @@ enum selint_error begin_block(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
-enum selint_error end_block(struct policy_node **cur,
+static enum selint_error end_block(struct policy_node **cur,
                             enum node_flavor block_type)
 {
 

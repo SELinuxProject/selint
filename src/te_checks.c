@@ -92,7 +92,7 @@ struct check_result *check_require_block(const struct check_data *data,
 
 // Helper for check_no_explicit_declaration.  Returns 1 is there is a require block
 // for type_name earlier in the file, and 0 otherwise
-int has_require(const struct policy_node *node, char *type_name)
+static int has_require(const struct policy_node *node, char *type_name)
 {
 	const struct policy_node *cur = node;
 	while (cur) {

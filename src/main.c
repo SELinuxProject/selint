@@ -36,7 +36,7 @@ extern int yylex_destroy(void);
 
 extern int verbose_flag;
 
-void usage()
+static void usage()
 {
 
 	/* *INDENT-OFF* */
