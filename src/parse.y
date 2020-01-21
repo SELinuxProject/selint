@@ -337,10 +337,10 @@ string_list:
 	;
 
 strings:
-	strings sl_item { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
-			cur->next = calloc(1, sizeof(struct string_list));
-			cur->next->string = strdup($2);
-			cur->next->next = NULL;
+	strings sl_item { struct string_list *current = $1; while (current->next) { current = current->next; }
+			current->next = calloc(1, sizeof(struct string_list));
+			current->next->string = strdup($2);
+			current->next->next = NULL;
 			free($2); }
 	|
 	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
@@ -359,10 +359,10 @@ sl_item:
 	;
 
 comma_string_list:
-	comma_string_list COMMA STRING { struct string_list *cur = $1; while (cur->next) { cur = cur->next; }
-					cur->next = calloc(1, sizeof(struct string_list));
-					cur->next->string = strdup($3);
-					cur->next->next = NULL;
+	comma_string_list COMMA STRING { struct string_list *current = $1; while (current->next) { current = current->next; }
+					current->next = calloc(1, sizeof(struct string_list));
+					current->next->string = strdup($3);
+					current->next->next = NULL;
 					free($3); }
 	|
 	STRING { $$ = calloc(1, sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1); }
@@ -569,17 +569,17 @@ args:
 	arg
 	|
 	args COMMA arg
-	{ struct string_list *cur = $1;
-	while (cur->next) { cur = cur->next; }
-	cur->next = $3;
+	{ struct string_list *current = $1;
+	while (current->next) { current = current->next; }
+	current->next = $3;
 	$$ = $1; }
 	|
 	args sl_item
-	{ struct string_list *cur = $1;
-	while (cur->next) { cur = cur->next; }
-	cur->next = calloc(1, sizeof(struct string_list));
-	cur->next->string = $2;
-	cur->next->has_incorrect_space = 1;
+	{ struct string_list *current = $1;
+	while (current->next) { current = current->next; }
+	current->next = calloc(1, sizeof(struct string_list));
+	current->next->string = $2;
+	current->next->has_incorrect_space = 1;
 	$$ = $1; }
 	;
 
