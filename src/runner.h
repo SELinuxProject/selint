@@ -28,7 +28,7 @@
 * flavor - The node type corresponding to the type of file (TE or IF)
 * Returns the head of the parsed AST or NULL on failure
 ****************************************************/
-struct policy_node *parse_one_file(char *filename, enum node_flavor flavor);
+struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor);
 
 /****************************************************
 * Determine whether a specific check is enabled based on the

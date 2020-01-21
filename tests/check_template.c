@@ -27,11 +27,11 @@
 #define NESTED_IF_FILENAME POLICIES_DIR "nested_templates.if"
 
 extern FILE * yyin;
-extern int yyparse();
-extern char *parsing_filename;
+extern int yyparse(void);
+extern const char *parsing_filename;
 
 START_TEST (test_replace_m4) {
-	char *orig1 = "$1_t";
+	const char *orig1 = "$1_t";
 
 	struct string_list *args = calloc(1,sizeof(struct string_list));
 	args->string = strdup("foo");
@@ -46,7 +46,7 @@ START_TEST (test_replace_m4) {
 
 	free(res);
 
-	char *orig2 = "$2";
+	const char *orig2 = "$2";
 
 	res = replace_m4(orig2, args);
 	ck_assert_ptr_nonnull(res);
@@ -54,7 +54,7 @@ START_TEST (test_replace_m4) {
 
 	free(res);
 
-	char *orig3 = "test_$1_test";
+	const char *orig3 = "test_$1_test";
 
 	res = replace_m4(orig3, args);
 	ck_assert_ptr_nonnull(res);
@@ -62,7 +62,7 @@ START_TEST (test_replace_m4) {
 
 	free(res);
 
-	char *orig4 = "test$2$1";
+	const char *orig4 = "test$2$1";
 
 	res = replace_m4(orig4, args);
 	ck_assert_ptr_nonnull(res);
@@ -81,8 +81,8 @@ START_TEST (test_replace_m4_too_few_args) {
 	args->next = calloc(1,sizeof(struct string_list));
 	args->next->string = strdup("bar");
 	args->next->next = NULL;
-	
-	char *orig = "$3_t";
+
+	const char *orig = "$3_t";
 
 	char *ret = replace_m4(orig, args);
 
@@ -99,7 +99,7 @@ START_TEST (test_replace_m4_nothing_to_replace) {
 	struct string_list *args = calloc(1, sizeof(struct string_list));
 	args->string = strdup("foo");
 
-	char *orig = "bar_t";
+	const char *orig = "bar_t";
 
 	char *res = replace_m4(orig, args);
 	ck_assert_ptr_nonnull(res);
@@ -114,7 +114,7 @@ START_TEST (test_replace_m4_bad_dollar_sign) {
 	struct string_list *args = calloc(1, sizeof(struct string_list));
 	args->string = strdup("foo");
 
-	char *orig = "$string";
+	const char *orig = "$string";
 
 	ck_assert_ptr_null(replace_m4(orig, args));
 

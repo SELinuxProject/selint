@@ -334,6 +334,7 @@ Suite *fc_checks_suite(void) {
 	tc_core = tcase_create("Core");
 
 	tcase_add_test(tc_core, test_check_file_context_types_exist);
+	tcase_add_test(tc_core, test_check_file_context_types_exist_bad_flavor);
 	tcase_add_test(tc_core, test_check_file_context_types_in_mod);
 	tcase_add_test(tc_core, test_check_file_context_roles);
 	tcase_add_test(tc_core, test_check_file_context_users);

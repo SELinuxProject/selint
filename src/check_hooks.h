@@ -168,7 +168,7 @@ struct check_result *alloc_internal_error(const char *string);
 * check_str - The string to check
 * returns 1 if it is a valid check and 0 otherwise
 *********************************************/
-int is_valid_check(char *check_str);
+int is_valid_check(const char *check_str);
 
 void free_check_result(struct check_result *);
 

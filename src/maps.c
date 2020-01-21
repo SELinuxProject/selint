@@ -123,7 +123,7 @@ char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
 	}
 }
 
-void insert_into_mods_map(char *mod_name, char *status)
+void insert_into_mods_map(const char *mod_name, const char *status)
 {
 
 	struct hash_elem *mod;
@@ -139,7 +139,7 @@ void insert_into_mods_map(char *mod_name, char *status)
 	}
 }
 
-char *look_up_in_mods_map(char *mod_name)
+char *look_up_in_mods_map(const char *mod_name)
 {
 
 	struct hash_elem *mod;
@@ -153,7 +153,7 @@ char *look_up_in_mods_map(char *mod_name)
 	}
 }
 
-void insert_into_mod_layers_map(char *mod_name, char *layer)
+void insert_into_mod_layers_map(const char *mod_name, const char *layer)
 {
 	struct hash_elem *mod;
 
@@ -169,7 +169,7 @@ void insert_into_mod_layers_map(char *mod_name, char *layer)
 
 }
 
-char *look_up_in_mod_layers_map(char *mod_name)
+char *look_up_in_mod_layers_map(const char *mod_name)
 {
 	struct hash_elem *mod;
 
@@ -182,7 +182,7 @@ char *look_up_in_mod_layers_map(char *mod_name)
 	}
 }
 
-void insert_into_ifs_map(char *if_name, char *module)
+void insert_into_ifs_map(const char *if_name, const char *module)
 {
 
 	struct hash_elem *if_call;
@@ -198,7 +198,7 @@ void insert_into_ifs_map(char *if_name, char *module)
 	}
 }
 
-char *look_up_in_ifs_map(char *if_name)
+char *look_up_in_ifs_map(const char *if_name)
 {
 
 	struct hash_elem *if_call;
@@ -232,7 +232,7 @@ unsigned int decl_map_count(enum decl_flavor flavor)
 	}
 }
 
-void mark_transform_if(char *if_name)
+void mark_transform_if(const char *if_name)
 {
 	struct bool_hash_elem *transform_if;
 
@@ -249,7 +249,7 @@ void mark_transform_if(char *if_name)
 	}
 }
 
-int is_transform_if(char *if_name)
+int is_transform_if(const char *if_name)
 {
 	struct bool_hash_elem *transform_if;
 	HASH_FIND(hh_transform, transform_map, if_name, strlen(if_name), transform_if);
@@ -260,7 +260,7 @@ int is_transform_if(char *if_name)
 	}
 }
 
-void mark_filetrans_if(char *if_name)
+void mark_filetrans_if(const char *if_name)
 {
 	struct bool_hash_elem *filetrans_if;
 
@@ -277,7 +277,7 @@ void mark_filetrans_if(char *if_name)
 	}
 }
 
-int is_filetrans_if(char *if_name)
+int is_filetrans_if(const char *if_name)
 {
 	struct bool_hash_elem *filetrans_if;
 	HASH_FIND(hh_filetrans, filetrans_map, if_name, strlen(if_name), filetrans_if);
@@ -288,7 +288,7 @@ int is_filetrans_if(char *if_name)
 	}
 }
 
-void mark_role_if(char *if_name)
+void mark_role_if(const char *if_name)
 {
 	struct bool_hash_elem *role_if;
 
@@ -305,7 +305,7 @@ void mark_role_if(char *if_name)
 	}
 }
 
-int is_role_if(char *if_name)
+int is_role_if(const char *if_name)
 {
 	struct bool_hash_elem *role_if;
 	HASH_FIND(hh_role_if, role_if_map, if_name, strlen(if_name), role_if);
@@ -348,7 +348,7 @@ static void insert_noop(__attribute__((unused)) struct template_hash_elem *templ
 	return;
 }
 
-static void insert_into_template_map(char *name, void *new_node,
+static void insert_into_template_map(const char *name, void *new_node,
                               void (*insertion_func)(struct template_hash_elem
                                                      *, void *))
 {
@@ -371,13 +371,13 @@ static void insert_into_template_map(char *name, void *new_node,
 	insertion_func(template, new_node);
 }
 
-void insert_template_into_template_map(char *name)
+void insert_template_into_template_map(const char *name)
 {
 	insert_into_template_map(name, NULL, insert_noop);
 }
 
-void insert_decl_into_template_map(char *name, enum decl_flavor flavor,
-                                   char *declaration)
+void insert_decl_into_template_map(const char *name, enum decl_flavor flavor,
+                                   const char *declaration)
 {
 
 	struct declaration_data *new_data =
@@ -394,7 +394,7 @@ void insert_decl_into_template_map(char *name, enum decl_flavor flavor,
 	insert_into_template_map(name, new_node, insert_decl);
 }
 
-void insert_call_into_template_map(char *name, struct if_call_data *call)
+void insert_call_into_template_map(const char *name, struct if_call_data *call)
 {
 
 	struct if_call_list *new_node = malloc(sizeof(struct if_call_list));
@@ -405,7 +405,7 @@ void insert_call_into_template_map(char *name, struct if_call_data *call)
 	insert_into_template_map(name, new_node, insert_call);
 }
 
-struct template_hash_elem *look_up_in_template_map(char *name)
+struct template_hash_elem *look_up_in_template_map(const char *name)
 {
 
 	struct template_hash_elem *template;
@@ -415,7 +415,7 @@ struct template_hash_elem *look_up_in_template_map(char *name)
 	return template;
 }
 
-struct decl_list *look_up_decl_in_template_map(char *name)
+struct decl_list *look_up_decl_in_template_map(const char *name)
 {
 	struct template_hash_elem *template = look_up_in_template_map(name);
 
@@ -426,7 +426,7 @@ struct decl_list *look_up_decl_in_template_map(char *name)
 	}
 }
 
-struct if_call_list *look_up_call_in_template_map(char *name)
+struct if_call_list *look_up_call_in_template_map(const char *name)
 {
 	struct template_hash_elem *template = look_up_in_template_map(name);
 

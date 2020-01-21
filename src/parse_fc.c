@@ -190,7 +190,7 @@ cleanup:
 	return NULL;
 }
 
-struct policy_node *parse_fc_file(char *filename)
+struct policy_node *parse_fc_file(const char *filename)
 {
 	FILE *fd = fopen(filename, "r");
 

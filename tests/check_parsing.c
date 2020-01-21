@@ -32,11 +32,11 @@
 #define DISABLE_COMMENT_FILENAME POLICIES_DIR "disable_comment.te"
 
 extern FILE * yyin;
-extern int yyparse();
-extern int yyrestart();
+extern int yyparse(void);
+extern int yyrestart(FILE *input_file);
 struct policy_node *ast;
 struct policy_node *cur;
-extern char *parsing_filename;
+extern const char *parsing_filename;
 
 START_TEST (test_parse_basic_te) {
 
@@ -53,7 +53,7 @@ START_TEST (test_parse_basic_te) {
 	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
 	ck_assert_ptr_nonnull(cur->next);
 	ck_assert_ptr_null(cur->first_child);
-	
+
 	cur = ast->next;
 	ck_assert_int_eq(NODE_DECL, cur->flavor);
 	struct declaration_data *dd = cur->data.d_data;
@@ -156,7 +156,7 @@ START_TEST (test_parse_basic_if) {
 	cur = cur->parent->next;
 
 	ck_assert_int_eq(NODE_IF_CALL, cur->flavor);
-	ck_assert_ptr_nonnull(cur->parent); 
+	ck_assert_ptr_nonnull(cur->parent);
 
 	free_policy_node(ast);
 	cleanup_parsing();
@@ -237,6 +237,7 @@ START_TEST (test_syntax_error) {
 
 	ast = cur = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("syntax_error");
+	parsing_filename = "syntax_error.te";
 
 	yyin = fopen(SYNTAX_ERROR_FILENAME, "r");
 	ck_assert_int_eq(1, yyparse());

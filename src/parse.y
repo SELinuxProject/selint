@@ -750,10 +750,12 @@ void yyerror(const char* s) {
 
 	struct check_data data;
 	data.mod_name = get_current_module_name();
-	data.filename = basename(parsing_filename);
+	char *copy = strdup(parsing_filename);
+	data.filename = basename(copy);
 	data.flavor = FILE_TE_FILE; // We don't know but it's unused by display_check_result
 
 	display_check_result(res, &data);
 
+	free(copy);
 	free_check_result(res);
 }

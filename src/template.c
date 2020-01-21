@@ -23,7 +23,7 @@
 #include "template.h"
 #include "maps.h"
 
-char *replace_m4(char *orig, struct string_list *args)
+char *replace_m4(const char *orig, struct string_list *args)
 {
 	size_t len_to_malloc = strlen(orig) + 1;
 	struct string_list *cur = args;
@@ -36,7 +36,7 @@ char *replace_m4(char *orig, struct string_list *args)
 	// arguments wasn't subtracted and not all args are necessarily substituted
 	char *ret = malloc(len_to_malloc);
 	*ret = '\0';            // If the string is only a substitution that there is no argument for, we need to be terminated
-	char *orig_pos = orig;
+	const char *orig_pos = orig;
 	char *ret_pos = ret;
 	while (*orig_pos) {
 		int arg_num;
@@ -92,10 +92,10 @@ struct string_list *replace_m4_list(struct string_list *replace_with,
 	return ret;
 }
 
-enum selint_error add_template_declarations(char *template_name,
+enum selint_error add_template_declarations(const char *template_name,
                                             struct string_list *args,
                                             struct string_list
-                                            *parent_temp_names, char *mod_name)
+                                            *parent_temp_names, const char *mod_name)
 {
 	struct string_list *cur = parent_temp_names;
 

@@ -30,21 +30,22 @@ extern FILE *yyin;
 extern int yyparse(void);
 struct policy_node *ast;        // Must be global so the parser can access it
 extern int yylineno;
-extern char *parsing_filename;
+extern const char *parsing_filename;
 extern struct policy_node *cur;
 
 #define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
-struct policy_node *parse_one_file(char *filename, enum node_flavor flavor)
+struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor)
 {
 
 	ast = calloc(1, sizeof(struct policy_node));
 	ast->flavor = flavor;
-	char *mod_name = strdup(basename(filename));
+	char *copy = strdup(filename);
+	char *mod_name = basename(copy);
 	mod_name[strlen(mod_name) - 3] = '\0'; // Remove suffix
 	set_current_module_name(mod_name);
 	yylineno = 1;
-	free(mod_name);
+	free(copy);
 
 	yyin = fopen(filename, "r");
 	if (!yyin) {

@@ -47,45 +47,45 @@ void insert_into_decl_map(const char *type, const char *module_name,
 
 char *look_up_in_decl_map(const char *type, enum decl_flavor flavor);
 
-void insert_into_mods_map(char *mod_name, char *status);
+void insert_into_mods_map(const char *mod_name, const char *status);
 
-char *look_up_in_mods_map(char *mod_name);
+char *look_up_in_mods_map(const char *mod_name);
 
-void insert_into_mod_layers_map(char *mod_name, char *layer);
+void insert_into_mod_layers_map(const char *mod_name, const char *layer);
 
-char *look_up_in_mod_layers_map(char *mod_name);
+char *look_up_in_mod_layers_map(const char *mod_name);
 
-void insert_into_ifs_map(char *if_name, char *module);
+void insert_into_ifs_map(const char *if_name, const char *module);
 
-char *look_up_in_ifs_map(char *if_name);
+char *look_up_in_ifs_map(const char *if_name);
 
-void mark_transform_if(char *if_name);
+void mark_transform_if(const char *if_name);
 
-int is_transform_if(char *if_name);
+int is_transform_if(const char *if_name);
 
-void mark_filetrans_if(char *if_name);
+void mark_filetrans_if(const char *if_name);
 
-int is_filetrans_if(char *if_name);
+int is_filetrans_if(const char *if_name);
 
-void mark_role_if(char *if_name);
+void mark_role_if(const char *if_name);
 
-int is_role_if(char *if_name);
+int is_role_if(const char *if_name);
 
 // Just generate a template entry in the map, but don't save any calls
 // or decls to it.  This is helpful to know what is a template for certain
 // checks even if the template never calls or declares anything
-void insert_template_into_template_map(char *name);
+void insert_template_into_template_map(const char *name);
 
-void insert_decl_into_template_map(char *name, enum decl_flavor flavor,
-                                   char *declaration);
+void insert_decl_into_template_map(const char *name, enum decl_flavor flavor,
+                                   const char *declaration);
 
-void insert_call_into_template_map(char *name, struct if_call_data *call);
+void insert_call_into_template_map(const char *name, struct if_call_data *call);
 
-struct template_hash_elem *look_up_in_template_map(char *name);
+struct template_hash_elem *look_up_in_template_map(const char *name);
 
-struct decl_list *look_up_decl_in_template_map(char *name);
+struct decl_list *look_up_decl_in_template_map(const char *name);
 
-struct if_call_list *look_up_call_in_template_map(char *name);
+struct if_call_list *look_up_call_in_template_map(const char *name);
 
 unsigned int decl_map_count(enum decl_flavor flavor);
 
