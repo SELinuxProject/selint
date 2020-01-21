@@ -19,7 +19,7 @@
 #include "tree.h"
 #include "parse.h"
 int yylineno;
-extern void yyerror(char *);
+extern void yyerror(const char *);
 %}
 %option nounput
 %option noinput

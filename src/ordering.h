@@ -119,7 +119,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 * to the list of sections
 **********************************/
 enum selint_error add_section_info(struct section_data *sections,
-                                   char *section_name,
+                                   const char *section_name,
                                    unsigned int lineno);
 
 /**********************************
@@ -127,7 +127,7 @@ enum selint_error add_section_info(struct section_data *sections,
 * the source type for most node varieties. For the declarations section
 * at the top it is "_declaration"
 **********************************/
-char *get_section(const struct policy_node *node);
+const char *get_section(const struct policy_node *node);
 
 /**********************************
 * Run through all sections in the section_data linked list and set
@@ -139,7 +139,7 @@ void calculate_average_lines(struct section_data *sections);
 /**********************************
 * Get the average line number of a section, based on the section name
 **********************************/
-float get_avg_line_by_name(char *section_name, struct section_data *sections);
+float get_avg_line_by_name(const char *section_name, struct section_data *sections);
 
 /**********************************
 * Get the subsection within the rules for a domain for a particular policy node
@@ -164,7 +164,7 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 * into a description by get_ordering_reason, so if they
 * are modified, that code should be modified as well.
 **********************************/
-char *lss_to_string(enum local_subsection lss);
+const char *lss_to_string(enum local_subsection lss);
 
 /**********************************
 * Get a string explaining why a node is out of order.

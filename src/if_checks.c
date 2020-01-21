@@ -96,7 +96,7 @@ struct check_result *check_type_used_but_not_required_in_if(__attribute__((unuse
 	}
 
 	struct string_list *type_node = types_in_current_node;
-	char *flavor = NULL;
+	const char *flavor = NULL;
 
 	while (type_node) {
 		if (!str_in_sl(type_node->string, types_required)) {
@@ -148,7 +148,7 @@ struct check_result *check_type_required_but_not_used_in_if(__attribute__((unuse
 
 	struct declaration_data *dd = node->data.d_data;
 
-	char *flavor = "";
+	const char *flavor = "";
 
 	if (dd->flavor == DECL_TYPE) {
 		flavor = "Type";

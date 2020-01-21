@@ -37,7 +37,7 @@
 		} \
 	} \
 
-static void insert_config_declarations(cfg_t * cfg, char *config_item,
+static void insert_config_declarations(cfg_t * cfg, const char *config_item,
                                 enum decl_flavor flavor)
 {
 	for (unsigned int i = 0; i < cfg_size(cfg, config_item); i++) {
@@ -46,13 +46,15 @@ static void insert_config_declarations(cfg_t * cfg, char *config_item,
 	}
 }
 
-enum selint_error parse_config(char *config_filename,
+enum selint_error parse_config(const char *config_filename,
                                int in_source_mode,
                                char *severity,
                                struct string_list **config_disabled_checks,
                                struct string_list **config_enabled_checks)
 {
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 	cfg_opt_t opts[] = {
 		CFG_STR("severity",           "convention", CFGF_NONE),
 		CFG_STR_LIST("disable",       "{}",         CFGF_NONE),
@@ -62,6 +64,7 @@ enum selint_error parse_config(char *config_filename,
 		CFG_STR_LIST("assume_roles",  "{}",         CFGF_NONE),
 		CFG_END()
 	};
+#pragma GCC diagnostic pop
 	cfg_t *cfg;
 
 	cfg = cfg_init(opts, CFGF_NONE);
