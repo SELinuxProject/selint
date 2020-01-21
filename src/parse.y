@@ -42,6 +42,8 @@
 %token <string> MLS_LEVEL;
 %token <string> STRING;
 %token <string> NUM_STRING;
+%token <string> IPV4;
+%token <string> IPV6;
 %token <string> NUMBER;
 %token <string> QUOTED_STRING;
 %token <symbol> SYMBOL;
@@ -50,6 +52,8 @@
 
 %destructor { free($$); } STRING
 %destructor { free($$); } NUM_STRING
+%destructor { free($$); } IPV4
+%destructor { free($$); } IPV6
 %destructor { free($$); } NUMBER
 %destructor { free($$); } QUOTED_STRING
 %destructor { free($$); } VERSION_NO
@@ -116,8 +120,6 @@
 %token TILDA;
 %token STAR;
 %token DASH;
-%token WHITESPACE;
-%token NEWLINE;
 %left AND;
 %left OR;
 %left XOR;
@@ -644,27 +646,13 @@ netifcon:
 	;
 
 nodecon:
-	NODECON WHITESPACE two_ip_addrs WHITESPACE context NEWLINE
+	NODECON two_ip_addrs context
 	;
 
 two_ip_addrs:
-	NUM_STRING WHITESPACE NUM_STRING { free($1); free($3); }
+	IPV4 IPV4 { free($1); free($2); }
 	|
-	ipv6 WHITESPACE ipv6
-	;
-
-ipv6:
-	ipv6_item
-	|
-	ipv6_item ipv6
-	;
-
-ipv6_item:
-	STRING { free($1); }
-	|
-	COLON
-	|
-	NUMBER { free($1); }
+	IPV6 IPV6 { free($1); free($2); }
 	;
 
 fs_use:
