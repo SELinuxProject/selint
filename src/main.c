@@ -36,7 +36,7 @@ extern int yylex_destroy(void);
 
 extern int verbose_flag;
 
-static void usage()
+static void usage(void)
 {
 
 	/* *INDENT-OFF* */
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 {
 
 	char severity = '\0';
-	char *config_filename = NULL;
+	const char *config_filename = NULL;
 	int source_flag = 0;
 	int recursive_scan = 0;
 	int only_enabled = 0;

@@ -118,7 +118,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 }
 
 enum selint_error add_section_info(struct section_data *sections,
-                                   char *section_name,
+                                   const char *section_name,
                                    unsigned int lineno)
 {
 	if (sections == NULL || section_name == NULL) {
@@ -146,7 +146,7 @@ enum selint_error add_section_info(struct section_data *sections,
 	return SELINT_SUCCESS;
 }
 
-char *get_section(const struct policy_node *node)
+const char *get_section(const struct policy_node *node)
 {
 	if (!node) {
 		return NULL; //Error
@@ -259,7 +259,7 @@ void calculate_average_lines(struct section_data *sections)
 	}
 }
 
-float get_avg_line_by_name(char *section_name, struct section_data *sections)
+float get_avg_line_by_name(const char *section_name, struct section_data *sections)
 {
 	while (0 != strcmp(sections->section_name, section_name)) {
 		sections = sections->next;
@@ -285,11 +285,11 @@ static int is_own_module_rule(const struct policy_node *node)
 		return 0;
 	}
 
-	char *domain_name = get_section(node);
+	const char *domain_name = get_section(node);
 	if (!domain_name) {
 		return 0;
 	}
-	char *current_mod = look_up_in_decl_map(domain_name, DECL_TYPE);
+	const char *current_mod = look_up_in_decl_map(domain_name, DECL_TYPE);
 	if (!current_mod) {
 		current_mod = look_up_in_decl_map(domain_name, DECL_ATTRIBUTE);
 	}
@@ -340,7 +340,7 @@ static int is_kernel_mod_if_call(const struct policy_node *node)
 	return 0;
 }
 
-static int check_call_layer(const struct policy_node *node, char *layer_to_check)
+static int check_call_layer(const struct policy_node *node, const char *layer_to_check)
 {
 	if (node->flavor != NODE_IF_CALL) {
 		return 0;
@@ -446,8 +446,8 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
                                                      const struct policy_node *first,
                                                      const struct policy_node *second)
 {
-	char *first_section_name = get_section(first);
-	char *second_section_name = get_section(second);
+	const char *first_section_name = get_section(first);
+	const char *second_section_name = get_section(second);
 
 	if (first_section_name == NULL || second_section_name == NULL) {
 		return ORDERING_ERROR;
@@ -508,7 +508,7 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 	return ORDER_EQUAL;
 }
 
-char *lss_to_string(enum local_subsection lss)
+const char *lss_to_string(enum local_subsection lss)
 {
 	switch (lss) {
 	case LSS_SELF:
@@ -573,18 +573,18 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	const struct policy_node *this_node = order_data->nodes[index].node;
 	const struct policy_node *other_node = order_data->nodes[nearest_index].node;
 
-	char *before_after = NULL;
+	const char *before_after = NULL;
 	if (nearest_index > index) {
 		before_after = "before";
 	} else {
 		before_after = "after";
 	}
 
-	char *reason_str = NULL;
+	const char *reason_str = NULL;
 	char *followup_str = NULL;
 	enum local_subsection other_lss;
-	char *node_section = NULL;
-	char *other_section = NULL;
+	const char *node_section = NULL;
+	const char *other_section = NULL;
 
 	switch (-reason) {
 	case ORDER_EQUAL:

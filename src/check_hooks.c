@@ -173,7 +173,7 @@ void display_check_result(struct check_result *res, struct check_data *data)
 	       res->severity, res->message, res->severity, res->check_id);
 }
 
-struct check_result *alloc_internal_error(char *string)
+struct check_result *alloc_internal_error(const char *string)
 {
 	return make_check_result('F', F_ID_INTERNAL, string);
 }
@@ -228,7 +228,7 @@ void free_check_result(struct check_result *res)
 
 __attribute__ ((format(printf, 3, 4)))
 struct check_result *make_check_result(char severity, unsigned int check_id,
-                                       char *format, ...)
+                                       const char *format, ...)
 {
 
 	struct check_result *res = malloc(sizeof(struct check_result));

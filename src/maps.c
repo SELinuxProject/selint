@@ -30,7 +30,7 @@ struct bool_hash_elem *filetrans_map = NULL;
 struct bool_hash_elem *role_if_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
-static struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
+static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor flavor)
 {
 
 	if (!name) {
@@ -65,7 +65,7 @@ static struct hash_elem *look_up_hash_elem(char *name, enum decl_flavor flavor)
 	return decl;
 }
 
-void insert_into_decl_map(char *name, char *module_name,
+void insert_into_decl_map(const char *name, const char *module_name,
                           enum decl_flavor flavor)
 {
 
@@ -111,7 +111,7 @@ void insert_into_decl_map(char *name, char *module_name,
 	}       //TODO: else report error?
 }
 
-char *look_up_in_decl_map(char *name, enum decl_flavor flavor)
+char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
 {
 
 	struct hash_elem *decl = look_up_hash_elem(name, flavor);

@@ -20,7 +20,7 @@
 #include "selint_error.h"
 #include "file_list.h"
 
-void load_access_vectors_normal(char *av_path);
+void load_access_vectors_normal(const char *av_path);
 
 void load_access_vectors_source(void);
 

@@ -21,7 +21,7 @@
 	#include "parse_functions.h"
 	#include "check_hooks.h"
 	int yylex(void);
-	void yyerror(char *);
+	void yyerror(const char *);
 
 	extern struct policy_node *ast;
 	extern unsigned int yylineno;
@@ -744,7 +744,7 @@ if_keyword:
 	;
 
 %%
-void yyerror(char* s) {
+void yyerror(const char* s) {
 	struct check_result *res = make_check_result('F', F_ID_POLICY_SYNTAX, s);
 	res->lineno = yylineno;
 

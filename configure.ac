@@ -76,5 +76,8 @@ AX_VALGRIND_CHECK
 
 AC_CHECK_HEADER([uthash.h], [], [AC_MSG_ERROR([Unable to find uthash header])])
 
+AM_CFLAGS="-Wall -Wextra -Wmissing-format-attribute -Wmissing-noreturn -Wpointer-arith -Wshadow -Wstrict-prototypes -Wundef -Wunused -Wwrite-strings"
+AC_SUBST([AM_CFLAGS])
+
 AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile man/Makefile])
 AC_OUTPUT()

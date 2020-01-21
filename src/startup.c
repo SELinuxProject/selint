@@ -21,14 +21,17 @@
 #include "maps.h"
 #include "tree.h"
 
-void load_access_vectors_normal(char *av_path)
+void load_access_vectors_normal(const char *av_path)
 {
 
-	char **paths = calloc(2, sizeof(char *));
+	const char **paths = calloc(2, sizeof(char *));
 
 	paths[0] = av_path;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL, NULL);
+#pragma GCC diagnostic pop
 
 	FTSENT *file = fts_read(ftsp);
 
@@ -167,9 +170,13 @@ static int mark_transform_interfaces_one_file(struct policy_node *ast) {
 
 enum selint_error load_devel_headers(struct policy_file_list *context_files)
 {
-	char *header_loc = "/usr/share/selinux/devel";
-	char *paths[2] = {header_loc, 0};
+	const char *header_loc = "/usr/share/selinux/devel";
+	const char *paths[2] = {header_loc, 0};
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+#pragma GCC diagnostic pop
 
 	FTSENT *file = fts_read(ftsp);
 	while (file) {
