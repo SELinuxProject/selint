@@ -25,7 +25,7 @@
 
 START_TEST (test_check_te_order) {
 	struct check_data *cd = calloc(1, sizeof(struct check_data));
-	cd->flavor = NODE_TE_FILE;
+	cd->flavor = FILE_TE_FILE;
 
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
 	struct policy_node *cur = head;
@@ -116,12 +116,12 @@ START_TEST (test_check_no_explicit_declaration) {
 	cur->flavor = NODE_AV_RULE;
 	cur->data.av_data = make_example_av_rule();
 
-	cd->flavor = NODE_IF_FILE;
+	cd->flavor = FILE_IF_FILE;
 	cd->mod_name = "foo";
 
 	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur));
 
-	cd->flavor = NODE_TE_FILE;
+	cd->flavor = FILE_TE_FILE;
 
 	// If the type isn't found, we don't do anything
 	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur));
@@ -146,6 +146,7 @@ START_TEST (test_check_no_explicit_declaration) {
 	cur = cur->prev;
 	cur->flavor = NODE_REQUIRE;
 	union node_data nd;
+	nd.d_data = NULL;
 	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(cur, NODE_START_BLOCK, nd, 0));
 	nd.d_data = calloc(1, sizeof(struct declaration_data));
 	nd.d_data->flavor = DECL_TYPE;
