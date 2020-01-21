@@ -172,7 +172,7 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 }
 
 struct check_result *check_module_if_call_in_optional(const struct check_data
-                                                      *check_data,
+                                                      *data,
                                                       const struct policy_node
                                                       *node)
 {
@@ -186,7 +186,7 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
 		return NULL;
 	}
 
-	if (0 == strcmp(if_mod_name, check_data->mod_name)) {
+	if (0 == strcmp(if_mod_name, data->mod_name)) {
 		// No issue calling interfaces in your own module
 		return NULL;
 	}
@@ -211,7 +211,4 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
 
 	return make_check_result('W', W_ID_IF_CALL_OPTIONAL,
 	                         "Call to interface defined in module should be in optional_policy block");
-
-	return NULL;
-
 }
