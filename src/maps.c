@@ -65,16 +65,16 @@ static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor fl
 	return decl;
 }
 
-void insert_into_decl_map(const char *name, const char *module_name,
+void insert_into_decl_map(const char *type, const char *module_name,
                           enum decl_flavor flavor)
 {
 
-	struct hash_elem *decl = look_up_hash_elem(name, flavor);
+	struct hash_elem *decl = look_up_hash_elem(type, flavor);
 
 	if (decl == NULL) {     // Item not in hash table already
 
 		decl = malloc(sizeof(struct hash_elem));
-		decl->key = strdup(name);
+		decl->key = strdup(type);
 		decl->val = strdup(module_name);
 
 		switch (flavor) {
@@ -111,10 +111,10 @@ void insert_into_decl_map(const char *name, const char *module_name,
 	}       //TODO: else report error?
 }
 
-char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
+char *look_up_in_decl_map(const char *type, enum decl_flavor flavor)
 {
 
-	struct hash_elem *decl = look_up_hash_elem(name, flavor);
+	struct hash_elem *decl = look_up_hash_elem(type, flavor);
 
 	if (decl == NULL) {
 		return NULL;

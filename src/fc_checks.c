@@ -31,7 +31,7 @@
 	} \
 
 struct check_result *check_file_context_types_in_mod(const struct check_data
-                                                     *check_data,
+                                                     *data,
                                                      const struct policy_node
                                                      *node)
 {
@@ -53,7 +53,7 @@ struct check_result *check_file_context_types_in_mod(const struct check_data
 		return NULL;
 	}
 
-	if (strcmp(check_data->mod_name, type_decl_mod_name)) {
+	if (strcmp(data->mod_name, type_decl_mod_name)) {
 		return make_check_result('S',
 		                         S_ID_FC_TYPE,
 		                         "Type %s is declared in module %s, but used in file context here.",
@@ -166,7 +166,7 @@ struct check_result *check_file_context_roles(__attribute__((unused)) const stru
 }
 
 struct check_result *check_file_context_types_exist(__attribute__((unused)) const struct check_data
-                                                    *check_data,
+                                                    *data,
                                                     const struct policy_node
                                                     *node)
 {

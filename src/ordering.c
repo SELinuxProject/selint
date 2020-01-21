@@ -108,7 +108,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 #ifdef DEBUG_INFO
 	for (int i=0; i< ordering->order_node_len; i++) {
 		if(nodes[i].node) {
-			printf("Line: %d, Section %s: LSS: %d\n",
+			printf("Line: %u, Section %s: LSS: %d\n",
 			       nodes[i].node->lineno,
 			       get_section(nodes[i].node),
 			       get_local_subsection(nodes[i].node));

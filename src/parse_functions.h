@@ -29,7 +29,7 @@
 *
 * Returns - SELINT error code
 **********************************/
-enum selint_error begin_parsing_te(struct policy_node **cur, const char *module_name,
+enum selint_error begin_parsing_te(struct policy_node **cur, const char *mn,
                                    unsigned int lineno);
 
 /**********************************
@@ -157,7 +157,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
                                          const char *default_type, const char *name,
                                          unsigned int lineno);
 
-enum selint_error insert_interface_call(struct policy_node **cur, const char *name,
+enum selint_error insert_interface_call(struct policy_node **cur, const char *if_name,
                                         struct string_list *args,
                                         unsigned int lineno);
 
