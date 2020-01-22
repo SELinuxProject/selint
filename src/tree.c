@@ -126,6 +126,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 	struct string_list *cur = NULL;
 	struct av_rule_data *av_data;
 	struct type_transition_data *tt_data;
+	struct role_transition_data *rt_data;
 	struct declaration_data *d_data;
 	struct if_call_data *ifc_data;
 	struct role_allow_data *ra_data;
@@ -166,6 +167,11 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 			cur = ret = calloc(1, sizeof(struct string_list));
 			cur->string = strdup(tt_data->default_type);
 		}
+		break;
+
+	case NODE_RT_RULE:
+		rt_data = node->data.rt_data;
+		ret = copy_string_list(rt_data->targets);
 		break;
 
 	case NODE_DECL:
@@ -300,6 +306,9 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	case NODE_TT_RULE:
 		free_type_transition_data(to_free->data.tt_data);
 		break;
+	case NODE_RT_RULE:
+		free_role_transition_data(to_free->data.rt_data);
+		break;
 	case NODE_IF_CALL:
 		free_if_call_data(to_free->data.ic_data);
 		break;
@@ -382,6 +391,22 @@ enum selint_error free_type_transition_data(struct type_transition_data
 	free_string_list(to_free->object_classes);
 	free(to_free->default_type);
 	free(to_free->name);
+
+	free(to_free);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error free_role_transition_data(struct role_transition_data
+                                            *to_free)
+{
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	free_string_list(to_free->sources);
+	free_string_list(to_free->targets);
+	free(to_free->default_role);
 
 	free(to_free);
 

@@ -137,7 +137,7 @@ enum selint_error insert_role_allow(struct policy_node **cur, const char *from_r
 * insert_type_transition
 * Add a type transition node at the next node in the tree, allocating all memory for it
 * cur (in, out) - The current spot in the tree.  Will be updated to point to
-*	the newly allocated av rule node
+*	the newly allocated type transition node
 * flavor (in) - The variety of type transition role.  The normal case is type_transition (TT_TT),
 * but other options include type_member (TT_TM), type_change (TT_TC) and range_transition (TT_RT)
 * sources (in) - (memory allocated by caller) The sources in the rule
@@ -155,6 +155,24 @@ enum selint_error insert_type_transition(struct policy_node **cur,
                                          struct string_list *targets,
                                          struct string_list *object_classes,
                                          const char *default_type, const char *name,
+                                         unsigned int lineno);
+
+/**********************************
+* insert_role_transition
+* Add a role transition node at the next node in the tree, allocating all memory for it
+* cur (in, out) - The current spot in the tree.  Will be updated to point to
+*	the newly allocated role transition node
+* sources (in) - (memory allocated by caller) The sources in the rule
+* targets (in) - (memory allocated by caller) the targets in the rule
+* default_role (in) - The role to transition to
+* lineno (in) - The line number of the rule
+*
+* Returns - SELINT error code
+**********************************/
+enum selint_error insert_role_transition(struct policy_node **cur,
+                                         struct string_list *sources,
+                                         struct string_list *targets,
+                                         char *default_role,
                                          unsigned int lineno);
 
 enum selint_error insert_interface_call(struct policy_node **cur, const char *if_name,

@@ -88,3 +88,5 @@ ifdef(`test',`
 ')
 
 foo_filter_template(synchronizer,synchronizer,`')
+
+role_transition foo_r bar_exec_t bar_r;

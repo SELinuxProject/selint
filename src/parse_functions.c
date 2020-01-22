@@ -309,6 +309,38 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_role_transition(struct policy_node **cur,
+                                         struct string_list *sources,
+                                         struct string_list *targets,
+                                         char *default_role,
+                                         unsigned int lineno)
+{
+	struct role_transition_data *rt_data =
+	        malloc(sizeof(struct role_transition_data));
+
+	rt_data->sources = sources;
+	rt_data->targets = targets;
+	rt_data->default_role = strdup(default_role);
+
+	union node_data nd;
+	nd.rt_data = rt_data;
+
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_RT_RULE,
+	                                                nd,
+	                                                lineno);
+
+	if (ret != SELINT_SUCCESS) {
+		free_role_transition_data(rt_data);
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+
+	return SELINT_SUCCESS;
+}
+
+
 enum selint_error insert_interface_call(struct policy_node **cur, const char *if_name,
                                         struct string_list *args,
                                         unsigned int lineno)
