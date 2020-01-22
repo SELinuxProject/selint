@@ -183,6 +183,8 @@ const char *get_section(const struct policy_node *node)
 		// The case of multiple source types is weird.  For now
 		// just using the first one seems fine.
 		return node->data.av_data->sources->string;
+	case NODE_RT_RULE:
+		return "_non_ordered";
 	case NODE_ROLE_ALLOW:
 		// This is not in the style guide. I normally see it grouped
 		// with declarations, but maybe a future ordering configuration
