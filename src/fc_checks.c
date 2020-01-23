@@ -75,9 +75,21 @@ struct check_result *check_file_context_regex(__attribute__((unused)) const stru
 	char prev = '\0';
 	int error = 0;
 
-	while (*path != '\0') {
+	while (cur != '\0') {
 		char next = *(path + 1);
 
+		if (cur == '[' && prev != '\\') {
+			// Fast forward through [ ] groups, because regex characters
+			// should not be escaped there
+			while (cur != '\0' &&
+			       (cur != ']' || prev == '\\')) {
+				next = *(path + 1);
+				prev = cur;
+				cur = next;
+				path++;
+			}
+			continue;
+		}
 		switch (cur) {
 		case '.':
 			// require that periods are either escaped or are one of ".*", ".+", or ".?"

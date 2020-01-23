@@ -328,6 +328,24 @@ START_TEST (test_check_file_context_regex) {
 	res = check_file_context_regex(data, node);
 	ck_assert_ptr_null(res);
 
+	free(entry->path);
+	entry->path = strdup("brackets\\.are[.s.kipped.]\\.");
+
+	res = check_file_context_regex(data, node);
+	ck_assert_ptr_null(res);
+
+	free(entry->path);
+	entry->path = strdup("unclosed[bracket");
+
+	res = check_file_context_regex(data, node);
+	ck_assert_ptr_null(res);
+
+	free(entry->path);
+	entry->path = strdup("escaped[brackets\\]in.brackets]");
+
+	res = check_file_context_regex(data, node);
+	ck_assert_ptr_null(res);
+
 	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
