@@ -116,7 +116,7 @@ START_TEST (test_check_no_explicit_declaration) {
 	cur->data.av_data = make_example_av_rule();
 
 	cd->flavor = FILE_IF_FILE;
-	cd->mod_name = "foo";
+	cd->mod_name = strdup("foo");
 
 	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur));
 
@@ -168,6 +168,7 @@ START_TEST (test_check_no_explicit_declaration) {
 
 	free_check_result(res);
 	free_all_maps();
+	free(cd->mod_name);
 	free(cd);
 	free_policy_node(cur);
 }
@@ -185,7 +186,7 @@ START_TEST (test_check_module_if_call_in_optional) {
 	cur->data.ic_data = ic_data;
 	ic_data->name = foo_read_str;
 	struct check_data *cd = calloc(1, sizeof(struct check_data));
-	cd->mod_name = "baz";
+	cd->mod_name = strdup("baz");
 
 	insert_into_ifs_map("foo_read", "foo");
 	insert_into_mods_map("foo", "module");
@@ -215,6 +216,7 @@ START_TEST (test_check_module_if_call_in_optional) {
 	ck_assert_ptr_null(res);
 
 	free(bar_read_str);
+	free(cd->mod_name);
 	free(cd);
 	free_all_maps();
 	free_policy_node(cur->parent);

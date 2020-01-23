@@ -25,7 +25,7 @@ START_TEST (test_check_file_context_types_exist) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -57,6 +57,7 @@ START_TEST (test_check_file_context_types_exist) {
 	ck_assert_ptr_null(res);
 
 	free_all_maps();
+	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
 
@@ -67,7 +68,7 @@ START_TEST (test_check_file_context_types_exist_bad_flavor) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -82,6 +83,7 @@ START_TEST (test_check_file_context_types_exist_bad_flavor) {
 	ck_assert_ptr_nonnull(res->message);
 
 	free_check_result(res);
+	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
 
@@ -92,7 +94,7 @@ START_TEST (test_check_file_context_types_in_mod) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -123,7 +125,8 @@ START_TEST (test_check_file_context_types_in_mod) {
 
 	free_check_result(res);
 
-	data->mod_name = "bar";
+	free(data->mod_name);
+	data->mod_name = strdup("bar");
 
 	res = check_file_context_types_exist(data, node);
 
@@ -132,6 +135,7 @@ START_TEST (test_check_file_context_types_in_mod) {
 	free(res);
 
 	free_all_maps();
+	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
 
@@ -142,7 +146,7 @@ START_TEST (test_check_file_context_roles) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -176,6 +180,7 @@ START_TEST (test_check_file_context_roles) {
 	free(res);
 
 	free_all_maps();
+	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
 
@@ -186,7 +191,7 @@ START_TEST (test_check_file_context_users) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -220,6 +225,7 @@ START_TEST (test_check_file_context_users) {
 	free(res);
 
 	free_all_maps();
+	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
 
@@ -230,7 +236,7 @@ START_TEST (test_check_file_context_error_nodes) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -253,6 +259,7 @@ START_TEST (test_check_file_context_error_nodes) {
 
 	free_check_result(res);
 
+	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
 }
@@ -262,7 +269,7 @@ START_TEST (test_fc_checks_handle_null_context_fields) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -280,6 +287,7 @@ START_TEST (test_fc_checks_handle_null_context_fields) {
 	ck_assert_ptr_null(check_file_context_roles(data, node));
 	ck_assert_ptr_null(check_file_context_users(data, node));
 
+	free(data->mod_name);
 	free(data);
 
 	free_policy_node(node);
@@ -290,7 +298,7 @@ END_TEST
 START_TEST (test_check_file_context_regex) {
 	struct check_data *data = malloc(sizeof(struct check_data));
 
-	data->mod_name = "foo";
+	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
@@ -320,6 +328,7 @@ START_TEST (test_check_file_context_regex) {
 	res = check_file_context_regex(data, node);
 	ck_assert_ptr_null(res);
 
+	free(data->mod_name);
 	free(data);
 	free_policy_node(node);
 }
