@@ -47,41 +47,41 @@ START_TEST (test_parse_basic_te) {
 	yyin = fopen(BASIC_TE_FILENAME, "r");
 	ck_assert_int_eq(0, yyparse());
 
-	struct policy_node *cur = ast;
+	struct policy_node *current = ast;
 
-	ck_assert_ptr_nonnull(cur);
-	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
-	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_nonnull(current);
+	ck_assert_int_eq(NODE_TE_FILE, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
 
-	cur = ast->next;
-	ck_assert_int_eq(NODE_DECL, cur->flavor);
-	struct declaration_data *dd = cur->data.d_data;
+	current = ast->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	struct declaration_data *dd = current->data.d_data;
 	ck_assert_int_eq(DECL_TYPE, dd->flavor);
 	ck_assert_str_eq("basic_t", dd->name);
-	ck_assert_ptr_nonnull(cur->next);
-	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
 
-	cur = cur->next;
-	ck_assert_int_eq(NODE_DECL, cur->flavor);
-	dd = cur->data.d_data;
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	dd = current->data.d_data;
 	ck_assert_int_eq(DECL_TYPE, dd->flavor);
 	ck_assert_str_eq("basic_exec_t", dd->name);
-	ck_assert_ptr_nonnull(cur->next);
-	ck_assert_ptr_null(cur->first_child);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
 
-	cur = cur->next;
-	ck_assert_int_eq(NODE_AV_RULE, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
-	ck_assert_ptr_null(cur->first_child);
+	current = current->next;
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
 
-	cur = cur->next;
-	ck_assert_int_eq(NODE_OPTIONAL_POLICY, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
-	ck_assert_ptr_nonnull(cur->first_child);
+	current = current->next;
+	ck_assert_int_eq(NODE_OPTIONAL_POLICY, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_nonnull(current->first_child);
 
-	cur = cur->first_child;
-	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
+	current = current->first_child;
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
 
 	ck_assert_str_eq("basic", look_up_in_decl_map("basic_t", DECL_TYPE));
 	ck_assert_int_eq(2, decl_map_count(DECL_TYPE));
@@ -105,58 +105,58 @@ START_TEST (test_parse_basic_if) {
 	parsing_filename = "basic";
 	ck_assert_int_eq(0, yyparse());
 
-	struct policy_node *cur = ast;
+	struct policy_node *current = ast;
 
-	ck_assert_ptr_nonnull(cur);
-	ck_assert_int_eq(NODE_IF_FILE, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
+	ck_assert_ptr_nonnull(current);
+	ck_assert_int_eq(NODE_IF_FILE, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
 
-	cur = cur->next;
+	current = current->next;
 
-	ck_assert_int_eq(NODE_COMMENT, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
+	ck_assert_int_eq(NODE_COMMENT, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
 
-	cur = cur->next;
+	current = current->next;
 
-	ck_assert_int_eq(NODE_COMMENT, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
+	ck_assert_int_eq(NODE_COMMENT, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
 
 
-	cur = cur->next;
+	current = current->next;
 
-	ck_assert_int_eq(NODE_INTERFACE_DEF, cur->flavor);
-	ck_assert_ptr_nonnull(cur->first_child);
-	ck_assert_str_eq("basic_domtrans", cur->data.str);
+	ck_assert_int_eq(NODE_INTERFACE_DEF, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_str_eq("basic_domtrans", current->data.str);
 
-	cur = cur->first_child;
+	current = current->first_child;
 
-	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
 
-	cur = cur->next;
+	current = current->next;
 
-	ck_assert_int_eq(cur->flavor, NODE_GEN_REQ);
-	ck_assert_ptr_nonnull(cur->first_child);
-	ck_assert_ptr_nonnull(cur->next);
-	ck_assert_ptr_nonnull(cur->prev);
+	ck_assert_int_eq(current->flavor, NODE_GEN_REQ);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_nonnull(current->prev);
 
-	cur = cur->first_child;
+	current = current->first_child;
 
-	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
-	ck_assert_ptr_nonnull(cur->next);
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
 
-	cur = cur->next;
+	current = current->next;
 
-	ck_assert_int_eq(NODE_DECL, cur->flavor);
-	ck_assert_ptr_null(cur->first_child);
-	ck_assert_ptr_null(cur->next);
-	ck_assert_ptr_nonnull(cur->prev);
-	ck_assert_ptr_nonnull(cur->parent);
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_null(current->next);
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_nonnull(current->parent);
 
-	cur = cur->parent->next;
+	current = current->parent->next;
 
-	ck_assert_int_eq(NODE_IF_CALL, cur->flavor);
-	ck_assert_ptr_nonnull(cur->parent);
+	ck_assert_int_eq(NODE_IF_CALL, current->flavor);
+	ck_assert_ptr_nonnull(current->parent);
 
 	free_policy_node(ast);
 	cleanup_parsing();
@@ -191,20 +191,20 @@ START_TEST (test_parse_blocks) {
 
 	ck_assert_ptr_nonnull(ast);
 
-	struct policy_node *cur = ast;
+	struct policy_node *current = ast;
 
-	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
+	ck_assert_int_eq(NODE_TE_FILE, current->flavor);
 
-	ck_assert_ptr_nonnull(cur->next);
+	ck_assert_ptr_nonnull(current->next);
 
-	cur = cur->next;
-	ck_assert_int_eq(NODE_OPTIONAL_POLICY, cur->flavor);
-	ck_assert_ptr_null(cur->next);
-	ck_assert_ptr_nonnull(cur->first_child);
+	current = current->next;
+	ck_assert_int_eq(NODE_OPTIONAL_POLICY, current->flavor);
+	ck_assert_ptr_null(current->next);
+	ck_assert_ptr_nonnull(current->first_child);
 
-	cur = cur->first_child;
-	ck_assert_int_eq(NODE_START_BLOCK, cur->flavor);
-	ck_assert_ptr_null(cur->next);
+	current = current->first_child;
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->next);
 
 	free_policy_node(ast);
 	cleanup_parsing();
