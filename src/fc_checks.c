@@ -75,37 +75,49 @@ struct check_result *check_file_context_regex(__attribute__((unused)) const stru
 	char prev = '\0';
 	int error = 0;
 
-	while (*path != '\0') {
+	while (cur != '\0') {
 		char next = *(path + 1);
 
-		switch (cur) {
-		case '.':
-			// require that periods are either escaped or are one of ".*", ".+", or ".?"
-			// rarely are periods actually used to just mean one of any character
-			if (prev != '\\' && next != '*' && next != '+'
-			    && next != '?') {
-				error = 1;
+		if (cur == '[' && prev != '\\') {
+			// Fast forward through [ ] groups, because regex characters
+			// should not be escaped there
+			while (cur != '\0' && cur != ']') {
+				prev = cur;
+				cur = next;
+				path++;
+				next = *(path + 1);
 			}
-			break;
-		case '+':
-		case '*':
-			// require that pluses and asterisks are either escaped or look
-			// something kindof like ".*", "(...)*", or "[...]*"
-			if (prev != '\\' && prev != '.' && prev != ']'
-			    && prev != ')') {
-				error = 1;
-			}
-			break;
-		default:
-			break;
-		}
+		} else {
 
-		if (error) {
-			return make_check_result('W', W_ID_FC_REGEX,
-			                         "File context path contains a potentially unescaped regex character '%c' at position %d: %s",
-			                         cur,
-			                         (int)(path - entry->path + 1),
-			                         entry->path);
+			switch (cur) {
+			case '.':
+				// require that periods are either escaped or are one of ".*", ".+", or ".?"
+				// rarely are periods actually used to just mean one of any character
+				if (prev != '\\' && next != '*' && next != '+'
+				    && next != '?') {
+					error = 1;
+				}
+				break;
+			case '+':
+			case '*':
+				// require that pluses and asterisks are either escaped or look
+				// something kindof like ".*", "(...)*", or "[...]*"
+				if (prev != '\\' && prev != '.' && prev != ']'
+				    && prev != ')') {
+					error = 1;
+				}
+				break;
+			default:
+				break;
+			}
+
+			if (error) {
+				return make_check_result('W', W_ID_FC_REGEX,
+							 "File context path contains a potentially unescaped regex character '%c' at position %d: %s",
+							 cur,
+							 (int)(path - entry->path + 1),
+							 entry->path);
+			}
 		}
 
 		prev = cur;
