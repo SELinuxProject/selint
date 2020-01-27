@@ -53,6 +53,9 @@ enum node_flavor {
 	NODE_CLEANUP,           // Called after each file parsing is complete so that checks
 	                        // that register on this node have a way to clean up state
 	NODE_ERROR              // When a parsing error occurs, save an error node in the tree
+	                        // NODE_ERROR must be the last item in the node_flavor enum
+	                        // as check_hooks.c assumes it when allocating an array of
+	                        // length equal to the number of node types
 };
 
 enum av_rule_flavor {

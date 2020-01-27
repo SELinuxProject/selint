@@ -83,18 +83,7 @@ struct check_node {
 };
 
 struct checks {
-	struct check_node *te_file_node_checks;
-	struct check_node *av_rule_node_checks;
-	struct check_node *tt_rule_node_checks;
-	struct check_node *decl_node_checks;
-	struct check_node *if_def_node_checks;
-	struct check_node *temp_def_node_checks;
-	struct check_node *if_call_node_checks;
-	struct check_node *require_node_checks;
-	struct check_node *gen_req_node_checks;
-	struct check_node *fc_entry_node_checks;
-	struct check_node *error_node_checks;
-	struct check_node *cleanup_checks;
+	struct check_node *check_nodes[NODE_ERROR + 1];
 };
 
 /*********************************************

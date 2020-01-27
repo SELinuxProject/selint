@@ -22,16 +22,16 @@
 
 #include "check_hooks.h"
 
-#define ALLOC_NODE(nl)  if (ck->nl) { \
-		loc = ck->nl; \
+#define ALLOC_NODE(nl)  if (ck->check_nodes[nl]) { \
+		loc = ck->check_nodes[nl]; \
 		while (loc->next) { loc = loc->next; } \
 		loc->next = malloc(sizeof(struct check_node)); \
 		if (!loc->next) { return SELINT_OUT_OF_MEM; } \
 		loc = loc->next; \
 } else { \
-		ck->nl = malloc(sizeof(struct check_node)); \
-		if (!ck->nl) { return SELINT_OUT_OF_MEM; } \
-		loc = ck->nl; \
+		ck->check_nodes[nl] = malloc(sizeof(struct check_node)); \
+		if (!ck->check_nodes[nl]) { return SELINT_OUT_OF_MEM; } \
+		loc = ck->check_nodes[nl]; \
 }
 
 enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
@@ -39,59 +39,9 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
                             struct check_result *(*check_function)(const struct check_data *check_data,
                                                                    const struct policy_node *node))
 {
-
 	struct check_node *loc;
 
-	switch (check_flavor) {
-	case NODE_TE_FILE:
-		ALLOC_NODE(te_file_node_checks);
-		break;
-	case NODE_AV_RULE:
-		ALLOC_NODE(av_rule_node_checks);
-		break;
-
-	case NODE_TT_RULE:
-		ALLOC_NODE(tt_rule_node_checks);
-		break;
-
-	case NODE_DECL:
-		ALLOC_NODE(decl_node_checks);
-		break;
-
-	case NODE_INTERFACE_DEF:
-		ALLOC_NODE(if_def_node_checks);
-		break;
-
-	case NODE_TEMP_DEF:
-		ALLOC_NODE(temp_def_node_checks);
-		break;
-
-	case NODE_IF_CALL:
-		ALLOC_NODE(if_call_node_checks);
-		break;
-
-	case NODE_REQUIRE:
-		ALLOC_NODE(require_node_checks);
-		break;
-
-	case NODE_GEN_REQ:
-		ALLOC_NODE(gen_req_node_checks);
-		break;
-
-	case NODE_FC_ENTRY:
-		ALLOC_NODE(fc_entry_node_checks);
-		break;
-
-	case NODE_ERROR:
-		ALLOC_NODE(error_node_checks);
-		break;
-
-	case NODE_CLEANUP:
-		ALLOC_NODE(cleanup_checks);
-		break;
-	default:
-		return SELINT_BAD_ARG;
-	}
+	ALLOC_NODE(check_flavor);
 
 	loc->check_function = check_function;
 	loc->check_id = strdup(check_id);
@@ -103,35 +53,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 enum selint_error call_checks(struct checks *ck, struct check_data *data,
                               struct policy_node *node)
 {
-
-	switch (node->flavor) {
-	case NODE_TE_FILE:
-		return call_checks_for_node_type(ck->te_file_node_checks, data, node);
-	case NODE_AV_RULE:
-		return call_checks_for_node_type(ck->av_rule_node_checks, data, node);
-	case NODE_TT_RULE:
-		return call_checks_for_node_type(ck->tt_rule_node_checks, data, node);
-	case NODE_DECL:
-		return call_checks_for_node_type(ck->decl_node_checks, data, node);
-	case NODE_INTERFACE_DEF:
-		return call_checks_for_node_type(ck->if_def_node_checks, data, node);
-	case NODE_TEMP_DEF:
-		return call_checks_for_node_type(ck->temp_def_node_checks, data, node);
-	case NODE_IF_CALL:
-		return call_checks_for_node_type(ck->if_call_node_checks, data, node);
-	case NODE_REQUIRE:
-		return call_checks_for_node_type(ck->require_node_checks, data, node);
-	case NODE_GEN_REQ:
-		return call_checks_for_node_type(ck->gen_req_node_checks, data, node);
-	case NODE_FC_ENTRY:
-		return call_checks_for_node_type(ck->fc_entry_node_checks, data, node);
-	case NODE_ERROR:
-		return call_checks_for_node_type(ck->error_node_checks, data, node);
-	case NODE_CLEANUP:
-		return call_checks_for_node_type(ck->cleanup_checks, data, node);
-	default:
-		return SELINT_SUCCESS;
-	}
+	return call_checks_for_node_type(ck->check_nodes[node->flavor], data, node);
 }
 
 enum selint_error call_checks_for_node_type(struct check_node *ck_list,
@@ -255,41 +177,10 @@ struct check_result *make_check_result(char severity, unsigned int check_id,
 
 void free_checks(struct checks *to_free)
 {
-	if (to_free->te_file_node_checks) {
-		free_check_node(to_free->te_file_node_checks);
-	}
-	if (to_free->av_rule_node_checks) {
-		free_check_node(to_free->av_rule_node_checks);
-	}
-	if (to_free->tt_rule_node_checks) {
-		free_check_node(to_free->tt_rule_node_checks);
-	}
-	if (to_free->decl_node_checks) {
-		free_check_node(to_free->decl_node_checks);
-	}
-	if (to_free->if_def_node_checks) {
-		free_check_node(to_free->if_def_node_checks);
-	}
-	if (to_free->temp_def_node_checks) {
-		free_check_node(to_free->temp_def_node_checks);
-	}
-	if (to_free->if_call_node_checks) {
-		free_check_node(to_free->if_call_node_checks);
-	}
-	if (to_free->require_node_checks) {
-		free_check_node(to_free->require_node_checks);
-	}
-	if (to_free->gen_req_node_checks) {
-		free_check_node(to_free->gen_req_node_checks);
-	}
-	if (to_free->fc_entry_node_checks) {
-		free_check_node(to_free->fc_entry_node_checks);
-	}
-	if (to_free->error_node_checks) {
-		free_check_node(to_free->error_node_checks);
-	}
-	if (to_free->cleanup_checks) {
-		free_check_node(to_free->cleanup_checks);
+	for (int i=0; i < NODE_ERROR + 1; i++) {
+		if (to_free->check_nodes[i]) {
+			free_check_node(to_free->check_nodes[i]);
+		}
 	}
 	free(to_free);
 }

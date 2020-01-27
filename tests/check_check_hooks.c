@@ -38,46 +38,45 @@ struct check_result * example_check2(__attribute__((unused)) const struct check_
 }
 
 START_TEST (test_add_check) {
-	struct checks *ck = malloc(sizeof(struct checks));
-	memset(ck, 0, sizeof(struct checks));
+	struct checks *ck = calloc(1, sizeof(struct checks));
 
 	check_called = 0;
 
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, "E-999", example_check));
 
-	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
-	ck_assert_ptr_null(ck->fc_entry_node_checks);
-	ck_assert_ptr_null(ck->error_node_checks);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_AV_RULE]);
+	ck_assert_ptr_null(ck->check_nodes[NODE_FC_ENTRY]);
+	ck_assert_ptr_null(ck->check_nodes[NODE_ERROR]);
 
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TT_RULE, ck, "E-999", example_check));
 
-	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
-	ck_assert_ptr_nonnull(ck->tt_rule_node_checks);
-	ck_assert_ptr_null(ck->fc_entry_node_checks);
-	ck_assert_ptr_null(ck->error_node_checks);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_AV_RULE]);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_TT_RULE]);
+	ck_assert_ptr_null(ck->check_nodes[NODE_FC_ENTRY]);
+	ck_assert_ptr_null(ck->check_nodes[NODE_ERROR]);
 
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_DECL, ck, "E-999", example_check));
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_INTERFACE_DEF, ck, "E-999", example_check));
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_TEMP_DEF, ck, "E-999", example_check));
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_IF_CALL, ck, "E-999", example_check));
 
-	ck_assert_ptr_nonnull(ck->decl_node_checks);
-	ck_assert_ptr_nonnull(ck->if_def_node_checks);
-	ck_assert_ptr_nonnull(ck->temp_def_node_checks);
-	ck_assert_ptr_nonnull(ck->if_call_node_checks);
-	ck_assert_ptr_null(ck->fc_entry_node_checks);
-	ck_assert_ptr_null(ck->error_node_checks);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_DECL]);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_INTERFACE_DEF]);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_TEMP_DEF]);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_IF_CALL]);
+	ck_assert_ptr_null(ck->check_nodes[NODE_FC_ENTRY]);
+	ck_assert_ptr_null(ck->check_nodes[NODE_ERROR]);
 
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_FC_ENTRY, ck, "E-999", example_check));
 
-	ck_assert_ptr_nonnull(ck->av_rule_node_checks);
-	ck_assert_ptr_nonnull(ck->fc_entry_node_checks);
-	ck_assert_ptr_null(ck->error_node_checks);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_AV_RULE]);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_FC_ENTRY]);
+	ck_assert_ptr_null(ck->check_nodes[NODE_ERROR]);
 
-	ck_assert_ptr_eq(ck->fc_entry_node_checks->check_function, example_check);
+	ck_assert_ptr_eq(ck->check_nodes[NODE_FC_ENTRY]->check_function, example_check);
 
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_ERROR, ck, "E-999", example_check));
-	ck_assert_ptr_nonnull(ck->error_node_checks);
+	ck_assert_ptr_nonnull(ck->check_nodes[NODE_ERROR]);
 
 	ck_assert_int_eq(0, check_called);
 
