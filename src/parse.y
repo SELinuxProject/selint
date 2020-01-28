@@ -482,6 +482,9 @@ if_or_ifn:
 tunable:
 	TUNABLE_POLICY OPEN_PAREN BACKTICK { begin_tunable_policy(&cur, yylineno); }
 	condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
+	|
+	TUNABLE_POLICY OPEN_PAREN { begin_tunable_policy(&cur, yylineno); }
+	condition COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
 	;
 
 gen_tunable:
