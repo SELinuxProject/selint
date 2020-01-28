@@ -1,0 +1,18 @@
+## [1.0.1] - 2020-01-28
+### Added
+- Warning for invalid check ids in config or on command line
+- CI for github pushes
+- Enabled many warnings in build system
+- Changelog
+
+### Fixed
+- Check W-002 now handles multiple requires in the same interface correctly
+- (Issue #2) Handle types prefixed with "-" correctly in checks
+- Handle type aliases correctly in checks W-002 and W-003
+- Fix double free in certain parse error corner cases
+- Look at role transitions in relevant checks (C-001, W-002, W-003)
+- Fix false positives on W-004 when a regex character is in square brackets
+- General Code Cleanup
+
+## [1.0.0] - 2020-01-15
+Initial Release
