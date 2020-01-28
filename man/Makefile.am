@@ -16,7 +16,7 @@ SOURCES=selint.h2m
 
 if HAVE_HELP2MAN
 man1_MANS=$(MANPAGES)
-EXTRA_DIST=$(man_MANS)
+EXTRA_DIST=$(man1_MANS)
 CLEANFILES=$(MANPAGES)
 
 selint.1: ../src/main.c

@@ -25,7 +25,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: install-deps
       run: |
-        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind
+        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man
         # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
         # ck_assert_ptr_nonnull were added in 0.11.0
         git clone https://github.com/libcheck/check.git --branch 0.13.0
