@@ -641,7 +641,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			reason_str = "that calls an interface not located in the kernel or system layer";
 			break;
 		case LSS_BUILD_OPTION:
-			reason_str = "that is controled by a build option";
+			reason_str = "that is controlled by a build option";
 			break;
 		case LSS_CONDITIONAL:
 			reason_str = "that is in a conditional policy block";
