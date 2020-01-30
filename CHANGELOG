@@ -1,6 +1,6 @@
 # SELint Changelog
 
-## Unreleased
+## [1.0.2] - 2020-01-30
 ### Fixed
 - (Issue #11) Include CHANGELOG, LICENSE and testing input files in release tarballs
 
