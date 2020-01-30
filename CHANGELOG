@@ -1,3 +1,9 @@
+# SELint Changelog
+
+## Unreleased
+### Fixed
+- (Issue #11) Include CHANGELOG, LICENSE and testing input files in release tarballs
+
 ## [1.0.1] - 2020-01-28
 ### Added
 - Warning for invalid check ids in config or on command line
