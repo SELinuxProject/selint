@@ -17,7 +17,7 @@ SUBDIRS = src . tests . man
 
 selintconfdir = $(sysconfdir)
 selintconf_DATA = selint.conf
-EXTRA_DIST = selint.conf CHANGELOG LICENSE
+EXTRA_DIST = selint.conf CHANGELOG LICENSE NOTICE check_examples.txt
 
 check-valgrind:
 	CK_FORK=no $(MAKE) -C tests check-valgrind-memcheck-am
