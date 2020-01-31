@@ -25,6 +25,10 @@ S-001:
 		type foo_t;
 	}
 
+S-003:
+
+	foo(bar);
+
 Warning:
 
 W-001:
