@@ -145,6 +145,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_FC_ENTRY, ck, "S-002",
 			          check_file_context_types_in_mod);
 		}
+		if (CHECK_ENABLED("S-003")) {
+			add_check(NODE_SEMICOLON, ck, "S-003",
+			          check_useless_semicolon);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {

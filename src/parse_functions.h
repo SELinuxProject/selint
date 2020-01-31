@@ -183,6 +183,9 @@ enum selint_error insert_permissive_statement(struct policy_node **cur,
                                               const char *domain,
                                               unsigned int lineno);
 
+enum selint_error insert_semicolon(struct policy_node **cur,
+                                   unsigned int lineno);
+
 /**********************************
 * begin_optional_policy
 * Add an optional policy node at the next node in the tree.  Create its first child

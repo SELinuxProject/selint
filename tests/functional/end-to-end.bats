@@ -90,6 +90,10 @@ test_one_check() {
 	test_one_check "S-002" "s02*"
 }
 
+@test "S-003" {
+	test_one_check "S-003" "s03.te"
+}
+
 @test "W-001" {
 	test_one_check "W-001" "w01*"
 }

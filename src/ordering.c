@@ -245,6 +245,7 @@ const char *get_section(const struct policy_node *node)
 		return NULL;           // fc files only
 	case NODE_COMMENT:
 	case NODE_EMPTY:
+	case NODE_SEMICOLON:
 	case NODE_ERROR:
 		return "_non_ordered";
 	default:
