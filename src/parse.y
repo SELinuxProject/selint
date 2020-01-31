@@ -245,7 +245,7 @@ bare_line:
 	|
 	typebounds
 	|
-	SEMICOLON
+	SEMICOLON { insert_semicolon(&cur, yylineno); }
 	|
 	COMMENT
 	// Would like to do error recovery, but the best strategy seems to be to skip

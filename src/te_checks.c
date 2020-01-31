@@ -90,6 +90,13 @@ struct check_result *check_require_block(const struct check_data *data,
 	return NULL;
 }
 
+struct check_result *check_useless_semicolon(__attribute__((unused)) const struct check_data *data,
+                                             __attribute__((unused)) const struct policy_node *node)
+{
+	return make_check_result('S', S_ID_SEMICOLON,
+	                         "Unnecessary semicolon");
+}
+
 // Helper for check_no_explicit_declaration.  Returns 1 is there is a require block
 // for type_name earlier in the file, and 0 otherwise
 static int has_require(const struct policy_node *node, char *type_name)

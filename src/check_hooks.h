@@ -29,6 +29,7 @@ enum convention_ids {
 enum style_ids {
 	S_ID_REQUIRE = 1,
 	S_ID_FC_TYPE = 2,
+	S_ID_SEMICOLON = 3,
 	S_END
 };
 
