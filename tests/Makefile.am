@@ -29,15 +29,18 @@ SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf sample_policy_files/bad
 
 FUNCTIONAL_TEST_FILES=functional/end-to-end.bats functional/configs/bad_ids.conf functional/configs/broken.conf functional/configs/default.conf functional/configs/empty.conf functional/policies/check_triggers/c04.if functional/policies/check_triggers/e02.fc functional/policies/check_triggers/e03e04e05.fc functional/policies/check_triggers/modules.conf functional/policies/check_triggers/s01.te functional/policies/check_triggers/s02.fc functional/policies/check_triggers/s02_other.te functional/policies/check_triggers/s03.te functional/policies/check_triggers/w01_other.te functional/policies/check_triggers/w01.te functional/policies/check_triggers/w02.if functional/policies/check_triggers/w02_role.if functional/policies/check_triggers/w02_role.te functional/policies/check_triggers/w02.te functional/policies/check_triggers/w03_alias.if functional/policies/check_triggers/w03.if functional/policies/check_triggers/w03_role.if functional/policies/check_triggers/w03_ta.if functional/policies/check_triggers/w04.fc functional/policies/check_triggers/w05_other.if functional/policies/check_triggers/w05.te functional/policies/check_triggers/C-001/interleaved.expect functional/policies/check_triggers/C-001/interleaved.te functional/policies/check_triggers/C-001/kernel_module_first.expect functional/policies/check_triggers/C-001/kernel_module_first.te functional/policies/check_triggers/C-001/optional.expect functional/policies/check_triggers/C-001/optional.te functional/policies/check_triggers/C-001/role_ifs.expect functional/policies/check_triggers/C-001/role_ifs.te functional/policies/check_triggers/C-001/simple.expect functional/policies/check_triggers/C-001/simple.te functional/policies/check_triggers/C-001/types_in_requires.expect functional/policies/check_triggers/C-001/types_in_requires.te functional/policies/check_triggers/C-001/interfaces/kernel/domain.if functional/policies/check_triggers/C-001/interfaces/kernel/kernel.if functional/policies/check_triggers/C-001/interfaces/other/mta.if functional/policies/check_triggers/C-001/interfaces/other/role_ifs.if functional/policies/check_triggers/C-001/interfaces/system/logging.if functional/policies/misc/disable.if functional/policies/misc/disable_multiple_other.te functional/policies/misc/disable_multiple.te functional/policies/misc/disable_require_start.te functional/policies/misc/disable.te functional/policies/misc/nesting.if functional/policies/misc/nesting.te functional/policies/misc/no_issues.te
 
-EXTRA_DIST = test_utils.c ${AV_FILE_PERM_FILES} ${AV_SOCKET_PERM_FILES} ${AV_X_CURSOR_PERM_FILES} ${SAMPLE_CONFIG_FILES} ${SAMPLE_POLICY_FILES} ${FUNCTIONAL_TEST_FILES}
+EXTRA_DIST = ${AV_FILE_PERM_FILES} ${AV_SOCKET_PERM_FILES} ${AV_X_CURSOR_PERM_FILES} ${SAMPLE_CONFIG_FILES} ${SAMPLE_POLICY_FILES} ${FUNCTIONAL_TEST_FILES}
 
-AM_CFLAGS += @CHECK_CFLAGS@
+AM_CFLAGS += @CHECK_CFLAGS@ -DSAMPLE_POL_DIR="\"$(srcdir)/sample_policy_files/\"" -DSAMPLE_CONF_DIR="\"$(srcdir)/sample_configs/\"" -DSAMPLE_AV_DIR="\"$(srcdir)/sample_av/\""
 if COND_GCOV
 AM_CFLAGS += --coverage -fno-inline -fno-inline-small-functions -fno-default-inline
 endif
 
 TEST_UTILS_HEADS=test_utils.h $(top_builddir)/src/tree.h $(top_builddir)/src/string_list.h
-TEST_UTILS_OBJS=test_utils.o $(top_builddir)/src/tree.o $(top_builddir)/src/string_list.o
+# Below does not include test_utils.o, because that will be built by the
+# inclusion of test_utils.c in SOURCES for each program needing test_utils,
+# so this only includes the additional object files to link against
+TEST_UTILS_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/string_list.o
 
 UTIL_HEADS=$(top_builddir)/src/util.h
 UTIL_OBJS=$(top_builddir)/src/util.o
@@ -87,7 +90,7 @@ check_maps_LDADD = @CHECK_LIBS@ $(sort ${MAPS_OBJS})
 check_startup_SOURCES = check_startup.c ${STARTUP_HEADS} ${MAPS_HEADS} ${SELINT_ERROR_HEADS}
 check_startup_LDADD = @CHECK_LIBS@ $(sort ${STARTUP_OBJS} ${MAPS_OBJS})
 
-check_tree_SOURCES = check_tree.c ${TREE_HEADS} ${TEST_UTILS_HEADS}
+check_tree_SOURCES = check_tree.c test_utils.c ${TREE_HEADS} ${TEST_UTILS_HEADS}
 check_tree_LDADD = @CHECK_LIBS@ $(sort ${TREE_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OBJS})
 
 check_file_list_SOURCES = check_file_list.c ${FILE_LIST_HEADS}
@@ -111,10 +114,10 @@ check_check_hooks_LDADD = @CHECK_LIBS@ $(sort ${CHECK_HOOKS_OBJS})
 check_fc_checks_SOURCES = check_fc_checks.c ${FC_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS}
 check_fc_checks_LDADD = @CHECK_LIBS@ $(sort ${FC_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS})
 
-check_if_checks_SOURCES = check_if_checks.c ${IF_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS} ${TEST_UTILS_HEADS}
+check_if_checks_SOURCES = check_if_checks.c test_utils.c ${IF_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS} ${TEST_UTILS_HEADS}
 check_if_checks_LDADD = @CHECK_LIBS@ $(sort ${IF_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OBJS})
 
-check_te_checks_SOURCES = check_te_checks.c ${TE_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS} ${TEST_UTILS_HEADS}
+check_te_checks_SOURCES = check_te_checks.c test_utils.c ${TE_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS} ${TEST_UTILS_HEADS}
 check_te_checks_LDADD = @CHECK_LIBS@ $(sort ${TE_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OBJS})
 
 check_runner_SOURCES = check_runner.c ${STRING_LIST_HEADS} ${RUNNER_HEADS}

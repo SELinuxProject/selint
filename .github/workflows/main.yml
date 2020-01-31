@@ -54,8 +54,8 @@ jobs:
       run: make check
     - name: make check-valgrind
       run: make check-valgrind
-    - name: make dist
-      run: make dist
+    - name: make distcheck
+      run: make distcheck
     - name: functional tests
       run : |
         cd ./tests/functional

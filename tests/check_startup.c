@@ -20,9 +20,13 @@
 #include "../src/maps.h"
 #include "../src/selint_error.h"
 
+#define MODULES_CONF_PATH SAMPLE_POL_DIR "modules.conf"
+#define BAD_MODULES_CONF_PATH SAMPLE_POL_DIR "bad_modules.conf"
+#define SAMPLE_AV_PATH SAMPLE_AV_DIR
+
 START_TEST (test_load_access_vectors_normal) {
 
-	load_access_vectors_normal("sample_av");
+	load_access_vectors_normal(SAMPLE_AV_PATH);
 
 	ck_assert_int_eq(decl_map_count(DECL_CLASS), 3);
 	ck_assert_int_eq(decl_map_count(DECL_PERM), 37);
@@ -39,7 +43,7 @@ END_TEST
 
 START_TEST (test_load_modules_source) {
 
-	enum selint_error res = load_modules_source("sample_policy_files/modules.conf");
+	enum selint_error res = load_modules_source(MODULES_CONF_PATH);
 
 	ck_assert_int_eq(SELINT_SUCCESS, res);
 
@@ -47,7 +51,7 @@ START_TEST (test_load_modules_source) {
 	ck_assert_str_eq("module", look_up_in_mods_map("sudo"));
 	ck_assert_str_eq("off", look_up_in_mods_map("games"));
 
-	res = load_modules_source("sample_policy_files/bad_modules.conf");
+	res = load_modules_source(BAD_MODULES_CONF_PATH);
 
 	ck_assert_int_eq(SELINT_PARSE_ERROR, res);
 

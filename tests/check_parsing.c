@@ -21,7 +21,7 @@
 #include "../src/parse.h"
 #include "../src/parse_functions.h"
 
-#define POLICIES_DIR "sample_policy_files/"
+#define POLICIES_DIR SAMPLE_POL_DIR
 #define BASIC_TE_FILENAME POLICIES_DIR "basic.te"
 #define BASIC_IF_FILENAME POLICIES_DIR "basic.if"
 #define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"

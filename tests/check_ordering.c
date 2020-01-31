@@ -60,7 +60,7 @@ START_TEST (test_prepare_ordering_metadata) {
 }
 END_TEST
 
-#define POLICIES_DIR "sample_policy_files/"
+#define POLICIES_DIR SAMPLE_POL_DIR
 #define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"
 
 START_TEST (test_ordering_uncommon_policy) {

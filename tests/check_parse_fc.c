@@ -20,7 +20,7 @@
 #include "../src/tree.h"
 #include "../src/parse_fc.h"
 
-#define POLICIES_DIR "sample_policy_files/"
+#define POLICIES_DIR SAMPLE_POL_DIR
 #define BASIC_FC_FILENAME POLICIES_DIR "basic.fc"
 #define WITH_M4_FILENAME POLICIES_DIR "with_m4.fc"
 #define NONE_CONTEXT_FILENAME POLICIES_DIR "none_context.fc"
