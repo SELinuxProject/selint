@@ -23,7 +23,7 @@
 #include "../src/parse.h"
 #include "../src/maps.h"
 
-#define POLICIES_DIR "sample_policy_files/"
+#define POLICIES_DIR SAMPLE_POL_DIR
 #define NESTED_IF_FILENAME POLICIES_DIR "nested_templates.if"
 
 extern FILE * yyin;

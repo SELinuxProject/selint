@@ -19,7 +19,7 @@
 #include "../src/string_list.h"
 #include "../src/selint_config.h"
 
-#define CONFIGS_DIR "sample_configs/"
+#define CONFIGS_DIR SAMPLE_CONF_DIR
 #define SEVERITY_CONVENTION_FILENAME CONFIGS_DIR "severity_convention.conf"
 #define SEVERITY_STYLE_FILENAME CONFIGS_DIR "severity_style.conf"
 #define SEVERITY_WARNING_FILENAME CONFIGS_DIR "severity_warning.conf"
