@@ -35,7 +35,7 @@ extern FILE * yyin;
 extern int yyparse(void);
 extern int yyrestart(FILE *input_file);
 struct policy_node *ast;
-struct policy_node *cur;
+extern struct policy_node *cur;
 extern const char *parsing_filename;
 
 START_TEST (test_parse_basic_te) {

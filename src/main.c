@@ -30,7 +30,7 @@
 #include "selint_config.h"
 #include "startup.h"
 
-int yydebug = 0;
+extern int yydebug;
 
 extern int yylex_destroy(void);
 
@@ -87,6 +87,8 @@ int main(int argc, char **argv)
 
 	struct string_list *cl_e_cursor = NULL;
 	struct string_list *cl_d_cursor = NULL;
+
+	yydebug = 0;
 
 	while (1) {
 
