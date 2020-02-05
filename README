@@ -29,8 +29,8 @@ INSTALLING FROM TAR DOWNLOAD
 INSTALLING FROM GIT
 
 	If you are building from a git repo checkout, you'll also need the
-	autoconf-archive package.  Then you can run ./autogen.sh to set up
-	autotools and then follow the steps above.
+	autotools (automake, autoconf, aclocal, autoreconf) and the autoconf-archive package.
+	Then you can run ./autogen.sh to set up autotools and then follow the steps above.
 
 USAGE
 

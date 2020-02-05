@@ -1,7 +1,13 @@
 # SELint Changelog
 
 ## Unreleased
-- Add -S flag to print a summary of issue found following an analysis
+### Added
+- -S flag to print a summary of issue found following an analysis
+- Check S-003 for unneeded semicolons
+
+### Fixed
+- Man page generation in distribution tarballs now works after make clean
+- documentation cleanup
 
 ## [1.0.2] - 2020-01-30
 ### Fixed
