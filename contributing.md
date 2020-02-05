@@ -38,7 +38,7 @@ The first thing to do is to decide where to put your check.  Checks live in te\_
 
 Your check should have the following prototype:
 
-`struct check\_result *check\_function(const struct check\_data * data, const struct policy\_node * node);`
+`struct check_result *check_function(const struct check_data * data, const struct policy_node * node);`
 
 In order to allow your check to be run, you need to add it to the register\_checks() function in runner.h, where you specify the type of node you should be run on, as well as the Check ID number, and your check function.
 
