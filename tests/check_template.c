@@ -170,7 +170,7 @@ START_TEST (test_replace_m4_list_too_few_args) {
 END_TEST
 
 struct policy_node *ast;
-struct policy_node *cur;
+extern struct policy_node *cur;
 
 START_TEST (test_nested_template_declarations) {
 
@@ -180,7 +180,7 @@ START_TEST (test_nested_template_declarations) {
 
 	yyin = fopen(NESTED_IF_FILENAME, "r");
 	parsing_filename = "nested";
-	yyparse();
+	ck_assert_int_eq(0, yyparse());
 	fclose(yyin);
 
 	struct string_list *called_args = calloc(1,sizeof(struct string_list));
