@@ -97,13 +97,19 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 * te_files - The list of te files to check
 * if_files - The list of if files to check
 * fc_files - The list of fc files to check
+* context_te_files - Additional te files to parse, but not scan.  This is used
+* to load symbols (eg type names) that may be referenced in scanned files.
+* context_if_files - Additional if files to parse, but not scan.  This is used
+* to load interface/template names and contents to do analysis on how they are
+* used in scanned files.
 * Returns SELINT_SUCCESS on success or an error code
 ****************************************************/
 enum selint_error run_analysis(struct checks *ck,
                                struct policy_file_list *te_files,
                                struct policy_file_list *if_files,
                                struct policy_file_list *fc_files,
-                               struct policy_file_list *context_files);
+                               struct policy_file_list *context_te_files,
+                               struct policy_file_list *context_if_files);
 
 /****************************************************
 * Display a summary of the analysis that was just run

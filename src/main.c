@@ -273,7 +273,10 @@ int main(int argc, char **argv)
 	struct policy_file_list *fc_files =
 		calloc(1, sizeof(struct policy_file_list));
 
-	struct policy_file_list *context_files =
+	struct policy_file_list *context_te_files =
+		calloc(1, sizeof(struct policy_file_list));
+
+	struct policy_file_list *context_if_files =
 		calloc(1, sizeof(struct policy_file_list));
 
 	char **paths = malloc(sizeof(char *) * argc - optind + 1);
@@ -343,7 +346,8 @@ int main(int argc, char **argv)
 		free_file_list(te_files);
 		free_file_list(if_files);
 		free_file_list(fc_files);
-		free_file_list(context_files);
+		free_file_list(context_te_files);
+		free_file_list(context_if_files);
 		free(modules_conf_path);
 		return EX_CONFIG;
 	}
@@ -365,7 +369,7 @@ int main(int argc, char **argv)
 	} else {
 		load_access_vectors_normal("/sys/fs/selinux/class");    // TODO
 		load_modules_normal();
-		enum selint_error res = load_devel_headers(context_files);
+		enum selint_error res = load_devel_headers(context_if_files);
 		if (res != SELINT_SUCCESS) {
 			printf("Error loading SELinux development header files.\n");
 		}
@@ -373,7 +377,7 @@ int main(int argc, char **argv)
 
 	free(modules_conf_path);
 
-	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_files);
+	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_te_files, context_if_files);
 	switch (res) {
 	case SELINT_SUCCESS:
 		if (summary_flag) {
@@ -408,7 +412,8 @@ int main(int argc, char **argv)
 	free_file_list(te_files);
 	free_file_list(if_files);
 	free_file_list(fc_files);
-	free_file_list(context_files);
+	free_file_list(context_te_files);
+	free_file_list(context_if_files);
 
 	return exit_code;
 }

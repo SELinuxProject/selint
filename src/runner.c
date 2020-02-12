@@ -299,7 +299,8 @@ enum selint_error run_analysis(struct checks *ck,
                                struct policy_file_list *te_files,
                                struct policy_file_list *if_files,
                                struct policy_file_list *fc_files,
-                               struct policy_file_list *context_files)
+                               struct policy_file_list *context_te_files,
+                               struct policy_file_list *context_if_files)
 {
 
 	enum selint_error res;
@@ -309,13 +310,17 @@ enum selint_error run_analysis(struct checks *ck,
 		goto out;
 	}
 
-	res = parse_all_files_in_list(context_files, NODE_IF_FILE); //TODO: This can eventually
-	                                                            // include te files too
+	res = parse_all_files_in_list(context_if_files, NODE_IF_FILE);
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}
 
 	mark_transform_interfaces(if_files);
+
+	res = parse_all_files_in_list(context_te_files, NODE_TE_FILE);
+	if (res != SELINT_SUCCESS) {
+		goto out;
+	}
 
 	res = parse_all_files_in_list(te_files, NODE_TE_FILE);
 	if (res != SELINT_SUCCESS) {
