@@ -76,6 +76,7 @@ test_one_check() {
 	test_ordering "role_ifs"
 	test_ordering "types_in_requires"
 	test_ordering "kernel_module_first"
+	test_ordering "if_in_optional"
 }
 
 @test "C-004" {

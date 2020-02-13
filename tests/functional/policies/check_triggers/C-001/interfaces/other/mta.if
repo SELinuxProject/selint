@@ -7,3 +7,11 @@ interface(`foo_do_stuff',`
 	')
 	do_things_pattern($1, stuff_t, stuff_t)
 ')
+
+# Need a second interface
+interface(`foo_do_other_stuff',`
+	gen_require(`
+		type other_stuff_t;
+	')
+	do_things_pattern($1, other_stuff_t, other_stuff_t)
+')
