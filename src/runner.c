@@ -310,12 +310,34 @@ enum selint_error run_analysis(struct checks *ck,
 		goto out;
 	}
 
+	// We parse all the context files for the side effects of parsing (populating
+	// the hash tables), and to mark the transform interfaces.  Then we only
+	// run checks on the non-context files
 	res = parse_all_files_in_list(context_if_files, NODE_IF_FILE);
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}
 
-	mark_transform_interfaces(if_files);
+	// Make temporary joined list to mark ALL transform interfaces
+	struct policy_file_list *all_if_files = calloc(1, sizeof(struct policy_file_list));
+	if (if_files->tail) {
+		// Only concatenate if if_files contains files
+		all_if_files->head = if_files->head;
+		if_files->tail->next = context_if_files->head;
+	} else {
+		// If both are empty, just having an empty list is fine
+		all_if_files->head = context_if_files->head;
+	}
+
+	all_if_files->tail = context_if_files->tail;
+
+	mark_transform_interfaces(all_if_files);
+
+	// Restore
+	if (if_files->tail) {
+		if_files->tail->next = NULL;
+	}
+	free(all_if_files);
 
 	res = parse_all_files_in_list(context_te_files, NODE_TE_FILE);
 	if (res != SELINT_SUCCESS) {

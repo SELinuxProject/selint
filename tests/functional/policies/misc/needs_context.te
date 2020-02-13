@@ -1,0 +1,8 @@
+policy_module(needs_context, 1.0)
+
+type signals_context_t;
+
+context_signal(signals_context_t)
+
+allow signals_context_t context_t:file read_file_perms; #W-001
+

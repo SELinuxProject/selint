@@ -43,6 +43,19 @@ struct policy_file *make_policy_file(const char *filename, struct policy_node *a
 	return ret;
 }
 
+int file_name_in_file_list(const char *filename, struct policy_file_list *list)
+{
+	struct policy_file_node *node = list->head;
+
+	while (node) {
+		if (node->file && 0 == strcmp(filename, node->file->filename)) {
+			return 1;
+		}
+		node = node->next;
+	}
+	return 0;
+}
+
 void free_file_list(struct policy_file_list *to_free)
 {
 	struct policy_file_node *cur = to_free->head;

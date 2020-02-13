@@ -42,6 +42,11 @@ OPTIONS
 		Override default config with config specified on command line.  See
 		CONFIGURATION section for config file syntax.
 
+	--context=CONTEXT_PATH
+		Also parse any .te or .if files found in CONTEXT_PATH and load symbols
+		associated with them for use when checking the policy files to be analyzed.
+		No checks are run on these files.
+
 	-d CHECKID, --disable=CHECKID
 		Disable check with the given ID.
 
