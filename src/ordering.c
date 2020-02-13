@@ -372,36 +372,51 @@ static int is_system_layer_if_call(const struct policy_node *node)
 
 int is_optional(const struct policy_node *node)
 {
+	int ret = 0;
 	while (node) {
 		if (node->flavor == NODE_OPTIONAL_POLICY ||
 		    node->flavor == NODE_OPTIONAL_ELSE) {
-			return 1;
+			ret = 1;
+		} else if (node->flavor == NODE_TUNABLE_POLICY ||
+		           node->flavor == NODE_IFDEF) {
+			ret = 0;
 		}
 		node = node->parent;
 	}
-	return 0;
+	return ret;
 }
 
 int is_tunable(const struct policy_node *node)
 {
+	int ret = 0;
 	while (node) {
 		if (node->flavor == NODE_TUNABLE_POLICY) {
-			return 1;
+			ret = 1;
+		} else if (node->flavor == NODE_OPTIONAL_POLICY ||
+		           node->flavor == NODE_OPTIONAL_ELSE ||
+		           node->flavor == NODE_IFDEF) {
+			ret = 0;
 		}
 		node = node->parent;
 	}
-	return 0;
+	return ret;
 }
 
 int is_in_ifdef(const struct policy_node *node)
 {
+	int ret = 0;
 	while (node) {
 		if (node->flavor == NODE_IFDEF) {
-			return 1;
+			ret = 1;
+		} else if (node->flavor == NODE_OPTIONAL_POLICY ||
+		           node->flavor == NODE_OPTIONAL_ELSE ||
+		           node->flavor == NODE_TUNABLE_POLICY) {
+			ret = 0;
 		}
+
 		node = node->parent;
 	}
-	return 0;
+	return ret;
 }
 
 enum local_subsection get_local_subsection(const struct policy_node *node)

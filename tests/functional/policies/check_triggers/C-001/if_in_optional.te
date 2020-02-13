@@ -1,0 +1,16 @@
+policy_module(ifdef_in_optional, 1.0)
+
+type foo_t;
+domain_type(foo_t)
+
+allow foo_t self:tcp_socket { create_socket_perms rw_socket_perms };
+
+optional_policy(`
+	foo_do_stuff(foo_t)
+')
+
+optional_policy(`
+	ifdef(`bar',`
+		foo_do_other_stuff(foo_t)
+	')
+')
