@@ -1,0 +1,3 @@
+policy_module(context, 1.0)
+
+type context_t; # This type should exist in the policy

@@ -30,6 +30,9 @@
 #include "selint_config.h"
 #include "startup.h"
 
+// ASCII characters go up to 127
+#define CONTEXT_ID 128
+
 extern int yydebug;
 
 extern int yylex_destroy(void);
@@ -42,23 +45,26 @@ static void usage(void)
 	/* *INDENT-OFF* */
 	printf("Usage: selint [OPTIONS] FILE [...]\n"\
 		"Perform static code analysis on SELinux policy source.\n\n");
-	printf("  -c CONFIGFILE, --config=CONFIGFILE\tOverride default config with config\n"\
-		"\t\t\t\t\tspecified on command line.  See\n"\
-		"\t\t\t\t\tCONFIGURATION section for config file syntax.\n"\
-		"  -d CHECKID, --disable=CHECKID\t\tDisable check with the given ID.\n"\
-		"  -e CHECKID, --enable=CHECKID\t\tEnable check with the given ID.\n"\
-		"  -E, --only-enabled\t\t\tOnly run checks that are explicitly enabled with\n"\
-		"\t\t\t\t\tthe --enable option.\n"\
-		"  -h, --help\t\t\t\tDisplay this menu\n"\
-		"  -l LEVEL, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
-		"\t\t\t\t\tgreater than LEVEL.  Options are C (convention), S (style),\n"\
-		"\t\t\t\t\tW (warning), E (error), F (fatal error).\n"\
-		"  -s, --source\t\t\t\tRun in \"source mode\" to scan a policy source repository\n"\
-		"\t\t\t\t\tthat is designed to compile into a full system policy.\n"\
-		"  -S, --summary\t\t\t\tDisplay a summary of issues found after running the analysis\n"\
-		"  -r, --recursive\t\t\tScan recursively and check all SELinux policy files found.\n"\
-		"  -v, --verbose\t\t\t\tEnable verbose output\n"\
-		"  -V, --version\t\t\t\tShow version information and exit.\n"
+	printf("  -c, --config=CONFIGFILE\tOverride default config with config\n"\
+		"\t\t\t\tspecified on command line.  See\n"\
+		"\t\t\t\tCONFIGURATION section for config file syntax.\n"\
+		"      --context=CONTEXT_PATH\tRecursively scan CONTEXT_PATH to find additional te and if\n"\
+		"\t\t\t\tfiles to parse, but not scan.  SELint will assume the scanned policy files\n"\
+		"\t\t\t\tare intended to be compiled together with the context files\n"\
+		"  -d, --disable=CHECKID\t\tDisable check with the given ID.\n"\
+		"  -e, --enable=CHECKID\t\tEnable check with the given ID.\n"\
+		"  -E, --only-enabled\t\tOnly run checks that are explicitly enabled with\n"\
+		"\t\t\t\tthe --enable option.\n"\
+		"  -h, --help\t\t\tDisplay this menu\n"\
+		"  -l, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
+		"\t\t\t\tgreater than LEVEL.  Options are C (convention), S (style),\n"\
+		"\t\t\t\tW (warning), E (error), F (fatal error).\n"\
+		"  -s, --source\t\t\tRun in \"source mode\" to scan a policy source repository\n"\
+		"\t\t\t\tthat is designed to compile into a full system policy.\n"\
+		"  -S, --summary\t\t\tDisplay a summary of issues found after running the analysis\n"\
+		"  -r, --recursive\t\tScan recursively and check all SELinux policy files found.\n"\
+		"  -v, --verbose\t\t\tEnable verbose output\n"\
+		"  -V, --version\t\t\tShow version information and exit.\n"
 );
 	/* *INDENT-ON* */
 
@@ -79,6 +85,7 @@ int main(int argc, char **argv)
 	int only_enabled = 0;
 	int exit_code = EX_OK;
 	int summary_flag = 0;
+	char *context_path = NULL;
 
 	struct string_list *config_disabled_checks = NULL;
 	struct string_list *config_enabled_checks = NULL;
@@ -94,6 +101,7 @@ int main(int argc, char **argv)
 
 		static struct option long_options[] = {
 			{ "config",       required_argument, NULL,          'c' },
+			{ "context",      required_argument,  NULL,          CONTEXT_ID },
 			{ "disable",      required_argument, NULL,          'd' },
 			{ "enable",       required_argument, NULL,          'e' },
 			{ "only-enabled", no_argument,       NULL,          'E' },
@@ -122,13 +130,17 @@ int main(int argc, char **argv)
 
 		switch (c) {
 
-		//getopt returns 0 when a long option with no short equivalent is used
 		case 0:
 			break;
 
 		case 'c':
 			// Specify config file
 			config_filename = optarg;
+			break;
+
+		case CONTEXT_ID:
+			// Specify a path for context files
+			context_path = optarg;
 			break;
 
 		case 'd':
@@ -279,7 +291,7 @@ int main(int argc, char **argv)
 	struct policy_file_list *context_if_files =
 		calloc(1, sizeof(struct policy_file_list));
 
-	char **paths = malloc(sizeof(char *) * argc - optind + 1);
+	char **paths = malloc(sizeof(char *) * argc - optind + 2);
 
 	int i = 0;
 	while (optind < argc) {
@@ -295,7 +307,6 @@ int main(int argc, char **argv)
 	char *modules_conf_path = NULL;
 
 	while (file) {
-
 		char *suffix = file->fts_path + file->fts_pathlen - 3;
 
 		if (!strcmp(suffix, ".te")) {
@@ -332,7 +343,38 @@ int main(int argc, char **argv)
 
 	fts_close(ftsp);
 
+	if (context_path) {
+		paths[0] = context_path;
+		paths[1] = NULL;
+
+		ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+		file = fts_read(ftsp);
+
+		while (file) {
+			char *suffix = file->fts_path + file->fts_pathlen - 3;
+			if (!strcmp(suffix, ".te")) {
+				if (!file_name_in_file_list(file->fts_path, te_files)) {
+					file_list_push_back(context_te_files,
+							    make_policy_file(file->fts_path,
+							    NULL));
+				}
+			} else if (!strcmp(suffix, ".if")) {
+				if (!file_name_in_file_list(file->fts_path, if_files)) {
+					file_list_push_back(context_if_files,
+							    make_policy_file(file->fts_path,
+							    NULL));
+				}
+			} else if (source_flag
+                                   && !modules_conf_path
+                                   && 0 == strcmp(file->fts_name, "modules.conf")) {
+				modules_conf_path = strdup(file->fts_path);
+			}
+			file = fts_read(ftsp);
+		}
+	}
+
 	free(paths);
+
 
 	struct checks *ck = register_checks(severity,
 	                                    config_enabled_checks,

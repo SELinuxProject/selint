@@ -63,6 +63,21 @@ START_TEST (test_make_policy_file) {
 }
 END_TEST
 
+START_TEST (test_file_name_in_file_list) {
+	struct policy_file_list *list = calloc(1, sizeof(struct policy_file_list));
+	file_list_push_back(list, make_policy_file("foo", NULL));
+	file_list_push_back(list, make_policy_file("bar", NULL));
+	file_list_push_back(list, make_policy_file("baz", NULL));
+
+	ck_assert_int_eq(0, file_name_in_file_list("not_in_list", list));
+	ck_assert_int_eq(1, file_name_in_file_list("foo", list));
+	ck_assert_int_eq(1, file_name_in_file_list("bar", list));
+	ck_assert_int_eq(1, file_name_in_file_list("baz", list));
+
+	free_file_list(list);
+}
+END_TEST
+
 Suite *file_list_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -73,6 +88,7 @@ Suite *file_list_suite(void) {
 
 	tcase_add_test(tc_core, test_file_list_push_back);
 	tcase_add_test(tc_core, test_make_policy_file);
+	tcase_add_test(tc_core, test_file_name_in_file_list);
 	suite_add_tcase(s, tc_core);
 
 	return s;

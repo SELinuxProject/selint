@@ -4,6 +4,12 @@
 ### Added
 - -S flag to print a summary of issue found following an analysis
 - Check S-003 for unneeded semicolons
+- --context flag to specify additional files to parse but not scan.
+  This is primarily helpful if you want to only scan your modified files
+  in a full source repository.  (If you are planning on loading your local
+  modules into your already installed policy and have local development
+  headers in a standard location, selint should find them by default and you
+  don't need to use this option)
 
 ### Fixed
 - Man page generation in distribution tarballs now works after make clean

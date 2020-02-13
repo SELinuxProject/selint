@@ -52,7 +52,7 @@ test_one_check_expect() {
 test_ordering() {
 	local CHECK_DIR="./policies/check_triggers/C-001/"
 	local FILENAME_PREFIX=$1
-	run ${SELINT_PATH} -rs -c configs/default.conf -e C-001 -E ${CHECK_DIR}${FILENAME_PREFIX}.te ${CHECK_DIR}interfaces ./policies/check_triggers/modules.conf
+	run ${SELINT_PATH} -rs -c configs/default.conf -e C-001 -E --context=${CHECK_DIR}interfaces ${CHECK_DIR}${FILENAME_PREFIX}.te ./policies/check_triggers/modules.conf
 	echo ${output}
 	while read p; do
 		echo "Checking for $p"
@@ -255,4 +255,11 @@ test_one_check() {
 	run ${SELINT_PATH} -c configs/bad_ids.conf -e foo -d bar -d baz policies/misc/no_issues.te
 	count=$(echo ${output} | grep -o "Warning" | wc -l)
 	[ "$count" -eq 5 ]
+}
+
+@test "context flag" {
+	touch tmp.conf
+	do_test "W-001" "../misc/needs_context.te" 0
+	do_test "W-001" "../misc/needs_context.te" 1 "--context=policies/context"
+	rm tmp.conf
 }
