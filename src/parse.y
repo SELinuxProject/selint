@@ -107,6 +107,7 @@
 %token INTERFACE;
 %token TEMPLATE;
 %token USERDEBUG_OR_ENG;
+%token FILE_TYPE_SPECIFIER;
 %token OPEN_PAREN;
 %token COMMA;
 %token PERIOD;
@@ -684,6 +685,8 @@ context:
 	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA mls_range CLOSE_PAREN { free($5); free($7); }
 	|
 	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA CLOSE_PAREN { free($5); }
+	|
+	FILE_TYPE_SPECIFIER context
 	;
 
 raw_context:
