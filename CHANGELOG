@@ -14,6 +14,7 @@
 ### Fixed
 - Man page generation in distribution tarballs now works after make clean
 - documentation cleanup
+- Various parser fixes
 
 ## [1.0.2] - 2020-01-30
 ### Fixed

@@ -1,4 +1,4 @@
-module uncommon 1.7;
+module uncommon 1;
 
 # Use uncommon policy constructs to ensure the parser can handle them without breaking
 
@@ -93,3 +93,6 @@ role_transition foo_r bar_exec_t bar_r;
 
 genfscon rootfs / -- gen_context(system_u:object_r:rootfs_t, s0)
 genfscon rootfs / -l gen_context(system_u:object_r:rootfs_t, s0)
+
+#exceptions
+neverallow { domain -foo_t } secret_stuff_t:file read;
