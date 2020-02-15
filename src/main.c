@@ -55,6 +55,7 @@ static void usage(void)
 		"  -e, --enable=CHECKID\t\tEnable check with the given ID.\n"\
 		"  -E, --only-enabled\t\tOnly run checks that are explicitly enabled with\n"\
 		"\t\t\t\tthe --enable option.\n"\
+		"  -F, --fail\t\t\tExit with a non-zero value if any issue was found\n"\
 		"  -h, --help\t\t\tDisplay this menu\n"\
 		"  -l, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
 		"\t\t\t\tgreater than LEVEL.  Options are C (convention), S (style),\n"\
@@ -85,6 +86,7 @@ int main(int argc, char **argv)
 	int only_enabled = 0;
 	int exit_code = EX_OK;
 	int summary_flag = 0;
+	int fail_on_finding = 0;
 	char *context_path = NULL;
 
 	struct string_list *config_disabled_checks = NULL;
@@ -104,6 +106,7 @@ int main(int argc, char **argv)
 			{ "context",      required_argument,  NULL,          CONTEXT_ID },
 			{ "disable",      required_argument, NULL,          'd' },
 			{ "enable",       required_argument, NULL,          'e' },
+			{ "fail",         no_argument,       NULL,          'F' },
 			{ "only-enabled", no_argument,       NULL,          'E' },
 			{ "help",         no_argument,       NULL,          'h' },
 			{ "level",        required_argument, NULL,          'l' },
@@ -120,7 +123,7 @@ int main(int argc, char **argv)
 
 		int c = getopt_long(argc,
 		                    argv,
-		                    "c:d:e:Ehl:mrsSVv",
+		                    "c:d:e:EFhl:mrsSVv",
 		                    long_options,
 		                    &option_index);
 
@@ -176,6 +179,11 @@ int main(int argc, char **argv)
 		case 'E':
 			// Only run checks enabled by the --enable flag.
 			only_enabled = 1;
+			break;
+
+		case 'F':
+			// Exit non-zero if any issue was found
+			fail_on_finding = 1;
 			break;
 
 		case 'h':
@@ -456,6 +464,10 @@ int main(int argc, char **argv)
 	free_file_list(fc_files);
 	free_file_list(context_te_files);
 	free_file_list(context_if_files);
+
+	if (fail_on_finding && found_issue && exit_code == EX_OK) {
+		return EX_DATAERR;
+	}
 
 	return exit_code;
 }
