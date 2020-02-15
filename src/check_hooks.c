@@ -22,6 +22,8 @@
 
 #include "check_hooks.h"
 
+int found_issue = 0;
+
 #define ALLOC_NODE(nl)  if (ck->check_nodes[nl]) { \
 		loc = ck->check_nodes[nl]; \
 		while (loc->next) { loc = loc->next; } \
@@ -71,6 +73,7 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 		}
 		struct check_result *res = cur->check_function(data, node);
 		if (res) {
+			found_issue = 1;
 			cur->issues_found++;
 			res->lineno = node->lineno;
 			display_check_result(res, data);

@@ -88,6 +88,9 @@ struct checks {
 	struct check_node *check_nodes[NODE_ERROR + 1];
 };
 
+// Whether an issue was found
+extern int found_issue;
+
 /*********************************************
 * Add an check to be called on check_flavor nodes
 * check_flavor - The flavor of node to call the check for

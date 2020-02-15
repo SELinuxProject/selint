@@ -56,6 +56,9 @@ OPTIONS
 	-E, --only-enabled
 		Only run checks that are explicitly enabled with the --enable option.
 
+	-F, --fail
+		Exit with a non-zero value if any issue was found.
+
 	-h, --help
 		Show help menu about command line options.
 
