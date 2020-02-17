@@ -261,7 +261,8 @@ enum selint_error run_checks_on_one_file(struct checks *ck,
 }
 
 enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
-                                 struct policy_file_list *files)
+                                 struct policy_file_list *files,
+                                 struct config_check_data *ccd)
 {
 
 	struct policy_file_node *file = files->head;
@@ -274,6 +275,7 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 
 		data.filename = strdup(basename(file->file->filename));
 		data.mod_name = strdup(data.filename);
+		data.config_check_data = ccd;
 
 		char *suffix_ptr = rindex(data.mod_name, '.');
 
@@ -300,7 +302,8 @@ enum selint_error run_analysis(struct checks *ck,
                                struct policy_file_list *if_files,
                                struct policy_file_list *fc_files,
                                struct policy_file_list *context_te_files,
-                               struct policy_file_list *context_if_files)
+                               struct policy_file_list *context_if_files,
+                               struct config_check_data *ccd)
 {
 
 	enum selint_error res;
@@ -354,17 +357,17 @@ enum selint_error run_analysis(struct checks *ck,
 		goto out;
 	}
 
-	res = run_all_checks(ck, FILE_TE_FILE, te_files);
+	res = run_all_checks(ck, FILE_TE_FILE, te_files, ccd);
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}
 
-	res = run_all_checks(ck, FILE_IF_FILE, if_files);
+	res = run_all_checks(ck, FILE_IF_FILE, if_files, ccd);
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}
 
-	res = run_all_checks(ck, FILE_FC_FILE, fc_files);
+	res = run_all_checks(ck, FILE_FC_FILE, fc_files, ccd);
 	if (res != SELINT_SUCCESS) {
 		goto out;
 	}
