@@ -65,6 +65,7 @@ struct check_data {
 	char *mod_name;
 	char *filename;
 	enum file_flavor flavor;
+	struct config_check_data *config_check_data;
 };
 
 // A check is responsible for filling out all fields except lineno

@@ -50,18 +50,20 @@ enum selint_error parse_config(const char *config_filename,
                                int in_source_mode,
                                char *severity,
                                struct string_list **config_disabled_checks,
-                               struct string_list **config_enabled_checks)
+                               struct string_list **config_enabled_checks,
+                               struct config_check_data *conf_check_data)
 {
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 	cfg_opt_t opts[] = {
-		CFG_STR("severity",           "convention", CFGF_NONE),
-		CFG_STR_LIST("disable",       "{}",         CFGF_NONE),
-		CFG_STR_LIST("enable_normal", "{}",         CFGF_NONE),
-		CFG_STR_LIST("enable_source", "{}",         CFGF_NONE),
-		CFG_STR_LIST("assume_users",  "{}",         CFGF_NONE),
-		CFG_STR_LIST("assume_roles",  "{}",         CFGF_NONE),
+		CFG_STR("severity",           "convention",    CFGF_NONE),
+		CFG_STR_LIST("disable",       "{}",            CFGF_NONE),
+		CFG_STR_LIST("enable_normal", "{}",            CFGF_NONE),
+		CFG_STR_LIST("enable_source", "{}",            CFGF_NONE),
+		CFG_STR_LIST("assume_users",  "{}",            CFGF_NONE),
+		CFG_STR_LIST("assume_roles",  "{}",            CFGF_NONE),
+		CFG_STR("ordering_rules",     "refpolicy-lax", CFGF_NONE),
 		CFG_END()
 	};
 #pragma GCC diagnostic pop
@@ -91,7 +93,8 @@ enum selint_error parse_config(const char *config_filename,
 		*severity = 'F';
 	} else {
 		printf
-		        ("Invalid severity level (%s) specified in config.  Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"",
+		        ("Invalid severity level (%s) specified in config.\n"\
+			 "Options are \"convention\", \"style\", \"warning\", \"error\" and \"fatal\"\n",
 		        config_severity);
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
@@ -109,6 +112,20 @@ enum selint_error parse_config(const char *config_filename,
 
 	insert_config_declarations(cfg, "assume_users", DECL_USER);
 	insert_config_declarations(cfg, "assume_roles", DECL_ROLE);
+
+	char *config_ordering_rules = cfg_getstr(cfg, "ordering_rules");
+
+	if (strcmp(config_ordering_rules, "refpolicy") == 0) {
+		conf_check_data->order_conf = ORDER_REF;
+	} else if (strcmp(config_ordering_rules, "refpolicy-lax") == 0) {
+		conf_check_data->order_conf = ORDER_LAX;
+	} else {
+		printf("Invalid ordering rules (%s), specified in config.\n"\
+		       "Options are \"refpolicy\" and \"refpolicy-lax\"\n",
+		       config_ordering_rules);
+		cfg_free(cfg);
+		return SELINT_CONFIG_PARSE_ERROR;
+	}
 
 	cfg_free(cfg);
 
