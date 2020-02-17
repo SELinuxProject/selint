@@ -21,6 +21,11 @@
 #include "selint_error.h"
 #include "tree.h"
 
+enum order_conf {
+	ORDER_REF,
+	ORDER_LAX
+};
+
 enum order_difference_reason {
 	ORDER_EQUAL  =0,
 	ORDER_SECTION=1,

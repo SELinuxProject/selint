@@ -249,11 +249,13 @@ int main(int argc, char **argv)
 		}
 	}
 
+	struct config_check_data ccd;
+
 	if (config_filename) {
 		char cfg_severity;
 		if (SELINT_SUCCESS != parse_config(config_filename, source_flag,
 		                                   &cfg_severity, &config_disabled_checks,
-		                                   &config_enabled_checks)) {
+		                                   &config_enabled_checks, &ccd)) {
 			// Error message printed by parse_config()
 			exit(EX_CONFIG);
 		}
@@ -427,7 +429,7 @@ int main(int argc, char **argv)
 
 	free(modules_conf_path);
 
-	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_te_files, context_if_files);
+	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_te_files, context_if_files, &ccd);
 	switch (res) {
 	case SELINT_SUCCESS:
 		if (summary_flag) {

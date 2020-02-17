@@ -21,6 +21,11 @@
 #include "string_list.h"
 #include "tree.h"
 #include "maps.h"
+#include "ordering.h"
+
+struct config_check_data {
+	enum order_conf order_conf;
+};
 
 /*******************************************************************
  * Parse the config file and set the function arguments appropriately
@@ -30,6 +35,7 @@ enum selint_error parse_config(const char *config_filename,
                                int in_source_mode,
                                char *severity,
                                struct string_list **config_disabled_checks,
-                               struct string_list **config_enabled_checks);
+                               struct string_list **config_enabled_checks,
+                               struct config_check_data *config_check_data);
 
 #endif
