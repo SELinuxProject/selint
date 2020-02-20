@@ -562,6 +562,8 @@ m4_argument:
 	|
 	BACKTICK string_list SINGLE_QUOTE { free_string_list($2); }
 	|
+	BACKTICK strings SINGLE_QUOTE { free_string_list($2); }
+	|
 	STRING { free($1); }
 	;
 
@@ -569,6 +571,8 @@ arg:
 	string_list
 	|
 	BACKTICK string_list SINGLE_QUOTE { $$ = $2; }
+	|
+	BACKTICK strings SINGLE_QUOTE { $$ = $2; }
 	|
 	BACKTICK SINGLE_QUOTE { $$ = NULL; }
 	;

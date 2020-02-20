@@ -10,6 +10,7 @@
   modules into your already installed policy and have local development
   headers in a standard location, selint should find them by default and you
   don't need to use this option)
+- -F flag to return an error code on issues found
 
 ### Fixed
 - Man page generation in distribution tarballs now works after make clean
