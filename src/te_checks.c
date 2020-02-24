@@ -22,6 +22,9 @@
 struct check_result *check_te_order(const struct check_data *data,
                                     const struct policy_node *node)
 {
+	if (!data || !data->config_check_data) {
+		return alloc_internal_error("Unintialized data given to C-001");
+	}
 	if (data->flavor != FILE_TE_FILE) {
 		return NULL;
 	}
@@ -36,7 +39,16 @@ struct check_result *check_te_order(const struct check_data *data,
 		if (!order_data) {
 			return alloc_internal_error("Failed to initialize ordering for C-001");
 		}
-		calculate_longest_increasing_subsequence(node, order_data, compare_nodes_refpolicy);
+		switch (data->config_check_data->order_conf) {
+		case ORDER_REF:
+			calculate_longest_increasing_subsequence(node, order_data, compare_nodes_refpolicy);
+			break;
+		case ORDER_LAX:
+			calculate_longest_increasing_subsequence(node, order_data, compare_nodes_refpolicy_lax);
+			break;
+		default:
+			return alloc_internal_error("Unknown ordering configuration given to C-001");
+		}
 		break;
 	case NODE_CLEANUP:
 		free_ordering_metadata(order_data);
