@@ -154,13 +154,33 @@ enum local_subsection get_local_subsection(const struct policy_node *node);
 /**********************************
 * Compare two nodes according to the refpolicy ordering conventions
 * located at https://github.com/SELinuxProject/refpolicy/wiki/StyleGuide
+* Variant is the config option for how strictly to enforce the style guide.
+* ORDER_REF - enforce the style guide as written
+* ORDER_LAX - enforce the style guide with the following exceptions:
+*     - No ordering restrictions are enforced on the relative ordering
+*     of interface calls and blocks
 * Return a positive value if the second node should go after the first,
 * a negative value is the second node should go before the first and
 * zero if they can go in either order.
 **********************************/
+enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_metadata *ordering_data,
+                                                             const struct policy_node *first,
+                                                             const struct policy_node *second,
+                                                             enum order_conf variant);
+
+/**********************************
+* Wrapper for compare_nodes_refpolicy_generic for refpolicy ordering
+**********************************/
 enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *ordering_data,
                                                      const struct policy_node *first,
                                                      const struct policy_node *second);
+
+/**********************************
+* Wrapper for compare_nodes_refpolicy_generic for refpolicy-lax ordering
+**********************************/
+enum order_difference_reason compare_nodes_refpolicy_lax(struct ordering_metadata *ordering_data,
+                                                         const struct policy_node *first,
+                                                         const struct policy_node *second);
 
 
 /**********************************

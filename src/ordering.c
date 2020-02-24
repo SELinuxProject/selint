@@ -460,9 +460,10 @@ enum local_subsection get_local_subsection(const struct policy_node *node)
 #define CHECK_FLAVOR_ORDERING(data_flavor, comp, ret) \
 	CHECK_ORDERING(first->data.data_flavor->flavor, second->data.data_flavor->flavor, comp, ret)
 
-enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *ordering_data,
-                                                     const struct policy_node *first,
-                                                     const struct policy_node *second)
+enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_metadata *ordering_data,
+                                                             const struct policy_node *first,
+                                                             const struct policy_node *second,
+						             enum order_conf variant)
 {
 	const char *first_section_name = get_section(first);
 	const char *second_section_name = get_section(second);
@@ -512,18 +513,35 @@ enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *o
 
 	CHECK_ORDERING(lss_first, lss_second, LSS_SELF, ORDER_LOCAL_SUBSECTION);
 	CHECK_ORDERING(lss_first, lss_second, LSS_OWN, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL_MOD, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_SYSTEM, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_BUILD_OPTION, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_CONDITIONAL, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_TUNABLE, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_OPTIONAL, ORDER_LOCAL_SUBSECTION);
+
+	if (variant == ORDER_REF) {
+		CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL_MOD, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_SYSTEM, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_BUILD_OPTION, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_CONDITIONAL, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_TUNABLE, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_OPTIONAL, ORDER_LOCAL_SUBSECTION);
+	}
 
 	// TODO: alphabetical
 
 	return ORDER_EQUAL;
+}
+
+enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *ordering_data,
+                                                     const struct policy_node *first,
+                                                     const struct policy_node *second)
+{
+	return compare_nodes_refpolicy_generic(ordering_data, first, second, ORDER_REF);
+}
+
+enum order_difference_reason compare_nodes_refpolicy_lax(struct ordering_metadata *ordering_data,
+                                                         const struct policy_node *first,
+                                                         const struct policy_node *second)
+{
+	return compare_nodes_refpolicy_generic(ordering_data, first, second, ORDER_LAX);
 }
 
 const char *lss_to_string(enum local_subsection lss)
