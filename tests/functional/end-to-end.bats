@@ -52,17 +52,21 @@ test_one_check_expect() {
 test_ordering() {
 	local CHECK_DIR="./policies/check_triggers/C-001/"
 	local FILENAME_PREFIX=$1
-	run ${SELINT_PATH} -rs -c configs/default.conf -e C-001 -E --context=${CHECK_DIR}interfaces ${CHECK_DIR}${FILENAME_PREFIX}.te ./policies/check_triggers/modules.conf
-	echo ${output}
-	while read p; do
-		echo "Checking for $p"
-		count=$(echo ${output} | grep -o ${p} | wc -l)
-		[ "$count" -eq "1" ]
-	done < "${CHECK_DIR}/${FILENAME_PREFIX}.expect"
-	local EXPECT_COUNT=$(cat ${CHECK_DIR}/${FILENAME_PREFIX}.expect | wc -l)
-	count=$(echo ${output} | grep -o C-001 | wc -l)
-	echo "Expecting: ${EXPECT_COUNT}, got: $count"
-	[ "$count" -eq "${EXPECT_COUNT}" ]
+	for ORDER_CONF in "ref" "lax"
+	do
+		echo "Checking ${FILENAME_PREFIX} in order ${ORDER_CONF}"
+		run ${SELINT_PATH} -rs -c configs/order_${ORDER_CONF}.conf -e C-001 -E --context=${CHECK_DIR}interfaces ${CHECK_DIR}${FILENAME_PREFIX}.te ./policies/check_triggers/modules.conf
+		echo ${output}
+		while read p; do
+			echo "Checking for $p"
+			count=$(echo ${output} | grep -o ${p} | wc -l)
+			[ "$count" -eq "1" ]
+		done < "${CHECK_DIR}/${FILENAME_PREFIX}.expect"
+		local EXPECT_COUNT=$(cat ${CHECK_DIR}/${FILENAME_PREFIX}.expect.${ORDER_CONF} | wc -l)
+		count=$(echo ${output} | grep -o C-001 | wc -l)
+		echo "Expecting: ${EXPECT_COUNT}, got: $count"
+		[ "$count" -eq "${EXPECT_COUNT}" ]
+	done
 }
 
 test_one_check() {

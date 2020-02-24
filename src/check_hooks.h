@@ -19,6 +19,7 @@
 
 #include "tree.h"
 #include "selint_error.h"
+#include "selint_config.h"
 
 enum convention_ids {
 	C_ID_TE_ORDER = 1,

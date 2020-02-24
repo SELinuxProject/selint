@@ -26,6 +26,8 @@
 START_TEST (test_check_te_order) {
 	struct check_data *cd = calloc(1, sizeof(struct check_data));
 	cd->flavor = FILE_TE_FILE;
+	cd->config_check_data = calloc(1, sizeof(struct config_check_data));
+	cd->config_check_data->order_conf = ORDER_REF;
 
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
 
@@ -63,6 +65,7 @@ START_TEST (test_check_te_order) {
 	cleanup->flavor = NODE_CLEANUP;
 	ck_assert_ptr_null(check_te_order(cd, cleanup));
 
+	free(cd->config_check_data);
 	free(cd);
 	free_policy_node(head);
 	free_policy_node(cleanup);
