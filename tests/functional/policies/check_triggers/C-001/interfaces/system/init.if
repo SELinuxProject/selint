@@ -1,0 +1,11 @@
+# Fake init interfaces
+
+# Fake init_system_domain
+interface(`init_system_domain',`
+	gen_require(`
+		type init_script_t;
+		attribute someattribute;
+	')
+	typeattribute $1 someattribute;
+	domtrans_pattern(init_script_t, $1, $2)
+')
