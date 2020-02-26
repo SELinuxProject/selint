@@ -764,6 +764,7 @@ int check_transform_interface_suffix(char *if_name)
 	     0 == strcmp(suffix, "_content") ||
 	     0 == strcmp(suffix, "_constrained") ||
 	     0 == strcmp(suffix, "_executable") ||
+	     0 == strcmp(suffix, "_exemption") ||
 	     0 == strcmp(suffix, "_object"))) {
 		return 1;
 	} else {
