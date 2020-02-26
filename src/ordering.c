@@ -217,6 +217,8 @@ const char *get_section(const struct policy_node *node)
 		}
 	case NODE_IF_CALL:
 		if (!is_optional(node) &&
+		    !is_in_ifdef(node) &&
+		    !is_tunable(node) &&
 		    (look_up_in_template_map(node->data.ic_data->name) ||
 		     is_transform_if(node->data.ic_data->name) ||
 		     is_role_if(node->data.ic_data->name) ||

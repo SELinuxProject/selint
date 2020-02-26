@@ -1,0 +1,21 @@
+policy_module(decl_in_block, 1.0)
+
+type foo_t;
+domain_type(foo_t)
+
+type foo_exec_t;
+
+allow foo_t self:capability mac_admin;
+
+ifdef(`init_systemd',`
+	init_system_domain(foo_t, foo_exec_t)
+')
+
+tunable_policy(`some_tunable',`
+	# C-001 doesn't care if it's redundant
+	domain_type(foo_t)
+')
+
+optional_policy(`
+	foo_writer(foo_t)
+')

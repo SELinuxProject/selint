@@ -15,3 +15,13 @@ interface(`foo_do_other_stuff',`
 	')
 	do_things_pattern($1, other_stuff_t, other_stuff_t)
 ')
+
+# Transform interface
+interface(`foo_writer_domain',`
+	gen_require(`
+		attribute foo_writer;
+		type foo_target_t;
+	')
+	typeattribute $1 foo_writer;
+	write_files_pattern($1, foo_target_t, foo_target_t)
+')
