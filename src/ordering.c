@@ -167,6 +167,9 @@ const char *get_section(const struct policy_node *node)
 			// it can be "~"
 			return "_non_ordered";
 		}
+		if (node->data.av_data->flavor == AV_RULE_AUDITALLOW) {
+			return "_non_ordered";
+		}
 		if (node->data.av_data->perms &&
 		    (str_in_sl("associate", node->data.av_data->perms) ||
 		     str_in_sl("mounton", node->data.av_data->perms))) {
@@ -216,7 +219,11 @@ const char *get_section(const struct policy_node *node)
 			return "_non_ordered"; // empty block
 		}
 	case NODE_IF_CALL:
-		if (!is_optional(node) &&
+		// check for filetrans_if first to treat interfaces with the
+		// flags filetrans and transform as _non-ordered
+		if (is_filetrans_if(node->data.ic_data->name)) {
+			return "_non_ordered";
+		} else if (!is_optional(node) &&
 		    !is_in_ifdef(node) &&
 		    !is_tunable(node) &&
 		    (look_up_in_template_map(node->data.ic_data->name) ||
@@ -225,8 +232,6 @@ const char *get_section(const struct policy_node *node)
 		     0 == strcmp(node->data.ic_data->name, "gen_bool") ||
 		     0 == strcmp(node->data.ic_data->name, "gen_tunable"))) {
 			return "_declarations";
-		} else if (is_filetrans_if(node->data.ic_data->name)) {
-			return "_non_ordered";
 		} else {
 			if (node->data.ic_data->args) {
 				return node->data.ic_data->args->string;
@@ -345,6 +350,37 @@ static int is_kernel_mod_if_call(const struct policy_node *node)
 	return 0;
 }
 
+static int is_own_mod_if_call(const struct policy_node *node)
+{
+	if (node->flavor != NODE_IF_CALL) {
+		return 0;
+	}
+	const char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
+	if (!mod_name) {
+		return 0;
+	}
+
+	// TODO: better way to get current module name,
+	// but get_current_module_name() does not work
+
+	struct string_list *types = get_types_in_node(node);
+	struct string_list *cur = types;
+	while (cur) {
+		const char *module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_TYPE);
+		if (!module_of_type_or_attr) {
+			module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_ATTRIBUTE);
+		}
+		if (module_of_type_or_attr &&
+		    0 != strcmp(module_of_type_or_attr, mod_name)) {
+			free_string_list(types);
+			return 0;
+		}
+		cur = cur->next;
+	}
+	free_string_list(types);
+	return 1;
+}
+
 static int check_call_layer(const struct policy_node *node, const char *layer_to_check)
 {
 	if (node->flavor != NODE_IF_CALL) {
@@ -436,6 +472,8 @@ enum local_subsection get_local_subsection(const struct policy_node *node)
 		return LSS_SELF;
 	} else if (is_own_module_rule(node)) {
 		return LSS_OWN;
+	} else if (is_own_mod_if_call(node)) {
+		return LSS_OWN;
 	} else if (is_kernel_mod_if_call(node)) {
 		return LSS_KERNEL_MOD;
 	} else if (is_kernel_layer_if_call(node)) {
@@ -448,6 +486,33 @@ enum local_subsection get_local_subsection(const struct policy_node *node)
 		// TODO conditional, optional etc
 		return LSS_UNKNOWN;
 	}
+}
+
+/*
+ * Treat the following as the same section:
+ *       foo_t and foo_t
+ *       foo_t and foo_r
+ *       foo   and foo_t
+ *       foo   and foo_r
+ */
+static int is_same_section(const char *first_section_name, const char *second_section_name)
+{
+	size_t first_length = strlen(first_section_name);
+	size_t second_length = strlen(second_section_name);
+
+
+	if (first_length >= 3 &&
+	    (first_section_name[first_length-1] == 't' || first_section_name[first_length-1] == 'r') &&
+	    first_section_name[first_length-2] == '_') {
+		first_length -= 2;
+	}
+	if (second_length >= 3 &&
+	    (second_section_name[second_length-1] == 't' || second_section_name[second_length-1] == 'r') &&
+	    second_section_name[second_length-2] == '_') {
+		second_length -= 2;
+	}
+
+	return (0 == strncmp(first_section_name, second_section_name, first_length > second_length ? first_length : second_length));
 }
 
 #define CHECK_ORDERING(to_check_first, to_check_second, comp, ret) \
@@ -479,11 +544,13 @@ enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_met
 		return ORDER_EQUAL;
 	}
 
-	if (0 != strcmp(first_section_name, second_section_name)) {
+	if (!is_same_section(first_section_name, second_section_name)) {
 		if (0 != strcmp(first_section_name, "_declarations") &&
 		    (0 == strcmp(second_section_name, "_declarations") ||
 		     (get_avg_line_by_name(first_section_name, ordering_data->sections) >
-		      get_avg_line_by_name(second_section_name, ordering_data->sections)))) {
+		      get_avg_line_by_name(second_section_name, ordering_data->sections))) &&
+		    // allow raw section alphabetically following another raw section
+		    (!(first_section_name[0] != '_' && second_section_name[0] != '_' && strcmp(first_section_name, second_section_name) < 0))) {
 			return -ORDER_SECTION;
 		} else {
 			return ORDER_SECTION;
@@ -724,7 +791,8 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	}
 	size_t str_len = strlen(reason_str) +
 	                 strlen(before_after) +
-	                 strlen("Line out of order.  It is ") +
+	                 strlen("Line out of order.  It is of type ") +
+	                 strlen(lss_to_string(get_local_subsection(this_node))) + 1 +
 	                 strlen(" line ") +
 	                 13; // 13 is enough for the maximum
 	                     // length of an unsigned int (10)
@@ -737,7 +805,8 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	char *ret = malloc(sizeof(char) * str_len);
 
 	size_t written = snprintf(ret, str_len,
-	                          "Line out of order.  It is %s line %u %s.",
+	                          "Line out of order.  It is of type %s %s line %u %s.",
+	                          lss_to_string(get_local_subsection(this_node)),
 	                          before_after,
 	                          other_node->lineno,
 	                          reason_str);
@@ -767,7 +836,8 @@ int check_transform_interface_suffix(char *if_name)
 	     0 == strcmp(suffix, "_constrained") ||
 	     0 == strcmp(suffix, "_executable") ||
 	     0 == strcmp(suffix, "_exemption") ||
-	     0 == strcmp(suffix, "_object"))) {
+	     0 == strcmp(suffix, "_object") ||
+	     0 == strcmp(suffix, "_mountpoint"))) {
 		return 1;
 	} else {
 		return 0;
