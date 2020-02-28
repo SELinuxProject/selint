@@ -220,9 +220,7 @@ enum selint_error insert_av_rule(struct policy_node **cur,
 	nd.av_data = av_data;
 
 	if ((*cur)->parent && (*cur)->parent->flavor == NODE_INTERFACE_DEF &&
-	    check_transform_interface_suffix((*cur)->parent->data.str) &&
-	    (str_in_sl("associate", perms) ||
-	     str_in_sl("mounton", perms))) {
+	    str_in_sl("associate", perms)) {
 		mark_transform_if((*cur)->parent->data.str);
 	}
 
@@ -340,6 +338,26 @@ enum selint_error insert_role_transition(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
+static int is_filetrans_if_name(const char *if_name)
+{
+	const char *suffix;
+
+	if (0 == strcmp(if_name, "filetrans_pattern")) {
+		return 1;
+	}
+
+	if (0 == strcmp(if_name, "filetrans_add_pattern")) {
+		return 1;
+	}
+
+	suffix = strrchr(if_name, '_');
+	if (suffix &&
+	    (0 == strcmp(suffix, "_filetrans"))) {
+		return 1;
+	}
+
+	return 0;
+}
 
 enum selint_error insert_interface_call(struct policy_node **cur, const char *if_name,
                                         struct string_list *args,
@@ -355,10 +373,14 @@ enum selint_error insert_interface_call(struct policy_node **cur, const char *if
 	if (template_name) {
 		insert_call_into_template_map(template_name, if_data);
 	} else {
-		add_template_declarations(if_name, args, NULL, module_name);
+		enum selint_error r = add_template_declarations(if_name, args, NULL, module_name);
+		if (r != SELINT_SUCCESS) {
+			free_if_call_data(if_data);
+			return r;
+		}
 	}
 
-	if (0 == strcmp(if_name, "filetrans_pattern") &&
+	if (is_filetrans_if_name(if_name) &&
 	    (*cur)->parent &&
 	    (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
 		mark_filetrans_if((*cur)->parent->data.str);
@@ -604,7 +626,9 @@ enum selint_error insert_type_attribute(struct policy_node **cur, const char *ty
 
 	if ((*cur)->parent &&
 	    (*cur)->parent->flavor == NODE_INTERFACE_DEF &&
-	    check_transform_interface_suffix((*cur)->parent->data.str)) {
+	    (check_transform_interface_suffix((*cur)->parent->data.str) ||
+	     0 == strcmp(get_current_module_name(), "mls") ||
+	     0 == strcmp(get_current_module_name(), "mcs"))) {
 		mark_transform_if((*cur)->parent->data.str);
 	}
 
