@@ -317,13 +317,13 @@ int main(int argc, char **argv)
 	char *modules_conf_path = NULL;
 
 	while (file) {
-		char *suffix = file->fts_path + file->fts_pathlen - 3;
+		const char *suffix = (file->fts_pathlen > 3) ? (file->fts_path + file->fts_pathlen - 3) : NULL;
 
-		if (!strcmp(suffix, ".te")) {
+		if (suffix && !strcmp(suffix, ".te")) {
 			file_list_push_back(te_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
-		} else if (!strcmp(suffix, ".if")) {
+		} else if (suffix && !strcmp(suffix, ".if")) {
 			file_list_push_back(if_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
@@ -331,7 +331,7 @@ int main(int argc, char **argv)
 			mod_name[file->fts_namelen - 3] = '\0';
 			insert_into_mod_layers_map(mod_name, file->fts_parent->fts_name);
 			free(mod_name);
-		} else if (!strcmp(suffix, ".fc")) {
+		} else if (suffix && !strcmp(suffix, ".fc")) {
 			file_list_push_back(fc_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
@@ -361,14 +361,14 @@ int main(int argc, char **argv)
 		file = fts_read(ftsp);
 
 		while (file) {
-			char *suffix = file->fts_path + file->fts_pathlen - 3;
-			if (!strcmp(suffix, ".te")) {
+			const char *suffix = (file->fts_pathlen > 3) ? (file->fts_path + file->fts_pathlen - 3) : NULL;
+			if (suffix &&  !strcmp(suffix, ".te")) {
 				if (!file_name_in_file_list(file->fts_path, te_files)) {
 					file_list_push_back(context_te_files,
 							    make_policy_file(file->fts_path,
 							    NULL));
 				}
-			} else if (!strcmp(suffix, ".if")) {
+			} else if (suffix &&  !strcmp(suffix, ".if")) {
 				if (!file_name_in_file_list(file->fts_path, if_files)) {
 					file_list_push_back(context_if_files,
 							    make_policy_file(file->fts_path,
