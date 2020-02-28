@@ -83,4 +83,17 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
                                                       const struct policy_node
                                                       *node);
 
+/*********************************************
+ * Check for clash of attribute and interface names.
+ * This will cause compilation to enter a endless loop
+ * and consume all available memory.
+ * Called on NODE_DECL nodes.
+ * data - metadata about the file currently being scanned
+ * node - the node to check
+ * returns NULL if passed or check_result for issue E-006
+*********************************************/
+struct check_result *check_attribute_interface_nameclash(const struct check_data
+                                                      *data,
+                                                      const struct policy_node
+                                                      *node);
 #endif

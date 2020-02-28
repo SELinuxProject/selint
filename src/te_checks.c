@@ -231,3 +231,24 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
 	return make_check_result('W', W_ID_IF_CALL_OPTIONAL,
 	                         "Call to interface defined in module should be in optional_policy block");
 }
+
+struct check_result *check_attribute_interface_nameclash(__attribute__((unused)) const struct check_data
+							 *data,
+							 const struct policy_node
+							 *node)
+{
+	const struct declaration_data *decl_data = node->data.d_data;
+
+	if (decl_data->flavor != DECL_ATTRIBUTE) {
+		// not an attribute declaration
+		return NULL;
+	}
+
+	if (look_up_in_ifs_map(decl_data->name)) {
+		return make_check_result('E', E_ID_ATTR_IF_CLASH,
+				  "Attribute declaration with name %s clashes with same named interface",
+				  decl_data->name);
+	}
+
+	return NULL;
+}
