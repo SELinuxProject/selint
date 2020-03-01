@@ -139,6 +139,10 @@ test_one_check() {
 	test_one_check "E-005" "e03e04e05.fc"
 }
 
+@test "E-006" {
+	test_one_check "E-006" "e06.*"
+}
+
 @test "assume_user" {
 	do_test "E-003" "e03e04e05.fc" 1 "-e E-003"
 	echo "assume_users = { system_u }" >> tmp.conf
