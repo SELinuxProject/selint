@@ -17,17 +17,158 @@
 TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering
 check_PROGRAMS = ${TESTS}
 
-AV_FILE_PERM_FILES=sample_av/file/index sample_av/file/perms/append sample_av/file/perms/audit_access sample_av/file/perms/create sample_av/file/perms/entrypoint sample_av/file/perms/execmod sample_av/file/perms/execute sample_av/file/perms/execute_no_trans sample_av/file/perms/getattr sample_av/file/perms/ioctl sample_av/file/perms/link sample_av/file/perms/lock sample_av/file/perms/map sample_av/file/perms/mounton sample_av/file/perms/open sample_av/file/perms/quotaon sample_av/file/perms/read sample_av/file/perms/relabelfrom sample_av/file/perms/relabelto sample_av/file/perms/rename sample_av/file/perms/setattr sample_av/file/perms/swapon sample_av/file/perms/unlink sample_av/file/perms/write
+AV_FILE_PERM_FILES=sample_av/file/index \
+			sample_av/file/perms/append \
+			sample_av/file/perms/audit_access \
+			sample_av/file/perms/create \
+			sample_av/file/perms/entrypoint \
+			sample_av/file/perms/execmod \
+			sample_av/file/perms/execute \
+			sample_av/file/perms/execute_no_trans \
+			sample_av/file/perms/getattr \
+			sample_av/file/perms/ioctl \
+			sample_av/file/perms/link \
+			sample_av/file/perms/lock \
+			sample_av/file/perms/map \
+			sample_av/file/perms/mounton \
+			sample_av/file/perms/open \
+			sample_av/file/perms/quotaon \
+			sample_av/file/perms/read \
+			sample_av/file/perms/relabelfrom \
+			sample_av/file/perms/relabelto \
+			sample_av/file/perms/rename \
+			sample_av/file/perms/setattr \
+			sample_av/file/perms/swapon \
+			sample_av/file/perms/unlink \
+			sample_av/file/perms/write
 
-AV_SOCKET_PERM_FILES=sample_av/socket/index sample_av/socket/perms/accept sample_av/socket/perms/append sample_av/socket/perms/bind sample_av/socket/perms/connect sample_av/socket/perms/create sample_av/socket/perms/getattr sample_av/socket/perms/getopt sample_av/socket/perms/ioctl sample_av/socket/perms/listen sample_av/socket/perms/lock sample_av/socket/perms/map sample_av/socket/perms/name_bind sample_av/socket/perms/read sample_av/socket/perms/recvfrom sample_av/socket/perms/recv_msg sample_av/socket/perms/relabelfrom sample_av/socket/perms/relabelto sample_av/socket/perms/send_msg sample_av/socket/perms/sendto sample_av/socket/perms/setattr sample_av/socket/perms/setopt sample_av/socket/perms/shutdown sample_av/socket/perms/write
+AV_SOCKET_PERM_FILES=sample_av/socket/index \
+			sample_av/socket/perms/accept \
+			sample_av/socket/perms/append \
+			sample_av/socket/perms/bind \
+			sample_av/socket/perms/connect \
+			sample_av/socket/perms/create \
+			sample_av/socket/perms/getattr \
+			sample_av/socket/perms/getopt \
+			sample_av/socket/perms/ioctl \
+			sample_av/socket/perms/listen \
+			sample_av/socket/perms/lock \
+			sample_av/socket/perms/map \
+			sample_av/socket/perms/name_bind \
+			sample_av/socket/perms/read \
+			sample_av/socket/perms/recvfrom \
+			sample_av/socket/perms/recv_msg \
+			sample_av/socket/perms/relabelfrom \
+			sample_av/socket/perms/relabelto \
+			sample_av/socket/perms/send_msg \
+			sample_av/socket/perms/sendto \
+			sample_av/socket/perms/setattr \
+			sample_av/socket/perms/setopt \
+			sample_av/socket/perms/shutdown \
+			sample_av/socket/perms/write
 
-AV_X_CURSOR_PERM_FILES=sample_av/x_cursor/index sample_av/x_cursor/perms/create sample_av/x_cursor/perms/destroy sample_av/x_cursor/perms/getattr sample_av/x_cursor/perms/read sample_av/x_cursor/perms/setattr sample_av/x_cursor/perms/use sample_av/x_cursor/perms/write
+AV_X_CURSOR_PERM_FILES=sample_av/x_cursor/index \
+			sample_av/x_cursor/perms/create \
+			sample_av/x_cursor/perms/destroy \
+			sample_av/x_cursor/perms/getattr \
+			sample_av/x_cursor/perms/read \
+			sample_av/x_cursor/perms/setattr \
+			sample_av/x_cursor/perms/use \
+			sample_av/x_cursor/perms/write
 
-SAMPLE_CONFIG_FILES=sample_configs/bad_format_2.conf sample_configs/bad_format.conf sample_configs/check_config.conf sample_configs/invalid_option.conf sample_configs/severity_convention.conf sample_configs/severity_error.conf sample_configs/severity_fatal.conf sample_configs/severity_invalid.conf sample_configs/severity_style.conf sample_configs/severity_warning.conf sample_configs/bad_order.conf sample_configs/refpolicy_ordering.conf
+SAMPLE_CONFIG_FILES=sample_configs/bad_format_2.conf \
+			sample_configs/bad_format.conf \
+			sample_configs/check_config.conf \
+			sample_configs/invalid_option.conf \
+			sample_configs/severity_convention.conf \
+			sample_configs/severity_error.conf \
+			sample_configs/severity_fatal.conf \
+			sample_configs/severity_invalid.conf \
+			sample_configs/severity_style.conf \
+			sample_configs/severity_warning.conf \
+			sample_configs/bad_order.conf \
+			sample_configs/refpolicy_ordering.conf
 
-SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf sample_policy_files/bad_role_allow.te sample_policy_files/basic.fc sample_policy_files/basic.if sample_policy_files/basic.te sample_policy_files/blocks.te sample_policy_files/disable_comment.te sample_policy_files/empty.te sample_policy_files/modules.conf sample_policy_files/nested_templates.if sample_policy_files/none_context.fc sample_policy_files/syntax_error.te sample_policy_files/uncommon.te sample_policy_files/with_m4.fc
+SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf \
+			sample_policy_files/bad_role_allow.te \
+			sample_policy_files/basic.fc \
+			sample_policy_files/basic.if \
+			sample_policy_files/basic.te \
+			sample_policy_files/blocks.te \
+			sample_policy_files/disable_comment.te \
+			sample_policy_files/empty.te \
+			sample_policy_files/modules.conf \
+			sample_policy_files/nested_templates.if \
+			sample_policy_files/none_context.fc \
+			sample_policy_files/syntax_error.te \
+			sample_policy_files/uncommon.te \
+			sample_policy_files/with_m4.fc
 
-FUNCTIONAL_TEST_FILES=functional/end-to-end.bats functional/configs/bad_ids.conf functional/configs/broken.conf functional/configs/default.conf functional/configs/empty.conf functional/configs/order_ref.conf functional/configs/order_lax.conf functional/policies/check_triggers/c04.if functional/policies/check_triggers/e02.fc functional/policies/check_triggers/e03e04e05.fc functional/policies/check_triggers/e06.te functional/policies/check_triggers/e06.if functional/policies/check_triggers/modules.conf functional/policies/check_triggers/s01.te functional/policies/check_triggers/s02.fc functional/policies/check_triggers/s02_other.te functional/policies/check_triggers/s03.te functional/policies/check_triggers/w01_other.te functional/policies/check_triggers/w01.te functional/policies/check_triggers/w02.if functional/policies/check_triggers/w02_role.if functional/policies/check_triggers/w02_role.te functional/policies/check_triggers/w02.te functional/policies/check_triggers/w03_alias.if functional/policies/check_triggers/w03.if functional/policies/check_triggers/w03_role.if functional/policies/check_triggers/w03_ta.if functional/policies/check_triggers/w04.fc functional/policies/check_triggers/w05_other.if functional/policies/check_triggers/w05.te functional/policies/check_triggers/C-001/interleaved.expect.ref functional/policies/check_triggers/C-001/interleaved.expect.lax functional/policies/check_triggers/C-001/interleaved.te functional/policies/check_triggers/C-001/kernel_module_first.expect.ref functional/policies/check_triggers/C-001/kernel_module_first.expect.lax functional/policies/check_triggers/C-001/kernel_module_first.te functional/policies/check_triggers/C-001/optional.expect.ref functional/policies/check_triggers/C-001/optional.expect.lax functional/policies/check_triggers/C-001/optional.te functional/policies/check_triggers/C-001/role_ifs.expect.ref functional/policies/check_triggers/C-001/role_ifs.expect.lax functional/policies/check_triggers/C-001/role_ifs.te functional/policies/check_triggers/C-001/simple.expect.ref functional/policies/check_triggers/C-001/simple.expect.lax functional/policies/check_triggers/C-001/simple.te functional/policies/check_triggers/C-001/types_in_requires.expect.ref functional/policies/check_triggers/C-001/types_in_requires.expect.lax functional/policies/check_triggers/C-001/types_in_requires.te functional/policies/check_triggers/C-001/decl_in_block.expect.ref functional/policies/check_triggers/C-001/decl_in_block.expect.lax functional/policies/check_triggers/C-001/decl_in_block.te functional/policies/check_triggers/C-001/interfaces/kernel/domain.if functional/policies/check_triggers/C-001/interfaces/kernel/kernel.if functional/policies/check_triggers/C-001/interfaces/other/mta.if functional/policies/check_triggers/C-001/interfaces/other/role_ifs.if functional/policies/check_triggers/C-001/interfaces/system/logging.if functional/policies/check_triggers/C-001/interfaces/system/init.if functional/policies/misc/disable.if functional/policies/misc/disable_multiple_other.te functional/policies/misc/disable_multiple.te functional/policies/misc/disable_require_start.te functional/policies/misc/disable.te functional/policies/misc/nesting.if functional/policies/misc/nesting.te functional/policies/misc/no_issues.te
+FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
+			functional/configs/bad_ids.conf \
+			functional/configs/broken.conf \
+			functional/configs/default.conf \
+			functional/configs/empty.conf \
+			functional/configs/order_ref.conf \
+			functional/configs/order_lax.conf \
+			functional/policies/check_triggers/c04.if \
+			functional/policies/check_triggers/e02.fc \
+			functional/policies/check_triggers/e03e04e05.fc \
+			functional/policies/check_triggers/e06.te \
+			functional/policies/check_triggers/e06.if \
+			functional/policies/check_triggers/modules.conf \
+			functional/policies/check_triggers/s01.te \
+			functional/policies/check_triggers/s02.fc \
+			functional/policies/check_triggers/s02_other.te \
+			functional/policies/check_triggers/s03.te \
+			functional/policies/check_triggers/w01_other.te \
+			functional/policies/check_triggers/w01.te \
+			functional/policies/check_triggers/w02.if \
+			functional/policies/check_triggers/w02_role.if \
+			functional/policies/check_triggers/w02_role.te \
+			functional/policies/check_triggers/w02.te \
+			functional/policies/check_triggers/w03_alias.if \
+			functional/policies/check_triggers/w03.if \
+			functional/policies/check_triggers/w03_role.if \
+			functional/policies/check_triggers/w03_ta.if \
+			functional/policies/check_triggers/w04.fc \
+			functional/policies/check_triggers/w05_other.if \
+			functional/policies/check_triggers/w05.te \
+			functional/policies/check_triggers/C-001/interleaved.expect.ref \
+			functional/policies/check_triggers/C-001/interleaved.expect.lax \
+			functional/policies/check_triggers/C-001/interleaved.te \
+			functional/policies/check_triggers/C-001/kernel_module_first.expect.ref \
+			functional/policies/check_triggers/C-001/kernel_module_first.expect.lax \
+			functional/policies/check_triggers/C-001/kernel_module_first.te \
+			functional/policies/check_triggers/C-001/optional.expect.ref \
+			functional/policies/check_triggers/C-001/optional.expect.lax \
+			functional/policies/check_triggers/C-001/optional.te \
+			functional/policies/check_triggers/C-001/role_ifs.expect.ref \
+			functional/policies/check_triggers/C-001/role_ifs.expect.lax \
+			functional/policies/check_triggers/C-001/role_ifs.te \
+			functional/policies/check_triggers/C-001/simple.expect.ref \
+			functional/policies/check_triggers/C-001/simple.expect.lax \
+			functional/policies/check_triggers/C-001/simple.te \
+			functional/policies/check_triggers/C-001/types_in_requires.expect.ref \
+			functional/policies/check_triggers/C-001/types_in_requires.expect.lax \
+			functional/policies/check_triggers/C-001/types_in_requires.te \
+			functional/policies/check_triggers/C-001/decl_in_block.expect.ref \
+			functional/policies/check_triggers/C-001/decl_in_block.expect.lax \
+			functional/policies/check_triggers/C-001/decl_in_block.te \
+			functional/policies/check_triggers/C-001/interfaces/kernel/domain.if \
+			functional/policies/check_triggers/C-001/interfaces/kernel/kernel.if \
+			functional/policies/check_triggers/C-001/interfaces/other/mta.if \
+			functional/policies/check_triggers/C-001/interfaces/other/role_ifs.if \
+			functional/policies/check_triggers/C-001/interfaces/system/logging.if \
+			functional/policies/check_triggers/C-001/interfaces/system/init.if \
+			functional/policies/misc/disable.if \
+			functional/policies/misc/disable_multiple_other.te \
+			functional/policies/misc/disable_multiple.te \
+			functional/policies/misc/disable_require_start.te \
+			functional/policies/misc/disable.te \
+			functional/policies/misc/nesting.if \
+			functional/policies/misc/nesting.te \
+			functional/policies/misc/no_issues.te
 
 EXTRA_DIST = ${AV_FILE_PERM_FILES} ${AV_SOCKET_PERM_FILES} ${AV_X_CURSOR_PERM_FILES} ${SAMPLE_CONFIG_FILES} ${SAMPLE_POLICY_FILES} ${FUNCTIONAL_TEST_FILES}
 
