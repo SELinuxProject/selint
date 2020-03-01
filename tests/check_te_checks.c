@@ -244,6 +244,30 @@ START_TEST (test_check_module_if_call_in_optional) {
 }
 END_TEST
 
+START_TEST (test_check_attribute_interface_nameclash) {
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_DECL;
+
+	node->data.d_data = calloc(1, sizeof(struct declaration_data));
+	node->data.d_data->flavor = DECL_ATTRIBUTE;
+	node->data.d_data->name = strdup("foo");
+
+	ck_assert_ptr_null(check_attribute_interface_nameclash(NULL, node));
+
+	insert_into_ifs_map("foo", "bar");
+
+	struct check_result *res = check_attribute_interface_nameclash(NULL, node);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_ATTR_IF_CLASH);
+	free_check_result(res);
+
+	free_policy_node(node);
+	free_all_maps();
+}
+END_TEST
+
 Suite *te_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -257,6 +281,7 @@ Suite *te_checks_suite(void) {
 	tcase_add_test(tc_core, test_check_useless_semicolon);
 	tcase_add_test(tc_core, test_check_no_explicit_declaration);
 	tcase_add_test(tc_core, test_check_module_if_call_in_optional);
+	tcase_add_test(tc_core, test_check_attribute_interface_nameclash);
 	suite_add_tcase(s, tc_core);
 
 	return s;
