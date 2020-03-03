@@ -20,11 +20,7 @@
 
 #include "selint_error.h"
 #include "tree.h"
-
-enum order_conf {
-	ORDER_REF,
-	ORDER_LAX
-};
+#include "check_hooks.h"
 
 enum order_difference_reason {
 	ORDER_EQUAL  =0,
@@ -79,6 +75,7 @@ struct order_node {
 };
 
 struct ordering_metadata {
+	const char *mod_name;
 	struct section_data *sections;
 	size_t order_node_len;
 	struct order_node nodes[];
@@ -90,6 +87,7 @@ struct ordering_metadata {
 * This function allocates memory for, but does not populate the
 * nodes[] array.  That will be populated on the next pass in the
 * calculate_longest_increasing_subsequence function.
+* data (in) - The metadata about the file being scanned
 * head (in) - Pointer to the file node at the top of the AST
 * for a file.
 *
@@ -97,7 +95,7 @@ struct ordering_metadata {
 * and all data except the nodesp[ array populated.  The caller is
 * responsible for freeing all memory.  Returns NULL on error
 **********************************/
-struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *head);
+struct ordering_metadata *prepare_ordering_metadata(const struct check_data *data, const struct policy_node *head);
 
 /**********************************
 * Calculate the longest increasing subsequence in a given file
@@ -149,7 +147,7 @@ float get_avg_line_by_name(const char *section_name, struct section_data *sectio
 /**********************************
 * Get the subsection within the rules for a domain for a particular policy node
 **********************************/
-enum local_subsection get_local_subsection(const struct policy_node *node);
+enum local_subsection get_local_subsection(const char *mod_name, const struct policy_node *node);
 
 /**********************************
 * Compare two nodes according to the refpolicy ordering conventions

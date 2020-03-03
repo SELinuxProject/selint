@@ -45,7 +45,10 @@ START_TEST (test_prepare_ordering_metadata) {
 	cur->next = calloc(1, sizeof(struct policy_node));
 	cur->next->flavor = NODE_DECL;
 
-	struct ordering_metadata *o = prepare_ordering_metadata(head);
+	struct check_data data;
+	data.mod_name = strdup("foo");
+
+	struct ordering_metadata *o = prepare_ordering_metadata(&data, head);
 
 	ck_assert_ptr_nonnull(o);
 	ck_assert_ptr_nonnull(o->sections);
@@ -55,6 +58,7 @@ START_TEST (test_prepare_ordering_metadata) {
 	ck_assert_ptr_null(o->nodes[1].node);
 	ck_assert_ptr_null(o->nodes[2].node);
 
+	free(data.mod_name);
 	free_ordering_metadata(o);
 	free_policy_node(head);
 }
@@ -67,7 +71,10 @@ START_TEST (test_ordering_uncommon_policy) {
 	struct policy_node *head = parse_one_file(UNCOMMON_TE_FILENAME, NODE_TE_FILE);
 	ck_assert_ptr_nonnull(head);
 
-	struct ordering_metadata *o = prepare_ordering_metadata(head);
+	struct check_data data;
+	data.mod_name = strdup("foo");
+
+	struct ordering_metadata *o = prepare_ordering_metadata(&data, head);
 
 	ck_assert_ptr_nonnull(o);
 
@@ -76,8 +83,8 @@ START_TEST (test_ordering_uncommon_policy) {
 	ck_assert_ptr_eq(o->nodes[0].node, head->next);
 	ck_assert_int_eq(o->nodes[0].in_order, 1);
 
+	free(data.mod_name);
 	free_ordering_metadata(o);
-
 	free_policy_node(head);
 	cleanup_parsing();
 }
@@ -95,7 +102,10 @@ START_TEST (test_calculate_longest_increasing_subsequence) {
 	cur->next = calloc(1, sizeof(struct policy_node));
 	cur->next->flavor = NODE_DECL;
 
-	struct ordering_metadata *o = prepare_ordering_metadata(head);
+	struct check_data data;
+	data.mod_name = strdup("foo");
+
+	struct ordering_metadata *o = prepare_ordering_metadata(&data, head);
 
 	ck_assert_ptr_nonnull(o);
 
@@ -105,12 +115,13 @@ START_TEST (test_calculate_longest_increasing_subsequence) {
 	ck_assert_int_eq(o->nodes[0].in_order, 1);
 
 	free_ordering_metadata(o);
-	o = prepare_ordering_metadata(head);
+	o = prepare_ordering_metadata(&data, head);
 
 	calculate_longest_increasing_subsequence(head, o, always_less);
 	ck_assert_ptr_eq(o->nodes[0].node, head->next);
 	ck_assert_int_eq(o->nodes[0].in_order, 0);
 
+	free(data.mod_name);
 	free_ordering_metadata(o);
 	free_policy_node(head);
 
@@ -222,14 +233,14 @@ START_TEST (test_calculate_average_lines) {
 END_TEST
 
 START_TEST (test_get_local_subsection) {
-	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection(NULL));
+	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection("foo", NULL));
 	struct policy_node *node = calloc(1, sizeof(struct policy_node));
 	node->flavor = NODE_AV_RULE;
 	node->data.av_data = calloc(1, sizeof(struct av_rule_data));
 	node->data.av_data->targets = calloc(1, sizeof(struct string_list));
 	node->data.av_data->targets->string = strdup("self");
 
-	ck_assert_int_eq(LSS_SELF, get_local_subsection(node));
+	ck_assert_int_eq(LSS_SELF, get_local_subsection("foo", node));
 
 	free(node->data.av_data->targets->string);
 	node->data.av_data->sources = calloc(1, sizeof(struct string_list));
@@ -240,19 +251,19 @@ START_TEST (test_get_local_subsection) {
 	insert_into_decl_map("foo_log_t", "foo", DECL_TYPE);
 	insert_into_decl_map("foo_config", "foo", DECL_ATTRIBUTE);
 
-	ck_assert_int_eq(LSS_OWN, get_local_subsection(node));
+	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo", node));
 
 	free(node->data.av_data->targets->string);
 	node->data.av_data->targets->string = strdup("foo_config");
 
-	ck_assert_int_eq(LSS_OWN, get_local_subsection(node));
+	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo", node));
 
 	free(node->data.av_data->targets->string);
 	node->data.av_data->targets->string = strdup("bar_data_t");
 	insert_into_decl_map("bar_data_t", "bar", DECL_TYPE);
 
 	// raw allow to other module.  Not mentioned in style guide
-	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection(node));
+	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection("foo", node));
 
 	free_all_maps();
 	free_policy_node(node);
@@ -273,7 +284,10 @@ START_TEST (test_compare_nodes_refpolicy) {
 	second->data.av_data->sources = calloc(1, sizeof(struct string_list));
 	second->data.av_data->sources->string = strdup("foo_t");
 
-	struct ordering_metadata *o = prepare_ordering_metadata(head);
+	struct check_data data;
+	data.mod_name = strdup("foo");
+
+	struct ordering_metadata *o = prepare_ordering_metadata(&data, head);
 
 	ck_assert_int_eq(ORDER_SECTION, compare_nodes_refpolicy(o, first, second));
 	ck_assert_int_eq(-ORDER_SECTION, compare_nodes_refpolicy(o, second, first));
@@ -291,6 +305,7 @@ START_TEST (test_compare_nodes_refpolicy) {
 	first->data.d_data->flavor = DECL_TYPE;
 	ck_assert_int_eq(-ORDER_DECLARATION_SUBSECTION, compare_nodes_refpolicy(o, first, second));
 
+	free(data.mod_name);
 	free_ordering_metadata(o);
 	free_policy_node(head);
 }

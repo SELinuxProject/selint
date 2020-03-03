@@ -39,6 +39,7 @@ void set_current_module_name(const char *mn);
 
 /**********************************
 * Return the name of the current module
+* This is only available during parsing
 **********************************/
 char *get_current_module_name(void);
 

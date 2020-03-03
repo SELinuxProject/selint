@@ -21,7 +21,11 @@
 #include "string_list.h"
 #include "tree.h"
 #include "maps.h"
-#include "ordering.h"
+
+enum order_conf {
+	ORDER_REF,
+	ORDER_LAX
+};
 
 struct config_check_data {
 	enum order_conf order_conf;
