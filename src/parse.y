@@ -39,14 +39,12 @@
 	enum node_flavor node_flavor;
 }
 
-%token <string> MLS_LEVEL;
 %token <string> STRING;
 %token <string> NUM_STRING;
 %token <string> IPV4;
 %token <string> IPV6;
 %token <string> NUMBER;
 %token <string> QUOTED_STRING;
-%token <symbol> SYMBOL;
 %token <string> VERSION_NO;
 %token <string> SELINT_COMMAND;
 
