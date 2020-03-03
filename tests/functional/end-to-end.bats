@@ -61,7 +61,7 @@ test_ordering() {
 			echo "Checking for $p"
 			count=$(echo ${output} | grep -o ${p} | wc -l)
 			[ "$count" -eq "1" ]
-		done < "${CHECK_DIR}/${FILENAME_PREFIX}.expect"
+		done < "${CHECK_DIR}/${FILENAME_PREFIX}.expect.${ORDER_CONF}"
 		local EXPECT_COUNT=$(cat ${CHECK_DIR}/${FILENAME_PREFIX}.expect.${ORDER_CONF} | wc -l)
 		count=$(echo ${output} | grep -o C-001 | wc -l)
 		echo "Expecting: ${EXPECT_COUNT}, got: $count"
