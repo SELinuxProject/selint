@@ -34,7 +34,7 @@ struct check_result *check_te_order(const struct check_data *data,
 
 	switch (node->flavor) {
 	case NODE_TE_FILE:
-		order_data = prepare_ordering_metadata(node);
+		order_data = prepare_ordering_metadata(data, node);
 		order_node_arr_index = 0;
 		if (!order_data) {
 			return alloc_internal_error("Failed to initialize ordering for C-001");

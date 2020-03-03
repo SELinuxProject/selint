@@ -26,7 +26,7 @@ int is_optional(const struct policy_node *node);
 int is_tunable(const struct policy_node *node);
 int is_in_ifdef(const struct policy_node *node);
 
-struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *head)
+struct ordering_metadata *prepare_ordering_metadata(const struct check_data *data, const struct policy_node *head)
 {
 	const struct policy_node *cur = head->next; // head is file.  Order the contents
 	size_t count = 0;
@@ -44,6 +44,8 @@ struct ordering_metadata *prepare_ordering_metadata(const struct policy_node *he
 
 	struct ordering_metadata *ret = calloc(1, sizeof(struct ordering_metadata) +
 	                                       (count * sizeof(struct order_node)));
+	ret->mod_name = data->mod_name; // Will only be needed for duration of check, so will remain allocated
+	                                // until we are done with this copy
 	ret->order_node_len = count;
 	ret->sections = sections;
 	// The nodes array will be populated during the LIS traversal
@@ -111,7 +113,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 			printf("Line: %u, Section %s: LSS: %d\n",
 			       nodes[i].node->lineno,
 			       get_section(nodes[i].node),
-			       get_local_subsection(nodes[i].node));
+			       get_local_subsection(ordering->mod_name, nodes[i].node));
 		}
 	}
 #endif
@@ -288,24 +290,13 @@ static int is_self_rule(const struct policy_node *node)
 	       0 == strcmp(node->data.av_data->targets->string, "self");
 }
 
-static int is_own_module_rule(const struct policy_node *node)
+static int is_own_module_rule(const struct policy_node *node, const char *current_mod_name)
 {
 	if (node->flavor != NODE_AV_RULE &&
 	    node->flavor != NODE_IF_CALL) {
 		return 0;
 	}
 
-	const char *domain_name = get_section(node);
-	if (!domain_name) {
-		return 0;
-	}
-	const char *current_mod = look_up_in_decl_map(domain_name, DECL_TYPE);
-	if (!current_mod) {
-		current_mod = look_up_in_decl_map(domain_name, DECL_ATTRIBUTE);
-	}
-	if (!current_mod) {
-		return 0; // Our section isn't a valid type or attribute
-	}
 	if (node->flavor == NODE_IF_CALL) {
 		// These should actually be patterns, not real calls
 		if (look_up_in_ifs_map(node->data.ic_data->name)) {
@@ -320,7 +311,7 @@ static int is_own_module_rule(const struct policy_node *node)
 			module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_ATTRIBUTE);
 		}
 		if (module_of_type_or_attr &&
-		    0 != strcmp(module_of_type_or_attr, current_mod)) {
+		    0 != strcmp(module_of_type_or_attr, current_mod_name)) {
 			free_string_list(types);
 			return 0;
 		}
@@ -350,7 +341,7 @@ static int is_kernel_mod_if_call(const struct policy_node *node)
 	return 0;
 }
 
-static int is_own_mod_if_call(const struct policy_node *node)
+static int is_own_mod_if_call(const struct policy_node *node, const char *current_mod_name)
 {
 	if (node->flavor != NODE_IF_CALL) {
 		return 0;
@@ -360,24 +351,10 @@ static int is_own_mod_if_call(const struct policy_node *node)
 		return 0;
 	}
 
-	// TODO: better way to get current module name,
-	// but get_current_module_name() does not work
-
-	struct string_list *types = get_types_in_node(node);
-	struct string_list *cur = types;
-	while (cur) {
-		const char *module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_TYPE);
-		if (!module_of_type_or_attr) {
-			module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_ATTRIBUTE);
-		}
-		if (module_of_type_or_attr &&
-		    0 != strcmp(module_of_type_or_attr, mod_name)) {
-			free_string_list(types);
-			return 0;
-		}
-		cur = cur->next;
+	if (current_mod_name &&
+	    0 != strcmp(current_mod_name, mod_name)) {
+		return 0;
 	}
-	free_string_list(types);
 	return 1;
 }
 
@@ -457,7 +434,7 @@ int is_in_ifdef(const struct policy_node *node)
 	return ret;
 }
 
-enum local_subsection get_local_subsection(const struct policy_node *node)
+enum local_subsection get_local_subsection(const char *mod_name, const struct policy_node *node)
 {
 	if (!node) {
 		return LSS_UNKNOWN;
@@ -470,9 +447,9 @@ enum local_subsection get_local_subsection(const struct policy_node *node)
 		return LSS_TUNABLE;
 	} else if (is_self_rule(node)) {
 		return LSS_SELF;
-	} else if (is_own_module_rule(node)) {
+	} else if (is_own_module_rule(node, mod_name)) {
 		return LSS_OWN;
-	} else if (is_own_mod_if_call(node)) {
+	} else if (is_own_mod_if_call(node, mod_name)) {
 		return LSS_OWN;
 	} else if (is_kernel_mod_if_call(node)) {
 		return LSS_KERNEL_MOD;
@@ -573,8 +550,8 @@ enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_met
 	}
 
 	// Local policy rules sections
-	enum local_subsection lss_first = get_local_subsection(first);
-	enum local_subsection lss_second = get_local_subsection(second);
+	enum local_subsection lss_first = get_local_subsection(ordering_data->mod_name, first);
+	enum local_subsection lss_second = get_local_subsection(ordering_data->mod_name, second);
 
 	if (lss_first == LSS_UNKNOWN || lss_second == LSS_UNKNOWN) {
 		return ORDER_EQUAL; // ... Maybe? Should this case be handled earlier?
@@ -723,7 +700,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		reason_str = "that is in another layer";
 		break;
 	case ORDER_LOCAL_SUBSECTION:
-		other_lss = get_local_subsection(other_node);
+		other_lss = get_local_subsection(order_data->mod_name, other_node);
 		switch (other_lss) {
 		case LSS_SELF:
 			reason_str = "that is a self rule";
@@ -762,7 +739,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			return NULL;
 		}
 		if (other_lss == LSS_KERNEL || other_lss == LSS_SYSTEM || other_lss == LSS_OTHER) {
-			enum local_subsection this_lss = get_local_subsection(this_node);
+			enum local_subsection this_lss = get_local_subsection(order_data->mod_name, this_node);
 			if (this_lss == LSS_KERNEL || this_lss == LSS_SYSTEM) {
 				int r = asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
 				if (r == -1) {
@@ -792,7 +769,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	size_t str_len = strlen(reason_str) +
 	                 strlen(before_after) +
 	                 strlen("Line out of order.  It is of type ") +
-	                 strlen(lss_to_string(get_local_subsection(this_node))) + 1 +
+	                 strlen(lss_to_string(get_local_subsection(order_data->mod_name, this_node))) + 1 +
 	                 strlen(" line ") +
 	                 13; // 13 is enough for the maximum
 	                     // length of an unsigned int (10)
@@ -806,7 +783,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 
 	size_t written = snprintf(ret, str_len,
 	                          "Line out of order.  It is of type %s %s line %u %s.",
-	                          lss_to_string(get_local_subsection(this_node)),
+	                          lss_to_string(get_local_subsection(order_data->mod_name, this_node)),
 	                          before_after,
 	                          other_node->lineno,
 	                          reason_str);
