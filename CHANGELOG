@@ -1,9 +1,8 @@
 # SELint Changelog
 
 ## Unreleased
-### Added
+### Added (general feature)
 - -S flag to print a summary of issue found following an analysis
-- Check S-003 for unneeded semicolons
 - --context flag to specify additional files to parse but not scan.
   This is primarily helpful if you want to only scan your modified files
   in a full source repository.  (If you are planning on loading your local
@@ -12,10 +11,19 @@
   don't need to use this option)
 - -F flag to return an error code on issues found
 
+### Added (checks)
+- S-003 for unneeded semicolons
+- E-006 for attribute/interface name clash
+
+### Changed
+- Turn C-001 off by default.
+- Assume the presence of system_u user and object_r role if no config is loaded.
+
 ### Fixed
 - Man page generation in distribution tarballs now works after make clean
 - documentation cleanup
 - Various parser fixes
+- Clean up of check C-001
 
 ## [1.0.2] - 2020-01-30
 ### Fixed
