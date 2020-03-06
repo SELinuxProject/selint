@@ -272,3 +272,14 @@ test_one_check() {
 	do_test "W-001" "../misc/needs_context.te" 1 "--context=policies/context"
 	rm tmp.conf
 }
+
+@test "run_summary" {
+	run ${SELINT_PATH} -c configs/default.conf -rsS policies/check_triggers
+	count=$(echo ${output} | grep -o "Found the following issue counts" | wc -l)
+	[ "$count" -eq 1 ]
+	for SEV in "C" "S" "W" "E"
+	do
+		count=$(echo ${output} | grep -E -o "${SEV}-00[0-9]: [0-9]+" | wc -l)
+		[ "$count" -ge 1 ]
+	done
+}
