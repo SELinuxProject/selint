@@ -203,7 +203,7 @@ static int comp_check_nodes(const void *n1, const void *n2)
 		} else if (node2->check_id[0] == 'W') {
 			COMPARE_IDS(node1_id, node2_id);
 		} else {
-			return 1;
+			return -1;
 		}
 	case 'E':
 		if (node2->check_id[0] == 'E') {
