@@ -149,6 +149,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_SEMICOLON, ck, "S-003",
 			          check_useless_semicolon);
 		}
+		if (CHECK_ENABLED("S-004")) {
+			add_check(NODE_IF_CALL, ck, "S-004",
+			          check_if_calls_template);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {
