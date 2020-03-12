@@ -44,6 +44,34 @@ struct check_result *check_interface_definitions_have_comment(__attribute__((unu
 	}
 }
 
+struct check_result *check_if_calls_template(__attribute__((unused)) const struct
+                                             check_data *data,
+                                             const struct
+                                             policy_node *node)
+{
+	const struct policy_node *parent = node->parent;
+	while (parent &&
+	       (parent->flavor != NODE_INTERFACE_DEF && parent->flavor != NODE_TEMP_DEF)) {
+		parent = parent->parent;
+	}
+	
+	if (!parent) {
+		return NULL;
+	}
+	
+	const char *call_name = node->data.ic_data->name;
+	
+	if (parent->flavor == NODE_INTERFACE_DEF && look_up_in_template_map(call_name)) {
+		return make_check_result('S',
+					 S_ID_IF_CALLS_TEMPL,
+					 "interface %s calls template %s",
+					 parent->data.str,
+					 call_name);
+	}
+	
+	return NULL;
+}
+
 struct check_result *check_type_used_but_not_required_in_if(__attribute__((unused)) const struct
                                                             check_data *data,
                                                             const struct
