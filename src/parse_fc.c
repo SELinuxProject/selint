@@ -70,25 +70,36 @@ struct fc_entry *parse_fc_line(char *line)
 		}
 
 		char *maybe_s = strtok(NULL, ",");
-		if (maybe_s == NULL) {
-			goto cleanup;
-		}
-		char *maybe_c = strtok(NULL, ",");
+		char *maybe_c = NULL;
 		int i = 0;
-		while (maybe_s[i] != '\0' && maybe_s[i] != ')') {
-			i++;
-		}
-		if (maybe_s[i] == '\0') {
-			if (!maybe_c) {
+
+		if (maybe_s) {
+			maybe_c = strtok(NULL, ",");
+			while (maybe_s[i] != '\0' && maybe_s[i] != ')') {
+				i++;
+			}
+			if (maybe_s[i] == '\0') {
+				if (!maybe_c) {
+					// Missing closing paren
+					goto cleanup;
+				}
+			}
+			maybe_s[i] = '\0';
+			while (maybe_s[0] != '\0'
+			       && (maybe_s[0] == ' ' || maybe_s[0] == '\t')) {
+				// trim beginning whitespace
+				maybe_s++;
+			}
+		} else {
+			// No mls
+			while (context_part[i] != '\0' && context_part[i] != ')') {
+				i++;
+			}
+			if (context_part[i] == '\0') {
 				// Missing closing paren
 				goto cleanup;
 			}
-		}
-		maybe_s[i] = '\0';
-		while (maybe_s[0] != '\0'
-		       && (maybe_s[0] == ' ' || maybe_s[0] == '\t')) {
-			// trim beginning whitespace
-			maybe_s++;
+			context_part[i] = '\0';
 		}
 
 		if (maybe_c) {
@@ -118,8 +129,10 @@ struct fc_entry *parse_fc_line(char *line)
 			strcpy(out->context->range, maybe_s);
 			strcat(out->context->range, ":");
 			strcat(out->context->range, maybe_c);
-		} else {
+		} else if (maybe_s) {
 			out->context->range = strdup(maybe_s);
+		} else {
+			out->context->range = NULL;
 		}
 	} else if (strcmp("<<none>>\n", pos) == 0
 	           || strcmp("<<none>>\r\n", pos) == 0) {
