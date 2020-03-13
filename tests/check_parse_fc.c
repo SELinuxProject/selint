@@ -71,6 +71,20 @@ START_TEST (test_parse_fc_line_with_gen_context) {
 
 	free_fc_entry(out);
 
+	char line2[] = "/usr/bin(/.*)?		gen_context(system_u:object_r:bin_t)";
+	out= parse_fc_line(line2);
+
+	ck_assert_ptr_nonnull(out);
+	ck_assert_str_eq("/usr/bin(/.*)?", out->path);
+	ck_assert(out->obj == '\0');
+	ck_assert_ptr_nonnull(out->context);
+	ck_assert_int_eq(1, out->context->has_gen_context);
+	ck_assert_str_eq("system_u", out->context->user);
+	ck_assert_str_eq("object_r", out->context->role);
+	ck_assert_str_eq("bin_t", out->context->type);
+	ck_assert_ptr_null(out->context->range);
+
+	free_fc_entry(out);
 }
 END_TEST
 
