@@ -1,0 +1,7 @@
+interface(`bar',`
+	# empty
+')
+
+interface(`foo',`
+	bar()
+')

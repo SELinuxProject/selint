@@ -136,6 +136,10 @@ test_one_check() {
 	test_one_check "W-005" "w05*"
 }
 
+@test "W-006" {
+	test_one_check "W-006" "w06.if"
+}
+
 @test "E-002" {
 	test_one_check "E-002" "e02.fc"
 }

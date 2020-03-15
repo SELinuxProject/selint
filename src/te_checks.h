@@ -94,6 +94,18 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
                                                       *node);
 
 /*********************************************
+* Check for interface calls with empty argument
+* Called on NODE_IF_CALL nodes
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue W-006
+*********************************************/
+struct check_result *check_empty_if_call_arg(const struct
+                                             check_data *data,
+                                             const struct
+                                             policy_node *node);
+
+/*********************************************
  * Check for clash of attribute and interface names.
  * This will cause compilation to enter a endless loop
  * and consume all available memory.
