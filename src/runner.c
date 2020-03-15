@@ -213,7 +213,7 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("E-006")) {
 			add_check(NODE_DECL, ck, "E-006",
-				check_attribute_interface_nameclash);
+				check_declaration_interface_nameclash);
 		}
 	case 'F':
 		break;

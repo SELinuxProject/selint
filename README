@@ -153,7 +153,7 @@ CHECK IDS
 	E-003: Nonexistent user listed in fc file
 	E-004: Nonexistent role listed in fc file
 	E-005: Nonexistent type listed in fc file
-	E-006: Attribute and interface with same name
+	E-006: Declaration and interface with same name
 
 	F-001: Policy syntax error prevents further processing
 	F-002: Internal error in SELint

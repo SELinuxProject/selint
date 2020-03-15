@@ -252,15 +252,15 @@ START_TEST (test_check_attribute_interface_nameclash) {
 	node->data.d_data->flavor = DECL_ATTRIBUTE;
 	node->data.d_data->name = strdup("foo");
 
-	ck_assert_ptr_null(check_attribute_interface_nameclash(NULL, node));
+	ck_assert_ptr_null(check_declaration_interface_nameclash(NULL, node));
 
 	insert_into_ifs_map("foo", "bar");
 
-	struct check_result *res = check_attribute_interface_nameclash(NULL, node);
+	struct check_result *res = check_declaration_interface_nameclash(NULL, node);
 
 	ck_assert_ptr_nonnull(res);
 	ck_assert_int_eq(res->severity, 'E');
-	ck_assert_int_eq(res->check_id, E_ID_ATTR_IF_CLASH);
+	ck_assert_int_eq(res->check_id, E_ID_DECL_IF_CLASH);
 	free_check_result(res);
 
 	free_policy_node(node);
