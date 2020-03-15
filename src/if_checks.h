@@ -69,4 +69,16 @@ struct check_result *check_type_required_but_not_used_in_if(const struct
                                                             const struct
                                                             policy_node *node);
 
+/*********************************************
+* Check that gen_require blocks are quoted
+* Called on NODE_GEN_REQ nodes
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue W-009
+*********************************************/
+struct check_result *check_unquoted_gen_require_block(const struct
+                                                      check_data *data,
+                                                      const struct
+                                                      policy_node *node);
+
 #endif

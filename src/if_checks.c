@@ -265,3 +265,16 @@ struct check_result *check_type_required_but_not_used_in_if(__attribute__((unuse
 	free_string_list(types_to_check);
 	return res;
 }
+
+struct check_result *check_unquoted_gen_require_block(__attribute__((unused)) const struct
+                                                      check_data *data,
+                                                      const struct
+                                                      policy_node *node)
+{
+	if (node->flagged) {
+		return make_check_result('W', W_ID_UNQUOTED_GENREQ,
+					 "Gen require block unquoted");
+	}
+	
+	return NULL;
+}

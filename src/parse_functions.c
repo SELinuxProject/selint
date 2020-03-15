@@ -555,9 +555,12 @@ enum selint_error begin_gen_require(struct policy_node **cur,
 	return begin_block(cur, NODE_GEN_REQ, (char *)NULL, lineno);
 }
 
-enum selint_error end_gen_require(struct policy_node **cur)
+enum selint_error end_gen_require(struct policy_node **cur, int unquoted)
 {
-
+	if (unquoted && (*cur)->parent && (*cur)->parent->flavor == NODE_GEN_REQ) {
+		(*cur)->parent->flagged = 1;
+	}
+	
 	return end_block(cur, NODE_GEN_REQ);
 }
 

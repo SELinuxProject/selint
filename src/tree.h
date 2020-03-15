@@ -172,6 +172,7 @@ struct policy_node {
 	union node_data data;
 	char *exceptions;
 	unsigned int lineno;
+	unsigned short flagged;
 };
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,

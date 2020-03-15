@@ -203,6 +203,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "W-008",
 			          check_risky_allow_perm);
 		}
+		if (CHECK_ENABLED("W-009")) {
+			add_check(NODE_GEN_REQ, ck, "W-009",
+			          check_unquoted_gen_require_block);
+		}
 		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {

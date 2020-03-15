@@ -42,6 +42,7 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 	to_insert->data = data;
 	to_insert->exceptions = NULL;
 	to_insert->lineno = lineno;
+	to_insert->flagged = 0;
 
 	if (parent->first_child == NULL) {
 		parent->first_child = to_insert;
@@ -86,6 +87,7 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 	to_insert->prev = prev;
 	to_insert->exceptions = NULL;
 	to_insert->lineno = lineno;
+	to_insert->flagged = 0;
 
 	return SELINT_SUCCESS;
 }

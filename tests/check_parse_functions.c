@@ -439,7 +439,7 @@ START_TEST (test_wrong_block_end) {
 
 	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_optional_policy(&cur));
 
-	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_gen_require(&cur));
+	ck_assert_int_eq(SELINT_NOT_IN_BLOCK, end_gen_require(&cur, 0));
 
 	ck_assert_int_eq(SELINT_SUCCESS, end_interface_def(&cur));
 
