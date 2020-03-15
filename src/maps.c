@@ -30,6 +30,9 @@ struct bool_hash_elem *filetrans_map = NULL;
 struct bool_hash_elem *role_if_map = NULL;
 struct template_hash_elem *template_map = NULL;
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor flavor)
 {
 
@@ -65,6 +68,9 @@ static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor fl
 	return decl;
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 void insert_into_decl_map(const char *type, const char *module_name,
                           enum decl_flavor flavor)
 {
@@ -123,6 +129,9 @@ char *look_up_in_decl_map(const char *type, enum decl_flavor flavor)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 void insert_into_mods_map(const char *mod_name, const char *status)
 {
 
@@ -139,6 +148,9 @@ void insert_into_mods_map(const char *mod_name, const char *status)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 char *look_up_in_mods_map(const char *mod_name)
 {
 
@@ -153,6 +165,9 @@ char *look_up_in_mods_map(const char *mod_name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 void insert_into_mod_layers_map(const char *mod_name, const char *layer)
 {
 	struct hash_elem *mod;
@@ -169,6 +184,9 @@ void insert_into_mod_layers_map(const char *mod_name, const char *layer)
 
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 char *look_up_in_mod_layers_map(const char *mod_name)
 {
 	struct hash_elem *mod;
@@ -182,6 +200,9 @@ char *look_up_in_mod_layers_map(const char *mod_name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 void insert_into_ifs_map(const char *if_name, const char *module)
 {
 
@@ -198,6 +219,9 @@ void insert_into_ifs_map(const char *if_name, const char *module)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 char *look_up_in_ifs_map(const char *if_name)
 {
 
@@ -232,6 +256,9 @@ unsigned int decl_map_count(enum decl_flavor flavor)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 void mark_transform_if(const char *if_name)
 {
 	struct bool_hash_elem *transform_if;
@@ -249,6 +276,9 @@ void mark_transform_if(const char *if_name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 int is_transform_if(const char *if_name)
 {
 	struct bool_hash_elem *transform_if;
@@ -260,6 +290,9 @@ int is_transform_if(const char *if_name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 void mark_filetrans_if(const char *if_name)
 {
 	struct bool_hash_elem *filetrans_if;
@@ -277,6 +310,9 @@ void mark_filetrans_if(const char *if_name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 int is_filetrans_if(const char *if_name)
 {
 	struct bool_hash_elem *filetrans_if;
@@ -288,6 +324,9 @@ int is_filetrans_if(const char *if_name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 void mark_role_if(const char *if_name)
 {
 	struct bool_hash_elem *role_if;
@@ -305,6 +344,9 @@ void mark_role_if(const char *if_name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 int is_role_if(const char *if_name)
 {
 	struct bool_hash_elem *role_if;
@@ -348,6 +390,9 @@ static void insert_noop(__attribute__((unused)) struct template_hash_elem *templ
 	return;
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 static void insert_into_template_map(const char *name, void *new_node,
                               void (*insertion_func)(struct template_hash_elem
                                                      *, void *))
@@ -405,6 +450,9 @@ void insert_call_into_template_map(const char *name, struct if_call_data *call)
 	insert_into_template_map(name, new_node, insert_call);
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 struct template_hash_elem *look_up_in_template_map(const char *name)
 {
 
