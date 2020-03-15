@@ -148,10 +148,20 @@ START_TEST (test_parse_basic_if) {
 	current = current->next;
 
 	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_str_eq("basic_t", current->data.d_data->name);
 	ck_assert_ptr_null(current->first_child);
-	ck_assert_ptr_null(current->next);
 	ck_assert_ptr_nonnull(current->prev);
 	ck_assert_ptr_nonnull(current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_str_eq("basic_exec_t", current->data.d_data->name);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_nonnull(current->parent);
+	ck_assert_ptr_null(current->next);
 
 	current = current->parent->next;
 
@@ -169,6 +179,7 @@ START_TEST (test_parse_uncommon_constructs) {
 
 	ast = cur = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("uncommon");
+	parsing_filename = "uncommon.te";
 
 	yyin = fopen(UNCOMMON_TE_FILENAME, "r");
 	ck_assert_int_eq(0, yyparse());
