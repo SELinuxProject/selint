@@ -95,6 +95,11 @@ test_one_check() {
 	test_one_check "C-006" "c06.te"
 }
 
+@test "C-007" {
+	test_one_check "C-007" "c07.1.te"
+	test_one_check "C-007" "c07.2.te"
+}
+
 @test "S-001" {
 	test_one_check "S-001" "s01.te"
 }

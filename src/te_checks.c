@@ -139,6 +139,39 @@ struct check_result *check_too_many_perms_in_allow_rule(__attribute__((unused)) 
 	return NULL;
 }
 
+struct check_result *check_multi_class_allow_rule(__attribute__((unused)) const struct check_data *data,
+                                                  const struct policy_node *node)
+{
+	// ignore non-allow rules
+	if (node->data.av_data->flavor != AV_RULE_ALLOW) {
+		return NULL;
+	}
+	
+	const struct string_list *classes = node->data.av_data->object_classes;
+	
+	if (!classes->next) {
+		return NULL;
+	}
+	
+	const struct string_list *perms = node->data.av_data->perms;
+	
+	// ignore rules with a single base permission
+	if (!perms->next) {
+		const char *suffix = strrchr(perms->string, '_');
+		if (!suffix ||
+		    (0 != strcmp(suffix, "_perms"))) {
+			return NULL;
+		}
+	}
+	
+	char *classes_str = join_string_list(classes);
+	struct check_result *res = make_check_result('C', C_ID_MULTI_CLASS_AV_RULE,
+						     "Allow rule with more than one class (%s)",
+						     classes_str);	
+	free(classes_str);
+	return res;
+}
+
 struct check_result *check_require_block(const struct check_data *data,
                                          const struct policy_node *node)
 {

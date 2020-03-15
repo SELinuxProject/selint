@@ -143,6 +143,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "C-006",
 			          check_too_many_perms_in_allow_rule);
 		}
+		if (CHECK_ENABLED("C-007")) {
+			add_check(NODE_AV_RULE, ck, "C-007",
+			          check_multi_class_allow_rule);
+		}
 		// FALLTHRU
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {
