@@ -1,0 +1,3 @@
+policy_module(c06, 1.0)
+
+allow source target:cls { perm1 perm2 perm3 perm4 perm5 };

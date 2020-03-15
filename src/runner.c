@@ -141,6 +141,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_DECL, ck, "C-005",
 			          check_unordered_perms);
 		}
+		if (CHECK_ENABLED("C-006")) {
+			add_check(NODE_AV_RULE, ck, "C-006",
+			          check_too_many_perms_in_allow_rule);
+		}
 		// FALLTHRU
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {

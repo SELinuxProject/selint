@@ -114,6 +114,47 @@ struct check_result *check_unordered_perms(__attribute__((unused)) const struct 
 
 }
 
+struct check_result *check_too_many_perms_in_allow_rule(__attribute__((unused)) const struct check_data *data,
+                                                        const struct policy_node *node)
+{
+	// ignore multi class av rules
+	if (node->data.av_data->object_classes->next) {
+		return NULL;
+	}
+
+	// ignore non-allow rules
+	if (node->data.av_data->flavor != AV_RULE_ALLOW) {
+		return NULL;
+	}
+
+	// ignore special classes
+	const char *class_name = node->data.av_data->object_classes->string;
+	if (strcmp(class_name, "process") == 0 ||
+	    strcmp(class_name, "process2") == 0 ||
+	    strcmp(class_name, "capability") == 0 ||
+	    strcmp(class_name, "capability2") == 0) {
+		return NULL;
+	}
+
+	const struct string_list *cur_perm = node->data.av_data->perms;
+	unsigned short count = 0;
+
+	while (cur_perm) {
+		count++;
+
+		cur_perm = cur_perm->next;
+	}
+
+	if (count > 4) {
+		return make_check_result('C', C_ID_TOO_MANY_PERMS,
+					 "Too many permissions (%u) for class %s in allow rule (use permission macro)",
+					 count,
+					 class_name);
+	}
+
+	return NULL;
+}
+
 struct check_result *check_require_block(const struct check_data *data,
                                          const struct policy_node *node)
 {

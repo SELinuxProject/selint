@@ -46,6 +46,16 @@ struct check_result *check_unordered_perms(const struct check_data *data,
                                            const struct policy_node *node);
 
 /*********************************************
+* Check for too many permissions in av rules.
+* Called on NODE_AV_RULE nodes.
+* data - metadata about the file currently being scanned
+* node - the node to check
+* returns NULL if passed or check_result for issue C-006
+*********************************************/
+struct check_result *check_too_many_perms_in_allow_rule(const struct check_data *data,
+                                                        const struct policy_node *node);
+
+/*********************************************
 * Check for the presence of require blocks in TE files.
 * Interface calls are to be prefered.
 * Called on NODE_REQUIRE and NODE_GEN_REQ nodes.
