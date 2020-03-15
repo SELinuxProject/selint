@@ -1,0 +1,6 @@
+policy_module(w07, 1.0)
+
+attribute a1;
+type t1;
+
+foo(a1 - t1)

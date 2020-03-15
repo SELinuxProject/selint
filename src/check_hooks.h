@@ -44,6 +44,7 @@ enum warn_ids {
 	W_ID_FC_REGEX          = 4,
 	W_ID_IF_CALL_OPTIONAL  = 5,
 	W_ID_EMPTY_IF_CALL_ARG = 6,
+	W_ID_SPACE_IF_CALL_ARG = 7,
 	W_END
 };
 
