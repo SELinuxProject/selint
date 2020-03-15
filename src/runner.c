@@ -135,6 +135,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_TEMP_DEF, ck, "C-004",
 			          check_interface_definitions_have_comment);
 		}
+		if (CHECK_ENABLED("C-005")) {
+			add_check(NODE_AV_RULE, ck, "C-005",
+			          check_unordered_perms_in_av_rule);
+		}
 		// FALLTHRU
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {
