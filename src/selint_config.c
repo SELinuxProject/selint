@@ -51,7 +51,7 @@ enum selint_error parse_config(const char *config_filename,
                                char *severity,
                                struct string_list **config_disabled_checks,
                                struct string_list **config_enabled_checks,
-                               struct config_check_data *conf_check_data)
+                               struct config_check_data *config_check_data)
 {
 
 #pragma GCC diagnostic push
@@ -116,9 +116,9 @@ enum selint_error parse_config(const char *config_filename,
 	char *config_ordering_rules = cfg_getstr(cfg, "ordering_rules");
 
 	if (strcmp(config_ordering_rules, "refpolicy") == 0) {
-		conf_check_data->order_conf = ORDER_REF;
+		config_check_data->order_conf = ORDER_REF;
 	} else if (strcmp(config_ordering_rules, "refpolicy-lax") == 0) {
-		conf_check_data->order_conf = ORDER_LAX;
+		config_check_data->order_conf = ORDER_LAX;
 	} else {
 		printf("Invalid ordering rules (%s), specified in config.\n"\
 		       "Options are \"refpolicy\" and \"refpolicy-lax\"\n",
