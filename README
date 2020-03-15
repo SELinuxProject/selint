@@ -144,6 +144,7 @@ CHECK IDS
 	W-003: Unused type, attribute or role listed in require block
 	W-004: Potentially unescaped regex character in file contexts paths
 	W-005: Interface call from module not in optional_policy block
+	W-006: Interface call with empty argument
 
 	E-002: Bad file context format
 	E-003: Nonexistent user listed in fc file

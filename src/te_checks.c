@@ -232,6 +232,21 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
 	                         "Call to interface defined in module should be in optional_policy block");
 }
 
+struct check_result *check_empty_if_call_arg(__attribute__((unused)) const struct
+                                             check_data *data,
+                                             const struct
+                                             policy_node *node)
+{
+	if (!node->data.ic_data->args) {
+		return make_check_result('W',
+					 W_ID_EMPTY_IF_CALL_ARG,
+					 "Call to interface %s with empty argument",
+					 node->data.ic_data->name);
+	}
+	
+	return NULL;
+}
+
 struct check_result *check_attribute_interface_nameclash(__attribute__((unused)) const struct check_data
 							 *data,
 							 const struct policy_node

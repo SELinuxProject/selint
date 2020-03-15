@@ -164,7 +164,7 @@ END_TEST
 START_TEST (test_is_valid_check) {
 	ck_assert_int_eq(1, is_valid_check("W-001"));
 	ck_assert_int_eq(1, is_valid_check("W-005"));
-	ck_assert_int_eq(0, is_valid_check("W-006"));
+	ck_assert_int_eq(0, is_valid_check("W-107"));
 	ck_assert_int_eq(0, is_valid_check("foobar"));
 	ck_assert_int_eq(1, is_valid_check("C-001"));
 	ck_assert_int_eq(1, is_valid_check("S-001"));
