@@ -78,6 +78,26 @@ struct check_result *check_te_order(const struct check_data *data,
 	return NULL;
 }
 
+struct check_result *check_unordered_perms_in_av_rule(__attribute__((unused)) const struct check_data *data,
+                                                           const struct policy_node *node)
+{
+	const struct string_list *prev = NULL, *cur = node->data.av_data->perms;
+	
+	while (cur) {
+		if (prev && strcmp(prev->string, "~") != 0 && strcmp(prev->string, cur->string) > 0) {
+			return make_check_result('C', C_ID_UNORDERED_PERM,
+					  "Permissions in av rule not ordered (%s before %s)",
+					  prev->string,
+					  cur->string);
+		}
+		
+		prev = cur;
+		cur = cur->next;
+	}
+	
+	return NULL;
+}
+
 struct check_result *check_require_block(const struct check_data *data,
                                          const struct policy_node *node)
 {
