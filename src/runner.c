@@ -183,6 +183,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_IF_CALL, ck, "W-006",
 			          check_empty_if_call_arg);
 		}
+		if (CHECK_ENABLED("W-007")) {
+			add_check(NODE_IF_CALL, ck, "W-007",
+			          check_space_if_call_arg);
+		}
 		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {
