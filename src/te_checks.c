@@ -367,6 +367,35 @@ struct check_result *check_space_if_call_arg(__attribute__((unused)) const struc
 	return NULL;
 }
 
+struct check_result *check_risky_allow_perm(__attribute__((unused)) const struct
+                                            check_data *data,
+                                            const struct
+                                            policy_node *node)
+{
+	// ignore non-allow rules
+	if (node->data.av_data->flavor != AV_RULE_ALLOW) {
+		return NULL;
+	}
+	
+	const struct string_list *perms = node->data.av_data->perms;
+	
+	while (perms) {
+		if (0 == strcmp(perms->string, "*") ||
+		    0 == strcmp(perms->string, "~")) {
+			char *perm_str = join_string_list(perms);
+			struct check_result *res = make_check_result('W', W_ID_RISKY_ALLOW_PERM,
+						                     "Allow rule with complement or wildcard permission (%s)",
+						                     perm_str);
+			free(perm_str);
+			return res;
+		}
+		
+		perms = perms->next;
+	}
+	
+	return NULL;
+}
+
 struct check_result *check_declaration_interface_nameclash(__attribute__((unused)) const struct check_data
 							   *data,
 							   const struct policy_node

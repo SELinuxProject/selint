@@ -138,6 +138,18 @@ struct check_result *check_space_if_call_arg(const struct
                                              policy_node *node);
 
 /*********************************************
+* Check for allow rule with complement or wildcard permission
+* Called on NODE_AV_RULE nodes
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue W-008
+*********************************************/
+struct check_result *check_risky_allow_perm(const struct
+                                            check_data *data,
+                                            const struct
+                                            policy_node *node);
+
+/*********************************************
  * Check for clash of declaration and interface names.
  * This will cause macro expansion to enter a endless loop
  * and consume all available memory.

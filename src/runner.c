@@ -199,6 +199,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_IF_CALL, ck, "W-007",
 			          check_space_if_call_arg);
 		}
+		if (CHECK_ENABLED("W-008")) {
+			add_check(NODE_AV_RULE, ck, "W-008",
+			          check_risky_allow_perm);
+		}
 		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {

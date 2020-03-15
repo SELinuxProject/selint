@@ -149,6 +149,7 @@ CHECK IDS
 	W-005: Interface call from module not in optional_policy block
 	W-006: Interface call with empty argument
 	W-007: Unquoted space in argument of interface call
+	W-008: Allow rule with complement or wildcard permission
 
 	E-002: Bad file context format
 	E-003: Nonexistent user listed in fc file
