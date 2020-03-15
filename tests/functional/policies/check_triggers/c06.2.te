@@ -1,0 +1,3 @@
+policy_module(c07, 1.0)
+
+allow source target:{ cls1 cls2 } { perm1 perm2 };

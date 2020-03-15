@@ -134,6 +134,7 @@ CHECK IDS
 	C-001: Violation of refpolicy te file ordering conventions
 	C-004: Interface does not have documentation comment
 	C-005: Permissions in av rule or class declaration not ordered
+	C-006: Allow rule with multiple classes
 
 	S-001: Require block used instead of interface call
 	S-002: File context file labels with type not declared in module

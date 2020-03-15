@@ -92,6 +92,12 @@ test_one_check() {
 	test_one_check "C-005" "c05.if"
 }
 
+@test "C-006" {
+	test_one_check "C-006" "c06.1.te"
+	test_one_check "C-006" "c06.2.te"
+	test_one_check_expect "C-006" "c06.3.te" 0
+}
+
 @test "S-001" {
 	test_one_check "S-001" "s01.te"
 }
