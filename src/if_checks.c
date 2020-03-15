@@ -143,6 +143,10 @@ struct check_result *check_type_used_but_not_required_in_if(__attribute__((unuse
 				flavor = "Attribute";
 			} else
 			if (look_up_in_decl_map
+			            (type_node->string, DECL_ATTRIBUTE_ROLE)) {
+				flavor = "Role Attribute";
+			} else
+			if (look_up_in_decl_map
 			            (type_node->string, DECL_ROLE)) {
 				flavor = "Role";
 			} else {
@@ -182,6 +186,8 @@ struct check_result *check_type_required_but_not_used_in_if(__attribute__((unuse
 		flavor = "Type";
 	} else if (dd->flavor == DECL_ATTRIBUTE) {
 		flavor = "Attribute";
+	} else if (dd->flavor == DECL_ATTRIBUTE_ROLE) {
+		flavor = "Role Attribute";
 	} else if (dd->flavor == DECL_ROLE) {
 		flavor = "Role";
 	} else {

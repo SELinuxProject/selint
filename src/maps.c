@@ -20,6 +20,7 @@ struct hash_elem *type_map = NULL;
 struct hash_elem *role_map = NULL;
 struct hash_elem *user_map = NULL;
 struct hash_elem *attr_map = NULL;
+struct hash_elem *roleattr_map = NULL;
 struct hash_elem *class_map = NULL;
 struct hash_elem *perm_map = NULL;
 struct hash_elem *mods_map = NULL;
@@ -54,6 +55,9 @@ static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor fl
 		break;
 	case DECL_ATTRIBUTE:
 		HASH_FIND(hh_attr, attr_map, name, strlen(name), decl);
+		break;
+	case DECL_ATTRIBUTE_ROLE:
+		HASH_FIND(hh_roleattr, roleattr_map, name, strlen(name), decl);
 		break;
 	case DECL_CLASS:
 		HASH_FIND(hh_class, class_map, name, strlen(name), decl);
@@ -98,6 +102,10 @@ void insert_into_decl_map(const char *type, const char *module_name,
 			break;
 		case DECL_ATTRIBUTE:
 			HASH_ADD_KEYPTR(hh_attr, attr_map, decl->key,
+			                strlen(decl->key), decl);
+			break;
+		case DECL_ATTRIBUTE_ROLE:
+			HASH_ADD_KEYPTR(hh_roleattr, roleattr_map, decl->key,
 			                strlen(decl->key), decl);
 			break;
 		case DECL_CLASS:
@@ -243,6 +251,8 @@ unsigned int decl_map_count(enum decl_flavor flavor)
 		return HASH_CNT(hh_type, type_map);
 	case DECL_ATTRIBUTE:
 		return HASH_CNT(hh_attr, attr_map);
+	case DECL_ATTRIBUTE_ROLE:
+		return HASH_CNT(hh_roleattr, roleattr_map);
 	case DECL_ROLE:
 		return HASH_CNT(hh_role, role_map);
 	case DECL_USER:

@@ -132,7 +132,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 	struct declaration_data *d_data;
 	struct if_call_data *ifc_data;
 	struct role_allow_data *ra_data;
-	struct type_attribute_data *ta_data;
+	struct attribute_data *ta_data;
 
 	switch (node->flavor) {
 	case NODE_AV_RULE:
@@ -200,6 +200,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		ret->next->string = strdup(ra_data->to);
 		break;
 	case NODE_TYPE_ATTRIBUTE:
+	case NODE_ROLE_ATTRIBUTE:
 		ta_data = node->data.ta_data;
 		ret = calloc(1, sizeof(struct string_list));
 		ret->string = strdup(ta_data->type);
@@ -321,7 +322,8 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 		free_fc_entry(to_free->data.fc_data);
 		break;
 	case NODE_TYPE_ATTRIBUTE:
-		free_type_attribute_data(to_free->data.ta_data);
+	case NODE_ROLE_ATTRIBUTE:
+		free_attribute_data(to_free->data.ta_data);
 		break;
 	default:
 		if (to_free->data.str != NULL) {
@@ -496,7 +498,7 @@ void free_sel_context(struct sel_context *to_free)
 	free(to_free);
 }
 
-void free_type_attribute_data(struct type_attribute_data *to_free)
+void free_attribute_data(struct attribute_data *to_free)
 {
 	if (to_free->type) {
 		free(to_free->type);

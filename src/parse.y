@@ -270,8 +270,7 @@ declaration:
 	|
 	role_declaration
 	|
-	// TODO: insert_declaration()
-	ATTRIBUTE_ROLE STRING SEMICOLON { free($2); }
+	ATTRIBUTE_ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, $2, NULL, yylineno); free($2); }
 	|
 	BOOL STRING SEMICOLON { insert_declaration(&cur, DECL_BOOL, $2, NULL, yylineno); free($2); }
 	;
@@ -307,7 +306,7 @@ type_attribute:
 	;
 
 role_attribute:
-	ROLE_ATTRIBUTE STRING comma_string_list SEMICOLON { free($2); free_string_list($3); }
+	ROLE_ATTRIBUTE STRING comma_string_list SEMICOLON { insert_role_attribute(&cur, $2, $3, yylineno); free($2); }
 
 rule:
 	av_type string_list string_list COLON string_list string_list SEMICOLON { insert_av_rule(&cur, $1, $2, $3, $5, $6, yylineno); }
@@ -479,8 +478,8 @@ require_line:
 		}
 	|
 	ATTRIBUTE_ROLE comma_string_list SEMICOLON {
-		//TODO: const struct string_list *iter = $2;
-		//TODO: for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATRIBUTE_ROLE, iter->string, NULL, yylineno);
+		const struct string_list *iter = $2;
+		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, iter->string, NULL, yylineno);
 		free_string_list($2);
 		}
 	|

@@ -199,6 +199,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_ALIAS:
 	case NODE_TYPE_ALIAS:
 	case NODE_TYPE_ATTRIBUTE:
+	case NODE_ROLE_ATTRIBUTE:
 		if (is_in_require(node)) {
 			return "_non_ordered";
 		} else {
@@ -541,6 +542,7 @@ enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_met
 			if (first->data.d_data->flavor != second->data.d_data->flavor) {
 				CHECK_FLAVOR_ORDERING(d_data, DECL_BOOL, ORDER_DECLARATION_SUBSECTION);
 				CHECK_FLAVOR_ORDERING(d_data, DECL_ATTRIBUTE, ORDER_DECLARATION_SUBSECTION);
+				CHECK_FLAVOR_ORDERING(d_data, DECL_ATTRIBUTE_ROLE, ORDER_DECLARATION_SUBSECTION);
 				// Types and roles should intersperse
 			} else {
 				// TODO: same subsection
