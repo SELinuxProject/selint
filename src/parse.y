@@ -624,9 +624,15 @@ cond_expr:
 	;
 
 genfscon:
-	GENFSCON STRING STRING context { free($2); free($3); }
+	GENFSCON STRING STRING genfscon_context { free($2); free($3); }
 	|
-	GENFSCON NUM_STRING STRING context { free($2); free($3); }
+	GENFSCON NUM_STRING STRING genfscon_context { free($2); free($3); }
+	;
+
+genfscon_context:
+	context
+	|
+	FILE_TYPE_SPECIFIER context
 	;
 
 sid:
@@ -687,8 +693,6 @@ context:
 	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA mls_range CLOSE_PAREN { free($5); free($7); }
 	|
 	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA CLOSE_PAREN { free($5); }
-	|
-	FILE_TYPE_SPECIFIER context
 	;
 
 raw_context:
