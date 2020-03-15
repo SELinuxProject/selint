@@ -283,6 +283,41 @@ struct check_result *check_empty_if_call_arg(__attribute__((unused)) const struc
 	return NULL;
 }
 
+struct check_result *check_space_if_call_arg(__attribute__((unused)) const struct
+                                             check_data *data,
+                                             const struct
+                                             policy_node *node)
+{
+	const struct string_list *prev = NULL, *args = node->data.ic_data->args;
+	unsigned short i = 1;
+	
+	while (args) {
+		if (args->has_incorrect_space) {
+			// do not issue on mls ranges
+			if ((args->string[0] != '-' ||
+			    look_up_in_decl_map(prev->string, DECL_TYPE) ||
+			    look_up_in_decl_map(prev->string, DECL_ATTRIBUTE) ||
+			    look_up_in_decl_map(prev->string, DECL_ROLE) ||
+			    look_up_in_decl_map(prev->string, DECL_USER))) {
+
+				return make_check_result('W',
+							 W_ID_SPACE_IF_CALL_ARG,
+							 "Argument no. %u '%s ...' of call to interface %s contains unquoted space",
+							 i - 1, // need to substract one, cause it is the next string who has the flag set
+							 prev ? prev->string : "",
+							 node->data.ic_data->name);
+			}
+		} else {
+			i++;
+		}
+		
+		prev = args;
+		args = args->next;
+	}
+	
+	return NULL;
+}
+
 struct check_result *check_attribute_interface_nameclash(__attribute__((unused)) const struct check_data
 							 *data,
 							 const struct policy_node

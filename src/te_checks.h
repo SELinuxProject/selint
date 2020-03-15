@@ -106,6 +106,18 @@ struct check_result *check_empty_if_call_arg(const struct
                                              policy_node *node);
 
 /*********************************************
+* Check for unquoted space in argument of interface calls
+* Called on NODE_IF_CALL nodes
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue W-007
+*********************************************/
+struct check_result *check_space_if_call_arg(const struct
+                                             check_data *data,
+                                             const struct
+                                             policy_node *node);
+
+/*********************************************
  * Check for clash of attribute and interface names.
  * This will cause compilation to enter a endless loop
  * and consume all available memory.
