@@ -28,6 +28,9 @@ int str_in_sl(const char *str, struct string_list *sl);
 // Return an identical copy of sl
 struct string_list *copy_string_list(struct string_list *sl);
 
+// Return space joined string, must be free'd
+char *join_string_list(const struct string_list *sl);
+
 void free_string_list(struct string_list *list);
 
 #endif
