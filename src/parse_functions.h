@@ -30,7 +30,7 @@
 * Returns - SELINT error code
 **********************************/
 enum selint_error begin_parsing_te(struct policy_node **cur, const char *mn,
-                                   unsigned int lineno);
+                                   unsigned bare_module, unsigned int lineno);
 
 /**********************************
 * Set the name of the current module to mn

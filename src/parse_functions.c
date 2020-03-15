@@ -27,10 +27,13 @@ char *module_name = NULL;
 char *parsing_filename = NULL;
 
 enum selint_error begin_parsing_te(struct policy_node **cur, const char *mn,
-                                   unsigned int lineno)
+                                   unsigned bare_module, unsigned int lineno)
 {
 	(*cur)->data.str = strdup(mn);
 	(*cur)->lineno = lineno;
+	if (bare_module) {
+		(*cur)->flagged = 1;
+	}
 
 	return SELINT_SUCCESS;
 }

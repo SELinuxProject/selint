@@ -203,6 +203,17 @@ struct check_result *check_useless_semicolon(__attribute__((unused)) const struc
 	                         "Unnecessary semicolon");
 }
 
+struct check_result *check_bare_module_statement(__attribute__((unused)) const struct check_data *data,
+                                                 const struct policy_node *node)
+{
+	if (node->flagged) {
+		return make_check_result('S', S_ID_BARE_MODULE,
+	                                 "Bare module statement (use `policy_module()` instead)");
+	}
+	
+	return NULL;
+}
+
 // Helper for check_no_explicit_declaration.  Returns 1 is there is a require block
 // for type_name earlier in the file, and 0 otherwise
 static int has_require(const struct policy_node *node, char *type_name)

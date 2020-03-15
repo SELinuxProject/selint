@@ -127,6 +127,7 @@
 %left NOT_EQUAL;
 %token COMMENT;
 
+%type<string> header_version
 %type<sl> string_list
 %type<sl> comma_string_list
 %type<sl> strings
@@ -174,13 +175,15 @@ comment:
 
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA VERSION_NO CLOSE_PAREN { if(!cur) { cur = ast; } begin_parsing_te(&cur, $3, yylineno); free($3); free($5);} // Version number isn't needed
+	POLICY_MODULE OPEN_PAREN STRING COMMA header_version CLOSE_PAREN { if(!cur) { cur = ast; } begin_parsing_te(&cur, $3, 0, yylineno); free($3); free($5);} // Version number isn't needed
 	|
-	MODULE STRING VERSION_NO SEMICOLON { cur = ast; begin_parsing_te(&cur, $2, yylineno); free($2); free($3); }
+	MODULE STRING header_version SEMICOLON { cur = ast; begin_parsing_te(&cur, $2, 1, yylineno); free($2); free($3); }
+	;
+	
+header_version:
+	VERSION_NO
 	|
-	POLICY_MODULE OPEN_PAREN STRING COMMA NUMBER CLOSE_PAREN { if(!cur) { cur = ast; } begin_parsing_te(&cur, $3, yylineno); free($3); free($5);} // Version number isn't needed
-	|
-	MODULE STRING NUMBER SEMICOLON { cur = ast; begin_parsing_te(&cur, $2, yylineno); free($2); free($3); }
+	NUMBER
 	;
 
 body:

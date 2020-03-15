@@ -141,6 +141,7 @@ CHECK IDS
 	S-002: File context file labels with type not declared in module
 	S-003: Unnecessary semicolon
 	S-004: Template call from an interface
+	S-005: Bare module statement
 
 	W-001: Type referenced without explicit declaration
 	W-002: Type, attribute or role used but not listed in require block in interface
