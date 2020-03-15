@@ -261,15 +261,16 @@ bare_line:
 declaration:
 	type_declaration
 	|
-	attribute_declaration
+	ATTRIBUTE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, NULL, yylineno); free($2); }
 	|
 	CLASS STRING string_list SEMICOLON { free($2); free_string_list($3); }
 	|
 	role_declaration
 	|
-	ATTRIBUTE_ROLE comma_string_list SEMICOLON { free_string_list($2); }
+	// TODO: insert_declaration()
+	ATTRIBUTE_ROLE STRING SEMICOLON { free($2); }
 	|
-	BOOL comma_string_list SEMICOLON { insert_declaration(&cur, DECL_BOOL, NULL, $2, yylineno); }
+	BOOL STRING SEMICOLON { insert_declaration(&cur, DECL_BOOL, $2, NULL, yylineno); free($2); }
 	;
 
 type_declaration:
@@ -288,16 +289,8 @@ type_declaration:
 				insert_aliases(&cur, tmp, DECL_TYPE, yylineno); }
 	;
 
-attribute_declaration:
-	ATTRIBUTE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, NULL, yylineno); free($2); }
-	|
-	ATTRIBUTE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, $4, yylineno); free($2); }
-	;
-
 role_declaration:
 	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, NULL, yylineno); free($2); }
-	|
-	ROLE STRING COMMA comma_string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
 	|
 	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
 	;
@@ -436,26 +429,68 @@ optional_open:
 
 require:
 	gen_require_begin
-	BACKTICK lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
+	BACKTICK require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
 	|
 	gen_require_begin
-	BACKTICK SELINT_COMMAND lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); save_command(cur, $3); free($3); }
+	BACKTICK SELINT_COMMAND require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); save_command(cur, $3); free($3); }
 	|
 	// TODO: This is bad and should be checked
 	gen_require_begin
-	lines CLOSE_PAREN { end_gen_require(&cur); }
+	require_lines CLOSE_PAREN { end_gen_require(&cur); }
 	|
 	REQUIRE OPEN_CURLY { begin_require(&cur, yylineno); }
-	lines CLOSE_CURLY { end_require(&cur); }
+	require_lines CLOSE_CURLY { end_require(&cur); }
 	|
 	REQUIRE OPEN_CURLY SELINT_COMMAND { begin_require(&cur, yylineno); save_command(cur->parent, $3); }
-	lines CLOSE_CURLY { end_require(&cur); free($3); }
+	require_lines CLOSE_CURLY { end_require(&cur); free($3); }
 	;
 
 gen_require_begin:
 	GEN_REQUIRE OPEN_PAREN { begin_gen_require(&cur, yylineno); }
 	|
 	GEN_REQUIRE OPEN_PAREN SELINT_COMMAND { begin_gen_require(&cur, yylineno); save_command(cur->parent, $3); free($3); }
+	;
+	
+require_lines:
+	require_lines require_line
+	|
+	require_line
+	;
+
+require_line:
+	TYPE comma_string_list SEMICOLON {
+		const struct string_list *iter = $2;
+		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_TYPE, iter->string, NULL, yylineno);
+		free_string_list($2);
+		}
+	|
+	ATTRIBUTE comma_string_list SEMICOLON {
+		const struct string_list *iter = $2;
+		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE, iter->string, NULL, yylineno);
+		free_string_list($2);
+		}
+	|
+	ROLE comma_string_list SEMICOLON {
+		const struct string_list *iter = $2;
+		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ROLE, iter->string, NULL, yylineno);
+		free_string_list($2);
+		}
+	|
+	ATTRIBUTE_ROLE comma_string_list SEMICOLON {
+		//TODO: const struct string_list *iter = $2;
+		//TODO: for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATRIBUTE_ROLE, iter->string, NULL, yylineno);
+		free_string_list($2);
+		}
+	|
+	BOOL comma_string_list SEMICOLON {
+		const struct string_list *iter = $2;
+		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_BOOL, iter->string, NULL, yylineno);
+		free_string_list($2);
+		}
+	|
+	CLASS STRING string_list SEMICOLON { free($2); free_string_list($3); }
+	|
+	COMMENT
 	;
 
 m4_call:
