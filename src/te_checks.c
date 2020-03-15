@@ -343,22 +343,17 @@ struct check_result *check_risky_allow_perm(__attribute__((unused)) const struct
 	return NULL;
 }
 
-struct check_result *check_attribute_interface_nameclash(__attribute__((unused)) const struct check_data
-							 *data,
-							 const struct policy_node
-							 *node)
+struct check_result *check_declaration_interface_nameclash(__attribute__((unused)) const struct check_data
+							   *data,
+							   const struct policy_node
+							   *node)
 {
-	const struct declaration_data *decl_data = node->data.d_data;
+	const char *decl_name = node->data.d_data->name;
 
-	if (decl_data->flavor != DECL_ATTRIBUTE) {
-		// not an attribute declaration
-		return NULL;
-	}
-
-	if (look_up_in_ifs_map(decl_data->name)) {
-		return make_check_result('E', E_ID_ATTR_IF_CLASH,
-				  "Attribute declaration with name %s clashes with same named interface",
-				  decl_data->name);
+	if (look_up_in_ifs_map(decl_name)) {
+		return make_check_result('E', E_ID_DECL_IF_CLASH,
+				  "Declaration with name %s clashes with same named interface",
+				  decl_name);
 	}
 
 	return NULL;
