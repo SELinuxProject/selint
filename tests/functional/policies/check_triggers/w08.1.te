@@ -1,0 +1,3 @@
+policy_module(w08, 1.0)
+
+allow source target:cls *;
