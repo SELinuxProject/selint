@@ -60,6 +60,15 @@ jobs:
       run : |
         cd ./tests/functional
         bats end-to-end.bats
+    - name: Test distribution
+      run : |
+        make VERSION=pipeline-test dist
+        tar xvzf selint-pipeline-test.tar.gz
+        cd selint-pipeline-test
+        ./configure
+        make
+        cd tests/functional
+        bats end-to-end.bats
     - name: refpolicy parse test
       run : |
         git clone --depth=1 https://github.com/SELinuxProject/refpolicy
