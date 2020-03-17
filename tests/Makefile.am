@@ -121,6 +121,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/s02.fc \
 			functional/policies/check_triggers/s02_other.te \
 			functional/policies/check_triggers/s03.te \
+			functional/policies/check_triggers/s04.if \
 			functional/policies/check_triggers/w01_other.te \
 			functional/policies/check_triggers/w01.te \
 			functional/policies/check_triggers/w02.if \
@@ -137,6 +138,9 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/C-001/interleaved.expect.ref \
 			functional/policies/check_triggers/C-001/interleaved.expect.lax \
 			functional/policies/check_triggers/C-001/interleaved.te \
+			functional/policies/check_triggers/C-001/if_in_optional.expect.ref \
+			functional/policies/check_triggers/C-001/if_in_optional.expect.lax \
+			functional/policies/check_triggers/C-001/if_in_optional.te \
 			functional/policies/check_triggers/C-001/kernel_module_first.expect.ref \
 			functional/policies/check_triggers/C-001/kernel_module_first.expect.lax \
 			functional/policies/check_triggers/C-001/kernel_module_first.te \
@@ -161,11 +165,14 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/C-001/interfaces/other/role_ifs.if \
 			functional/policies/check_triggers/C-001/interfaces/system/logging.if \
 			functional/policies/check_triggers/C-001/interfaces/system/init.if \
+			functional/policies/context/context.if \
+			functional/policies/context/context.te \
 			functional/policies/misc/disable.if \
 			functional/policies/misc/disable_multiple_other.te \
 			functional/policies/misc/disable_multiple.te \
 			functional/policies/misc/disable_require_start.te \
 			functional/policies/misc/disable.te \
+			functional/policies/misc/needs_context.te \
 			functional/policies/misc/nesting.if \
 			functional/policies/misc/nesting.te \
 			functional/policies/misc/no_issues.te
