@@ -45,6 +45,18 @@ struct check_result *check_if_calls_template(const struct
                                              policy_node *node);
 
 /*********************************************
+* Check that interfaces do contain declarations.
+* Called on NODE_DECL nodes.
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue S-005
+*********************************************/
+struct check_result *check_decl_in_if(const struct
+                                      check_data *data,
+                                      const struct
+                                      policy_node *node);
+
+/*********************************************
 * Check that all types referenced in interface are listed in its require block
 * (or declared in that template)
 * Called on NODE_AV_RULE, NODE_TT_RULE and NODE_IF_CALL nodes.

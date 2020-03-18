@@ -33,6 +33,7 @@ enum style_ids {
 	S_ID_FC_TYPE        = 2,
 	S_ID_SEMICOLON      = 3,
 	S_ID_IF_CALLS_TEMPL = 4,
+	S_ID_DECL_IN_IF     = 5,
 	S_END
 };
 

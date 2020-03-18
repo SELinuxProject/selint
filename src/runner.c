@@ -159,6 +159,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_IF_CALL, ck, "S-004",
 			          check_if_calls_template);
 		}
+		if (CHECK_ENABLED("S-005")) {
+			add_check(NODE_DECL, ck, "S-005",
+			          check_decl_in_if);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {
