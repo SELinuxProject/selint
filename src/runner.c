@@ -137,7 +137,9 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("C-005")) {
 			add_check(NODE_AV_RULE, ck, "C-005",
-			          check_unordered_perms_in_av_rule);
+			          check_unordered_perms);
+			add_check(NODE_DECL, ck, "C-005",
+			          check_unordered_perms);
 		}
 		// FALLTHRU
 	case 'S':

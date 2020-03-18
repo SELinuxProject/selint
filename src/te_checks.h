@@ -36,14 +36,14 @@ struct check_result *check_te_order(const struct check_data *data,
                                     const struct policy_node *node);
 
 /*********************************************
-* Check for unordered permissions in av rules.
-* Called on NODE_AV_RULE nodes.
+* Check for unordered permissions in av rules and class declarations.
+* Called on NODE_AV_RULE and NODE_DECL nodes.
 * data - metadata about the file currently being scanned
 * node - the node to check
 * returns NULL if passed or check_result for issue C-005
 *********************************************/
-struct check_result *check_unordered_perms_in_av_rule(const struct check_data *data,
-                                                      const struct policy_node *node);
+struct check_result *check_unordered_perms(const struct check_data *data,
+                                           const struct policy_node *node);
 
 /*********************************************
 * Check for the presence of require blocks in TE files.

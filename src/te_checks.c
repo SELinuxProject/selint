@@ -78,24 +78,51 @@ struct check_result *check_te_order(const struct check_data *data,
 	return NULL;
 }
 
-struct check_result *check_unordered_perms_in_av_rule(__attribute__((unused)) const struct check_data *data,
-                                                           const struct policy_node *node)
+struct check_result *check_unordered_perms(__attribute__((unused)) const struct check_data *data,
+                                           const struct policy_node *node)
 {
-	const struct string_list *prev = NULL, *cur = node->data.av_data->perms;
+	if (node->flavor == NODE_AV_RULE) {
+		const struct string_list *prev = NULL, *cur = node->data.av_data->perms;
 	
-	while (cur) {
-		if (prev && strcmp(prev->string, "~") != 0 && strcmp(prev->string, cur->string) > 0) {
-			return make_check_result('C', C_ID_UNORDERED_PERM,
-					  "Permissions in av rule not ordered (%s before %s)",
-					  prev->string,
-					  cur->string);
+		while (cur) {
+			if (prev && strcmp(prev->string, "~") != 0 && strcmp(prev->string, cur->string) > 0) {
+				return make_check_result('C', C_ID_UNORDERED_PERM,
+						"Permissions in av rule not ordered (%s before %s)",
+						prev->string,
+						cur->string);
+			}
+
+			prev = cur;
+			cur = cur->next;
 		}
-		
-		prev = cur;
-		cur = cur->next;
+
+		return NULL;
+
+	} else if (node->flavor == NODE_DECL) {
+		// ignore non-class declarations
+		if (node->data.d_data->flavor != DECL_CLASS) {
+			return NULL;
+		}
+
+		const struct string_list *prev = NULL, *cur = node->data.d_data->attrs;
+
+		while (cur) {
+			if (prev && strcmp(prev->string, "~") != 0 && strcmp(prev->string, cur->string) > 0) {
+				return make_check_result('C', C_ID_UNORDERED_PERM,
+						"Permissions in class declaration not ordered (%s before %s)",
+						prev->string,
+						cur->string);
+			}
+
+			prev = cur;
+			cur = cur->next;
+		}
+
+		return NULL;
+
+	} else {
+		return alloc_internal_error("Invalid node type for `check_unordered_perms`");
 	}
-	
-	return NULL;
 }
 
 struct check_result *check_require_block(const struct check_data *data,
