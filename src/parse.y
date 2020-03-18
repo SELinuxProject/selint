@@ -263,7 +263,7 @@ declaration:
 	|
 	ATTRIBUTE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE, $2, NULL, yylineno); free($2); }
 	|
-	CLASS STRING string_list SEMICOLON { free($2); free_string_list($3); }
+	CLASS STRING string_list SEMICOLON { insert_declaration(&cur, DECL_CLASS, $2, $3, yylineno); free($2); }
 	|
 	role_declaration
 	|
@@ -488,7 +488,7 @@ require_line:
 		free_string_list($2);
 		}
 	|
-	CLASS STRING string_list SEMICOLON { free($2); free_string_list($3); }
+	CLASS STRING string_list SEMICOLON { insert_declaration(&cur, DECL_CLASS, $2, $3, yylineno); free($2); }
 	|
 	COMMENT
 	;
