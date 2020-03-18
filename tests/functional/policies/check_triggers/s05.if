@@ -1,0 +1,3 @@
+interface(`bar',`
+	type $1_t;
+')

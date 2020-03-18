@@ -72,6 +72,42 @@ struct check_result *check_if_calls_template(__attribute__((unused)) const struc
 	return NULL;
 }
 
+struct check_result *check_decl_in_if(const struct
+                                      check_data *data,
+                                      const struct
+                                      policy_node *node)
+{
+	if (data->flavor != FILE_IF_FILE) {
+		return NULL;
+	}
+
+	const struct policy_node *parent = node->parent;
+	while (parent &&
+	       (parent->flavor != NODE_INTERFACE_DEF && parent->flavor != NODE_TEMP_DEF)) {
+		// ignore declarations in require blocks
+		if (parent->flavor == NODE_GEN_REQ || parent->flavor == NODE_REQUIRE) {
+			return NULL;
+		}
+
+		parent = parent->parent;
+	}
+
+	// only check interfaces
+	if (!parent || parent->flavor != NODE_INTERFACE_DEF) {
+		return NULL;
+	}
+
+	// ignore role declaration associating to type
+	if (node->data.d_data->flavor == DECL_ROLE && node->data.d_data->attrs) {
+		return NULL;
+	}
+
+	return make_check_result('S',
+				 S_ID_DECL_IN_IF,
+				 "Declaration of %s in interface",
+				 node->data.d_data->name);
+}
+
 struct check_result *check_type_used_but_not_required_in_if(__attribute__((unused)) const struct
                                                             check_data *data,
                                                             const struct

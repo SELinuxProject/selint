@@ -108,6 +108,10 @@ test_one_check() {
 	test_one_check "S-004" "s04.*"
 }
 
+@test "S-005" {
+	test_one_check "S-005" "s05.if"
+}
+
 @test "W-001" {
 	test_one_check "W-001" "w01*"
 }
