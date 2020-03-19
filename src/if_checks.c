@@ -44,11 +44,15 @@ struct check_result *check_interface_definitions_have_comment(__attribute__((unu
 	}
 }
 
-struct check_result *check_if_calls_template(__attribute__((unused)) const struct
+struct check_result *check_if_calls_template(const struct
                                              check_data *data,
                                              const struct
                                              policy_node *node)
 {
+	if (data->flavor != FILE_IF_FILE) {
+		return NULL;
+	}
+
 	const struct policy_node *parent = node->parent;
 	while (parent &&
 	       (parent->flavor != NODE_INTERFACE_DEF && parent->flavor != NODE_TEMP_DEF)) {
@@ -108,11 +112,14 @@ struct check_result *check_decl_in_if(const struct
 				 node->data.d_data->name);
 }
 
-struct check_result *check_type_used_but_not_required_in_if(__attribute__((unused)) const struct
+struct check_result *check_type_used_but_not_required_in_if(const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node)
 {
+	if (data->flavor != FILE_IF_FILE) {
+		return NULL;
+	}
 
 	const struct policy_node *cur = node;
 
@@ -204,11 +211,14 @@ struct check_result *check_type_used_but_not_required_in_if(__attribute__((unuse
 	return NULL;
 }
 
-struct check_result *check_type_required_but_not_used_in_if(__attribute__((unused)) const struct
+struct check_result *check_type_required_but_not_used_in_if(const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node)
 {
+	if (data->flavor != FILE_IF_FILE) {
+		return NULL;
+	}
 
 	struct declaration_data *dd = node->data.d_data;
 
