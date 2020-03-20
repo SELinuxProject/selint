@@ -31,6 +31,18 @@ struct check_result *check_file_context_types_in_mod(const struct check_data
                                                      *node);
 
 /*********************************************
+* Check for gen_context calls that omit an mls component
+* Called on NODE_FC_ENTRY nodes.
+* node - the node to check
+* returns NULL if passed or check_result for issue S-007
+*********************************************/
+struct check_result *check_gen_context_no_range(const struct check_data
+                                                *data,
+                                                const struct policy_node
+                                                *node);
+
+
+/*********************************************
 * Check for potentially unescaped regex characters.
 * Called on NODE_FC_ENTRY nodes;
 * node - the node to check

@@ -167,6 +167,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_HEADER, ck, "S-006",
 			          check_bare_module_statement);
 		}
+		if (CHECK_ENABLED("S-007")) {
+			add_check(NODE_FC_ENTRY, ck, "S-007",
+			          check_gen_context_no_range);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {

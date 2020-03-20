@@ -64,6 +64,21 @@ struct check_result *check_file_context_types_in_mod(const struct check_data
 	return NULL;
 }
 
+struct check_result *check_gen_context_no_range(__attribute__((unused)) const struct check_data
+                                                *data,
+                                                const struct policy_node
+                                                *node)
+{
+	SETUP_FOR_FC_CHECK(node)
+
+	if (entry->context->has_gen_context && !entry->context->range) {
+		return make_check_result('S',
+		                         S_ID_MISSING_RANGE,
+		                         "No mls levels specified in gen_context");
+	}
+	return NULL;
+}
+
 struct check_result *check_file_context_regex(__attribute__((unused)) const struct check_data *data,
                                               const struct policy_node *node)
 {

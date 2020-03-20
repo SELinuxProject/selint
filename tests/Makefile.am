@@ -126,6 +126,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/s04.if \
 			functional/policies/check_triggers/s05.if \
 			functional/policies/check_triggers/s06.te \
+			functional/policies/check_triggers/s07.fc \
 			functional/policies/check_triggers/w01_other.te \
 			functional/policies/check_triggers/w01.te \
 			functional/policies/check_triggers/w02.if \
