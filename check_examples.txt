@@ -11,11 +11,15 @@ C-001:
 
 	type bar_t;
 
-C-002:
+C-004:
 
 	interface(`foo_read_conf',`
 		...
 	')
+
+C-005:
+
+	allow foo_t bar_t:file { write read };
 
 Style:
 
@@ -28,6 +32,33 @@ S-001:
 S-003:
 
 	foo(bar);
+
+S-004:
+
+	template(`bar',`')
+	interface(`foo',`
+		bar()
+	')
+
+S-005:
+
+	interface(`foo',`
+		type foo_t;
+	')
+
+S-006:
+
+	module foo 1.0;
+
+S-007:
+
+	gen_context(system_u:object_r:foo_t)
+
+S-008:
+
+	gen_require(
+		type foo_t;
+	)
 
 Warning:
 
@@ -54,18 +85,53 @@ W-004:
 
 	/path/with/unescaped.dot    -- gen_context(system_u:object_r:foo_exec_t,s0)
 
+W-005:
+
+	# foo is set to module in modules.conf
+	foo_read_conf()
+
+W-006:
+
+	foo()
+
+W-007:
+
+	foo(bar baz)
+
+W-008:
+
+	allow foo_t bar_t:file *;
+
+W-009:
+
+	#In foo.te
+	policy_module(bar, 1.0)
+
 Error:
-
-E-001:
-
-	# apache is set as a module in our modules.conf
-	apache_read_tmp_files(foo_t)
 
 E-002:
 
 	/usr/bin/foo		--	gen_erquire(system_u:object_r:foo_exec_t, s0)
 
+E-003:
+
+	/usr/bin/foo		--	gen_require(not_a_valid_user:object_r:foo_exec_t, s0)
+
+E-004:
+
+	/usr/bin/foo		--	gen_require(system_u:not_a_valid_role:foo_exec_t, s0)
+
+E-004:
+
+	/usr/bin/foo		--	gen_require(system_u:object_r:not_a_valid_type, s0)
+
 E-005:
 
 	# There is no type named foo_exce_t defined in our policy
 	/usr/bin/foo		--	gen_require(system_u:object_r:foo_exce_t, s0)
+
+E-006:
+
+	attribute foo;
+
+	interface(`foo',`')
