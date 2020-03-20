@@ -1,7 +1,7 @@
 # SELint Changelog
 
 ## Unreleased
-### Added (general feature)
+### Added (general features)
 - -S flag to print a summary of issue found following an analysis
 - --context flag to specify additional files to parse but not scan.
   This is primarily helpful if you want to only scan your modified files
@@ -12,8 +12,18 @@
 - -F flag to return an error code on issues found
 
 ### Added (checks)
+- C-005 for permission ordering
 - S-003 for unneeded semicolons
-- E-006 for attribute/interface name clash
+- S-004 for template calls from interfaces
+- S-005 for declarations in an interface
+- S-006 for the use of a bare module statement instead of policy_module() macro
+- S-007 for the use of a gen_context() macro with no mls component specified
+- S-008 for gen_require() macro calls with unquoted arguments
+- W-006 for interface call with empty arguments
+- W-007 for unexpected spaces in interface arguments
+- W-008 for permission lists with * or ~
+- W-009 for module name not matching file name
+- E-006 for declaration/interface name clash
 
 ### Changed
 - Turn C-001 off by default.
