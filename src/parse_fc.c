@@ -36,6 +36,10 @@ struct fc_entry *parse_fc_line(char *line)
 
 	char *pos = strtok(line, whitespace);
 
+	if (pos == NULL) {
+		goto cleanup;
+	}
+
 	out->path = strdup(pos);
 
 	pos = strtok(NULL, whitespace);
