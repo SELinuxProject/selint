@@ -21,4 +21,3 @@ optional_policy(`
 ')
 
 manage_files_pattern(domB_t, resource_t, resource_t)
-

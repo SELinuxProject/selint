@@ -36,7 +36,7 @@ START_TEST (test_check_interface_defs_have_comment) {
 	ck_assert_ptr_null(res);
 
 	head->next->flavor = NODE_TEMP_DEF;
-	
+
 	res = check_interface_definitions_have_comment(NULL, head->next);
 	ck_assert_ptr_null(res);
 

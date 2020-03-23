@@ -10,4 +10,4 @@ domain_second_access(foo_t)
 
 kernel_read_system_state(foo_t)
 
-foo_do_stuff(foo_t) 
+foo_do_stuff(foo_t)

@@ -26,7 +26,7 @@ struct check_result * example_check(const struct check_data *check_data, const s
 struct check_result * example_check2(const struct check_data *check_data, const struct policy_node *node);
 struct check_result * returns_blank_result(const struct check_data *check_data, const struct policy_node *node);
 
-struct check_result * example_check(__attribute__((unused)) const struct check_data *check_data, 
+struct check_result * example_check(__attribute__((unused)) const struct check_data *check_data,
 				  __attribute__((unused)) const struct policy_node *node) {
 	check_called = 1;
 	return (struct check_result *) NULL;

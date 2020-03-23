@@ -14,7 +14,7 @@
 ## </param>
 ## <rolecap/>
 #
-# 
+#
 interface(`ipsec_run_racoon',`
         gen_require(`
                 type racoon_t;
@@ -32,4 +32,3 @@ interface(`this_one_fails',`
 
 	allow $1 foo_t:file read;
 ')
-

@@ -57,7 +57,7 @@ END_TEST
 
 START_TEST (test_parse_config_checks) {
 	char severity = '\0';
-	struct string_list *dis = NULL; 
+	struct string_list *dis = NULL;
 	struct string_list *en = NULL;
 	struct config_check_data ccd;
 

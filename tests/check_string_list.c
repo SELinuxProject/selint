@@ -78,7 +78,7 @@ START_TEST (test_copy_string_list) {
 
 	free_string_list(sl1);
 	free_string_list(sl2);
-	
+
 }
 END_TEST
 

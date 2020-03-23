@@ -58,13 +58,13 @@ struct check_result *check_if_calls_template(const struct
 	       (parent->flavor != NODE_INTERFACE_DEF && parent->flavor != NODE_TEMP_DEF)) {
 		parent = parent->parent;
 	}
-	
+
 	if (!parent) {
 		return NULL;
 	}
-	
+
 	const char *call_name = node->data.ic_data->name;
-	
+
 	if (parent->flavor == NODE_INTERFACE_DEF && look_up_in_template_map(call_name)) {
 		return make_check_result('S',
 					 S_ID_IF_CALLS_TEMPL,
@@ -72,7 +72,7 @@ struct check_result *check_if_calls_template(const struct
 					 parent->data.str,
 					 call_name);
 	}
-	
+
 	return NULL;
 }
 

@@ -3,4 +3,3 @@
 ifdef(`distro_windows',`
 /this/is/also/a/path				gen_context(system_u:object_r:hijklmn_t, s0)
 ')
-
