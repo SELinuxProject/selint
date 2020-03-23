@@ -88,7 +88,7 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 \{ { return OPEN_CURLY; }
 \} { return CLOSE_CURLY; }
 \: { return COLON; }
-\; { return SEMICOLON; BEGIN(INITIAL);}
+\; { return SEMICOLON; }
 \` { return BACKTICK; }
 \' { return SINGLE_QUOTE; }
 \~ { return TILDA; }
