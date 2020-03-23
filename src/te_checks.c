@@ -356,6 +356,31 @@ struct check_result *check_risky_allow_perm(__attribute__((unused)) const struct
 	return NULL;
 }
 
+struct check_result *check_module_file_name_mismatch(const struct check_data
+						     *data,
+						     const struct policy_node
+						     *node)
+{
+	const char *mod_name = node->data.h_data->module_name;
+	size_t mod_name_len = strlen(mod_name);
+	const char *file_name = data->filename;
+	size_t file_name_len = strlen(file_name);
+
+	const char *file_name_ext = strrchr(file_name, '.');
+	if (file_name_ext) {
+		file_name_len -= strlen(file_name_ext);
+	}
+
+	if (mod_name_len != file_name_len || strncmp(mod_name, file_name, file_name_len)) {
+		return make_check_result('W', W_ID_MOD_NAME_FILE,
+					 "Module name %s does not match file name %s",
+					 mod_name,
+					 file_name);
+	}
+
+	return NULL;
+}
+
 struct check_result *check_declaration_interface_nameclash(__attribute__((unused)) const struct check_data
 							   *data,
 							   const struct policy_node
