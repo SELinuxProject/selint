@@ -287,6 +287,19 @@ enum selint_error save_command(struct policy_node *cur, const char *comm);
 enum selint_error insert_type_attribute(struct policy_node **cur, const char *type, struct string_list *attrs, unsigned int lineno);
 
 /**********************************
+* insert_role_attribute
+* Insert a role_attribute node into the tree
+* cur (in, out) - The current spot in the tree.  Will be updated to point to the
+* new node.
+* role (in) - The role specified in the statement
+* attrs (in) - The attributes specified in the statement
+* lineno (in) - The line number
+*
+* Returns - SELint error code
+**********************************/
+enum selint_error insert_role_attribute(struct policy_node **cur, const char *role, struct string_list *attrs, unsigned int lineno);
+
+/**********************************
 * cleanup_parsing
 * Call after all parsing is done to free up memory
 **********************************/

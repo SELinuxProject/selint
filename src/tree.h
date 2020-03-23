@@ -34,6 +34,7 @@ enum node_flavor {
 	NODE_ALIAS,
 	NODE_TYPE_ALIAS,
 	NODE_TYPE_ATTRIBUTE,
+	NODE_ROLE_ATTRIBUTE,
 	NODE_M4_CALL,
 	NODE_OPTIONAL_POLICY,
 	NODE_OPTIONAL_ELSE,
@@ -69,11 +70,17 @@ enum av_rule_flavor {
 enum decl_flavor {
 	DECL_TYPE,
 	DECL_ATTRIBUTE,
+	DECL_ATTRIBUTE_ROLE,
 	DECL_ROLE,
 	DECL_USER,
 	DECL_CLASS,
 	DECL_PERM,
 	DECL_BOOL
+};
+
+enum attr_flavor {
+	ATTR_TYPE,
+	ATTR_ROLE
 };
 
 enum tt_flavor {
@@ -146,9 +153,10 @@ struct fc_entry {
 	struct sel_context *context;
 };
 
-struct type_attribute_data {
+struct attribute_data {
 	char *type;
 	struct string_list *attrs;
+	enum attr_flavor flavor;
 };
 
 union node_data {
@@ -159,7 +167,7 @@ union node_data {
 	struct if_call_data *ic_data;
 	struct declaration_data *d_data;
 	struct fc_entry *fc_data;
-	struct type_attribute_data *ta_data;
+	struct attribute_data *at_data;
 	char *str;
 };
 
@@ -225,6 +233,6 @@ void free_fc_entry(struct fc_entry *to_free);
 
 void free_sel_context(struct sel_context *to_free);
 
-void free_type_attribute_data(struct type_attribute_data *to_free);
+void free_attribute_data(struct attribute_data *to_free);
 
 #endif

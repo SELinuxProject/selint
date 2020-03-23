@@ -25,7 +25,7 @@
 struct hash_elem {
 	char *key;
 	char *val;
-	UT_hash_handle hh_type, hh_role, hh_user, hh_attr, hh_class, hh_perm,
+	UT_hash_handle hh_type, hh_role, hh_user, hh_attr_type, hh_attr_role, hh_class, hh_perm,
 	               hh_mods, hh_ifs, hh_mod_layers;
 };
 

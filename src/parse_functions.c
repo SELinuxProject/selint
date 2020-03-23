@@ -604,19 +604,30 @@ enum selint_error save_command(struct policy_node *cur, const char *comm)
 	return SELINT_SUCCESS;
 }
 
-enum selint_error insert_type_attribute(struct policy_node **cur, const char *type, struct string_list *attrs, unsigned int lineno)
+static enum node_flavor attr_to_node_flavor(enum attr_flavor flavor)
 {
-	struct type_attribute_data *data = calloc(1, sizeof(struct type_attribute_data));
+	switch (flavor) {
+	case ATTR_TYPE:
+		return NODE_TYPE_ATTRIBUTE;
+	case ATTR_ROLE:
+		return NODE_ROLE_ATTRIBUTE;
+	}
+}
+
+static enum selint_error insert_attribute(struct policy_node **cur, enum attr_flavor flavor, const char *type, struct string_list *attrs, unsigned int lineno)
+{
+	struct attribute_data *data = calloc(1, sizeof(struct attribute_data));
 	if (!data) {
 		return SELINT_OUT_OF_MEM;
 	}
 	union node_data nd;
-	nd.ta_data = data;
+	nd.at_data = data;
 
 	data->type = strdup(type);
 	data->attrs = attrs;
+	data->flavor = flavor;
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_TYPE_ATTRIBUTE, nd, lineno);
+	enum selint_error ret = insert_policy_node_next(*cur, attr_to_node_flavor(flavor), nd, lineno);
 	if (ret != SELINT_SUCCESS) {
 		free(data);
 		return ret;
@@ -633,6 +644,16 @@ enum selint_error insert_type_attribute(struct policy_node **cur, const char *ty
 	}
 
 	return SELINT_SUCCESS;
+}
+
+enum selint_error insert_type_attribute(struct policy_node **cur, const char *type, struct string_list *attrs, unsigned int lineno)
+{
+	return insert_attribute(cur, ATTR_TYPE, type, attrs, lineno);
+}
+
+enum selint_error insert_role_attribute(struct policy_node **cur, const char *role, struct string_list *attrs, unsigned int lineno)
+{
+	return insert_attribute(cur, ATTR_ROLE, role, attrs, lineno);
 }
 
 void cleanup_parsing()
