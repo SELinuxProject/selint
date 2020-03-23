@@ -22,15 +22,17 @@
 #include "maps.h"
 
 /**********************************
-* begin_parsing_te
-* Called at the beginning of parsing a te file to set up AST for a te file
-* cur (in, out) - Will be allocated to point to the first node of the tree
+* insert_header
+* Add a header node at the next node in the tree, allocating all memory for it.
+* cur (in, out) - The current spot in the tree.  Will be updated to point to
+*	the newly allocated declaration node
 * module_name (in) - The name of the policy module
-*
+* flavor (in) - The flavor being declared
+* lineno (in) - The line number
 * Returns - SELINT error code
 **********************************/
-enum selint_error begin_parsing_te(struct policy_node **cur, const char *mn,
-                                   unsigned int lineno);
+enum selint_error insert_header(struct policy_node **cur, const char *mn,
+                                enum header_flavor flavor, unsigned int lineno);
 
 /**********************************
 * Set the name of the current module to mn

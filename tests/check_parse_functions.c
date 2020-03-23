@@ -25,23 +25,24 @@
 #define EXAMPLE_TYPE_2 "bar_t"
 #define EXAMPLE_TYPE_3 "baz_t"
 
-START_TEST (test_begin_parsing_te) {
+START_TEST (test_insert_header) {
 
 	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
 	cur->flavor = NODE_TE_FILE;
 
-	ck_assert_int_eq(SELINT_SUCCESS, begin_parsing_te(&cur, "example", 1));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_header(&cur, "example", HEADER_BARE, 1));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_ptr_null(cur->parent);
 	ck_assert_ptr_null(cur->next);
-	ck_assert_ptr_null(cur->prev);
+	ck_assert_ptr_nonnull(cur->prev);
 	ck_assert_ptr_null(cur->first_child);
-	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
-	ck_assert_str_eq(cur->data.str, "example");
+	ck_assert_int_eq(NODE_HEADER, cur->flavor);
+	ck_assert_int_eq(cur->data.h_data->flavor, HEADER_BARE);
+	ck_assert_str_eq(cur->data.h_data->module_name, "example");
 	ck_assert_int_eq(cur->lineno, 1);
 
-	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(cur));
+	ck_assert_int_eq(SELINT_SUCCESS, free_policy_node(cur->prev));
 
 	cleanup_parsing();
 
@@ -499,7 +500,7 @@ Suite *parse_functions_suite(void) {
 	tc_core = tcase_create("Core");
 	tc_blocks = tcase_create("Blocks");
 
-	tcase_add_test(tc_core, test_begin_parsing_te);
+	tcase_add_test(tc_core, test_insert_header);
 	tcase_add_test(tc_core, test_insert_comment);
 	tcase_add_test(tc_core, test_insert_declaration);
 	tcase_add_test(tc_core, test_insert_aliases);

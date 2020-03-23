@@ -26,11 +26,30 @@
 char *module_name = NULL;
 char *parsing_filename = NULL;
 
-enum selint_error begin_parsing_te(struct policy_node **cur, const char *mn,
-                                   unsigned int lineno)
+enum selint_error insert_header(struct policy_node **cur, const char *mn,
+                                enum header_flavor flavor, unsigned int lineno)
 {
-	(*cur)->data.str = strdup(mn);
-	(*cur)->lineno = lineno;
+	struct header_data *data = (struct header_data *)malloc(sizeof(struct header_data));
+	if (!data) {
+		return SELINT_OUT_OF_MEM;
+	}
+
+	memset(data, 0, sizeof(struct header_data));
+
+	data->flavor = flavor;
+	data->module_name = strdup(mn);
+	if (!data->module_name) {
+		return SELINT_OUT_OF_MEM;
+	}
+
+	union node_data nd;
+	nd.h_data = data;
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_HEADER, nd, lineno);
+	if (ret != SELINT_SUCCESS) {
+		return ret;
+	}
+	*cur = (*cur)->next;
 
 	return SELINT_SUCCESS;
 }

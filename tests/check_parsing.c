@@ -55,6 +55,14 @@ START_TEST (test_parse_basic_te) {
 	ck_assert_ptr_null(current->first_child);
 
 	current = ast->next;
+	ck_assert_int_eq(NODE_HEADER, current->flavor);
+	struct header_data *hd = current->data.h_data;
+	ck_assert_int_eq(HEADER_MACRO, hd->flavor);
+	ck_assert_str_eq("basic", hd->module_name);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
 	ck_assert_int_eq(NODE_DECL, current->flavor);
 	struct declaration_data *dd = current->data.d_data;
 	ck_assert_int_eq(DECL_TYPE, dd->flavor);
@@ -209,6 +217,11 @@ START_TEST (test_parse_blocks) {
 	ck_assert_ptr_nonnull(current->next);
 
 	current = current->next;
+	ck_assert_int_eq(NODE_HEADER, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
 	ck_assert_int_eq(NODE_OPTIONAL_POLICY, current->flavor);
 	ck_assert_ptr_null(current->next);
 	ck_assert_ptr_nonnull(current->first_child);
@@ -288,10 +301,12 @@ START_TEST (test_disable_comment) {
 	ck_assert_ptr_nonnull(ast);
 	ck_assert_int_eq(NODE_TE_FILE, ast->flavor);
 	ck_assert_ptr_nonnull(ast->next);
-	ck_assert_int_eq(NODE_DECL, ast->next->flavor);
+	ck_assert_int_eq(NODE_HEADER, ast->next->flavor);
 	ck_assert_ptr_nonnull(ast->next->next);
-	ck_assert_int_eq(NODE_AV_RULE, ast->next->next->flavor);
-	ck_assert_str_eq("W-001\n", ast->next->next->exceptions);
+	ck_assert_int_eq(NODE_DECL, ast->next->next->flavor);
+	ck_assert_ptr_nonnull(ast->next->next->next);
+	ck_assert_int_eq(NODE_AV_RULE, ast->next->next->next->flavor);
+	ck_assert_str_eq("W-001\n", ast->next->next->next->exceptions);
 
 	free_policy_node(ast);
 	cleanup_parsing();

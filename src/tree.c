@@ -209,6 +209,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		ret->string = strdup(node->data.str);
 		break;
 	/*
+	   NODE_HEADER,
 	   NODE_M4_CALL,
 	   NODE_OPTIONAL_POLICY,
 	   NODE_OPTIONAL_ELSE,
@@ -298,6 +299,9 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	}
 
 	switch (to_free->flavor) {
+	case NODE_HEADER:
+		free_header_data(to_free->data.h_data);
+		break;
 	case NODE_AV_RULE:
 		free_av_rule_data(to_free->data.av_data);
 		break;
@@ -340,6 +344,20 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	to_free->next = NULL;
 
 	to_free->prev = NULL;
+
+	free(to_free);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error free_header_data(struct header_data *to_free)
+{
+
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	free(to_free->module_name);
 
 	free(to_free);
 
