@@ -29,6 +29,7 @@ enum node_flavor {
 	NODE_RT_RULE,
 	NODE_TM_RULE,
 	NODE_TC_RULE,
+	NODE_HEADER,
 	NODE_ROLE_ALLOW,
 	NODE_DECL,
 	NODE_ALIAS,
@@ -60,6 +61,11 @@ enum node_flavor {
 	                        // length equal to the number of node types
 };
 
+enum header_flavor {
+	HEADER_BARE,
+	HEADER_MACRO
+};
+
 enum av_rule_flavor {
 	AV_RULE_ALLOW,
 	AV_RULE_AUDITALLOW,
@@ -88,6 +94,11 @@ enum tt_flavor {
 	TT_TM,
 	TT_TC,
 	TT_RT
+};
+
+struct header_data {
+	enum header_flavor flavor;
+	char *module_name;
 };
 
 struct av_rule_data {
@@ -160,6 +171,7 @@ struct attribute_data {
 };
 
 union node_data {
+	struct header_data *h_data;
 	struct av_rule_data *av_data;
 	struct role_allow_data *ra_data;
 	struct type_transition_data *tt_data;
@@ -209,6 +221,8 @@ int is_in_require(const struct policy_node *cur);
 struct policy_node *dfs_next(const struct policy_node *node);
 
 enum selint_error free_policy_node(struct policy_node *to_free);
+
+enum selint_error free_header_data(struct header_data *to_free);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
 

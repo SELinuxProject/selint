@@ -163,6 +163,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_DECL, ck, "S-005",
 			          check_decl_in_if);
 		}
+		if (CHECK_ENABLED("S-006")) {
+			add_check(NODE_HEADER, ck, "S-006",
+			          check_bare_module_statement);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {
