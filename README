@@ -150,6 +150,7 @@ CHECK IDS
 	W-006: Interface call with empty argument
 	W-007: Unquoted space in argument of interface call
 	W-008: Allow rule with complement or wildcard permission
+	W-009: Module name does not match file name
 
 	E-002: Bad file context format
 	E-003: Nonexistent user listed in fc file

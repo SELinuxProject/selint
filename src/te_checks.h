@@ -140,6 +140,18 @@ struct check_result *check_risky_allow_perm(const struct
                                             policy_node *node);
 
 /*********************************************
+ * Check for mismatch of module and file names.
+ * Called on NODE_HEADER nodes.
+ * data - metadata about the file currently being scanned
+ * node - the node to check
+ * returns NULL if passed or check_result for issue W-009
+*********************************************/
+struct check_result *check_module_file_name_mismatch(const struct check_data
+                                                     *data,
+                                                     const struct policy_node
+                                                     *node);
+
+/*********************************************
  * Check for clash of declaration and interface names.
  * This will cause macro expansion to enter an endless loop
  * and consume all available memory.
