@@ -481,8 +481,8 @@ START_TEST (test_insert_type_attribute) {
 	ck_assert_int_eq(SELINT_SUCCESS, insert_type_attribute(&cur, "foo_t", attrs, 1234));
 
 	ck_assert_ptr_eq(cur->prev, head);
-	ck_assert_str_eq(cur->data.ta_data->type, "foo_t");
-	ck_assert_str_eq(cur->data.ta_data->attrs->string, "foo");
+	ck_assert_str_eq(cur->data.at_data->type, "foo_t");
+	ck_assert_str_eq(cur->data.at_data->attrs->string, "foo");
 
 	free_policy_node(head);
 	cleanup_parsing();

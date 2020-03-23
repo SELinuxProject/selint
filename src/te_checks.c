@@ -299,6 +299,7 @@ struct check_result *check_space_if_call_arg(__attribute__((unused)) const struc
 			    look_up_in_decl_map(prev->string, DECL_TYPE) ||
 			    look_up_in_decl_map(prev->string, DECL_ATTRIBUTE) ||
 			    look_up_in_decl_map(prev->string, DECL_ROLE) ||
+			    look_up_in_decl_map(prev->string, DECL_ATTRIBUTE_ROLE) ||
 			    look_up_in_decl_map(prev->string, DECL_USER))) {
 
 				return make_check_result('W',

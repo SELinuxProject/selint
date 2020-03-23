@@ -199,6 +199,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_ALIAS:
 	case NODE_TYPE_ALIAS:
 	case NODE_TYPE_ATTRIBUTE:
+	case NODE_ROLE_ATTRIBUTE:
 		if (is_in_require(node)) {
 			return "_non_ordered";
 		} else {
