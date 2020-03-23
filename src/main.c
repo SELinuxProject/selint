@@ -279,7 +279,7 @@ int main(int argc, char **argv)
 		WARN_ON_INVALID_CHECK_ID(config_check_id->string, "enabled in config");
 		config_check_id = config_check_id->next;
 	}
-	
+
 	if (only_enabled && !cl_enabled_checks) {
 		printf("Error: no warning enabled!\n");
 		exit(EX_USAGE);

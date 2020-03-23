@@ -80,5 +80,3 @@ struct av_rule_data * make_example_av_rule() {
 	return av_rule_data;
 
 }
-
-

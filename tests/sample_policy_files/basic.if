@@ -7,7 +7,7 @@ interface(`basic_domtrans',`
 	')
 
 	domtrans_pattern($1, basic_exec_t, basic_t)
-') 
+')
 
 template(`basic_template',`
 	gen_require(`

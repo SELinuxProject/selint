@@ -113,12 +113,12 @@ START_TEST (test_get_types_in_node_av) {
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_1);
 
-	cur = cur->next; 
+	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_2);
 
-	cur = cur->next; 
+	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_3);
@@ -154,12 +154,12 @@ START_TEST (test_get_types_in_node_tt) {
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_3);
 
-	cur = cur->next; 
+	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_2);
 
-	cur = cur->next; 
+	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_1);

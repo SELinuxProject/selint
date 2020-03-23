@@ -23,6 +23,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: check-whitespaces
+      run: git diff-tree --check $(git hash-object -t tree /dev/null) HEAD
     - name: install-deps
       run: |
         sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man
@@ -111,4 +113,3 @@ jobs:
         asset_path: ./selint-${{ steps.release_info.outputs.tag }}.tar.gz
         asset_name: selint-${{ steps.release_info.outputs.tag }}.tar.gz
         asset_content_type: application/tar+gzip
-

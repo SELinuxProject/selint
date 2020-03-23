@@ -29,4 +29,3 @@ interface(`domain_second_access',`
 	')
 	read_files_pattern($1, domain_bar_t, domain_bar_t)
 ')
-

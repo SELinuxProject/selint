@@ -450,7 +450,7 @@ gen_require_begin:
 	|
 	GEN_REQUIRE OPEN_PAREN SELINT_COMMAND { begin_gen_require(&cur, yylineno); save_command(cur->parent, $3); free($3); }
 	;
-	
+
 require_lines:
 	require_lines require_line
 	|

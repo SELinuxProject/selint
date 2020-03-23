@@ -279,7 +279,7 @@ struct check_result *check_empty_if_call_arg(__attribute__((unused)) const struc
 					 "Call to interface %s with empty argument",
 					 node->data.ic_data->name);
 	}
-	
+
 	return NULL;
 }
 
@@ -290,7 +290,7 @@ struct check_result *check_space_if_call_arg(__attribute__((unused)) const struc
 {
 	const struct string_list *prev = NULL, *args = node->data.ic_data->args;
 	unsigned short i = 1;
-	
+
 	while (args) {
 		if (args->has_incorrect_space) {
 			// do not issue on mls ranges
@@ -310,11 +310,11 @@ struct check_result *check_space_if_call_arg(__attribute__((unused)) const struc
 		} else {
 			i++;
 		}
-		
+
 		prev = args;
 		args = args->next;
 	}
-	
+
 	return NULL;
 }
 
@@ -327,19 +327,19 @@ struct check_result *check_risky_allow_perm(__attribute__((unused)) const struct
 	if (node->data.av_data->flavor != AV_RULE_ALLOW) {
 		return NULL;
 	}
-	
+
 	const struct string_list *perms = node->data.av_data->perms;
-	
+
 	while (perms) {
 		if (0 == strcmp(perms->string, "*") ||
 		    0 == strcmp(perms->string, "~")) {
 			return make_check_result('W', W_ID_RISKY_ALLOW_PERM,
 						 "Allow rule with complement or wildcard permission");
 		}
-		
+
 		perms = perms->next;
 	}
-	
+
 	return NULL;
 }
 

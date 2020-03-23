@@ -1,8 +1,8 @@
 SUMMARY
 
 	SELint is a program to perform static code analysis on SELinux policy
-	source files 
-	
+	source files
+
 
 INSTALLING FROM TAR DOWNLOAD
 
@@ -34,7 +34,7 @@ INSTALLING FROM GIT
 
 USAGE
 
-	selint [OPTIONS] FILE [...] 
+	selint [OPTIONS] FILE [...]
 
 OPTIONS
 
@@ -72,7 +72,7 @@ OPTIONS
 		Run in "source mode" to scan a policy source repository that is designed to
 		compile into a full system policy.  If this flag is not specified, SELint
 		will assume that scanned policy files are intended to be loaded into the
-		currently running system policy. 
+		currently running system policy.
 	-S, --summary
 		Display a summary of issues found after running the analysis
 
