@@ -294,7 +294,8 @@ struct check_result *check_space_if_call_arg(__attribute__((unused)) const struc
 	while (args) {
 		if (args->has_incorrect_space) {
 			// do not issue on mls ranges
-			if ((args->string[0] != '-' ||
+			if (prev &&
+			    (args->string[0] != '-' ||
 			    look_up_in_decl_map(prev->string, DECL_TYPE) ||
 			    look_up_in_decl_map(prev->string, DECL_ATTRIBUTE) ||
 			    look_up_in_decl_map(prev->string, DECL_ROLE) ||
