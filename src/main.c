@@ -391,6 +391,8 @@ int main(int argc, char **argv)
 			}
 			file = fts_read(ftsp);
 		}
+
+		fts_close(ftsp);
 	}
 
 	free(paths);
