@@ -95,7 +95,6 @@ enum selint_error insert_declaration(struct policy_node **cur,
 
 		if (temp_name) {
 			// We are inside a template, so we need to save declarations in the template map
-			// TODO: What about nested templates?  This case may require some thought
 			// 'role foo types bar_t, baz_t;' statements are not declarations.
 			insert_decl_into_template_map(temp_name, flavor, name);
 		} else if (name && '$' != name[0]) {
