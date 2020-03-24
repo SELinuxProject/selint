@@ -317,7 +317,7 @@ struct check_result *check_space_if_call_arg(__attribute__((unused)) const struc
 							 W_ID_SPACE_IF_CALL_ARG,
 							 "Argument no. %u '%s ...' of call to interface %s contains unquoted space",
 							 i - 1, // need to substract one, cause it is the next string who has the flag set
-							 prev ? prev->string : "",
+							 prev->string,
 							 node->data.ic_data->name);
 			}
 		} else {
