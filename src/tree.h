@@ -176,6 +176,10 @@ struct attribute_data {
 	enum attr_flavor flavor;
 };
 
+struct gen_require_data {
+	unsigned char unquoted;
+};
+
 union node_data {
 	struct header_data *h_data;
 	struct av_rule_data *av_data;
@@ -187,6 +191,7 @@ union node_data {
 	struct declaration_data *d_data;
 	struct fc_entry *fc_data;
 	struct attribute_data *at_data;
+	struct gen_require_data *gr_data;
 	char *str;
 };
 
@@ -257,5 +262,7 @@ void free_fc_entry(struct fc_entry *to_free);
 void free_sel_context(struct sel_context *to_free);
 
 void free_attribute_data(struct attribute_data *to_free);
+
+void free_gen_require_data(struct gen_require_data *to_free);
 
 #endif

@@ -57,6 +57,18 @@ struct check_result *check_decl_in_if(const struct
                                       policy_node *node);
 
 /*********************************************
+* Check that gen_require blocks are quoted
+* Called on NODE_GEN_REQ nodes
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue S-008
+*********************************************/
+struct check_result *check_unquoted_gen_require_block(const struct
+                                                      check_data *data,
+                                                      const struct
+                                                      policy_node *node);
+
+/*********************************************
 * Check that all types referenced in interface are listed in its require block
 * (or declared in that template)
 * Called on NODE_AV_RULE, NODE_TT_RULE and NODE_IF_CALL nodes.

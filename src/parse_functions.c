@@ -473,12 +473,9 @@ enum selint_error insert_semicolon(struct policy_node **cur, unsigned int lineno
 }
 
 static enum selint_error begin_block(struct policy_node **cur,
-                              enum node_flavor block_type, char *data,
+                              enum node_flavor block_type, union node_data nd,
                               unsigned int lineno)
 {
-	union node_data nd;
-
-	nd.str = data;
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                block_type,
 	                                                nd,
@@ -518,8 +515,9 @@ static enum selint_error end_block(struct policy_node **cur,
 enum selint_error begin_optional_policy(struct policy_node **cur,
                                         unsigned int lineno)
 {
-
-	return begin_block(cur, NODE_OPTIONAL_POLICY, (char *)NULL, lineno);
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_OPTIONAL_POLICY, nd, lineno);
 }
 
 enum selint_error end_optional_policy(struct policy_node **cur)
@@ -531,7 +529,9 @@ enum selint_error end_optional_policy(struct policy_node **cur)
 enum selint_error begin_optional_else(struct policy_node **cur,
                                       unsigned int lineno)
 {
-	return begin_block(cur, NODE_OPTIONAL_ELSE, (char *)NULL, lineno);
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_OPTIONAL_ELSE, nd, lineno);
 }
 
 enum selint_error end_optional_else(struct policy_node **cur)
@@ -542,8 +542,9 @@ enum selint_error end_optional_else(struct policy_node **cur)
 enum selint_error begin_tunable_policy(struct policy_node **cur,
                                        unsigned int lineno)
 {
-
-	return begin_block(cur, NODE_TUNABLE_POLICY, (char *)NULL, lineno);
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_TUNABLE_POLICY, nd, lineno);
 }
 
 enum selint_error end_tunable_policy(struct policy_node **cur)
@@ -569,7 +570,10 @@ enum selint_error begin_interface_def(struct policy_node **cur,
 
 	insert_into_ifs_map(name, get_current_module_name());
 
-	return begin_block(cur, flavor, strdup(name), lineno);
+	union node_data nd;
+	nd.str = strdup(name);
+
+	return begin_block(cur, flavor, nd, lineno);
 }
 
 enum selint_error end_interface_def(struct policy_node **cur)
@@ -585,20 +589,27 @@ enum selint_error end_interface_def(struct policy_node **cur)
 enum selint_error begin_gen_require(struct policy_node **cur,
                                     unsigned int lineno)
 {
-
-	return begin_block(cur, NODE_GEN_REQ, (char *)NULL, lineno);
+	struct gen_require_data *data = (struct gen_require_data *)malloc(sizeof(struct gen_require_data));
+	union node_data nd;
+	nd.gr_data = data;
+	return begin_block(cur, NODE_GEN_REQ, nd, lineno);
 }
 
-enum selint_error end_gen_require(struct policy_node **cur)
+enum selint_error end_gen_require(struct policy_node **cur, unsigned char unquoted)
 {
+
+	if ((*cur)->parent && (*cur)->parent->flavor == NODE_GEN_REQ) {
+		(*cur)->parent->data.gr_data->unquoted = unquoted;
+	}
 
 	return end_block(cur, NODE_GEN_REQ);
 }
 
 enum selint_error begin_require(struct policy_node **cur, unsigned int lineno)
 {
-
-	return begin_block(cur, NODE_REQUIRE, (char *)NULL, lineno);
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_REQUIRE, nd, lineno);
 }
 
 enum selint_error end_require(struct policy_node **cur)
@@ -609,7 +620,9 @@ enum selint_error end_require(struct policy_node **cur)
 
 enum selint_error begin_ifdef(struct policy_node **cur, unsigned int lineno)
 {
-	return begin_block(cur, NODE_IFDEF, (char *)NULL, lineno);
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_IFDEF, nd, lineno);
 }
 
 enum selint_error end_ifdef(struct policy_node **cur)

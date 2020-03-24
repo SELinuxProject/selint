@@ -142,6 +142,7 @@ CHECK IDS
 	S-005: Declaration in interface
 	S-006: Bare module statement
 	S-007: Call to gen_context omits mls component
+	S-008: Unquoted gen_require block
 
 	W-001: Type referenced without explicit declaration
 	W-002: Type, attribute or role used but not listed in require block in interface

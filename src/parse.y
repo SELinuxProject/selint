@@ -430,14 +430,13 @@ optional_open:
 
 require:
 	gen_require_begin
-	BACKTICK require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); }
+	BACKTICK require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur, 0); }
 	|
 	gen_require_begin
-	BACKTICK SELINT_COMMAND require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur); save_command(cur, $3); free($3); }
+	BACKTICK SELINT_COMMAND require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur, 0); save_command(cur, $3); free($3); }
 	|
-	// TODO: This is bad and should be checked
 	gen_require_begin
-	require_lines CLOSE_PAREN { end_gen_require(&cur); }
+	require_lines CLOSE_PAREN { end_gen_require(&cur, 1); }
 	|
 	REQUIRE OPEN_CURLY { begin_require(&cur, yylineno); }
 	require_lines CLOSE_CURLY { end_require(&cur); }

@@ -36,6 +36,7 @@ enum style_ids {
 	S_ID_DECL_IN_IF     = 5,
 	S_ID_BARE_MODULE    = 6,
 	S_ID_MISSING_RANGE  = 7,
+	S_ID_UNQUOTE_GENREQ = 8,
 	S_END
 };
 

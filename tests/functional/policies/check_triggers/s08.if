@@ -1,0 +1,7 @@
+interface(`bar',`
+	gen_require(
+		type foo;
+	)
+
+	some_macro(foo)
+')

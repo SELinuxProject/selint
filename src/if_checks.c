@@ -107,6 +107,19 @@ struct check_result *check_decl_in_if(const struct
 				 node->data.d_data->name);
 }
 
+struct check_result *check_unquoted_gen_require_block(__attribute__((unused)) const struct
+                                                      check_data *data,
+                                                      const struct
+                                                      policy_node *node)
+{
+	if (node->data.gr_data->unquoted) {
+		return make_check_result('S', S_ID_UNQUOTE_GENREQ,
+					 "Gen require block unquoted");
+	}
+
+	return NULL;
+}
+
 struct check_result *check_type_used_but_not_required_in_if(const struct
                                                             check_data *data,
                                                             const struct
