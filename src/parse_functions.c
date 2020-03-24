@@ -611,6 +611,9 @@ static enum node_flavor attr_to_node_flavor(enum attr_flavor flavor)
 		return NODE_TYPE_ATTRIBUTE;
 	case ATTR_ROLE:
 		return NODE_ROLE_ATTRIBUTE;
+	default:
+		// Should never happen
+		return NODE_ERROR;
 	}
 }
 
