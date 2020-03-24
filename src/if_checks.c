@@ -101,11 +101,6 @@ struct check_result *check_decl_in_if(const struct
 		return NULL;
 	}
 
-	// ignore role declaration associating to type
-	if (node->data.d_data->flavor == DECL_ROLE && node->data.d_data->attrs) {
-		return NULL;
-	}
-
 	return make_check_result('S',
 				 S_ID_DECL_IN_IF,
 				 "Declaration of %s in interface",

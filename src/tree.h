@@ -31,6 +31,7 @@ enum node_flavor {
 	NODE_TC_RULE,
 	NODE_HEADER,
 	NODE_ROLE_ALLOW,
+	NODE_ROLE_TYPES,
 	NODE_DECL,
 	NODE_ALIAS,
 	NODE_TYPE_ALIAS,
@@ -114,6 +115,11 @@ struct role_allow_data {
 	char *to;
 };
 
+struct role_types_data {
+	char *role;
+	struct string_list *types;
+};
+
 struct type_transition_data {
 	struct string_list *sources;
 	struct string_list *targets;
@@ -174,6 +180,7 @@ union node_data {
 	struct header_data *h_data;
 	struct av_rule_data *av_data;
 	struct role_allow_data *ra_data;
+	struct role_types_data *rtyp_data;
 	struct type_transition_data *tt_data;
 	struct role_transition_data *rt_data;
 	struct if_call_data *ic_data;
@@ -227,6 +234,8 @@ enum selint_error free_header_data(struct header_data *to_free);
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
 
 enum selint_error free_ra_data(struct role_allow_data *to_free);
+
+enum selint_error free_rtyp_data(struct role_types_data *to_free);
 
 enum selint_error free_type_transition_data(struct type_transition_data
                                             *to_free);

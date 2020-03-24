@@ -193,7 +193,8 @@ const char *get_section(const struct policy_node *node)
 	case NODE_RT_RULE:
 		return "_non_ordered";
 	case NODE_ROLE_ALLOW:
-		// This is not in the style guide. I normally see it grouped
+	case NODE_ROLE_TYPES:
+		// These are not in the style guide. I normally see them grouped
 		// with declarations, but maybe a future ordering configuration
 		// can sort it that way
 		return "_non_ordered";

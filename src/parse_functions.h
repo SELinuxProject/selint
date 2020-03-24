@@ -137,6 +137,20 @@ enum selint_error insert_role_allow(struct policy_node **cur, const char *from_r
                                     const char *to_role, unsigned int lineno);
 
 /**********************************
+* insert_role_types
+* Add a role types node at the next node in the tree, allocating all memory for it
+* cur (in, out) - The current spot in the tree.  Will be updated to point to
+*       the newly allocated av rule node
+* role (in) - The name of the role allowed to access types
+* types (in) - (memory allocated by caller) The types allowed to be accessed
+* lineno (in) - The line number
+*
+* Returns - SELINT error code
+**********************************/
+enum selint_error insert_role_types(struct policy_node **cur, const char *role,
+                                    struct string_list *types, unsigned int lineno);
+
+/**********************************
 * insert_type_transition
 * Add a type transition node at the next node in the tree, allocating all memory for it
 * cur (in, out) - The current spot in the tree.  Will be updated to point to
