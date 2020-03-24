@@ -120,6 +120,10 @@ test_one_check() {
 	test_one_check "S-007" "s07.fc"
 }
 
+@test "S-008" {
+	test_one_check "S-008" "s08.if"
+}
+
 @test "W-001" {
 	test_one_check "W-001" "w01*"
 }
@@ -265,7 +269,7 @@ test_one_check() {
 	[ "$status" -eq 0 ]
 	[ "$output" == "" ]
 
-	run ${SELINT_PATH} -c configs/default.conf policies/misc/disable_require_start.*
+	run ${SELINT_PATH} -c configs/default.conf -d S-008 policies/misc/disable_require_start.*
 	[ "$status" -eq 0 ]
 	[ "$output" == "" ]
 }

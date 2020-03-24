@@ -265,7 +265,7 @@ enum selint_error end_interface_def(struct policy_node **cur);
 enum selint_error begin_gen_require(struct policy_node **cur,
                                     unsigned int lineno);
 
-enum selint_error end_gen_require(struct policy_node **cur);
+enum selint_error end_gen_require(struct policy_node **cur, unsigned char unquoted);
 
 enum selint_error begin_require(struct policy_node **cur, unsigned int lineno);
 

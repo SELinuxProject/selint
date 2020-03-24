@@ -337,6 +337,9 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	case NODE_ROLE_ATTRIBUTE:
 		free_attribute_data(to_free->data.at_data);
 		break;
+	case NODE_GEN_REQ:
+		free_gen_require_data(to_free->data.gr_data);
+		break;
 	default:
 		if (to_free->data.str != NULL) {
 			free(to_free->data.str);
@@ -546,5 +549,10 @@ void free_attribute_data(struct attribute_data *to_free)
 	if (to_free->attrs) {
 		free_string_list(to_free->attrs);
 	}
+	free(to_free);
+}
+
+void free_gen_require_data(struct gen_require_data *to_free)
+{
 	free(to_free);
 }
