@@ -96,13 +96,8 @@ enum selint_error insert_declaration(struct policy_node **cur,
 		if (temp_name) {
 			// We are inside a template, so we need to save declarations in the template map
 			// TODO: What about nested templates?  This case may require some thought
-			if (! (flavor == DECL_ROLE && attrs)) {
-				// A role declaration with "attributes" in a template is:
-				// role foo types bar_t, baz_t;
-				// This is a role association, not a declaration, so we don't
-				// insert declarations of this form
-				insert_decl_into_template_map(temp_name, flavor, name);
-			}
+			// 'role foo types bar_t, baz_t;' statements are not declarations.
+			insert_decl_into_template_map(temp_name, flavor, name);
 		} else if (name && '$' != name[0]) {
 			// If the name starts with $ we're probably doing something like associating
 			// a role with types in interfaces
@@ -115,19 +110,6 @@ enum selint_error insert_declaration(struct policy_node **cur,
 
 			insert_into_decl_map(name, mn, flavor);
 
-		}
-	}
-	if (flavor == DECL_ROLE &&
-	    (*cur)->parent &&
-	    (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
-		struct string_list *cur_sl_item = attrs;
-		while (cur_sl_item) {
-			if (cur_sl_item->string[0] == '$') {
-				// Role interfaces are only those where the types are passed in, not the roles
-				mark_role_if((*cur)->parent->data.str);
-				break;
-			}
-			cur_sl_item = cur_sl_item->next;
 		}
 	}
 
@@ -272,6 +254,40 @@ enum selint_error insert_role_allow(struct policy_node **cur, const char *from_r
 		insert_policy_node_next(*cur, NODE_ROLE_ALLOW, nd, lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_ra_data(ra_data);
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error insert_role_types(struct policy_node **cur, const char *role,
+                                    struct string_list *types, unsigned int lineno)
+{
+	if ((*cur)->parent && (*cur)->parent->flavor == NODE_INTERFACE_DEF) {
+		const struct string_list *cur_sl_item = types;
+		while (cur_sl_item) {
+			if (cur_sl_item->string[0] == '$') {
+				// Role interfaces are only those where the types are passed in, not the roles
+				mark_role_if((*cur)->parent->data.str);
+				break;
+			}
+			cur_sl_item = cur_sl_item->next;
+		}
+	}
+
+	struct role_types_data *rtyp_data = (struct role_types_data *)malloc(sizeof(struct role_types_data));
+
+	rtyp_data->role = strdup(role);
+	rtyp_data->types = types;
+
+	union node_data nd;
+	nd.rtyp_data = rtyp_data;
+
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_ROLE_TYPES, nd, lineno);
+	if (ret != SELINT_SUCCESS) {
+		free_rtyp_data(rtyp_data);
 		return ret;
 	}
 

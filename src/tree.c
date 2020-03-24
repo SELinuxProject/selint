@@ -130,6 +130,7 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 	struct declaration_data *d_data;
 	struct if_call_data *ifc_data;
 	struct role_allow_data *ra_data;
+	struct role_types_data *rtyp_data;
 	struct attribute_data *at_data;
 
 	switch (node->flavor) {
@@ -196,6 +197,12 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 		ret->string = strdup(ra_data->from);
 		ret->next = calloc(1, sizeof(struct string_list));
 		ret->next->string = strdup(ra_data->to);
+		break;
+	case NODE_ROLE_TYPES:
+		rtyp_data = node->data.rtyp_data;
+		ret = calloc(1, sizeof(struct string_list));
+		ret->string = strdup(rtyp_data->role);
+		ret->next = copy_string_list(rtyp_data->types);
 		break;
 	case NODE_TYPE_ATTRIBUTE:
 	case NODE_ROLE_ATTRIBUTE:
@@ -308,6 +315,9 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	case NODE_ROLE_ALLOW:
 		free_ra_data(to_free->data.ra_data);
 		break;
+	case NODE_ROLE_TYPES:
+		free_rtyp_data(to_free->data.rtyp_data);
+		break;
 	case NODE_TT_RULE:
 		free_type_transition_data(to_free->data.tt_data);
 		break;
@@ -393,6 +403,20 @@ enum selint_error free_ra_data(struct role_allow_data *to_free)
 
 	free(to_free->from);
 	free(to_free->to);
+	free(to_free);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error free_rtyp_data(struct role_types_data *to_free)
+{
+
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	free(to_free->role);
+	free_string_list(to_free->types);
 	free(to_free);
 
 	return SELINT_SUCCESS;

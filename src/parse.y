@@ -214,6 +214,8 @@ bare_line:
 	|
 	role_allow
 	|
+	role_types
+	|
 	type_transition
 	|
 	range_transition
@@ -267,7 +269,7 @@ declaration:
 	|
 	CLASS STRING string_list SEMICOLON { insert_declaration(&cur, DECL_CLASS, $2, $3, yylineno); free($2); }
 	|
-	role_declaration
+	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, NULL, yylineno); free($2); }
 	|
 	ATTRIBUTE_ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, $2, NULL, yylineno); free($2); }
 	|
@@ -288,12 +290,6 @@ type_declaration:
 				tmp->string = $4;
 				tmp->next = $6;
 				insert_aliases(&cur, tmp, DECL_TYPE, yylineno); }
-	;
-
-role_declaration:
-	ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, NULL, yylineno); free($2); }
-	|
-	ROLE STRING TYPES string_list SEMICOLON { insert_declaration(&cur, DECL_ROLE, $2, $4, yylineno); free($2); }
 	;
 
 type_alias:
@@ -380,6 +376,10 @@ role_allow:
 	                                            free_string_list($2);
 	                                            free_string_list($3);}
 	;
+
+role_types:
+        ROLE STRING TYPES string_list SEMICOLON { insert_role_types(&cur, $2, $4, yylineno); free($2); }
+        ;
 
 type_transition:
 	TYPE_TRANSITION string_list string_list COLON string_list STRING SEMICOLON
