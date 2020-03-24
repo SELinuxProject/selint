@@ -23,7 +23,7 @@ struct check_result *check_te_order(const struct check_data *data,
                                     const struct policy_node *node)
 {
 	if (!data || !data->config_check_data) {
-		return alloc_internal_error("Unintialized data given to C-001");
+		return alloc_internal_error("Uninitialized data given to C-001");
 	}
 	if (data->flavor != FILE_TE_FILE) {
 		return NULL;
