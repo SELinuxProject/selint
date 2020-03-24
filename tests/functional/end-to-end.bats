@@ -258,18 +258,18 @@ test_one_check() {
 }
 
 @test "disable comment" {
-	run ${SELINT_PATH} -c configs/default.conf -e W-002 -E -s policies/misc/disable.*
+	run ${SELINT_PATH} -c configs/default.conf -F -e W-002 -E -s policies/misc/disable.*
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o "W-002" | wc -l)
 	echo "Status: $status, Count: $count (expected 0)"
 	echo $output
 	[ "$count" -eq 0 ]
 
-	run ${SELINT_PATH} -c configs/default.conf policies/misc/disable_multiple*
+	run ${SELINT_PATH} -F -c configs/default.conf policies/misc/disable_multiple*
 	[ "$status" -eq 0 ]
 	[ "$output" == "" ]
 
-	run ${SELINT_PATH} -c configs/default.conf -d S-008 policies/misc/disable_require_start.*
+	run ${SELINT_PATH} -F -c configs/default.conf -d S-008 policies/misc/disable_require_start.*
 	[ "$status" -eq 0 ]
 	[ "$output" == "" ]
 }
