@@ -196,7 +196,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_ROLE_TYPES:
 		// These are not in the style guide. I normally see them grouped
 		// with declarations, but maybe a future ordering configuration
-		// can sort it that way
+		// can sort them that way
 		return "_non_ordered";
 	case NODE_DECL:
 	case NODE_ALIAS:
@@ -471,7 +471,6 @@ enum local_subsection get_local_subsection(const char *mod_name, const struct po
 
 /*
  * Treat the following as the same section:
- *       foo_t and foo_t
  *       foo_t and foo_r
  *       foo   and foo_t
  *       foo   and foo_r

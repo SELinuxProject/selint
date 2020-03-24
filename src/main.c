@@ -397,7 +397,6 @@ int main(int argc, char **argv)
 
 	free(paths);
 
-
 	struct checks *ck = register_checks(severity,
 	                                    config_enabled_checks,
 	                                    config_disabled_checks,
@@ -431,7 +430,7 @@ int main(int argc, char **argv)
 			printf("Failed to locate modules.conf file.\n");
 		}
 	} else {
-		load_access_vectors_normal("/sys/fs/selinux/class");    // TODO
+		load_access_vectors_normal("/sys/fs/selinux/class");
 		load_modules_normal();
 		enum selint_error res = load_devel_headers(context_if_files);
 		if (res != SELINT_SUCCESS) {
