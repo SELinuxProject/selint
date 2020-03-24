@@ -39,6 +39,7 @@ enum selint_error insert_header(struct policy_node **cur, const char *mn,
 	data->flavor = flavor;
 	data->module_name = strdup(mn);
 	if (!data->module_name) {
+		free(data);
 		return SELINT_OUT_OF_MEM;
 	}
 
