@@ -21,6 +21,7 @@ static struct hash_elem *role_map = NULL;
 static struct hash_elem *user_map = NULL;
 static struct hash_elem *attr_type_map = NULL;
 static struct hash_elem *attr_role_map = NULL;
+static struct hash_elem *bool_map = NULL;
 static struct hash_elem *class_map = NULL;
 static struct hash_elem *perm_map = NULL;
 static struct hash_elem *mods_map = NULL;
@@ -58,6 +59,9 @@ static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor fl
 		break;
 	case DECL_ATTRIBUTE_ROLE:
 		HASH_FIND(hh_attr_role, attr_role_map, name, strlen(name), decl);
+		break;
+	case DECL_BOOL:
+		HASH_FIND(hh_bool, bool_map, name, strlen(name), decl);
 		break;
 	case DECL_CLASS:
 		HASH_FIND(hh_class, class_map, name, strlen(name), decl);
@@ -106,6 +110,10 @@ void insert_into_decl_map(const char *type, const char *module_name,
 			break;
 		case DECL_ATTRIBUTE_ROLE:
 			HASH_ADD_KEYPTR(hh_attr_role, attr_role_map, decl->key,
+			                strlen(decl->key), decl);
+			break;
+		case DECL_BOOL:
+			HASH_ADD_KEYPTR(hh_bool, bool_map, decl->key,
 			                strlen(decl->key), decl);
 			break;
 		case DECL_CLASS:
@@ -257,6 +265,8 @@ unsigned int decl_map_count(enum decl_flavor flavor)
 		return HASH_CNT(hh_role, role_map);
 	case DECL_USER:
 		return HASH_CNT(hh_user, user_map);
+	case DECL_BOOL:
+		return HASH_CNT(hh_bool, bool_map);
 	case DECL_CLASS:
 		return HASH_CNT(hh_class, class_map);
 	case DECL_PERM:
@@ -522,6 +532,8 @@ void free_all_maps()
 	FREE_MAP(attr_type);
 
 	FREE_MAP(attr_role);
+
+	FREE_MAP(bool);
 
 	FREE_MAP(class);
 
