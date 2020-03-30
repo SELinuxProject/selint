@@ -320,7 +320,7 @@ int main(int argc, char **argv)
 
 	paths[i] = NULL;
 
-	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT | FTS_XDEV, NULL);
 
 	FTSENT *file = fts_read(ftsp);
 
@@ -367,7 +367,7 @@ int main(int argc, char **argv)
 		paths[0] = context_path;
 		paths[1] = NULL;
 
-		ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+		ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT | FTS_XDEV, NULL);
 		file = fts_read(ftsp);
 
 		while (file) {

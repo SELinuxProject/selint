@@ -175,7 +175,7 @@ enum selint_error load_devel_headers(struct policy_file_list *context_files)
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
-	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT | FTS_XDEV, NULL);
 #pragma GCC diagnostic pop
 
 	FTSENT *file = fts_read(ftsp);
