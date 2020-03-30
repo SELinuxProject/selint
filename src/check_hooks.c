@@ -86,14 +86,15 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 
 void display_check_result(struct check_result *res, struct check_data *data)
 {
+	static const size_t FILENAME_PADDING = 22;
 
 	const size_t len = strlen(data->filename);
 	unsigned int padding;
 
-	if (18 < len) {
+	if (FILENAME_PADDING < len) {
 		padding = 0;
 	} else {
-		padding = 18 - len;
+		padding = FILENAME_PADDING - len;
 	}
 
 	printf("%s:%*u: (%c): %s (%c-%03u)\n",
