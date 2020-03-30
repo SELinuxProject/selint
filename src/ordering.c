@@ -234,8 +234,7 @@ const char *get_section(const struct policy_node *node)
 		    !is_tunable(node) &&
 		    (look_up_in_template_map(node->data.ic_data->name) ||
 		     is_transform_if(node->data.ic_data->name) ||
-		     is_role_if(node->data.ic_data->name) ||
-		     0 == strcmp(node->data.ic_data->name, "gen_tunable"))) {
+		     is_role_if(node->data.ic_data->name))) {
 			return "_declarations";
 		} else {
 			if (node->data.ic_data->args) {

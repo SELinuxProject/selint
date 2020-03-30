@@ -297,6 +297,10 @@ bool_declaration:
 	BOOL STRING SEMICOLON { insert_declaration(&cur, DECL_BOOL, $2, NULL, yylineno); free($2); }
 	|
 	GEN_BOOL OPEN_PAREN STRING COMMA STRING CLOSE_PAREN { insert_declaration(&cur, DECL_BOOL, $3, NULL, yylineno); free($3); free($5); }
+	|
+	GEN_TUNABLE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA STRING CLOSE_PAREN { insert_declaration(&cur, DECL_BOOL, $4, NULL, yylineno); free($4); free($7); }
+	|
+	GEN_TUNABLE OPEN_PAREN STRING COMMA STRING CLOSE_PAREN { insert_declaration(&cur, DECL_BOOL, $3, NULL, yylineno); free($3); free($5); }
 	;
 
 type_alias:
@@ -505,8 +509,6 @@ m4_call:
 	|
 	tunable
 	|
-	gen_tunable
-	|
 	ifelse
 	|
 	refpolicywarn
@@ -530,12 +532,6 @@ tunable:
 	|
 	TUNABLE_POLICY OPEN_PAREN { begin_tunable_policy(&cur, yylineno); }
 	condition COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
-	;
-
-gen_tunable:
-	GEN_TUNABLE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA STRING CLOSE_PAREN { free($4); free($7); }
-	|
-	GEN_TUNABLE OPEN_PAREN STRING COMMA STRING CLOSE_PAREN { free($3); free($5); }
 	;
 
 ifelse:
