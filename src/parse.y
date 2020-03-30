@@ -79,6 +79,7 @@
 %token ROLE_TRANSITION;
 %token OPTIONAL_POLICY;
 %token GEN_REQUIRE;
+%token GEN_BOOL;
 %token GEN_TUNABLE;
 %token REQUIRE;
 %token TUNABLE_POLICY;
@@ -273,7 +274,7 @@ declaration:
 	|
 	ATTRIBUTE_ROLE STRING SEMICOLON { insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, $2, NULL, yylineno); free($2); }
 	|
-	BOOL STRING SEMICOLON { insert_declaration(&cur, DECL_BOOL, $2, NULL, yylineno); free($2); }
+	bool_declaration
 	;
 
 type_declaration:
@@ -290,6 +291,12 @@ type_declaration:
 				tmp->string = $4;
 				tmp->next = $6;
 				insert_aliases(&cur, tmp, DECL_TYPE, yylineno); }
+	;
+
+bool_declaration:
+	BOOL STRING SEMICOLON { insert_declaration(&cur, DECL_BOOL, $2, NULL, yylineno); free($2); }
+	|
+	GEN_BOOL OPEN_PAREN STRING COMMA STRING CLOSE_PAREN { insert_declaration(&cur, DECL_BOOL, $3, NULL, yylineno); free($3); free($5); }
 	;
 
 type_alias:
