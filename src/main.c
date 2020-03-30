@@ -29,9 +29,11 @@
 #include "util.h"
 #include "selint_config.h"
 #include "startup.h"
+#include "color.h"
 
 // ASCII characters go up to 127
 #define CONTEXT_ID 128
+#define COLOR_ID   129
 
 extern int yydebug;
 
@@ -48,6 +50,8 @@ static void usage(void)
 	printf("  -c, --config=CONFIGFILE\tOverride default config with config\n"\
 		"\t\t\t\tspecified on command line.  See\n"\
 		"\t\t\t\tCONFIGURATION section for config file syntax.\n"\
+		"      --color=COLOR_OPTION\tConfigure color output.\n"\
+		"\t\t\t\tOptions are on, off and auto (the default).\n"\
 		"      --context=CONTEXT_PATH\tRecursively scan CONTEXT_PATH to find additional te and if\n"\
 		"\t\t\t\tfiles to parse, but not scan.  SELint will assume the scanned policy files\n"\
 		"\t\t\t\tare intended to be compiled together with the context files\n"\
@@ -88,6 +92,7 @@ int main(int argc, char **argv)
 	int summary_flag = 0;
 	int fail_on_finding = 0;
 	char *context_path = NULL;
+	char color = 0;  // 0 auto, 1 off, 2 on
 
 	struct string_list *config_disabled_checks = NULL;
 	struct string_list *config_enabled_checks = NULL;
@@ -101,9 +106,9 @@ int main(int argc, char **argv)
 
 	while (1) {
 
-		static struct option long_options[] = {
+		static const struct option long_options[] = {
 			{ "config",       required_argument, NULL,          'c' },
-			{ "context",      required_argument,  NULL,          CONTEXT_ID },
+			{ "context",      required_argument, NULL,          CONTEXT_ID },
 			{ "disable",      required_argument, NULL,          'd' },
 			{ "enable",       required_argument, NULL,          'e' },
 			{ "fail",         no_argument,       NULL,          'F' },
@@ -114,6 +119,7 @@ int main(int argc, char **argv)
 			{ "recursive",    no_argument,       NULL,          'r' },
 			{ "source",       no_argument,       NULL,          's' },
 			{ "summary",      no_argument,       NULL,          'S' },
+			{ "color",        required_argument, NULL,          COLOR_ID },
 			{ "version",      no_argument,       NULL,          'V' },
 			{ "verbose",      no_argument,       &verbose_flag, 1   },
 			{ 0,              0,                 0,             0   }
@@ -144,6 +150,20 @@ int main(int argc, char **argv)
 		case CONTEXT_ID:
 			// Specify a path for context files
 			context_path = optarg;
+			break;
+
+		case COLOR_ID:
+			if (0 == strcmp(optarg, "on")) {
+				color = 2;
+			} else if (0 == strcmp(optarg, "off")) {
+				color = 1;
+			} else if (0 == strcmp(optarg, "auto")) {
+				color = 0;
+			} else {
+				printf("Invalid argument '%s' given for option --color\n", optarg);
+				usage();
+				exit(EX_USAGE);
+			}
 			break;
 
 		case 'd':
@@ -235,8 +255,17 @@ int main(int argc, char **argv)
 
 	print_if_verbose("Verbose mode enabled\n");
 
+	if (color == 2 || (color == 0 && isatty(STDOUT_FILENO))) {
+		color_enable();
+		print_if_verbose("Color output enabled\n");
+	}
+
 	if (source_flag) {
 		print_if_verbose("Source mode enabled\n");
+
+		if (!recursive_scan) {
+			printf("%sNote%s: Source mode enabled without recursive flag (only explicit specified files will be checked).\n", color_note(), color_reset());
+		}
 	}
 
 	if (!config_filename) {
@@ -281,7 +310,7 @@ int main(int argc, char **argv)
 	}
 
 	if (only_enabled && !cl_enabled_checks) {
-		printf("Error: no warning enabled!\n");
+		printf("%sError%s: no warning enabled!\n", color_error(), color_reset());
 		exit(EX_USAGE);
 	}
 
@@ -405,7 +434,7 @@ int main(int argc, char **argv)
 	                                    only_enabled);
 
 	if (!ck) {
-		printf("Failed to register checks (bad configuration)\n");
+		printf("%sError%s: Failed to register checks (bad configuration)\n", color_error(), color_reset());
 		free_file_list(te_files);
 		free_file_list(if_files);
 		free_file_list(fc_files);
@@ -421,20 +450,20 @@ int main(int argc, char **argv)
 			enum selint_error res =
 				load_modules_source(modules_conf_path);
 			if (res != SELINT_SUCCESS) {
-				printf("Error loading modules.conf: %d\n", res);
+				printf("%sWarning%s: Failed to load modules.conf: %d\n", color_warning(), color_reset(), res);
 			} else {
 				print_if_verbose("Loaded modules from %s\n",
 				                 modules_conf_path);
 			}
 		} else {
-			printf("Failed to locate modules.conf file.\n");
+			printf("%sWarning%s: Failed to locate modules.conf file.\n", color_warning(), color_reset());
 		}
 	} else {
 		load_access_vectors_normal("/sys/fs/selinux/class");
 		load_modules_normal();
 		enum selint_error res = load_devel_headers(context_if_files);
 		if (res != SELINT_SUCCESS) {
-			printf("Error loading SELinux development header files.\n");
+			printf("%sWarning%s: Failed to load SELinux development header files.\n", color_warning(), color_reset());
 		}
 	}
 
@@ -448,11 +477,11 @@ int main(int argc, char **argv)
 		}
 		break;
 	case SELINT_PARSE_ERROR:
-		printf("Error during parsing\n");
+		printf("%sError%s: Failed to parse files\n", color_error(), color_reset());
 		exit_code = EX_SOFTWARE;
 		break;
 	default:
-		printf("Internal error: %d\n", res);
+		printf("%sError%s: Internal error: %d\n", color_error(), color_reset(), res);
 		exit_code = EX_SOFTWARE;
 	}
 
