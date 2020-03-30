@@ -77,7 +77,7 @@ static void usage(void)
 
 #define WARN_ON_INVALID_CHECK_ID(id, desc)\
 	if (!is_valid_check(id)) {\
-		printf("Warning: %s, %s, is not a valid check id.\n", id, desc);\
+		printf("%sWarning%s: %s, %s, is not a valid check id.\n", color_warning(), color_reset(), id, desc);\
 	}
 
 int main(int argc, char **argv)
@@ -168,7 +168,6 @@ int main(int argc, char **argv)
 
 		case 'd':
 			// Disable a given check
-			WARN_ON_INVALID_CHECK_ID(optarg, "disabled on command line");
 			if (cl_d_cursor) {
 				cl_d_cursor->next =
 					calloc(1, sizeof(struct string_list));
@@ -183,7 +182,6 @@ int main(int argc, char **argv)
 
 		case 'e':
 			// Enable a given check
-			WARN_ON_INVALID_CHECK_ID(optarg, "enabled on command line");
 			if (cl_e_cursor) {
 				cl_e_cursor->next =
 					calloc(1, sizeof(struct string_list));
@@ -266,6 +264,13 @@ int main(int argc, char **argv)
 		if (!recursive_scan) {
 			printf("%sNote%s: Source mode enabled without recursive flag (only explicit specified files will be checked).\n", color_note(), color_reset());
 		}
+	}
+
+	for (const struct string_list * cur = cl_disabled_checks; cur; cur = cur->next) {
+		WARN_ON_INVALID_CHECK_ID(cur->string, "disabled on command line");
+	}
+	for (const struct string_list * cur = cl_enabled_checks; cur; cur = cur->next) {
+		WARN_ON_INVALID_CHECK_ID(cur->string, "enabled on command line");
 	}
 
 	if (!config_filename) {
