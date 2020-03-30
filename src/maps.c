@@ -16,20 +16,20 @@
 
 #include "maps.h"
 
-struct hash_elem *type_map = NULL;
-struct hash_elem *role_map = NULL;
-struct hash_elem *user_map = NULL;
-struct hash_elem *attr_type_map = NULL;
-struct hash_elem *attr_role_map = NULL;
-struct hash_elem *class_map = NULL;
-struct hash_elem *perm_map = NULL;
-struct hash_elem *mods_map = NULL;
-struct hash_elem *mod_layers_map = NULL;
-struct hash_elem *ifs_map = NULL;
-struct bool_hash_elem *transform_map = NULL;
-struct bool_hash_elem *filetrans_map = NULL;
-struct bool_hash_elem *role_if_map = NULL;
-struct template_hash_elem *template_map = NULL;
+static struct hash_elem *type_map = NULL;
+static struct hash_elem *role_map = NULL;
+static struct hash_elem *user_map = NULL;
+static struct hash_elem *attr_type_map = NULL;
+static struct hash_elem *attr_role_map = NULL;
+static struct hash_elem *class_map = NULL;
+static struct hash_elem *perm_map = NULL;
+static struct hash_elem *mods_map = NULL;
+static struct hash_elem *mod_layers_map = NULL;
+static struct hash_elem *ifs_map = NULL;
+static struct bool_hash_elem *transform_map = NULL;
+static struct bool_hash_elem *filetrans_map = NULL;
+static struct bool_hash_elem *role_if_map = NULL;
+static struct template_hash_elem *template_map = NULL;
 
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 __attribute__((no_sanitize("unsigned-integer-overflow")))
