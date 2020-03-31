@@ -30,6 +30,7 @@
 #define SYNTAX_ERROR_FILENAME POLICIES_DIR "syntax_error.te"
 #define BAD_RA_FILENAME POLICIES_DIR "bad_role_allow.te"
 #define DISABLE_COMMENT_FILENAME POLICIES_DIR "disable_comment.te"
+#define BOOL_DECLARATION_FILENAME POLICIES_DIR "bool_declarations.te"
 
 extern FILE * yyin;
 extern int yyparse(void);
@@ -315,6 +316,129 @@ START_TEST (test_disable_comment) {
 }
 END_TEST
 
+START_TEST (test_bool_declarations) {
+
+	ast = cur = calloc(1, sizeof(struct policy_node));
+	set_current_module_name("bool_declarations");
+
+	yyin = fopen(BOOL_DECLARATION_FILENAME, "r");
+	yyrestart(yyin);
+	ck_assert_int_eq(0, yyparse());
+
+	struct policy_node *current = ast;
+
+	// top file node
+	ck_assert_ptr_nonnull(current);
+	ck_assert_int_eq(NODE_TE_FILE, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	// header node
+	ck_assert_ptr_null(current->parent);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_int_eq(NODE_HEADER, current->flavor);
+
+	current = current->next;
+
+	// first bool
+	ck_assert_ptr_null(current->parent);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_ptr_nonnull(current->data.d_data);
+	ck_assert_int_eq(DECL_BOOL, current->data.d_data->flavor);
+	ck_assert_str_eq("bool_one", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+
+	current = current->next;
+
+	// second bool
+	ck_assert_ptr_null(current->parent);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_ptr_nonnull(current->data.d_data);
+	ck_assert_int_eq(DECL_BOOL, current->data.d_data->flavor);
+	ck_assert_str_eq("bool_two", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+
+	current = current->next;
+
+	// third bool
+	ck_assert_ptr_null(current->parent);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_ptr_nonnull(current->data.d_data);
+	ck_assert_int_eq(DECL_BOOL, current->data.d_data->flavor);
+	ck_assert_str_eq("bool_three", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+
+	current = current->next;
+
+	// first tunable
+	ck_assert_ptr_null(current->parent);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_ptr_nonnull(current->data.d_data);
+	ck_assert_int_eq(DECL_BOOL, current->data.d_data->flavor);
+	ck_assert_str_eq("tunable_one", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+
+	current = current->next;
+
+	// second tunable
+	ck_assert_ptr_null(current->parent);
+	ck_assert_ptr_null(current->next); // last node
+	ck_assert_ptr_nonnull(current->prev);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_ptr_nonnull(current->data.d_data);
+	ck_assert_int_eq(DECL_BOOL, current->data.d_data->flavor);
+	ck_assert_str_eq("tunable_two", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+
+	// check storage
+	const char *mod_name;
+
+	mod_name = look_up_in_decl_map("bool_one", DECL_BOOL);
+	ck_assert_ptr_nonnull(mod_name);
+	ck_assert_str_eq("bool_declarations", mod_name);
+
+	mod_name = look_up_in_decl_map("bool_two", DECL_BOOL);
+	ck_assert_ptr_nonnull(mod_name);
+	ck_assert_str_eq("bool_declarations", mod_name);
+
+	mod_name = look_up_in_decl_map("bool_three", DECL_BOOL);
+	ck_assert_ptr_nonnull(mod_name);
+	ck_assert_str_eq("bool_declarations", mod_name);
+
+	mod_name = look_up_in_decl_map("tunable_one", DECL_BOOL);
+	ck_assert_ptr_nonnull(mod_name);
+	ck_assert_str_eq("bool_declarations", mod_name);
+
+	mod_name = look_up_in_decl_map("tunable_two", DECL_BOOL);
+	ck_assert_ptr_nonnull(mod_name);
+	ck_assert_str_eq("bool_declarations", mod_name);
+
+	// some cross checks
+	ck_assert_ptr_null(look_up_in_decl_map("bool_four", DECL_BOOL));
+	ck_assert_ptr_null(look_up_in_decl_map("bool_one", DECL_TYPE));
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(yyin);
+}
+END_TEST
+
 Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -331,6 +455,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_syntax_error);
 	tcase_add_test(tc_core, test_parse_bad_role_allow);
 	tcase_add_test(tc_core, test_disable_comment);
+	tcase_add_test(tc_core, test_bool_declarations);
 	suite_add_tcase(s, tc_core);
 
 	return s;
