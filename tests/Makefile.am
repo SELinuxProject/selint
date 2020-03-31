@@ -95,6 +95,7 @@ SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf \
 			sample_policy_files/basic.if \
 			sample_policy_files/basic.te \
 			sample_policy_files/blocks.te \
+			sample_policy_files/bool_declarations.te \
 			sample_policy_files/disable_comment.te \
 			sample_policy_files/empty.te \
 			sample_policy_files/modules.conf \

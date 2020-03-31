@@ -1,0 +1,10 @@
+policy_module(bool_declarations, 1.0.0)
+
+bool bool_one;
+
+gen_bool(bool_two, false)
+
+gen_bool(bool_three,true)
+
+gen_tunable(`tunable_one', true)
+gen_tunable(tunable_two,false)
