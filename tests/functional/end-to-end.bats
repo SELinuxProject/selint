@@ -272,6 +272,10 @@ test_one_check() {
 	run ${SELINT_PATH} -F -c configs/default.conf -d S-008 policies/misc/disable_require_start.*
 	[ "$status" -eq 0 ]
 	[ "$output" == "" ]
+
+	run ${SELINT_PATH} -F -c configs/default.conf policies/misc/disable_require_decl.*
+	[ "$status" -eq 0 ]
+	[ "$output" == "" ]
 }
 
 @test "nonexistent file" {

@@ -184,6 +184,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/misc/disable.if \
 			functional/policies/misc/disable_multiple_other.te \
 			functional/policies/misc/disable_multiple.te \
+			functional/policies/misc/disable_require_decl.if \
 			functional/policies/misc/disable_require_start.te \
 			functional/policies/misc/disable.te \
 			functional/policies/misc/needs_context.te \
