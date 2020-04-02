@@ -42,9 +42,6 @@ OPTIONS
 		Override default config with config specified on command line.  See
 		CONFIGURATION section for config file syntax.
 
-	--color=COLOR_OPTION
-		Configure color output.  Options are on, off and auto (the default).
-
 	--context=CONTEXT_PATH
 		Also parse any .te or .if files found in CONTEXT_PATH and load symbols
 		associated with them for use when checking the policy files to be analyzed.
