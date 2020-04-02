@@ -221,6 +221,8 @@ struct string_list *get_names_in_node(const struct policy_node *node);
 
 struct string_list *get_names_required(const struct policy_node *node);
 
+const char *decl_flavor_to_string(enum decl_flavor flavor);
+
 /**********************************
 * Return 1 if the node is in a require block
 * and 0 otherwise

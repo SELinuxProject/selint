@@ -93,4 +93,15 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
                                                             const struct
                                                             policy_node *node);
 
+/*********************************************
+* Check that all types listed in require block are declared in the same module
+* Called on NODE_DECL nodes
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue W-011
+*********************************************/
+struct check_result *check_required_declaration_own(const struct
+                                                    check_data *data,
+                                                    const struct
+                                                    policy_node *node);
 #endif

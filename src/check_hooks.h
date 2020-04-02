@@ -52,6 +52,7 @@ enum warn_ids {
 	W_ID_RISKY_ALLOW_PERM  = 8,
 	W_ID_MOD_NAME_FILE     = 9,
 	W_ID_UNKNOWN_CALL      = 10,
+	W_ID_IF_DECL_NOT_OWN   = 11,
 	W_END
 };
 

@@ -325,3 +325,56 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 	free_string_list(names_to_check);
 	return res;
 }
+
+struct check_result *check_required_declaration_own(const struct
+                                                    check_data *data,
+                                                    const struct
+                                                    policy_node *node)
+{
+	if (data->flavor != FILE_IF_FILE) {
+		return NULL;
+	}
+
+	const char *name = node->data.d_data->name;
+	const enum decl_flavor flavor = node->data.d_data->flavor;
+
+	// ignore class, permission and user declarations
+	if (flavor == DECL_CLASS || flavor == DECL_PERM || flavor == DECL_USER) {
+		return NULL;
+	}
+
+	// TODO: handle templated declarations
+	if (name[0] == '$') {
+		return NULL;
+	}
+
+	// only check declarations in require blocks
+	if (!is_in_require(node)) {
+		return NULL;
+	}
+
+	const char *modname_orig_decl = look_up_in_decl_map(name, flavor);
+	if (!modname_orig_decl) {
+		return make_check_result('W',
+			                 W_ID_IF_DECL_NOT_OWN,
+			                 "Definition of declared %s %s not found in any module",
+			                 decl_flavor_to_string(flavor),
+			                 name);
+	}
+
+	if (0 == strcmp(modname_orig_decl, data->mod_name)) {
+		return NULL;
+	}
+
+	// ignore roles declared in kernel module: common in refpolicy
+	if (flavor == DECL_ROLE && 0 == strcmp(modname_orig_decl, "kernel")) {
+		return NULL;
+	}
+
+	return make_check_result('W',
+			         W_ID_IF_DECL_NOT_OWN,
+			         "Definition of declared %s %s not found in own module, but in module %s",
+			         decl_flavor_to_string(flavor),
+			         name,
+			         modname_orig_decl);
+}

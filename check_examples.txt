@@ -111,6 +111,16 @@ W-010:
 
 	init_this-if-does-not-exist(bar_t)
 
+W-011:
+
+	interface(`foo_read_conf',`
+		gen_require(`
+			type this_type_does_not_exist;
+			# type from different module
+			type bar_conf_t;
+		')
+	')
+
 Error:
 
 E-002:

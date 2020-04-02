@@ -171,6 +171,7 @@ CHECK IDS
 	W-008: Allow rule with complement or wildcard permission
 	W-009: Module name does not match file name
 	W-010: Call to unknown interface
+	W-011: Declaration in require block not defined in own module
 
 	E-002: Bad file context format
 	E-003: Nonexistent user listed in fc file
