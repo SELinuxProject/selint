@@ -612,7 +612,11 @@ arg:
 	|
 	BACKTICK strings SINGLE_QUOTE { $$ = $2; }
 	|
-	BACKTICK SINGLE_QUOTE { $$ = NULL; }
+	BACKTICK SINGLE_QUOTE { char *empty = malloc(1);
+				empty[0] = '\0';
+				$$ = malloc(sizeof(struct string_list));
+				$$->string = empty;
+				$$->next = NULL; }
 	;
 
 args:
