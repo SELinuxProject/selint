@@ -119,6 +119,30 @@ char *get_name_if_in_template(struct policy_node *cur)
 	return NULL;
 }
 
+const char *decl_flavor_to_string(enum decl_flavor flavor)
+{
+	switch (flavor) {
+	case DECL_TYPE:
+		return "type";
+	case DECL_ATTRIBUTE:
+		return "attribute";
+	case DECL_ATTRIBUTE_ROLE:
+		return "attribute role";
+	case DECL_ROLE:
+		return "role";
+	case DECL_USER:
+		return "user";
+	case DECL_CLASS:
+		return "class";
+	case DECL_PERM:
+		return "permission";
+	case DECL_BOOL:
+		return "boolean";
+	default:
+		return "unknown";
+	}
+}
+
 struct string_list *get_names_in_node(const struct policy_node *node)
 {
 

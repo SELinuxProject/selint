@@ -1,0 +1,6 @@
+interface(`w11_if',`
+	gen_require(`
+		type w11_t;
+		type wnot11_t;
+	')
+')

@@ -231,6 +231,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_IF_CALL, ck, "W-010",
 				  check_unknown_interface_call);
 		}
+		if (CHECK_ENABLED("W-011")) {
+			add_check(NODE_DECL, ck, "W-011",
+				  check_required_declaration_own);
+		}
 		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {
