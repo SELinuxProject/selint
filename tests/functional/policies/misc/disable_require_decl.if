@@ -1,0 +1,6 @@
+#comment
+interface(`disable_require_decl_if',`
+	gen_require(`
+		type foo_t; #selint-disable:W-003
+	')
+')

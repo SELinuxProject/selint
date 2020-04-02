@@ -469,6 +469,12 @@ require_lines:
 	;
 
 require_line:
+	require_bare
+	|
+	require_bare SELINT_COMMAND { save_command(cur, $2); free($2); }
+	;
+
+require_bare:
 	TYPE comma_string_list SEMICOLON {
 		const struct string_list *iter = $2;
 		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_TYPE, iter->string, NULL, yylineno);
