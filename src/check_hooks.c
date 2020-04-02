@@ -22,8 +22,6 @@
 
 #include "check_hooks.h"
 
-#include "color.h"
-
 int found_issue = 0;
 
 #define ALLOC_NODE(nl)  if (ck->check_nodes[nl]) { \
@@ -99,14 +97,11 @@ void display_check_result(struct check_result *res, struct check_data *data)
 		padding = FILENAME_PADDING - len;
 	}
 
-	printf("%s:%*u: %s(%c)%s: %s (%c-%03u)\n",
+	printf("%s:%*u: (%c): %s (%c-%03u)\n",
 	       data->filename,
 	       padding,
 	       res->lineno,
-	       color_severity(res->severity),
-	       res->severity,
-	       color_reset(),
-	       res->message, res->severity, res->check_id);
+	       res->severity, res->message, res->severity, res->check_id);
 }
 
 struct check_result *alloc_internal_error(const char *string)
@@ -249,7 +244,7 @@ void display_check_issue_counts(const struct checks *ck)
 		if (old_issue_name && 0 != strcmp(old_issue_name, node_arr[i]->check_id)) {
 			// New issue.  Print the old info
 			if (issue_count != 0) {
-				printf("%s%s%s: %u\n", color_severity(old_issue_name[0]), old_issue_name, color_reset(), issue_count);
+				printf("%s: %u\n", old_issue_name, issue_count);
 				printed_something = 1;
 			}
 
@@ -264,12 +259,12 @@ void display_check_issue_counts(const struct checks *ck)
 
 	// Possible print last issue
 	if (issue_count != 0) {
-		printf("%s%s%s: %u\n", color_severity(old_issue_name[0]), old_issue_name, color_reset(), issue_count);
+		printf("%s: %u\n", old_issue_name, issue_count);
 		printed_something = 1;
 	}
 
 	if (!printed_something) {
-		printf("%s(none)%s\n", color_ok(), color_reset());
+		printf("(none)\n");
 	}
 
 	free(node_arr);
