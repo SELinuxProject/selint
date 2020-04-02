@@ -96,3 +96,5 @@ genfscon rootfs / -l gen_context(system_u:object_r:rootfs_t, s0)
 
 #exceptions
 neverallow { domain -foo_t } secret_stuff_t:file read;
+
+empty_string_first(`', foo_t)
