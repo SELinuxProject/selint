@@ -107,6 +107,10 @@ W-009:
 	#In foo.te
 	policy_module(bar, 1.0)
 
+W-010:
+
+	init_this-if-does-not-exist(bar_t)
+
 Error:
 
 E-002:

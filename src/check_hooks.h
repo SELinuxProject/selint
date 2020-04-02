@@ -51,6 +51,7 @@ enum warn_ids {
 	W_ID_SPACE_IF_CALL_ARG = 7,
 	W_ID_RISKY_ALLOW_PERM  = 8,
 	W_ID_MOD_NAME_FILE     = 9,
+	W_ID_UNKNOWN_CALL      = 10,
 	W_END
 };
 

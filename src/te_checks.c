@@ -500,6 +500,58 @@ struct check_result *check_module_file_name_mismatch(const struct check_data
 	return NULL;
 }
 
+static bool starts_with_module_prefix(const char *name)
+{
+	for (const char *prefix = strchr(name, '_'); prefix; prefix = strchr(prefix + 1, '_')) {
+		char *search_mod = strndup(name, (size_t)(prefix - name));
+		if (look_up_in_mods_map(search_mod)) {
+			free(search_mod);
+			return true;
+		}
+
+		for (size_t i = 0; i < (sizeof RefPol_module_abbreviations / sizeof *RefPol_module_abbreviations); ++i) {
+			if (0 == strcmp(search_mod, RefPol_module_abbreviations[i][0]) &&
+			    look_up_in_mods_map(RefPol_module_abbreviations[i][1])) {
+				free(search_mod);
+				return true;
+			}
+		}
+
+		free(search_mod);
+	}
+
+	return false;
+}
+
+struct check_result *check_unknown_interface_call(__attribute__((unused)) const struct check_data
+						  *data,
+						  const struct policy_node
+						  *node)
+{
+	const char *if_name = node->data.ic_data->name;
+
+	// ignore known macros starting with module name
+	for (size_t i = 0; i < (sizeof RefPol_macros_with_module_prefix / sizeof *RefPol_macros_with_module_prefix); ++i) {
+		if (0 == strcmp(if_name, RefPol_macros_with_module_prefix[i])) {
+			return NULL;
+		}
+	}
+
+	// ignore calls which does not start with a module name: they are probably macros
+	if (!starts_with_module_prefix(if_name)) {
+		return NULL;
+	}
+
+	// ignore known interfaces
+	if (look_up_in_ifs_map(if_name)) {
+		return NULL;
+	}
+
+	return make_check_result('W', W_ID_UNKNOWN_CALL,
+				 "Call to %s can not be referenced to any interface",
+				 if_name);
+}
+
 struct check_result *check_declaration_interface_nameclash(__attribute__((unused)) const struct check_data
 							   *data,
 							   const struct policy_node

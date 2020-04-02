@@ -50,4 +50,29 @@ void print_if_verbose(const char *format, ...);
 ****************************************************/
 bool ends_with(const char *str, size_t str_len, const char *suffix, size_t suffix_len);
 
+
+/****************************************************
+*
+*   Conventions in refpolicy style policies
+*
+****************************************************/
+
+static const char *const RefPol_module_abbreviations[][2] = {
+	{ "fs"      , "filesystem"   },
+	{ "corecmd" , "corecommands" },
+	{ "seutil"  , "selinuxutil"  },
+	{ "libs"    , "libraries"    },
+	{ "dev"     , "devices"      },
+	{ "term"    , "terminal"     },
+	{ "corenet" , "corenetwork"  },
+	{ "auth"    , "authlogin"    },
+	{ "userdom" , "userdomain"   },
+	{ "sysnet"  , "sysnetwork"   },
+};
+
+static const char *const RefPol_macros_with_module_prefix[] = {
+	"domain_auto_transition_pattern",
+	"domain_transition_pattern",
+};
+
 #endif

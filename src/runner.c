@@ -227,6 +227,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_HEADER, ck, "W-009",
 			          check_module_file_name_mismatch);
 		}
+		if (CHECK_ENABLED("W-010")) {
+			add_check(NODE_IF_CALL, ck, "W-010",
+				  check_unknown_interface_call);
+		}
 		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {

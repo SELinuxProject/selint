@@ -1,0 +1,11 @@
+policy_module(w10, 1.0.0)
+
+type t1;
+
+somethingsomething_pattern(t1)
+
+type t2;
+
+can_exec(t1, t2)
+
+w06_interface(t1)
