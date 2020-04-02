@@ -1,0 +1,6 @@
+policy_module(w10, 1.0.0)
+
+type t;
+
+# module w05 is defined in modules.conf
+w05_nonexist(t)

@@ -172,6 +172,11 @@ test_one_check() {
 	test_one_check "W-009" "w09.te"
 }
 
+@test "W-010" {
+	test_one_check "W-010" "w10.warn.te"
+	test_one_check_expect "W-010" "w10.pass.te" 0
+}
+
 @test "E-002" {
 	test_one_check "E-002" "e02.fc"
 }
