@@ -352,7 +352,6 @@ int main(int argc, char **argv)
 
 	int i = 0;
 	while (optind < argc) {
-		print_if_verbose("Path added to scan: '%s'\n", argv[optind]);
 		paths[i++] = argv[optind++];
 	}
 
@@ -388,15 +387,10 @@ int main(int argc, char **argv)
 			// TODO: Make modules.conf name configurable
 			modules_conf_path = strdup(file->fts_path);
 		} else {
-			if (recursive_scan) {
-				print_if_verbose("Skipping %s which is not a policy file\n",
-				                 file->fts_path);
-			} else {
-				// avoid printing the message twice for directories
-				if (file->fts_info != FTS_D) {
-					printf("%sNote%s: Skipping %s which is not a policy file\n",
-					       color_note(), color_reset(), file->fts_path);
-				}
+			print_if_verbose(
+				"Skipping %s which is not a policy file\n",
+				file->fts_path);
+			if (!recursive_scan) {
 				fts_set(ftsp, file, FTS_SKIP);
 			}
 		}
