@@ -24,6 +24,7 @@
 #include "ordering.h"
 #include "util.h"
 #include "perm_macro.h"
+#include "naming.h"
 
 struct check_result *check_te_order(const struct check_data *data,
                                     const struct policy_node *node)
@@ -167,7 +168,42 @@ struct check_result *check_no_self(__attribute__((unused)) const struct check_da
 
 	return make_check_result('C', C_ID_SELF,
 	                         "Recommend use of self keyword instead of redundant type");
+}
 
+struct check_result *check_naming(const struct check_data *data,
+                                  const struct policy_node *node)
+{
+	const char *reason;
+
+	switch (node->flavor) {
+	case NODE_DECL:
+		// check only declarations in te files
+		if (data->flavor != FILE_TE_FILE) {
+			return NULL;
+		}
+
+		reason = naming_decl_check(node->data.d_data->name, node->data.d_data->flavor);
+		break;
+
+	case NODE_INTERFACE_DEF:
+		reason = naming_if_check(node->data.str, data->mod_name);
+		break;
+
+	case NODE_TEMP_DEF:
+		reason = naming_temp_check(node->data.str, data->mod_name);
+		break;
+
+	default:
+		return alloc_internal_error("Invalid node type for `check_naming`");
+	}
+
+	if (!reason) {
+		return NULL;
+	}
+
+	return make_check_result('C', C_ID_NAMING,
+				 "Naming convention voliated: %s",
+				 reason);
 }
 
 struct check_result *check_require_block(const struct check_data *data,

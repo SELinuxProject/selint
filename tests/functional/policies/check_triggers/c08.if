@@ -1,0 +1,16 @@
+#comment
+interface(`cnot10_if1',`
+	#empty
+')
+
+interface(`c10_pattern',`
+	#empty
+')
+
+template(`cnot10_template',`
+	#empty
+')
+
+template(`c10_something',`
+	#empty
+')

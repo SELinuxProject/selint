@@ -1,0 +1,8 @@
+policy_module(c06, 1.0.0)
+
+type A;
+type t__t;
+type t_;
+type t_f;
+
+role foo_t;
