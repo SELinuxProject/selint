@@ -140,6 +140,9 @@
 %type<av_flavor> av_type
 %type<node_flavor> if_keyword
 
+%destructor { free($$); } mls_component mls_level mls_range sl_item
+%destructor { free_string_list($$); } arg args comma_string_list string_list strings
+
 %%
 selinux_file:
 	%empty
@@ -345,7 +348,8 @@ strings:
 			current->next = calloc(1, sizeof(struct string_list));
 			current->next->string = strdup($2);
 			current->next->next = NULL;
-			free($2); }
+			free($2);
+			$$ = $1; }
 	|
 	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
 	;
@@ -367,7 +371,8 @@ comma_string_list:
 					current->next = calloc(1, sizeof(struct string_list));
 					current->next->string = strdup($3);
 					current->next->next = NULL;
-					free($3); }
+					free($3);
+					$$ = $1; }
 	|
 	STRING { $$ = calloc(1, sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1); }
 	;
