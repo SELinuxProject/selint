@@ -24,6 +24,7 @@
 #include "color.h"
 
 int found_issue = 0;
+int suppress_output = 0;
 
 #define ALLOC_NODE(nl)  if (ck->check_nodes[nl]) { \
 		loc = ck->check_nodes[nl]; \
@@ -77,7 +78,9 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 			found_issue = 1;
 			cur->issues_found++;
 			res->lineno = node->lineno;
-			display_check_result(res, data);
+			if (!suppress_output) {
+				display_check_result(res, data);
+			}
 			free_check_result(res);
 		}
 		cur = cur->next;

@@ -32,8 +32,9 @@
 #include "color.h"
 
 // ASCII characters go up to 127
-#define CONTEXT_ID 128
-#define COLOR_ID   129
+#define CONTEXT_ID      128
+#define COLOR_ID        129
+#define SUMMARY_ONLY_ID 130
 
 extern int yydebug;
 
@@ -67,6 +68,8 @@ static void usage(void)
 		"  -s, --source\t\t\tRun in \"source mode\" to scan a policy source repository\n"\
 		"\t\t\t\tthat is designed to compile into a full system policy.\n"\
 		"  -S, --summary\t\t\tDisplay a summary of issues found after running the analysis\n"\
+		"      --summary-only\t\tOnly display a summary of issues found after running the analysis.\n"\
+		"\t\t\t\tDo not show the individual findings.  Implies -S.\n"\
 		"  -r, --recursive\t\tScan recursively and check all SELinux policy files found.\n"\
 		"  -v, --verbose\t\t\tEnable verbose output\n"\
 		"  -V, --version\t\t\tShow version information and exit.\n"
@@ -120,6 +123,7 @@ int main(int argc, char **argv)
 			{ "source",       no_argument,       NULL,          's' },
 			{ "summary",      no_argument,       NULL,          'S' },
 			{ "color",        required_argument, NULL,          COLOR_ID },
+			{ "summary-only", no_argument,       NULL,          SUMMARY_ONLY_ID },
 			{ "version",      no_argument,       NULL,          'V' },
 			{ "verbose",      no_argument,       &verbose_flag, 1   },
 			{ 0,              0,                 0,             0   }
@@ -229,6 +233,10 @@ int main(int argc, char **argv)
 			source_flag = 1;
 			break;
 
+		case SUMMARY_ONLY_ID:
+			// Do not display individual findings
+			suppress_output = 1;
+			// FALLTHRU
 		case 'S':
 			// Display a summary at the end of the run
 			summary_flag = 1;
