@@ -76,7 +76,7 @@ jobs:
         git clone --depth=1 https://github.com/SELinuxProject/refpolicy
         cd refpolicy/
         make conf
-        ../src/selint -c ../selint.conf -s -r -l E .
+        ../src/selint -c ../selint.conf -s -r -e C-001 --summary-only .
 
     - name: Release Info
       id: release_info
