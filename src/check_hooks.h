@@ -103,6 +103,8 @@ struct checks {
 
 // Whether an issue was found
 extern int found_issue;
+// Whether found issues are printed individually
+extern int suppress_output;
 
 /*********************************************
 * Add an check to be called on check_flavor nodes

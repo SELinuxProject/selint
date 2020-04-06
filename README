@@ -76,8 +76,13 @@ OPTIONS
 		compile into a full system policy.  If this flag is not specified, SELint
 		will assume that scanned policy files are intended to be loaded into the
 		currently running system policy.
+
 	-S, --summary
-		Display a summary of issues found after running the analysis
+		Display a summary of issues found after running the analysis.
+
+	--summary-only
+		Only display a summary of issues found after running the analysis.
+		Do not show the individual findings.  Implies -S.
 
 	-r, --recursive
 		Scan recursively and check all SELinux policy files found.
