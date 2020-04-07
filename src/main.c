@@ -55,23 +55,23 @@ static void usage(void)
 		"\t\t\t\tOptions are on, off and auto (the default).\n"\
 		"      --context=CONTEXT_PATH\tRecursively scan CONTEXT_PATH to find additional te and if\n"\
 		"\t\t\t\tfiles to parse, but not scan.  SELint will assume the scanned policy files\n"\
-		"\t\t\t\tare intended to be compiled together with the context files\n"\
+		"\t\t\t\tare intended to be compiled together with the context files.\n"\
 		"  -d, --disable=CHECKID\t\tDisable check with the given ID.\n"\
 		"  -e, --enable=CHECKID\t\tEnable check with the given ID.\n"\
 		"  -E, --only-enabled\t\tOnly run checks that are explicitly enabled with\n"\
 		"\t\t\t\tthe --enable option.\n"\
-		"  -F, --fail\t\t\tExit with a non-zero value if any issue was found\n"\
-		"  -h, --help\t\t\tDisplay this menu\n"\
+		"  -F, --fail\t\t\tExit with a non-zero value if any issue was found.\n"\
+		"  -h, --help\t\t\tDisplay this menu.\n"\
 		"  -l, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
 		"\t\t\t\tgreater than LEVEL.  Options are C (convention), S (style),\n"\
 		"\t\t\t\tW (warning), E (error), F (fatal error).\n"\
 		"  -s, --source\t\t\tRun in \"source mode\" to scan a policy source repository\n"\
 		"\t\t\t\tthat is designed to compile into a full system policy.\n"\
-		"  -S, --summary\t\t\tDisplay a summary of issues found after running the analysis\n"\
+		"  -S, --summary\t\t\tDisplay a summary of issues found after running the analysis.\n"\
 		"      --summary-only\t\tOnly display a summary of issues found after running the analysis.\n"\
 		"\t\t\t\tDo not show the individual findings.  Implies -S.\n"\
 		"  -r, --recursive\t\tScan recursively and check all SELinux policy files found.\n"\
-		"  -v, --verbose\t\t\tEnable verbose output\n"\
+		"  -v, --verbose\t\t\tEnable verbose output.\n"\
 		"  -V, --version\t\t\tShow version information and exit.\n"
 );
 	/* *INDENT-ON* */
