@@ -56,6 +56,7 @@ struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor
 	parsing_filename = filename;
 	if (0 != yyparse()) {
 		free_policy_node(ast);
+		fclose(yyin);
 		return NULL;
 	}
 	fclose(yyin);
