@@ -32,7 +32,7 @@ struct fc_entry *parse_fc_line(char *line)
 
 	memset(out, 0, sizeof(struct fc_entry));
 
-	char *orig_line = strdup(line); // If the object class is ommitted, we need to revert
+	char *orig_line = strdup(line); // If the object class is omitted, we need to revert
 
 	char *pos = strtok(line, whitespace);
 
@@ -59,7 +59,7 @@ struct fc_entry *parse_fc_line(char *line)
 		}
 	}
 	// pos points to the start of the context, but spaces in the context may have been
-	// overwitten by strtok
+	// overwritten by strtok
 	strcpy(line, orig_line);
 
 	if (strncmp("gen_context(", pos, GEN_CONTEXT_LEN) == 0) {

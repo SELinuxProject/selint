@@ -47,7 +47,7 @@ struct check_result *check_unordered_perms(const struct check_data *data,
 
 /*********************************************
 * Check for the presence of require blocks in TE files.
-* Interface calls are to be prefered.
+* Interface calls are to be preferred.
 * Called on NODE_REQUIRE and NODE_GEN_REQ nodes.
 * data - metadata about the file currently being scanned
 * node - the node to check

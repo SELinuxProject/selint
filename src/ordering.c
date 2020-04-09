@@ -164,7 +164,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_AV_RULE:
 		if (node->data.av_data->flavor == AV_RULE_NEVERALLOW) {
 			// These are somewhat of a unique situation, and the style guide
-			// doesn't mention them explicitely.  Maybe they should just group
+			// doesn't mention them explicitly.  Maybe they should just group
 			// like other av rules, but they can often have multiple types.
 			// Additionally, the below code assumes that the first string in
 			// the sources is a type or attribute, but in the case of neverallows
@@ -500,7 +500,7 @@ static int is_same_section(const char *first_section_name, const char *second_se
 	if (to_check_second == comp) { \
 		return -ret; \
 	} \
-// Call this in order of an ordering on enums.  It returns a positve or
+// Call this in order of an ordering on enums.  It returns a positive or
 // negative value based on which one it encounters first.
 #define CHECK_FLAVOR_ORDERING(data_flavor, comp, ret) \
 	CHECK_ORDERING(first->data.data_flavor->flavor, second->data.data_flavor->flavor, comp, ret)

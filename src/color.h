@@ -19,8 +19,8 @@
 
 /*********************************************
 * Enable colored output.
-* All color funtions only return color control sequences, if colored output has been enabled.
-* Prior to that all color funtions return an empty string.
+* All color functions only return color control sequences, if colored output has been enabled.
+* Prior to that all color functions return an empty string.
 *********************************************/
 void color_enable(void);
 
@@ -51,7 +51,7 @@ const char *color_note(void);
 const char *color_ok(void);
 
 /*********************************************
-* Mark the following output with the appropiate color for the given severity.
+* Mark the following output with the appropriate color for the given severity.
 * severity - The severity to decide the color.
 *********************************************/
 const char *color_severity(char severity);
