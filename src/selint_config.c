@@ -37,6 +37,31 @@
 		} \
 	} \
 
+static enum selint_error parse_bool(const char *string, bool *value)
+{
+	if (0 == strcmp("true", string) ||
+	    0 == strcmp("True", string) ||
+	    0 == strcmp("TRUE", string) ||
+	    0 == strcmp("yes", string) ||
+	    0 == strcmp("Yes", string) ||
+	    0 == strcmp("YES", string)) {
+		*value = true;
+		return SELINT_SUCCESS;
+	}
+
+	if (0 == strcmp("false", string) ||
+	    0 == strcmp("False", string) ||
+	    0 == strcmp("FALSE", string) ||
+	    0 == strcmp("no", string) ||
+	    0 == strcmp("No", string) ||
+	    0 == strcmp("NO", string)) {
+		*value = false;
+		return SELINT_SUCCESS;
+	}
+
+	return SELINT_CONFIG_PARSE_ERROR;
+}
+
 static void insert_config_declarations(cfg_t * cfg, const char *config_item,
                                 enum decl_flavor flavor)
 {
@@ -56,13 +81,14 @@ enum selint_error parse_config(const char *config_filename,
 
 IGNORE_CONST_DISCARD_BEGIN;
 	cfg_opt_t opts[] = {
-		CFG_STR("severity",           "convention",    CFGF_NONE),
-		CFG_STR_LIST("disable",       "{}",            CFGF_NONE),
-		CFG_STR_LIST("enable_normal", "{}",            CFGF_NONE),
-		CFG_STR_LIST("enable_source", "{}",            CFGF_NONE),
-		CFG_STR_LIST("assume_users",  "{}",            CFGF_NONE),
-		CFG_STR_LIST("assume_roles",  "{}",            CFGF_NONE),
-		CFG_STR("ordering_rules",     "refpolicy-lax", CFGF_NONE),
+		CFG_STR("severity",                    "convention",    CFGF_NONE),
+		CFG_STR_LIST("disable",                "{}",            CFGF_NONE),
+		CFG_STR_LIST("enable_normal",          "{}",            CFGF_NONE),
+		CFG_STR_LIST("enable_source",          "{}",            CFGF_NONE),
+		CFG_STR_LIST("assume_users",           "{}",            CFGF_NONE),
+		CFG_STR_LIST("assume_roles",           "{}",            CFGF_NONE),
+		CFG_STR("ordering_rules",              "refpolicy-lax", CFGF_NONE),
+		CFG_STR("skip_checking_generated_fcs", "true",          CFGF_NONE),
 		CFG_END()
 	};
 IGNORE_CONST_DISCARD_END;
@@ -125,6 +151,20 @@ IGNORE_CONST_DISCARD_END;
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
 	}
+
+	const char *config_skip_checking_generated_fcs = cfg_getstr(cfg, "skip_checking_generated_fcs");
+	bool skip_checking_generated_fcs;
+
+	enum selint_error r = parse_bool(config_skip_checking_generated_fcs, &skip_checking_generated_fcs);
+	if (r != SELINT_SUCCESS) {
+		printf("Invalid skip_checking_generated_fcs setting (%s), specified in config.\n"\
+		       "Options are \"true\" and \"false\"\n",
+		       config_skip_checking_generated_fcs);
+		cfg_free(cfg);
+		return r;
+	}
+
+	config_check_data->skip_checking_generated_fcs = skip_checking_generated_fcs;
 
 	cfg_free(cfg);
 
