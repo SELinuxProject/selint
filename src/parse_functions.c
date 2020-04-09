@@ -89,7 +89,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 {
 
 	if (!is_in_require(*cur)) {
-		// In a require block, the objects arent being declared
+		// In a require block, the objects aren't being declared
 		// Otherwise, we need to insert them into the appropriate map
 
 		char *temp_name = get_name_if_in_template(*cur);

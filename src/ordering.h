@@ -32,7 +32,7 @@ enum order_difference_reason {
 	ORDERING_ERROR=-1024, // Since we will be negating values of this enum
 	                      // we want it to have a signed internal
 	                      // representation.  The compiler gets to choose which
-	                      // so by having a negative value explicitely declared
+	                      // so by having a negative value explicitly declared
 	                      // we force it to be signed
 };
 

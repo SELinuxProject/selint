@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 			severity = cfg_severity;
 		}
 	} else {
-		// If there is no config, we should assume the existance of normal users and
+		// If there is no config, we should assume the existence of normal users and
 		// roles that we wouldn't otherwise know about
 		insert_into_decl_map("system_u", "__assumed__", DECL_USER);
 		insert_into_decl_map("object_r", "__assumed__", DECL_ROLE);

@@ -323,7 +323,7 @@ START_TEST (test_check_file_context_regex) {
 	free_check_result(res);
 
 	free(entry->path);
-	entry->path = strdup("path\\.with\\.escpaed\\.dots");
+	entry->path = strdup("path\\.with\\.escaped\\.dots");
 
 	res = check_file_context_regex(data, node);
 	ck_assert_ptr_null(res);
