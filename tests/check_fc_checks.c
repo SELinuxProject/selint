@@ -94,8 +94,11 @@ START_TEST (test_check_file_context_types_in_mod) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
+	data->filename = strdup("foo");
 	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
+	struct config_check_data cfg = { ORDER_LAX, true };
+	data->config_check_data = &cfg;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));
 	memset(node, 0, sizeof(struct policy_node));
@@ -136,6 +139,7 @@ START_TEST (test_check_file_context_types_in_mod) {
 
 	free_all_maps();
 	free(data->mod_name);
+	free(data->filename);
 	free(data);
 	free_policy_node(node);
 
@@ -269,6 +273,7 @@ START_TEST (test_fc_checks_handle_null_context_fields) {
 
 	struct check_data *data = malloc(sizeof(struct check_data));
 
+	data->filename = strdup("foo");
 	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
 
@@ -287,6 +292,7 @@ START_TEST (test_fc_checks_handle_null_context_fields) {
 	ck_assert_ptr_null(check_file_context_roles(data, node));
 	ck_assert_ptr_null(check_file_context_users(data, node));
 
+	free(data->filename);
 	free(data->mod_name);
 	free(data);
 

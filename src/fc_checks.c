@@ -14,9 +14,13 @@
 * limitations under the License.
 */
 
+#include <stdio.h>
+
+#include "color.h"
 #include "fc_checks.h"
 #include "maps.h"
 #include "tree.h"
+#include "util.h"
 
 #define SETUP_FOR_FC_CHECK(node) \
 	if (node->flavor != NODE_FC_ENTRY) { \
@@ -38,8 +42,25 @@ struct check_result *check_file_context_types_in_mod(const struct check_data
 
 	SETUP_FOR_FC_CHECK(node)
 
+	if (data->config_check_data->skip_checking_generated_fcs) {
+		// do not check probably generated base and entire filecontext file
+		// do not check probably generated module filecontext files
+		static bool notified = false;
+		if (0 == strcmp("base.fc", data->filename) ||
+		    0 == strcmp("all_mods.fc", data->filename) ||
+		    ends_with(data->filename, strlen(data->filename), ".mod.fc", strlen(".mod.fc"))) {
+			if (!notified) {
+				printf("%sNote%s: Check S-002 is not performed against generated filecontext files (e.g. %s).\n"\
+				       "      This can be disabled with the configuration setting \"skip_checking_generated_fcs\".\n",
+				    color_note(), color_reset(), data->filename);
+				notified = true;
+			}
+			return NULL;
+		}
+	}
+
 	const char *type_decl_mod_name = look_up_in_decl_map(entry->context->type,
-	                                               DECL_TYPE);
+	                                                     DECL_TYPE);
 
 	if (!type_decl_mod_name) {
 		// If the type is not in any module, that's a different error

@@ -277,7 +277,7 @@ check_check_hooks_SOURCES = check_check_hooks.c ${CHECK_HOOKS_HEADS}
 check_check_hooks_LDADD = @CHECK_LIBS@ $(sort ${CHECK_HOOKS_OBJS})
 
 check_fc_checks_SOURCES = check_fc_checks.c ${FC_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS}
-check_fc_checks_LDADD = @CHECK_LIBS@ $(sort ${FC_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS})
+check_fc_checks_LDADD = @CHECK_LIBS@ $(sort ${FC_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS} ${UTIL_OBJS})
 
 check_if_checks_SOURCES = check_if_checks.c test_utils.c ${IF_CHECKS_HEADS} ${CHECK_HOOKS_HEADS} ${MAPS_HEADS} ${TEST_UTILS_HEADS}
 check_if_checks_LDADD = @CHECK_LIBS@ $(sort ${IF_CHECKS_OBJS} ${CHECK_HOOKS_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OBJS})

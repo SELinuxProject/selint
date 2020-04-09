@@ -17,6 +17,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <stdbool.h>
+
 #include "selint_error.h"
 #include "string_list.h"
 #include "tree.h"
@@ -29,6 +31,7 @@ enum order_conf {
 
 struct config_check_data {
 	enum order_conf order_conf;
+	bool skip_checking_generated_fcs;
 };
 
 /*******************************************************************
