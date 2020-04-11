@@ -24,9 +24,7 @@
 void load_access_vectors_normal(const char *av_path)
 {
 
-	const char **paths = calloc(2, sizeof(char *));
-
-	paths[0] = av_path;
+	const char *paths[2] = { av_path, NULL };
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
@@ -52,7 +50,6 @@ void load_access_vectors_normal(const char *av_path)
 		file = fts_read(ftsp);
 	}
 	fts_close(ftsp);
-	free(paths);
 }
 
 void load_access_vectors_source()
