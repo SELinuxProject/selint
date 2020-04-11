@@ -19,6 +19,24 @@
 
 #include <stdbool.h>
 
+// ignore conversions discarding const specifier, e.g.
+//     const char []     ->  char *
+//     const char *[2]'  ->  char *const *
+// necessary for calling fts_open() and initializing cfg_opt_t
+#ifdef __clang__
+#define IGNORE_CONST_DISCARD_BEGIN _Pragma("clang diagnostic push") \
+                                   _Pragma("clang diagnostic ignored \"-Wincompatible-pointer-types-discards-qualifiers\"")
+#define IGNORE_CONST_DISCARD_END   _Pragma("clang diagnostic pop")
+#elif defined(__GNUC__)
+#define IGNORE_CONST_DISCARD_BEGIN _Pragma("GCC diagnostic push") \
+                                   _Pragma("GCC diagnostic ignored \"-Wdiscarded-qualifiers\"") \
+                                   _Pragma("GCC diagnostic ignored \"-Wincompatible-pointer-types\"")
+#define IGNORE_CONST_DISCARD_END   _Pragma("GCC diagnostic pop")
+#else
+#define IGNORE_CONST_DISCARD_BEGIN
+#define IGNORE_CONST_DISCARD_END
+#endif
+
 __attribute__((format(printf,1,2)))
 void print_if_verbose(const char *format, ...);
 
