@@ -24,7 +24,6 @@
 #include "ordering.h"
 
 char *module_name = NULL;
-char *parsing_filename = NULL;
 
 enum selint_error insert_header(struct policy_node **cur, const char *mn,
                                 enum header_flavor flavor, unsigned int lineno)

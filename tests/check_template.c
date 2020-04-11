@@ -26,10 +26,6 @@
 #define POLICIES_DIR SAMPLE_POL_DIR
 #define NESTED_IF_FILENAME POLICIES_DIR "nested_templates.if"
 
-extern FILE * yyin;
-extern int yyparse(void);
-extern const char *parsing_filename;
-
 START_TEST (test_replace_m4) {
 	const char *orig1 = "$1_t";
 
@@ -169,19 +165,16 @@ START_TEST (test_replace_m4_list_too_few_args) {
 }
 END_TEST
 
-struct policy_node *ast;
-extern struct policy_node *cur;
-
 START_TEST (test_nested_template_declarations) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	ast->flavor = NODE_IF_FILE;
 	set_current_module_name("nested");
 
-	yyin = fopen(NESTED_IF_FILENAME, "r");
-	parsing_filename = "nested";
-	ck_assert_int_eq(0, yyparse());
-	fclose(yyin);
+	FILE *f = fopen(NESTED_IF_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, NESTED_IF_FILENAME, &ast));
+	fclose(f);
 
 	struct string_list *called_args = calloc(1,sizeof(struct string_list));
 	called_args->string = strdup("first");

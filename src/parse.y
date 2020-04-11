@@ -20,16 +20,25 @@
 	#include "tree.h"
 	#include "parse_functions.h"
 	#include "check_hooks.h"
-	int yylex(void);
-	void yyerror(const char *);
 
-	extern struct policy_node *ast;
+	// lexer
 	extern unsigned int yylineno;
-	extern char *parsing_filename;
+	extern void yyrestart(FILE *);
+	extern int yylex(void);
 
-	struct policy_node *cur;
+	// own prototypes, only needed by lexer
+	void yyerror(const char *);
 	#define YYDEBUG 1
+
+	// local variables
+	static const char *parsing_filename;
+	static struct policy_node *cur;
 %}
+
+%code provides {
+	// global prototype
+	int yyparse_wrapper(FILE *filefd, const char *filename, struct policy_node **ast);
+}
 
 %union {
 	char *string;
@@ -146,7 +155,7 @@
 %%
 selinux_file:
 	%empty
-	/* empty */ { ast->flavor = NODE_EMPTY; }
+	/* empty */ { cur->flavor = NODE_EMPTY; }
 	|
 	te_policy
 	|
@@ -172,15 +181,14 @@ comments:
 	;
 
 comment:
-	COMMENT	{ if (!cur) { cur = ast; }
-	          insert_comment(&cur, yylineno); }
+	COMMENT	{ insert_comment(&cur, yylineno); }
 	;
 
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA header_version CLOSE_PAREN { if(!cur) { cur = ast; } insert_header(&cur, $3, HEADER_MACRO, yylineno); free($3); } // Version number isn't needed
+	POLICY_MODULE OPEN_PAREN STRING COMMA header_version CLOSE_PAREN { insert_header(&cur, $3, HEADER_MACRO, yylineno); free($3); } // Version number isn't needed
 	|
-	MODULE STRING header_version SEMICOLON { cur = ast; insert_header(&cur, $2, HEADER_BARE, yylineno); free($2); }
+	MODULE STRING header_version SEMICOLON { insert_header(&cur, $2, HEADER_BARE, yylineno); free($2); }
 	;
 
 header_version:
@@ -797,11 +805,7 @@ interface_def:
 	;
 
 start_interface:
-	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK {
-		if (!cur) {
-			cur = ast;
-		}
-		begin_interface_def(&cur, $1, $4, yylineno); free($4); }
+	if_keyword OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK { begin_interface_def(&cur, $1, $4, yylineno); free($4); }
 	;
 
 end_interface:
@@ -829,4 +833,13 @@ void yyerror(const char* s) {
 
 	free(copy);
 	free_check_result(res);
+}
+
+int yyparse_wrapper(FILE *filefd, const char *filename, struct policy_node **ast) {
+	yyrestart(filefd);
+	yylineno = 1;
+	parsing_filename = filename;
+	cur = *ast;
+
+	return yyparse();
 }
