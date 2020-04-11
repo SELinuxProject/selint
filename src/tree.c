@@ -90,7 +90,7 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 	return SELINT_SUCCESS;
 }
 
-int is_template_call(struct policy_node *node)
+int is_template_call(const struct policy_node *node)
 {
 	if (node == NULL || node->data.ic_data == NULL) {
 		return 0;

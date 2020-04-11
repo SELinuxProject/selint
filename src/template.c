@@ -23,10 +23,10 @@
 #include "template.h"
 #include "maps.h"
 
-char *replace_m4(const char *orig, struct string_list *args)
+char *replace_m4(const char *orig, const struct string_list *args)
 {
 	size_t len_to_malloc = strlen(orig) + 1;
-	struct string_list *cur = args;
+	const struct string_list *cur = args;
 
 	while (cur) {
 		len_to_malloc += strlen(cur->string);
@@ -42,7 +42,7 @@ char *replace_m4(const char *orig, struct string_list *args)
 		int arg_num;
 		int after_num_pos;
 
-		char *dollar_pos = strchr(orig_pos, '$');
+		const char *dollar_pos = strchr(orig_pos, '$');
 		if (!dollar_pos) {
 			strcpy(ret_pos, orig_pos);
 			break;
@@ -72,8 +72,8 @@ char *replace_m4(const char *orig, struct string_list *args)
 	return ret;
 }
 
-struct string_list *replace_m4_list(struct string_list *replace_with,
-                                    struct string_list *replace_from)
+struct string_list *replace_m4_list(const struct string_list *replace_with,
+                                    const struct string_list *replace_from)
 {
 	struct string_list *ret = calloc(1, sizeof(struct string_list));
 	struct string_list *cur = ret;
@@ -93,9 +93,9 @@ struct string_list *replace_m4_list(struct string_list *replace_with,
 }
 
 enum selint_error add_template_declarations(const char *template_name,
-                                            struct string_list *args,
-                                            struct string_list
-                                            *parent_temp_names, const char *mod_name)
+                                            const struct string_list *args,
+                                            struct string_list *parent_temp_names,
+                                            const char *mod_name)
 {
 	struct string_list *cur = parent_temp_names;
 

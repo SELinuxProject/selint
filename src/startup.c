@@ -137,14 +137,14 @@ enum selint_error load_modules_source(const char *modules_conf_path)
 	return SELINT_SUCCESS;
 }
 
-static int mark_transform_interfaces_one_file(struct policy_node *ast) {
+static int mark_transform_interfaces_one_file(const struct policy_node *ast) {
 	int marked_transform = 0;
-	struct policy_node *cur = ast;
+	const struct policy_node *cur = ast;
 	while (cur) {
 		if (cur->flavor == NODE_INTERFACE_DEF &&
 		    cur->first_child &&
 		    !is_transform_if(cur->data.str)) {
-			struct policy_node *child = cur->first_child;
+			const struct policy_node *child = cur->first_child;
 			while (child &&
 			       (child->flavor == NODE_START_BLOCK ||
 			        child->flavor == NODE_REQUIRE ||
@@ -197,9 +197,9 @@ enum selint_error load_devel_headers(struct policy_file_list *context_files)
 	return SELINT_SUCCESS;
 }
 
-enum selint_error mark_transform_interfaces(struct policy_file_list *files)
+enum selint_error mark_transform_interfaces(const struct policy_file_list *files)
 {
-	struct policy_file_node *cur;
+	const struct policy_file_node *cur;
 	int marked_transform;
 	do {
 		marked_transform = 0;
