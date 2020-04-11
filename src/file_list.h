@@ -40,7 +40,7 @@ void file_list_push_back(struct policy_file_list *list,
 struct policy_file *make_policy_file(const char *filename, struct policy_node *ast);
 
 // Return 1 if filename matches the name of a file in list, and 0 otherwise
-int file_name_in_file_list(const char *filename, struct policy_file_list *list);
+int file_name_in_file_list(const char *filename, const struct policy_file_list *list);
 
 void free_file_list(struct policy_file_list *to_free);
 

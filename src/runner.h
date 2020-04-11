@@ -35,10 +35,11 @@ struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor
 * config file and the command line arguments
 ****************************************************/
 int is_check_enabled(const char *check_name,
-                     struct string_list *config_enabled_checks,
-                     struct string_list *config_disabled_checks,
-                     struct string_list *cl_enabled_checks,
-                     struct string_list *cl_disabled_checks, int only_enabled);
+                     const struct string_list *config_enabled_checks,
+                     const struct string_list *config_disabled_checks,
+                     const struct string_list *cl_enabled_checks,
+                     const struct string_list *cl_disabled_checks,
+                     int only_enabled);
 
 /****************************************************
 * Allocate and populate a checks structure with the list of checks enabled for
@@ -47,10 +48,10 @@ int is_check_enabled(const char *check_name,
 * Returns the allocated checks structure or NULL on failure
 ****************************************************/
 struct checks *register_checks(char level,
-                               struct string_list *config_enabled_checks,
-                               struct string_list *config_disabled_checks,
-                               struct string_list *cl_enabled_checks,
-                               struct string_list *cl_disabled_checks,
+                               const struct string_list *config_enabled_checks,
+                               const struct string_list *config_disabled_checks,
+                               const struct string_list *cl_enabled_checks,
+                               const struct string_list *cl_disabled_checks,
                                int only_enabled);
 
 /****************************************************
@@ -78,8 +79,8 @@ enum selint_error parse_all_fc_files_in_list(struct policy_file_list *files);
 * Returns SELINT_SUCCESS on success or an error code
 ****************************************************/
 enum selint_error run_checks_on_one_file(struct checks *ck,
-                                         struct check_data *data,
-                                         struct policy_node *head);
+                                         const struct check_data *data,
+                                         const struct policy_node *head);
 
 /****************************************************
 * Run all checks on all files of a certain type (te, if or fc)
@@ -119,6 +120,6 @@ enum selint_error run_analysis(struct checks *ck,
 * ck - The checks structure
 * no return
 ****************************************************/
-void display_run_summary(struct checks *ck);
+void display_run_summary(const struct checks *ck);
 
 #endif

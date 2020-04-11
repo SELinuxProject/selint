@@ -55,15 +55,16 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 	return SELINT_SUCCESS;
 }
 
-enum selint_error call_checks(struct checks *ck, struct check_data *data,
-                              struct policy_node *node)
+enum selint_error call_checks(struct checks *ck,
+                              const struct check_data *data,
+                              const struct policy_node *node)
 {
 	return call_checks_for_node_type(ck->check_nodes[node->flavor], data, node);
 }
 
 enum selint_error call_checks_for_node_type(struct check_node *ck_list,
-                                            struct check_data *data,
-                                            struct policy_node *node)
+                                            const struct check_data *data,
+                                            const struct policy_node *node)
 {
 
 	struct check_node *cur = ck_list;
@@ -88,7 +89,7 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 	return SELINT_SUCCESS;
 }
 
-void display_check_result(struct check_result *res, struct check_data *data)
+void display_check_result(const struct check_result *res, const struct check_data *data)
 {
 	static const size_t FILENAME_PADDING = 22;
 

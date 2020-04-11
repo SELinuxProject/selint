@@ -18,7 +18,7 @@
 #include <string.h>
 
 #include "string_list.h"
-int str_in_sl(const char *str, struct string_list *sl)
+int str_in_sl(const char *str, const struct string_list *sl)
 {
 
 	if (!sl) {
@@ -34,7 +34,7 @@ int str_in_sl(const char *str, struct string_list *sl)
 	return 0;
 }
 
-struct string_list *copy_string_list(struct string_list *sl)
+struct string_list *copy_string_list(const struct string_list *sl)
 {
 	if (!sl) {
 		return NULL;

@@ -67,10 +67,11 @@ struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor
 }
 
 int is_check_enabled(const char *check_name,
-                     struct string_list *config_enabled_checks,
-                     struct string_list *config_disabled_checks,
-                     struct string_list *cl_enabled_checks,
-                     struct string_list *cl_disabled_checks, int only_enabled)
+                     const struct string_list *config_enabled_checks,
+                     const struct string_list *config_disabled_checks,
+                     const struct string_list *cl_enabled_checks,
+                     const struct string_list *cl_disabled_checks,
+                     int only_enabled)
 {
 
 	int is_enabled = 1;     // default to enabled
@@ -103,10 +104,10 @@ int is_check_enabled(const char *check_name,
 }
 
 struct checks *register_checks(char level,
-                               struct string_list *config_enabled_checks,
-                               struct string_list *config_disabled_checks,
-                               struct string_list *cl_enabled_checks,
-                               struct string_list *cl_disabled_checks,
+                               const struct string_list *config_enabled_checks,
+                               const struct string_list *config_disabled_checks,
+                               const struct string_list *cl_enabled_checks,
+                               const struct string_list *cl_disabled_checks,
                                int only_enabled)
 {
 
@@ -285,10 +286,10 @@ enum selint_error parse_all_fc_files_in_list(struct policy_file_list *files)
 }
 
 enum selint_error run_checks_on_one_file(struct checks *ck,
-                                         struct check_data *data,
-                                         struct policy_node *head)
+                                         const struct check_data *data,
+                                         const struct policy_node *head)
 {
-	struct policy_node *current = head;
+	const struct policy_node *current = head;
 
 	while (current) {
 		enum selint_error res = call_checks(ck, data, current);
@@ -425,7 +426,7 @@ out:
 	return res;
 }
 
-void display_run_summary(struct checks *ck)
+void display_run_summary(const struct checks *ck)
 {
 	printf("Found the following issue counts:\n");
 	display_check_issue_counts(ck);

@@ -43,9 +43,9 @@ struct policy_file *make_policy_file(const char *filename, struct policy_node *a
 	return ret;
 }
 
-int file_name_in_file_list(const char *filename, struct policy_file_list *list)
+int file_name_in_file_list(const char *filename, const struct policy_file_list *list)
 {
-	struct policy_file_node *node = list->head;
+	const struct policy_file_node *node = list->head;
 
 	while (node) {
 		if (node->file && 0 == strcmp(filename, node->file->filename)) {

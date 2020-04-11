@@ -132,8 +132,8 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 * returns SELINT_SUCCESS or an error code on failure
 *********************************************/
 enum selint_error call_checks(struct checks *ck,
-                              struct check_data *data,
-                              struct policy_node *node);
+                              const struct check_data *data,
+                              const struct policy_node *node);
 
 /*********************************************
 * Helper function for call_checks that takes the appropriate
@@ -144,15 +144,16 @@ enum selint_error call_checks(struct checks *ck,
 * returns SELINT_SUCCESS or an error code on failure
 *********************************************/
 enum selint_error call_checks_for_node_type(struct check_node *ck_list,
-                                            struct check_data *data,
-                                            struct policy_node *node);
+                                            const struct check_data *data,
+                                            const struct policy_node *node);
 
 /*********************************************
 * Display a result message for a positive check finding
 * res - Information about the result of the check
 * data - Metadata about the file
 *********************************************/
-void display_check_result(struct check_result *res, struct check_data *data);
+void display_check_result(const struct check_result *res,
+                          const struct check_data *data);
 
 /*********************************************
 * Creates a check_result, using a printf style format string and optional
