@@ -20,16 +20,16 @@
 #include "startup.h"
 #include "maps.h"
 #include "tree.h"
+#include "util.h"
 
 void load_access_vectors_normal(const char *av_path)
 {
 
 	const char *paths[2] = { av_path, NULL };
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+IGNORE_CONST_DISCARD_BEGIN;
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL, NULL);
-#pragma GCC diagnostic pop
+IGNORE_CONST_DISCARD_END;
 
 	FTSENT *file = fts_read(ftsp);
 
@@ -170,10 +170,9 @@ enum selint_error load_devel_headers(struct policy_file_list *context_files)
 	const char *header_loc = "/usr/share/selinux/devel";
 	const char *paths[2] = {header_loc, 0};
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+IGNORE_CONST_DISCARD_BEGIN;
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
-#pragma GCC diagnostic pop
+IGNORE_CONST_DISCARD_END;
 
 	FTSENT *file = fts_read(ftsp);
 	while (file) {

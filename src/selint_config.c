@@ -54,8 +54,7 @@ enum selint_error parse_config(const char *config_filename,
                                struct config_check_data *config_check_data)
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+IGNORE_CONST_DISCARD_BEGIN;
 	cfg_opt_t opts[] = {
 		CFG_STR("severity",           "convention",    CFGF_NONE),
 		CFG_STR_LIST("disable",       "{}",            CFGF_NONE),
@@ -66,7 +65,7 @@ enum selint_error parse_config(const char *config_filename,
 		CFG_STR("ordering_rules",     "refpolicy-lax", CFGF_NONE),
 		CFG_END()
 	};
-#pragma GCC diagnostic pop
+IGNORE_CONST_DISCARD_END;
 	cfg_t *cfg;
 
 	cfg = cfg_init(opts, CFGF_NONE);
