@@ -21,7 +21,6 @@
 
 int verbose_flag;
 
-__attribute__((format(printf,1,2)))
 void print_if_verbose(const char *format, ...)
 {
 	if (!verbose_flag) {

@@ -17,6 +17,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+__attribute__((format(printf,1,2)))
 void print_if_verbose(const char *format, ...);
 
 #endif
