@@ -113,7 +113,7 @@ void display_check_result(struct check_result *res, struct check_data *data)
 
 struct check_result *alloc_internal_error(const char *string)
 {
-	return make_check_result('F', F_ID_INTERNAL, string);
+	return make_check_result('F', F_ID_INTERNAL, "%s", string);
 }
 
 int is_valid_check(const char *check_str)
