@@ -18,6 +18,7 @@
 #include "maps.h"
 #include "tree.h"
 #include "ordering.h"
+#include "util.h"
 
 struct check_result *check_te_order(const struct check_data *data,
                                     const struct policy_node *node)
@@ -152,6 +153,104 @@ struct check_result *check_bare_module_statement(__attribute__((unused)) const s
 	if (node->data.h_data->flavor == HEADER_BARE) {
 		return make_check_result('S', S_ID_BARE_MODULE,
 	                                 "Bare module statement (use `policy_module()` instead)");
+	}
+
+	return NULL;
+}
+
+// check if '$STR' ends with '$SUFFIX_perms'
+static bool ends_with_suffix_perms(const char *str, size_t str_len, const char *suffix, size_t suffix_len)
+{
+	if (str_len < (suffix_len + strlen("_perms"))) {
+		return 0;
+	}
+
+	// no need to check last 6 characters are actual '_perms'
+	// we call this only on strings we have checked to have this suffix
+	return (0 == strncmp(str + str_len - (suffix_len + strlen("_perms")), suffix, suffix_len));
+}
+
+struct check_result *check_perm_macro_class_mismatch(__attribute__((unused)) const struct check_data *data,
+                                                     const struct policy_node *node)
+{
+	static const char *const class_aliases[][2] = {
+		{ "chr_file", "term"   },
+		{ "process",  "signal" },
+	};
+
+	static const char *const file_suffix_classes[] = {
+		"lnk_file",
+		"chr_file",
+		"blk_file",
+		"sock_file",
+		"fifo_file",
+	};
+
+	// ignore multi class av rules
+	if (node->data.av_data->object_classes->next) {
+		return NULL;
+	}
+
+	const char *class_name = node->data.av_data->object_classes->string;
+	const size_t class_name_len = strlen(class_name);
+	const char *class_alias = NULL;
+	for (size_t i = 0; i < (sizeof class_aliases / sizeof *class_aliases); ++i) {
+		if (0 == strcmp(class_name, class_aliases[i][0])) {
+			class_alias = class_aliases[i][1];
+			break;
+		}
+	}
+	const size_t class_alias_len = class_alias ? strlen(class_alias) : 0;
+	const bool is_file_class = (0 == strcmp(class_name, "file"));
+	const bool is_netlink_socket_class = (0 == strncmp(class_name, "netlink_", strlen("netlink_")));
+	const bool is_socket_class = ends_with(class_name, class_name_len, "_socket", strlen("_socket"));
+
+	for (const struct string_list *perms = node->data.av_data->perms; perms; perms = perms->next) {
+		const size_t perm_len = strlen(perms->string);
+
+		// ignore permissions without '_perms' suffix; they are probably not macros
+		if (!ends_with(perms->string, perm_len, "_perms", strlen("_perms"))) {
+			continue;
+		}
+
+		// ignore permissions matching 'something[_something]_$CLASSNAME_perms'
+		if (ends_with_suffix_perms(perms->string, perm_len, class_name, class_name_len)) {
+			// report usage of macros matching different class with actual class as suffix
+			// e.g. report 'something_fifo_file_perms' for class 'file'
+			if (is_file_class) {
+				for (size_t i = 0; i < (sizeof file_suffix_classes / sizeof *file_suffix_classes); ++i) {
+					if (ends_with_suffix_perms(perms->string, perm_len, file_suffix_classes[i], strlen(file_suffix_classes[i]))) {
+						goto report;
+					}
+				}
+			}
+			continue;
+		}
+
+		// ignore permissions 'something[_something]_netlink_socket_perms' for netlink classes
+		if (is_netlink_socket_class &&
+		    ends_with(perms->string, perm_len, "_socket_perms", strlen("_socket_perms"))) {
+			continue;
+		}
+
+		// ignore permissions 'something[_something]_socket_perms' for (non-netlink) socket classes
+		if (is_socket_class &&
+		    !is_netlink_socket_class &&
+		    ends_with(perms->string, perm_len, "_socket_perms", strlen("_socket_perms")) &&
+		    !ends_with(perms->string, perm_len, "netlink_socket_perms", strlen("netlink_socket_perms"))) {
+			continue;
+		}
+
+		// ignore permissions 'something[_something]_$CLASSNAMEALIAS_perms'
+		if (class_alias && ends_with_suffix_perms(perms->string, perm_len, class_alias, class_alias_len)) {
+			continue;
+		}
+
+report:
+		return make_check_result('S', S_ID_PERM_SUFFIX,
+					 "Permission macro %s does not match class %s",
+					 perms->string,
+					 class_name);
 	}
 
 	return NULL;

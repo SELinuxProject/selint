@@ -17,7 +17,19 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <stdbool.h>
+
 __attribute__((format(printf,1,2)))
 void print_if_verbose(const char *format, ...);
+
+/****************************************************
+* Checks whether a string ends with a suffix.
+* str - The string to check.
+* str_len - The length of the string to check.
+* suffix - The suffix to check against.
+* suffix_len - The lenght of the suffix to check against.
+* Returns true if the string ends with the given suffi, else false.
+****************************************************/
+bool ends_with(const char *str, size_t str_len, const char *suffix, size_t suffix_len);
 
 #endif

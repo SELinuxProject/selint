@@ -124,6 +124,11 @@ test_one_check() {
 	test_one_check "S-008" "s08.if"
 }
 
+@test "S-009" {
+	test_one_check_expect "S-009" "s09.pass.te" 0
+	test_one_check_expect "S-009" "s09.warn.te" 4
+}
+
 @test "W-001" {
 	test_one_check "W-001" "w01*"
 }

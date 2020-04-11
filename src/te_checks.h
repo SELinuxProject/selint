@@ -77,6 +77,16 @@ struct check_result *check_bare_module_statement(const struct check_data *data,
                                                  const struct policy_node *node);
 
 /*********************************************
+* Check for name mismatch between permission macro and class name.
+* Called on NODE_AV_RULE nodes.
+* data - metadata about the file currently being scanned
+* node - the node to check
+* returns NULL if passed or check_result for issue S-009
+*********************************************/
+struct check_result *check_perm_macro_class_mismatch(const struct check_data *data,
+                                                     const struct policy_node *node);
+
+/*********************************************
 * Check for references to types in te files without an explicit declaration.
 * We don't check types in .if or .fc files because those are similar issues
 * handled by W-002 and E-005 respectively.
