@@ -179,7 +179,7 @@ START_TEST (test_increment_issues) {
 	struct checks *ck = calloc(1, sizeof(struct checks));
 	ck_assert_int_eq(SELINT_SUCCESS, add_check(NODE_AV_RULE, ck, "E-999", returns_blank_result));
 
-	struct check_data *data = calloc(1, sizeof(struct checks));
+	struct check_data *data = calloc(1, sizeof(struct check_data));
 	data->filename = strdup("example.te");
 
 	ck_assert_int_eq(0, ck->check_nodes[NODE_AV_RULE]->issues_found);
