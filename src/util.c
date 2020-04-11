@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "util.h"
 
@@ -34,4 +35,13 @@ void print_if_verbose(const char *format, ...)
 	vprintf(format, args);
 
 	va_end(args);
+}
+
+bool ends_with(const char *str, size_t str_len, const char *suffix, size_t suffix_len)
+{
+	if (str_len < suffix_len) {
+		return 0;
+	}
+
+	return (0 == strncmp(str + str_len - suffix_len, suffix, suffix_len));
 }

@@ -1,0 +1,17 @@
+policy_module(s09, 1.0)
+
+allow source target:foo some_foo_perms;
+
+allow source target:file write_file_perms;
+
+allow source target:fifo_file write_fifo_file_perms;
+
+allow source target:netlink_something_socket some_netlink_socket_perms;
+
+allow source target:netlink_something_socket some_socket_perms;
+
+allow source target:something_socket some_socket_perms;
+
+allow source target:chr_file rw_term_perms;
+
+allow source target:process signal_perms;

@@ -177,6 +177,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_GEN_REQ, ck, "S-008",
 			          check_unquoted_gen_require_block);
 		}
+		if (CHECK_ENABLED("S-009")) {
+			add_check(NODE_AV_RULE, ck, "S-009",
+			          check_perm_macro_class_mismatch);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {

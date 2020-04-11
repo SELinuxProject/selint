@@ -151,6 +151,7 @@ CHECK IDS
 	S-006: Bare module statement
 	S-007: Call to gen_context omits mls component
 	S-008: Unquoted gen_require block
+	S-009: Permission macro suffix does not match class name
 
 	W-001: Type referenced without explicit declaration
 	W-002: Type, attribute or role used but not listed in require block in interface
