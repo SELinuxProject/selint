@@ -32,21 +32,15 @@
 #define DISABLE_COMMENT_FILENAME POLICIES_DIR "disable_comment.te"
 #define BOOL_DECLARATION_FILENAME POLICIES_DIR "bool_declarations.te"
 
-extern FILE * yyin;
-extern int yyparse(void);
-extern int yyrestart(FILE *input_file);
-struct policy_node *ast;
-extern struct policy_node *cur;
-extern const char *parsing_filename;
-
 START_TEST (test_parse_basic_te) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	ast->flavor = NODE_TE_FILE;
 	set_current_module_name("basic");
 
-	yyin = fopen(BASIC_TE_FILENAME, "r");
-	ck_assert_int_eq(0, yyparse());
+	FILE *f = fopen(BASIC_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, BASIC_TE_FILENAME, &ast));
 
 	struct policy_node *current = ast;
 
@@ -99,20 +93,20 @@ START_TEST (test_parse_basic_te) {
 
 	cleanup_parsing();
 
-	fclose(yyin);
+	fclose(f);
 
 }
 END_TEST
 
 START_TEST (test_parse_basic_if) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	ast->flavor = NODE_IF_FILE;
 	set_current_module_name("basic");
 
-	yyin = fopen(BASIC_IF_FILENAME, "r");
-	parsing_filename = "basic";
-	ck_assert_int_eq(0, yyparse());
+	FILE *f = fopen(BASIC_IF_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, BASIC_IF_FILENAME, &ast));
 
 	struct policy_node *current = ast;
 
@@ -179,35 +173,36 @@ START_TEST (test_parse_basic_if) {
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 
 }
 END_TEST
 
 START_TEST (test_parse_uncommon_constructs) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("uncommon");
-	parsing_filename = "uncommon.te";
 
-	yyin = fopen(UNCOMMON_TE_FILENAME, "r");
-	ck_assert_int_eq(0, yyparse());
+	FILE *f = fopen(UNCOMMON_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, UNCOMMON_TE_FILENAME, &ast));
 
 	ck_assert_ptr_nonnull(ast);
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 }
 END_TEST
 
 START_TEST (test_parse_blocks) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("blocks");
 
-	yyin = fopen(BLOCKS_TE_FILENAME, "r");
-	ck_assert_int_eq(0, yyparse());
+	FILE *f = fopen(BLOCKS_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, BLOCKS_TE_FILENAME, &ast));
 
 	ck_assert_ptr_nonnull(ast);
 
@@ -233,17 +228,18 @@ START_TEST (test_parse_blocks) {
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 }
 END_TEST
 
 START_TEST (test_parse_empty_file) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("empty");
 
-	yyin = fopen(EMPTY_TE_FILENAME, "r");
-	ck_assert_int_eq(0, yyparse());
+	FILE *f = fopen(EMPTY_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, EMPTY_TE_FILENAME, &ast));
 
 	ck_assert_ptr_nonnull(ast);
 
@@ -253,51 +249,51 @@ START_TEST (test_parse_empty_file) {
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 
 }
 END_TEST
 
 START_TEST (test_syntax_error) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("syntax_error");
-	parsing_filename = "syntax_error.te";
 
-	yyin = fopen(SYNTAX_ERROR_FILENAME, "r");
-	ck_assert_int_eq(1, yyparse());
+	FILE *f = fopen(SYNTAX_ERROR_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(1, yyparse_wrapper(f, SYNTAX_ERROR_FILENAME, &ast));
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 
 }
 END_TEST
 
 START_TEST (test_parse_bad_role_allow) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("bad_ra");
 
-	yyin = fopen(BAD_RA_FILENAME, "r");
-	yyrestart(yyin);
-	ck_assert_int_eq(1, yyparse());
+	FILE *f = fopen(BAD_RA_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(1, yyparse_wrapper(f, BAD_RA_FILENAME, &ast));
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 
 }
 END_TEST
 
 START_TEST (test_disable_comment) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("disable_comment");
 
-	yyin = fopen(DISABLE_COMMENT_FILENAME, "r");
-	yyrestart(yyin);
-	ck_assert_int_eq(0, yyparse());
+	FILE *f = fopen(DISABLE_COMMENT_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, DISABLE_COMMENT_FILENAME, &ast));
 
 	ck_assert_ptr_nonnull(ast);
 	ck_assert_int_eq(NODE_TE_FILE, ast->flavor);
@@ -311,19 +307,19 @@ START_TEST (test_disable_comment) {
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 
 }
 END_TEST
 
 START_TEST (test_bool_declarations) {
 
-	ast = cur = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("bool_declarations");
 
-	yyin = fopen(BOOL_DECLARATION_FILENAME, "r");
-	yyrestart(yyin);
-	ck_assert_int_eq(0, yyparse());
+	FILE *f = fopen(BOOL_DECLARATION_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_int_eq(0, yyparse_wrapper(f, BOOL_DECLARATION_FILENAME, &ast));
 
 	struct policy_node *current = ast;
 
@@ -435,7 +431,7 @@ START_TEST (test_bool_declarations) {
 
 	free_policy_node(ast);
 	cleanup_parsing();
-	fclose(yyin);
+	fclose(f);
 }
 END_TEST
 

@@ -23,44 +23,35 @@
 #include "if_checks.h"
 #include "te_checks.h"
 #include "parse_fc.h"
+#include "parse.h"
 #include "util.h"
 #include "startup.h"
-
-extern FILE *yyin;
-extern int yyparse(void);
-struct policy_node *ast;        // Must be global so the parser can access it
-extern int yylineno;
-extern const char *parsing_filename;
-extern struct policy_node *cur;
 
 #define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
 struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor)
 {
 
-	ast = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	ast->flavor = flavor;
 	char *copy = strdup(filename);
 	char *mod_name = basename(copy);
 	mod_name[strlen(mod_name) - 3] = '\0'; // Remove suffix
 	set_current_module_name(mod_name);
-	yylineno = 1;
 	free(copy);
 
-	yyin = fopen(filename, "r");
-	if (!yyin) {
+	FILE *f = fopen(filename, "r");
+	if (!f) {
 		printf("Error opening %s\n", filename);
 		free_policy_node(ast);
 		return NULL;
 	}
-	parsing_filename = filename;
-	if (0 != yyparse()) {
+	if (0 != yyparse_wrapper(f, filename, &ast)) {
 		free_policy_node(ast);
-		fclose(yyin);
+		fclose(f);
 		return NULL;
 	}
-	fclose(yyin);
-	cur = NULL;
+	fclose(f);
 
 	// dont run cleanup_parsing until everything is done because it frees the maps
 	return ast;
@@ -261,7 +252,6 @@ enum selint_error parse_all_files_in_list(struct policy_file_list *files, enum n
 	while (current) {
 		print_if_verbose("Parsing %s\n", current->file->filename);
 		current->file->ast = parse_one_file(current->file->filename, flavor);
-		ast = NULL;
 		if (!current->file->ast) {
 			return SELINT_PARSE_ERROR;
 		}
