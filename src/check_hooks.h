@@ -161,6 +161,7 @@ void display_check_result(struct check_result *res, struct check_data *data);
 * check_id - The check identifier
 * format - A printf style format string
 *********************************************/
+__attribute__ ((format(printf, 3, 4)))
 struct check_result *make_check_result(char severity,
                                        unsigned int check_id,
                                        const char *format, ...);

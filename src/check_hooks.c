@@ -283,7 +283,6 @@ void free_check_result(struct check_result *res)
 	free(res);
 }
 
-__attribute__ ((format(printf, 3, 4)))
 struct check_result *make_check_result(char severity, unsigned int check_id,
                                        const char *format, ...)
 {
