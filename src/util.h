@@ -17,6 +17,9 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+/* whether to print debug messages */
+extern int verbose_flag;
+
 void print_if_verbose(const char *format, ...);
 
 #endif

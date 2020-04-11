@@ -40,8 +40,6 @@ extern int yydebug;
 
 extern int yylex_destroy(void);
 
-extern int verbose_flag;
-
 static void usage(void)
 {
 
