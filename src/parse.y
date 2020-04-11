@@ -810,7 +810,7 @@ if_keyword:
 
 %%
 void yyerror(const char* s) {
-	struct check_result *res = make_check_result('F', F_ID_POLICY_SYNTAX, s);
+	struct check_result *res = make_check_result('F', F_ID_POLICY_SYNTAX, "%s", s);
 	res->lineno = yylineno;
 
 	struct check_data data;
