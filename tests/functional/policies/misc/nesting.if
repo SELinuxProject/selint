@@ -1,7 +1,4 @@
-# Currently, ifdefs are discarded by the parser so this works fine with W-002
-# But if we ever save them and the gen_require becomes a child of the ifdef in
-# the tree, then this will break.  W-002 assumes that the gen_require is at
-# the top level.
+# Needed for W-002 to function correctly
 interface(`test_nesting',`
 	ifdef(`var',`
 		gen_require(`
@@ -9,4 +6,14 @@ interface(`test_nesting',`
 		')
 	')
 	append_files_pattern($1, foo_log_t, foo_data_t)
+')
+
+interface(`test_nesting_other_way',`
+	gen_require(`
+		type foo_log_t;
+		ifdef(`var',`
+			attribute foo_log;
+		')
+	')
+	append_files_pattern($1, foo_log, foo_log_t)
 ')
