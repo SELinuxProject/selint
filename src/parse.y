@@ -512,6 +512,12 @@ require_bare:
 	|
 	CLASS STRING string_list SEMICOLON { insert_declaration(&cur, DECL_CLASS, $2, $3, yylineno); free($2); }
 	|
+	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK { begin_ifdef(&cur, yylineno); }
+	require_lines SINGLE_QUOTE CLOSE_PAREN { end_ifdef(&cur); free($4); }
+	|
+	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, yylineno); }
+	require_lines CLOSE_PAREN { end_ifdef(&cur); free($4); }
+	|
 	COMMENT
 	;
 
