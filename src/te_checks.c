@@ -67,6 +67,7 @@ struct check_result *check_te_order(const struct check_data *data,
 					char *reason_str = get_ordering_reason(order_data, order_node_arr_index);
 					struct check_result *to_ret = make_check_result('C',
 					                                                C_ID_TE_ORDER,
+					                                                "%s",
 					                                                reason_str);
 					free(reason_str);
 					return to_ret;
