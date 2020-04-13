@@ -48,7 +48,7 @@ OPTIONS
 	--context=CONTEXT_PATH
 		Also parse any .te or .if files found in CONTEXT_PATH and load symbols
 		associated with them for use when checking the policy files to be analyzed.
-		No checks are run on these files.
+		No checks are run on these files. Implies -s.
 
 	--debug-parser
 		Enable debug ouput for the internal policy parser.

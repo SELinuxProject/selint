@@ -58,6 +58,7 @@ static void usage(void)
 		"      --context=CONTEXT_PATH\tRecursively scan CONTEXT_PATH to find additional te and if\n"\
 		"\t\t\t\tfiles to parse, but not scan.  SELint will assume the scanned policy files\n"\
 		"\t\t\t\tare intended to be compiled together with the context files.\n"\
+		"\t\t\t\tare intended to be compiled together with the context files.  Implies -s.\n"\
 		"      --debug-parser\t\tEnable debug ouput for the internal policy parser.\n"\
 		"\t\t\t\tVery noisy, useful to debug parsing failures.\n"\
 		"  -d, --disable=CHECKID\t\tDisable check with the given ID.\n"\
@@ -163,6 +164,8 @@ int main(int argc, char **argv)
 		case CONTEXT_ID:
 			// Specify a path for context files
 			context_path = optarg;
+			// Don't parse system devel policies if a context is given
+			source_flag = 1;
 			break;
 
 		case COLOR_ID:
