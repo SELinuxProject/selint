@@ -286,7 +286,8 @@ int main(int argc, char **argv)
 		if (0 != access(config_filename, R_OK)) {
 			//No default config found
 			print_if_verbose(
-				"No config specified and could not find default config.");
+				"No config specified and could not find default config at %s.\n",
+				config_filename);
 			config_filename = NULL;
 		}
 	}
