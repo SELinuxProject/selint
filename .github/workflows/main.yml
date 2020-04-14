@@ -18,16 +18,25 @@ on: [push, pull_request]
 
 jobs:
   build:
-
+    name: build (${{ matrix.cc }})
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [ 'gcc', 'clang' ]
+    env:
+      CC: ${{ matrix.cc }}
     steps:
     - uses: actions/checkout@v2
-    - name: check-whitespaces
-      run: git diff-tree --check $(git hash-object -t tree /dev/null) HEAD
-    - name: install-deps
+    - name: install clang repo
       run: |
-        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key 2>/dev/null | sudo apt-key add -
+        sudo add-apt-repository 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main' -y
+        sudo apt-get update -q
+    - name: install dependencies
+      run: sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man clang-10
+    - name: install check
+      run : |
         # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
         # ck_assert_ptr_nonnull were added in 0.11.0
         git clone https://github.com/libcheck/check.git --branch 0.13.0
@@ -39,6 +48,8 @@ jobs:
         sudo ldconfig
         cd ..
         rm -rf check
+    - name: install bats
+      run : |
         # Install bats.  Ubuntu is on 0.4.0 and the latest is 1.1.0.  This is to work around
         # a bug with running a program multiple times in the same test
         git clone https://github.com/bats-core/bats-core.git
@@ -67,7 +78,7 @@ jobs:
         make VERSION=pipeline-test dist
         tar xvzf selint-pipeline-test.tar.gz
         cd selint-pipeline-test
-        ./configure
+        ./configure CFLAGS="-Werror"
         make
         cd tests/functional
         bats end-to-end.bats
@@ -81,7 +92,7 @@ jobs:
     - name: Release Info
       id: release_info
       run: |
-        if [[ '${{ github.ref }}' == refs/tags/v* ]]
+        if [[ '${{ github.ref }}' == refs/tags/v* && ${{ matrix.cc }} == 'gcc' ]]
         then
           echo ::set-output name=is_release::true
           echo ::set-output name=tag::$(echo ${{ github.ref }} | cut -dv -f2)
@@ -113,3 +124,12 @@ jobs:
         asset_path: ./selint-${{ steps.release_info.outputs.tag }}.tar.gz
         asset_name: selint-${{ steps.release_info.outputs.tag }}.tar.gz
         asset_content_type: application/tar+gzip
+
+  whitespace_check:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: check-whitespaces
+        run: git diff-tree --check $(git hash-object -t tree /dev/null) HEAD
