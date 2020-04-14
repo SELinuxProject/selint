@@ -311,15 +311,11 @@ int main(int argc, char **argv)
 		insert_into_decl_map("object_r", "__assumed__", DECL_ROLE);
 	}
 
-	struct string_list *config_check_id = config_disabled_checks;
-	while (config_check_id) {
+	for (const struct string_list *config_check_id = config_disabled_checks; config_check_id; config_check_id = config_check_id->next) {
 		WARN_ON_INVALID_CHECK_ID(config_check_id->string, "disabled in config");
-		config_check_id = config_check_id->next;
 	}
-	config_check_id = config_enabled_checks;
-	while (config_check_id) {
+	for (const struct string_list *config_check_id = config_enabled_checks; config_check_id; config_check_id = config_check_id->next) {
 		WARN_ON_INVALID_CHECK_ID(config_check_id->string, "enabled in config");
-		config_check_id = config_check_id->next;
 	}
 
 	if (only_enabled && !cl_enabled_checks) {
