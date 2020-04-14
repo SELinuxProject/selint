@@ -186,13 +186,15 @@ struct check_result *check_perm_macro_class_mismatch(__attribute__((unused)) con
 		"fifo_file",
 	};
 
+	const char *class_name = node->data.av_data->object_classes->string;
+	const size_t class_name_len = strlen(class_name);
+
 	// ignore multi class av rules
-	if (node->data.av_data->object_classes->next) {
+	if (node->data.av_data->object_classes->next ||
+	    ends_with(class_name, class_name_len, "_class_set", strlen("_class_set"))) {
 		return NULL;
 	}
 
-	const char *class_name = node->data.av_data->object_classes->string;
-	const size_t class_name_len = strlen(class_name);
 	const char *class_alias = NULL;
 	for (size_t i = 0; i < (sizeof class_aliases / sizeof *class_aliases); ++i) {
 		if (0 == strcmp(class_name, class_aliases[i][0])) {
