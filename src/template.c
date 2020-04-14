@@ -112,7 +112,7 @@ enum selint_error add_template_declarations(const char *template_name,
 	cur->string = strdup(template_name);
 	cur->next = parent_temp_names;
 
-	struct if_call_list *calls =
+	const struct if_call_list *calls =
 		look_up_call_in_template_map(template_name);
 
 	while (calls) {
@@ -130,7 +130,7 @@ enum selint_error add_template_declarations(const char *template_name,
 		calls = calls->next;
 	}
 
-	struct decl_list *decls = look_up_decl_in_template_map(template_name);
+	const struct decl_list *decls = look_up_decl_in_template_map(template_name);
 
 	while (decls) {
 		char *new_decl = replace_m4(decls->decl->name, args);

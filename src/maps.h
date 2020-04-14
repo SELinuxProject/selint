@@ -45,19 +45,19 @@ struct template_hash_elem {
 void insert_into_decl_map(const char *name, const char *module_name,
                           enum decl_flavor flavor);
 
-char *look_up_in_decl_map(const char *name, enum decl_flavor flavor);
+const char *look_up_in_decl_map(const char *name, enum decl_flavor flavor);
 
 void insert_into_mods_map(const char *mod_name, const char *status);
 
-char *look_up_in_mods_map(const char *mod_name);
+const char *look_up_in_mods_map(const char *mod_name);
 
 void insert_into_mod_layers_map(const char *mod_name, const char *layer);
 
-char *look_up_in_mod_layers_map(const char *mod_name);
+const char *look_up_in_mod_layers_map(const char *mod_name);
 
 void insert_into_ifs_map(const char *if_name, const char *mod_name);
 
-char *look_up_in_ifs_map(const char *if_name);
+const char *look_up_in_ifs_map(const char *if_name);
 
 void mark_transform_if(const char *if_name);
 
@@ -81,11 +81,11 @@ void insert_decl_into_template_map(const char *name, enum decl_flavor flavor,
 
 void insert_call_into_template_map(const char *name, struct if_call_data *call);
 
-struct template_hash_elem *look_up_in_template_map(const char *name);
+const struct template_hash_elem *look_up_in_template_map(const char *name);
 
-struct decl_list *look_up_decl_in_template_map(const char *name);
+const struct decl_list *look_up_decl_in_template_map(const char *name);
 
-struct if_call_list *look_up_call_in_template_map(const char *name);
+const struct if_call_list *look_up_call_in_template_map(const char *name);
 
 unsigned int decl_map_count(enum decl_flavor flavor);
 

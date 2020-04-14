@@ -312,7 +312,7 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 	struct string_list *type = types;
 
 	while (type) {
-		char *mod_name = look_up_in_decl_map(type->string, DECL_TYPE);
+		const char *mod_name = look_up_in_decl_map(type->string, DECL_TYPE);
 		if (!mod_name) {
 			//Not a type
 			type = type->next;
@@ -345,7 +345,7 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
 
 	struct if_call_data *if_data = node->data.ic_data;
 
-	char *if_mod_name = look_up_in_ifs_map(if_data->name);
+	const char *if_mod_name = look_up_in_ifs_map(if_data->name);
 
 	if (!if_mod_name) {
 		// Not defined as an interface.  Probably a macro
@@ -357,7 +357,7 @@ struct check_result *check_module_if_call_in_optional(const struct check_data
 		return NULL;
 	}
 
-	char *mod_type = look_up_in_mods_map(if_mod_name);
+	const char *mod_type = look_up_in_mods_map(if_mod_name);
 
 	if (!mod_type || 0 != strcmp(mod_type, "module")) {
 		// If mod_type is NULL, we have no info on this module.  We *should* have info
