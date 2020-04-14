@@ -32,9 +32,10 @@
 #include "color.h"
 
 // ASCII characters go up to 127
-#define CONTEXT_ID      128
-#define COLOR_ID        129
-#define SUMMARY_ONLY_ID 130
+#define CONTEXT_ID          128
+#define COLOR_ID            129
+#define SUMMARY_ONLY_ID     130
+#define SCAN_HIDDEN_DIRS_ID 131
 
 extern int yydebug;
 
@@ -65,6 +66,8 @@ static void usage(void)
 		"  -l, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
 		"\t\t\t\tgreater than LEVEL.  Options are C (convention), S (style),\n"\
 		"\t\t\t\tW (warning), E (error), F (fatal error).\n"\
+		"      --scan-hidden-dirs\tScan hidden directories.\n"\
+		"\t\t\t\tBy default hidden directories (like '.git') are skipped in recursive mode.\n"\
 		"  -s, --source\t\t\tRun in \"source mode\" to scan a policy source repository\n"\
 		"\t\t\t\tthat is designed to compile into a full system policy.\n"\
 		"  -S, --summary\t\t\tDisplay a summary of issues found after running the analysis.\n"\
@@ -94,6 +97,7 @@ int main(int argc, char **argv)
 	int exit_code = EX_OK;
 	int summary_flag = 0;
 	int fail_on_finding = 0;
+	int scan_hidden_dirs = 0;
 	char *context_path = NULL;
 	char color = 0;  // 0 auto, 1 off, 2 on
 
@@ -110,23 +114,24 @@ int main(int argc, char **argv)
 	while (1) {
 
 		static const struct option long_options[] = {
-			{ "config",       required_argument, NULL,          'c' },
-			{ "context",      required_argument, NULL,          CONTEXT_ID },
-			{ "disable",      required_argument, NULL,          'd' },
-			{ "enable",       required_argument, NULL,          'e' },
-			{ "fail",         no_argument,       NULL,          'F' },
-			{ "only-enabled", no_argument,       NULL,          'E' },
-			{ "help",         no_argument,       NULL,          'h' },
-			{ "level",        required_argument, NULL,          'l' },
-			{ "modules-conf", required_argument, NULL,          'm' },
-			{ "recursive",    no_argument,       NULL,          'r' },
-			{ "source",       no_argument,       NULL,          's' },
-			{ "summary",      no_argument,       NULL,          'S' },
-			{ "color",        required_argument, NULL,          COLOR_ID },
-			{ "summary-only", no_argument,       NULL,          SUMMARY_ONLY_ID },
-			{ "version",      no_argument,       NULL,          'V' },
-			{ "verbose",      no_argument,       &verbose_flag, 1   },
-			{ 0,              0,                 0,             0   }
+			{ "config",           required_argument, NULL,          'c' },
+			{ "context",          required_argument, NULL,          CONTEXT_ID },
+			{ "disable",          required_argument, NULL,          'd' },
+			{ "enable",           required_argument, NULL,          'e' },
+			{ "fail",             no_argument,       NULL,          'F' },
+			{ "only-enabled",     no_argument,       NULL,          'E' },
+			{ "help",             no_argument,       NULL,          'h' },
+			{ "level",            required_argument, NULL,          'l' },
+			{ "modules-conf",     required_argument, NULL,          'm' },
+			{ "recursive",        no_argument,       NULL,          'r' },
+			{ "source",           no_argument,       NULL,          's' },
+			{ "summary",          no_argument,       NULL,          'S' },
+			{ "color",            required_argument, NULL,          COLOR_ID },
+			{ "scan-hidden-dirs", no_argument,       NULL,          SCAN_HIDDEN_DIRS_ID },
+			{ "summary-only",     no_argument,       NULL,          SUMMARY_ONLY_ID },
+			{ "version",          no_argument,       NULL,          'V' },
+			{ "verbose",          no_argument,       &verbose_flag, 1   },
+			{ 0,                  0,                 0,             0   }
 		};
 
 		int option_index = 0;
@@ -231,6 +236,11 @@ int main(int argc, char **argv)
 		case 's':
 			// Run in source mode
 			source_flag = 1;
+			break;
+
+		case SCAN_HIDDEN_DIRS_ID:
+			// Scan hidden direcories in recursive mode
+			scan_hidden_dirs = 1;
 			break;
 
 		case SUMMARY_ONLY_ID:
@@ -407,6 +417,15 @@ int main(int argc, char **argv)
 			}
 
 			if (!recursive_scan) {
+				fts_set(ftsp, file, FTS_SKIP);
+			}
+
+			if (!scan_hidden_dirs &&
+			    file->fts_info == FTS_D &&
+			    file->fts_name[0] == '.' &&
+			    file->fts_name[1] != '.' &&
+			    file->fts_name[1] != '\0') {
+				print_if_verbose("Skipping hidden directory %s\n", file->fts_path);
 				fts_set(ftsp, file, FTS_SKIP);
 			}
 		}

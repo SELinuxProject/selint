@@ -71,6 +71,10 @@ OPTIONS
 		SEVERITY LEVELS for more information.  If this option is not specified,
 		SELint will default to the level selected in the applicable config file.
 
+	--scan-hidden-dirs
+		Scan hidden directories.  By default hidden directories (like '.git') are
+		skipped in recursive mode.
+
 	-s, --source
 		Run in "source mode" to scan a policy source repository that is designed to
 		compile into a full system policy.  If this flag is not specified, SELint
