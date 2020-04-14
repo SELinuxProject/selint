@@ -79,11 +79,11 @@ static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor fl
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 __attribute__((no_sanitize("unsigned-integer-overflow")))
 #endif
-void insert_into_decl_map(const char *type, const char *module_name,
+void insert_into_decl_map(const char *name, const char *module_name,
                           enum decl_flavor flavor)
 {
 
-	struct hash_elem *decl = look_up_hash_elem(type, flavor);
+	struct hash_elem *decl = look_up_hash_elem(name, flavor);
 
 	if (decl == NULL) {     // Item not in hash table already
 
@@ -133,10 +133,10 @@ void insert_into_decl_map(const char *type, const char *module_name,
 	}       //TODO: else report error?
 }
 
-char *look_up_in_decl_map(const char *type, enum decl_flavor flavor)
+char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
 {
 
-	struct hash_elem *decl = look_up_hash_elem(type, flavor);
+	struct hash_elem *decl = look_up_hash_elem(name, flavor);
 
 	if (decl == NULL) {
 		return NULL;
@@ -219,7 +219,7 @@ char *look_up_in_mod_layers_map(const char *mod_name)
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 __attribute__((no_sanitize("unsigned-integer-overflow")))
 #endif
-void insert_into_ifs_map(const char *if_name, const char *module)
+void insert_into_ifs_map(const char *if_name, const char *mod_name)
 {
 
 	struct hash_elem *if_call;

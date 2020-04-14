@@ -42,10 +42,10 @@ struct template_hash_elem {
 	UT_hash_handle hh;
 };
 
-void insert_into_decl_map(const char *type, const char *module_name,
+void insert_into_decl_map(const char *name, const char *module_name,
                           enum decl_flavor flavor);
 
-char *look_up_in_decl_map(const char *type, enum decl_flavor flavor);
+char *look_up_in_decl_map(const char *name, enum decl_flavor flavor);
 
 void insert_into_mods_map(const char *mod_name, const char *status);
 
@@ -55,7 +55,7 @@ void insert_into_mod_layers_map(const char *mod_name, const char *layer);
 
 char *look_up_in_mod_layers_map(const char *mod_name);
 
-void insert_into_ifs_map(const char *if_name, const char *module);
+void insert_into_ifs_map(const char *if_name, const char *mod_name);
 
 char *look_up_in_ifs_map(const char *if_name);
 
