@@ -1,3 +1,7 @@
 policy_module(w01_other, 1.0)
 
 type foo_t;
+
+attribute foo_domain;
+
+attribute_role foo_roles;

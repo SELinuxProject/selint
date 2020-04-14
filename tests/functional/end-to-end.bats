@@ -130,7 +130,7 @@ test_one_check() {
 }
 
 @test "W-001" {
-	test_one_check "W-001" "w01*"
+	test_one_check_expect "W-001" "w01*" 5
 }
 
 @test "W-002" {

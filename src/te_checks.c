@@ -259,23 +259,23 @@ report:
 }
 
 // Helper for check_no_explicit_declaration.  Returns 1 is there is a require block
-// for type_name earlier in the file, and 0 otherwise
-static int has_require(const struct policy_node *node, char *type_name)
+// for name earlier in the file, and 0 otherwise
+static int has_require(const struct policy_node *node, const char *name, enum decl_flavor flavor)
 {
 	const struct policy_node *cur = node;
 	while (cur) {
 		if (cur->flavor == NODE_REQUIRE || cur->flavor == NODE_GEN_REQ) {
 			cur = cur->first_child;
 			while (1) {
-				if (cur->flavor == NODE_DECL && cur->data.d_data->flavor == DECL_TYPE) {
-					if (0 == strcmp(type_name, cur->data.d_data->name)) {
+				if (cur->flavor == NODE_DECL && cur->data.d_data->flavor == flavor) {
+					if (0 == strcmp(name, cur->data.d_data->name)) {
 						return 1;
 					}
 					struct string_list *other_types = cur->data.d_data->attrs; // In requires these
 					                                                           // are types, not
 					                                                           // attributes
 					while (other_types) {
-						if (0 == strcmp(type_name, other_types->string)) {
+						if (0 == strcmp(name, other_types->string)) {
 							return 1;
 						}
 						other_types = other_types->next;
@@ -310,32 +310,40 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 		return NULL;
 	}
 
-	struct string_list *types = get_types_in_node(node);
-	struct string_list *type = types;
+	struct string_list *names = get_types_in_node(node);
 
-	while (type) {
-		const char *mod_name = look_up_in_decl_map(type->string, DECL_TYPE);
-		if (!mod_name) {
-			//Not a type
-			type = type->next;
+	for (const struct string_list *name = names; name; name = name->next) {
+		const char *mod_name;
+		enum decl_flavor flavor;
+
+		if ((mod_name = look_up_in_decl_map(name->string, DECL_TYPE))) {
+			flavor = DECL_TYPE;
+		} else if ((mod_name = look_up_in_decl_map(name->string, DECL_ATTRIBUTE))) {
+			flavor = DECL_ATTRIBUTE;
+		} else if ((mod_name = look_up_in_decl_map(name->string, DECL_ATTRIBUTE_ROLE))) {
+			flavor = DECL_ATTRIBUTE_ROLE;
+		// Do not check for roles: in refpolicy they are defined in the kernel module
+		// and used in role modules (like unprivuser)
+		} else {
+			//Not a known name
 			continue;
 		}
+
 		if (0 != strcmp(data->mod_name, mod_name)) {
 			// It may be required
-			if (!has_require(node, type->string)) {
-				// We didn't find a require block with this type
+			if (!has_require(node, name->string, flavor)) {
+				// We didn't find a require block with this name
 				struct check_result *to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
-										"No explicit declaration for %s.  You should access it via interface call or use a require block.",
-										type->string);
-				free_string_list(types);
+										"No explicit declaration for %s from module %s.  You should access it via interface call or use a require block.",
+										name->string, mod_name);
+				free_string_list(names);
 				return to_ret;
 			}
-			// Otherwise, keep checking other types in this node
+			// Otherwise, keep checking other names in this node
 		}
-		type = type->next;
 	}
 
-	free_string_list(types);
+	free_string_list(names);
 	return NULL;
 }
 
