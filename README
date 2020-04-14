@@ -161,7 +161,7 @@ CHECK IDS
 	S-008: Unquoted gen_require block
 	S-009: Permission macro suffix does not match class name
 
-	W-001: Type referenced without explicit declaration
+	W-001: Type or attribute referenced without explicit declaration
 	W-002: Type, attribute or role used but not listed in require block in interface
 	W-003: Unused type, attribute or role listed in require block
 	W-004: Potentially unescaped regex character in file contexts paths

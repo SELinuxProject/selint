@@ -1,5 +1,14 @@
 policy_module(w01, 1.0)
 
 type bar_t;
+role bar_r;
 
 allow foo_t bar_t:file read;
+
+do_something(foo_domain)
+
+role foo_roles types bar_t;
+
+typeattribute bar_t foo_domain;
+
+roleattribute bar_r foo_roles;
