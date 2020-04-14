@@ -88,7 +88,7 @@ void insert_into_decl_map(const char *name, const char *module_name,
 	if (decl == NULL) {     // Item not in hash table already
 
 		decl = malloc(sizeof(struct hash_elem));
-		decl->key = strdup(type);
+		decl->key = strdup(name);
 		decl->val = strdup(module_name);
 
 		switch (flavor) {
@@ -133,7 +133,7 @@ void insert_into_decl_map(const char *name, const char *module_name,
 	}       //TODO: else report error?
 }
 
-char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
+const char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
 {
 
 	struct hash_elem *decl = look_up_hash_elem(name, flavor);
@@ -167,7 +167,7 @@ void insert_into_mods_map(const char *mod_name, const char *status)
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 __attribute__((no_sanitize("unsigned-integer-overflow")))
 #endif
-char *look_up_in_mods_map(const char *mod_name)
+const char *look_up_in_mods_map(const char *mod_name)
 {
 
 	struct hash_elem *mod;
@@ -203,7 +203,7 @@ void insert_into_mod_layers_map(const char *mod_name, const char *layer)
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 __attribute__((no_sanitize("unsigned-integer-overflow")))
 #endif
-char *look_up_in_mod_layers_map(const char *mod_name)
+const char *look_up_in_mod_layers_map(const char *mod_name)
 {
 	struct hash_elem *mod;
 
@@ -229,7 +229,7 @@ void insert_into_ifs_map(const char *if_name, const char *mod_name)
 	if (!if_call) {
 		if_call = malloc(sizeof(struct hash_elem));
 		if_call->key = strdup(if_name);
-		if_call->val = strdup(module);
+		if_call->val = strdup(mod_name);
 		HASH_ADD_KEYPTR(hh_ifs, ifs_map, if_call->key,
 		                strlen(if_call->key), if_call);
 	}
@@ -238,7 +238,7 @@ void insert_into_ifs_map(const char *if_name, const char *mod_name)
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 __attribute__((no_sanitize("unsigned-integer-overflow")))
 #endif
-char *look_up_in_ifs_map(const char *if_name)
+const char *look_up_in_ifs_map(const char *if_name)
 {
 
 	struct hash_elem *if_call;
@@ -473,7 +473,7 @@ void insert_call_into_template_map(const char *name, struct if_call_data *call)
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 __attribute__((no_sanitize("unsigned-integer-overflow")))
 #endif
-struct template_hash_elem *look_up_in_template_map(const char *name)
+const struct template_hash_elem *look_up_in_template_map(const char *name)
 {
 
 	struct template_hash_elem *template;
@@ -483,9 +483,9 @@ struct template_hash_elem *look_up_in_template_map(const char *name)
 	return template;
 }
 
-struct decl_list *look_up_decl_in_template_map(const char *name)
+const struct decl_list *look_up_decl_in_template_map(const char *name)
 {
-	struct template_hash_elem *template = look_up_in_template_map(name);
+	const struct template_hash_elem *template = look_up_in_template_map(name);
 
 	if (template) {
 		return template->declarations;
@@ -494,9 +494,9 @@ struct decl_list *look_up_decl_in_template_map(const char *name)
 	}
 }
 
-struct if_call_list *look_up_call_in_template_map(const char *name)
+const struct if_call_list *look_up_call_in_template_map(const char *name)
 {
-	struct template_hash_elem *template = look_up_in_template_map(name);
+	const struct template_hash_elem *template = look_up_in_template_map(name);
 
 	if (template) {
 		return template->calls;

@@ -38,7 +38,7 @@ struct check_result *check_file_context_types_in_mod(const struct check_data
 
 	SETUP_FOR_FC_CHECK(node)
 
-	char *type_decl_mod_name = look_up_in_decl_map(entry->context->type,
+	const char *type_decl_mod_name = look_up_in_decl_map(entry->context->type,
 	                                               DECL_TYPE);
 
 	if (!type_decl_mod_name) {
@@ -162,7 +162,7 @@ struct check_result *check_file_context_users(__attribute__((unused)) const stru
 
 	SETUP_FOR_FC_CHECK(node)
 
-	char *user_decl_filename = look_up_in_decl_map(entry->context->user,
+	const char *user_decl_filename = look_up_in_decl_map(entry->context->user,
 	                                               DECL_USER);
 
 	if (!user_decl_filename) {
@@ -180,7 +180,7 @@ struct check_result *check_file_context_roles(__attribute__((unused)) const stru
 
 	SETUP_FOR_FC_CHECK(node)
 
-	char *role_decl_filename = look_up_in_decl_map(entry->context->role,
+	const char *role_decl_filename = look_up_in_decl_map(entry->context->role,
 	                                               DECL_ROLE);
 
 	if (!role_decl_filename) {
@@ -200,7 +200,7 @@ struct check_result *check_file_context_types_exist(__attribute__((unused)) cons
 
 	SETUP_FOR_FC_CHECK(node)
 
-	char *type_decl_filename = look_up_in_decl_map(entry->context->type,
+	const char *type_decl_filename = look_up_in_decl_map(entry->context->type,
 	                                               DECL_TYPE);
 
 	if (!type_decl_filename) {

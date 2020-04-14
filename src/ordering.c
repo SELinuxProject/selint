@@ -308,7 +308,7 @@ static int is_own_module_rule(const struct policy_node *node, const char *curren
 	struct string_list *types = get_types_in_node(node);
 	struct string_list *cur = types;
 	while (cur) {
-		char *module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_TYPE);
+		const char *module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_TYPE);
 		if (!module_of_type_or_attr) {
 			module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_ATTRIBUTE);
 		}
@@ -333,7 +333,7 @@ static int is_kernel_mod_if_call(const struct policy_node *node)
 	if (node->flavor != NODE_IF_CALL) {
 		return 0;
 	}
-	char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
+	const char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
 	if (!mod_name) {
 		return 0;
 	}
@@ -365,12 +365,12 @@ static int check_call_layer(const struct policy_node *node, const char *layer_to
 	if (node->flavor != NODE_IF_CALL) {
 		return 0;
 	}
-	char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
+	const char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
 	if (!mod_name) {
 		// not an actual interface
 		return 0;
 	}
-	char *layer_name = look_up_in_mod_layers_map(mod_name);
+	const char *layer_name = look_up_in_mod_layers_map(mod_name);
 	if (!layer_name) {
 		return 0;
 	}

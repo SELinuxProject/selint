@@ -24,7 +24,7 @@ START_TEST (test_insert_into_type_map) {
 	insert_into_decl_map("bar_t", "test_module", DECL_TYPE);
 	insert_into_decl_map("baz_t", "other_module", DECL_TYPE);
 
-	char *mod_name = look_up_in_decl_map("doesntexist", DECL_TYPE);
+	const char *mod_name = look_up_in_decl_map("doesntexist", DECL_TYPE);
 
 	ck_assert_ptr_null(mod_name);
 
@@ -66,7 +66,7 @@ START_TEST (test_role_and_user_maps) {
 	insert_into_decl_map("bar_r", "test_module2", DECL_ROLE);
 	insert_into_decl_map("bar_u", "test_module3", DECL_USER);
 
-	char *mod_name = look_up_in_decl_map("foo_r", DECL_TYPE);
+	const char *mod_name = look_up_in_decl_map("foo_r", DECL_TYPE);
 
 	ck_assert_ptr_null(mod_name);
 
@@ -102,7 +102,7 @@ START_TEST (test_class_and_perm_maps) {
 	insert_into_decl_map("file", "class", DECL_CLASS);
 	insert_into_decl_map("read", "perm", DECL_PERM);
 
-	char *res = look_up_in_decl_map("dir", DECL_CLASS);
+	const char *res = look_up_in_decl_map("dir", DECL_CLASS);
 
 	ck_assert_ptr_null(res);
 
@@ -126,7 +126,7 @@ START_TEST (test_mods_map) {
 	insert_into_mods_map("systemd", "base");
 	insert_into_mods_map("games", "off");
 
-	char *res = look_up_in_mods_map("systemd");
+	const char *res = look_up_in_mods_map("systemd");
 	ck_assert_str_eq("base", res);
 
 	res = look_up_in_mods_map("games");
@@ -148,7 +148,7 @@ START_TEST (test_insert_decl_into_template_map) {
 
 	insert_decl_into_template_map("other_template", DECL_TYPE, "$1_conf_t");
 
-	struct decl_list *dl = look_up_decl_in_template_map("doesntexist");
+	const struct decl_list *dl = look_up_decl_in_template_map("doesntexist");
 	ck_assert_ptr_null(dl);
 
 	dl = look_up_decl_in_template_map("user_domain");
@@ -202,7 +202,7 @@ START_TEST (test_insert_call_into_template_map) {
 
 	insert_decl_into_template_map("user_domain", DECL_TYPE, "$1_conf_t");
 
-	struct if_call_list *out = look_up_call_in_template_map("user_domain");
+	const struct if_call_list *out = look_up_call_in_template_map("user_domain");
 
 	ck_assert_ptr_eq(call, out->call);
 
