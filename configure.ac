@@ -28,7 +28,7 @@ AC_PROG_CC_STDC
 AC_PROG_LEX
 AC_PROG_YACC
 
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.0], [], [AC_MSG_ERROR([Check not found])])
+PKG_CHECK_MODULES([CHECK], [check >= 0.11.0], [], [AC_MSG_ERROR([Check not found])])
 
 # Checks for libraries.
 AC_SEARCH_LIBS([cfg_init], [confuse], [], [
