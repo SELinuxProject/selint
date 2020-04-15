@@ -36,6 +36,7 @@
 #define COLOR_ID            129
 #define SUMMARY_ONLY_ID     130
 #define SCAN_HIDDEN_DIRS_ID 131
+#define DEBUG_PARSER_ID     132
 
 extern int yydebug;
 
@@ -57,6 +58,8 @@ static void usage(void)
 		"      --context=CONTEXT_PATH\tRecursively scan CONTEXT_PATH to find additional te and if\n"\
 		"\t\t\t\tfiles to parse, but not scan.  SELint will assume the scanned policy files\n"\
 		"\t\t\t\tare intended to be compiled together with the context files.\n"\
+		"      --debug-parser\t\tEnable debug ouput for the internal policy parser.\n"\
+		"\t\t\t\tVery noisy, useful to debug parsing failures.\n"\
 		"  -d, --disable=CHECKID\t\tDisable check with the given ID.\n"\
 		"  -e, --enable=CHECKID\t\tEnable check with the given ID.\n"\
 		"  -E, --only-enabled\t\tOnly run checks that are explicitly enabled with\n"\
@@ -116,6 +119,7 @@ int main(int argc, char **argv)
 		static const struct option long_options[] = {
 			{ "config",           required_argument, NULL,          'c' },
 			{ "context",          required_argument, NULL,          CONTEXT_ID },
+			{ "debug-parser",     no_argument,       NULL,          DEBUG_PARSER_ID },
 			{ "disable",          required_argument, NULL,          'd' },
 			{ "enable",           required_argument, NULL,          'e' },
 			{ "fail",             no_argument,       NULL,          'F' },
@@ -173,6 +177,11 @@ int main(int argc, char **argv)
 				usage();
 				exit(EX_USAGE);
 			}
+			break;
+
+		case DEBUG_PARSER_ID:
+			// Enable debug mode for the internal parser
+			yydebug = 1;
 			break;
 
 		case 'd':

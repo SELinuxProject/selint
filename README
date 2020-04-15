@@ -50,6 +50,10 @@ OPTIONS
 		associated with them for use when checking the policy files to be analyzed.
 		No checks are run on these files.
 
+	--debug-parser
+		Enable debug ouput for the internal policy parser.
+		Very noisy, useful to debug parsing failures.
+
 	-d CHECKID, --disable=CHECKID
 		Disable check with the given ID.
 
