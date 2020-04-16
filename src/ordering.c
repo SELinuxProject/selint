@@ -782,15 +782,20 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 
 	char *ret = malloc(sizeof(char) * str_len);
 
-	size_t written = snprintf(ret, str_len,
-	                          "Line out of order.  It is of type %s %s line %u %s.",
-	                          lss_to_string(get_local_subsection(order_data->mod_name, this_node)),
-	                          before_after,
-	                          other_node->lineno,
-	                          reason_str);
+	ssize_t written = snprintf(ret, str_len,
+	                           "Line out of order.  It is of type %s %s line %u %s.",
+	                           lss_to_string(get_local_subsection(order_data->mod_name, this_node)),
+	                           before_after,
+	                           other_node->lineno,
+	                           reason_str);
+
+	if (written < 0) {
+		free(followup_str);
+		return NULL;
+	}
 
 	if (followup_str) {
-		strncat(ret, followup_str, str_len - written);
+		strncat(ret, followup_str, str_len - (size_t)written);
 	}
 
 	free(followup_str);

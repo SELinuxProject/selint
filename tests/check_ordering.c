@@ -53,7 +53,7 @@ START_TEST (test_prepare_ordering_metadata) {
 	ck_assert_ptr_nonnull(o);
 	ck_assert_ptr_nonnull(o->sections);
 	ck_assert_ptr_nonnull(o->sections->section_name);
-	ck_assert_int_eq(o->order_node_len, 3);
+	ck_assert_uint_eq(o->order_node_len, 3);
 	ck_assert_ptr_null(o->nodes[0].node);
 	ck_assert_ptr_null(o->nodes[1].node);
 	ck_assert_ptr_null(o->nodes[2].node);

@@ -360,7 +360,7 @@ int main(int argc, char **argv)
 	struct policy_file_list *context_if_files =
 		calloc(1, sizeof(struct policy_file_list));
 
-	char **paths = malloc(sizeof(char *) * argc - optind + 2);
+	char **paths = malloc(sizeof(char *) * (unsigned)argc - (unsigned)optind + 2);
 
 	int i = 0;
 	while (optind < argc) {
