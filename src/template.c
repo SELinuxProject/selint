@@ -47,7 +47,7 @@ char *replace_m4(const char *orig, const struct string_list *args)
 			strcpy(ret_pos, orig_pos);
 			break;
 		}
-		strncpy(ret_pos, orig_pos, dollar_pos - orig_pos);
+		strncpy(ret_pos, orig_pos, (size_t)(dollar_pos - orig_pos));
 		ret_pos += dollar_pos - orig_pos;
 		orig_pos = dollar_pos;
 

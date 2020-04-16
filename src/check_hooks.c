@@ -99,7 +99,7 @@ void display_check_result(const struct check_result *res, const struct check_dat
 	if (FILENAME_PADDING < len) {
 		padding = 0;
 	} else {
-		padding = FILENAME_PADDING - len;
+		padding = (unsigned)(FILENAME_PADDING - len);
 	}
 
 	printf("%s:%*u: %s(%c)%s: %s (%c-%03u)\n",
@@ -188,8 +188,8 @@ static int comp_check_nodes(const void *n1, const void *n2)
 	const struct check_node *node1 = *(struct check_node **)n1;
 	const struct check_node *node2 = *(struct check_node **)n2;
 
-	unsigned int node1_id = atoi(node1->check_id + 2);
-	unsigned int node2_id = atoi(node2->check_id + 2);
+	int node1_id = atoi(node1->check_id + 2);
+	int node2_id = atoi(node2->check_id + 2);
 
 	switch (node1->check_id[0]) {
 	case 'C':

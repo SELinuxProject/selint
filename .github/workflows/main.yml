@@ -60,7 +60,8 @@ jobs:
     - name: autogen
       run: ./autogen.sh
     - name: configure
-      run: ./configure CFLAGS="-Werror"
+      # old flex/bison versions might not generate conversion warning free code
+      run: ./configure CFLAGS="-Werror -Wno-error=conversion -Wno-error=sign-conversion"
     - name: make
       run: make
     - name: make check
@@ -78,7 +79,7 @@ jobs:
         make VERSION=pipeline-test dist
         tar xvzf selint-pipeline-test.tar.gz
         cd selint-pipeline-test
-        ./configure CFLAGS="-Werror"
+        ./configure CFLAGS="-Werror -Wno-error=conversion -Wno-error=sign-conversion"
         make
         cd tests/functional
         bats end-to-end.bats
