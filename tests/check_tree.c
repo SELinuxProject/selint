@@ -106,7 +106,7 @@ START_TEST (test_get_types_in_node_av) {
 
 	node->data.av_data = make_example_av_rule();
 
-	struct string_list *out = get_types_in_node(node);
+	struct string_list *out = get_names_in_node(node);
 
 	struct string_list *cur = out;
 
@@ -147,7 +147,7 @@ START_TEST (test_get_types_in_node_tt) {
 
 	tt_data->default_type = strdup(EXAMPLE_TYPE_1);
 
-	struct string_list *out = get_types_in_node(node);
+	struct string_list *out = get_names_in_node(node);
 
 	struct string_list *cur = out;
 
@@ -182,7 +182,7 @@ START_TEST (test_get_types_in_node_dd) {
 
 	d_data->name = strdup(EXAMPLE_TYPE_2);
 
-	struct string_list *out = get_types_in_node(node);
+	struct string_list *out = get_names_in_node(node);
 
 	ck_assert_ptr_nonnull(out);
 
@@ -210,7 +210,7 @@ START_TEST (test_get_types_in_node_if_call) {
 	if_data->args->next = calloc(1, sizeof(struct string_list));
 	if_data->args->next->string = strdup("baz_t");
 
-	struct string_list *out = get_types_in_node(node);
+	struct string_list *out = get_names_in_node(node);
 
 	ck_assert_ptr_nonnull(out);
 
@@ -229,7 +229,7 @@ START_TEST (test_get_types_in_node_no_types) {
 	struct policy_node *node = calloc(1, sizeof(struct policy_node));
 	node->flavor = NODE_ERROR;
 
-	ck_assert_ptr_null(get_types_in_node(node));
+	ck_assert_ptr_null(get_names_in_node(node));
 
 	free_policy_node(node);
 }
@@ -245,7 +245,7 @@ START_TEST (test_get_types_in_node_exclusion) {
 	node->data.av_data->sources->next = calloc(1, sizeof(struct string_list));
 	node->data.av_data->sources->next->string = strdup("-init_t");
 
-	struct string_list *out = get_types_in_node(node);
+	struct string_list *out = get_names_in_node(node);
 	ck_assert_ptr_nonnull(out);
 
 	ck_assert_str_eq(out->string, "domain");

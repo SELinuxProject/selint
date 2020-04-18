@@ -113,7 +113,7 @@ START_TEST(test_check_type_used_but_not_required_in_if) {
 
 	const struct check_data cdata = { NULL, NULL, FILE_IF_FILE, NULL };
 
-	struct check_result *res = check_type_used_but_not_required_in_if(&cdata, cur);
+	struct check_result *res = check_name_used_but_not_required_in_if(&cdata, cur);
 
 	ck_assert_ptr_nonnull(res);
 
@@ -171,12 +171,12 @@ START_TEST (test_check_type_required_but_not_used_in_if) {
 
 	const struct check_data cdata = { NULL, NULL, FILE_IF_FILE, NULL };
 
-	ck_assert_ptr_null(check_type_required_but_not_used_in_if(&cdata, cur));
+	ck_assert_ptr_null(check_name_required_but_not_used_in_if(&cdata, cur));
 
 	free(data->name);
 	data->name = strdup("not_used_t");
 
-	struct check_result *res = check_type_required_but_not_used_in_if(&cdata, cur);
+	struct check_result *res = check_name_required_but_not_used_in_if(&cdata, cur);
 	ck_assert_ptr_nonnull(res);
 
 	free_check_result(res);
@@ -231,7 +231,7 @@ START_TEST (test_system_r_exception) {
 
 	const struct check_data cdata = { NULL, NULL, FILE_IF_FILE, NULL };
 
-	ck_assert_ptr_null(check_type_used_but_not_required_in_if(&cdata, cur));
+	ck_assert_ptr_null(check_name_used_but_not_required_in_if(&cdata, cur));
 
 	free_policy_node(head);
 	free_all_maps();
