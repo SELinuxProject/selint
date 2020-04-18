@@ -183,8 +183,6 @@ const char *get_section(const struct policy_node *node)
 		// just using the first one seems fine.
 		return node->data.av_data->sources->string;
 	case NODE_TT_RULE:
-	case NODE_TM_RULE:
-	case NODE_TC_RULE:
 		// TODO: Are type_member and type_change the same as tt
 		// from an ordering standpoint?
 		// The case of multiple source types is weird.  For now
