@@ -69,14 +69,14 @@ struct check_result *check_unquoted_gen_require_block(const struct
                                                       policy_node *node);
 
 /*********************************************
-* Check that all types referenced in interface are listed in its require block
+* Check that all names referenced in interface are listed in its require block
 * (or declared in that template)
 * Called on NODE_AV_RULE, NODE_TT_RULE and NODE_IF_CALL nodes.
 * data - metadata about the file
 * node - the node to check
 * returns NULL if passed or check_result for issue W-002
 *********************************************/
-struct check_result *check_type_used_but_not_required_in_if(const struct
+struct check_result *check_name_used_but_not_required_in_if(const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node);
@@ -88,7 +88,7 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 * node - the node to check
 * returns NULL if passed or check_result for issue W-003
 *********************************************/
-struct check_result *check_type_required_but_not_used_in_if(const struct
+struct check_result *check_name_required_but_not_used_in_if(const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node);

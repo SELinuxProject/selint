@@ -119,7 +119,7 @@ char *get_name_if_in_template(struct policy_node *cur)
 	return NULL;
 }
 
-struct string_list *get_types_in_node(const struct policy_node *node)
+struct string_list *get_names_in_node(const struct policy_node *node)
 {
 
 	struct string_list *ret = NULL;
@@ -244,10 +244,9 @@ struct string_list *get_types_in_node(const struct policy_node *node)
 	}
 
 	return ret;
-
 }
 
-struct string_list *get_types_required(const struct policy_node *node)
+struct string_list *get_names_required(const struct policy_node *node)
 {
 	struct string_list *ret = NULL;
 	struct string_list *ret_cursor = NULL;
@@ -256,9 +255,9 @@ struct string_list *get_types_required(const struct policy_node *node)
 
 	while (cur) {
 		if (ret_cursor) {
-			ret_cursor->next = get_types_in_node(cur);
+			ret_cursor->next = get_names_in_node(cur);
 		} else {
-			ret = ret_cursor = get_types_in_node(cur);
+			ret = ret_cursor = get_names_in_node(cur);
 		}
 		while (ret_cursor && ret_cursor->next) {
 			ret_cursor = ret_cursor->next;

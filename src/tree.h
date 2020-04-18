@@ -219,9 +219,9 @@ int is_template_call(const struct policy_node *node);
 
 char *get_name_if_in_template(struct policy_node *cur);
 
-struct string_list *get_types_in_node(const struct policy_node *node);
+struct string_list *get_names_in_node(const struct policy_node *node);
 
-struct string_list *get_types_required(const struct policy_node *node);
+struct string_list *get_names_required(const struct policy_node *node);
 
 /**********************************
 * Return 1 if the node is in a require block

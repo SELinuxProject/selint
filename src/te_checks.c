@@ -310,7 +310,7 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 		return NULL;
 	}
 
-	struct string_list *names = get_types_in_node(node);
+	struct string_list *names = get_names_in_node(node);
 
 	for (const struct string_list *name = names; name; name = name->next) {
 		const char *mod_name;

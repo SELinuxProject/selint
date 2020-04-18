@@ -189,15 +189,15 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("W-002")) {
 			add_check(NODE_AV_RULE, ck, "W-002",
-			          check_type_used_but_not_required_in_if);
+			          check_name_used_but_not_required_in_if);
 			add_check(NODE_IF_CALL, ck, "W-002",
-			          check_type_used_but_not_required_in_if);
+			          check_name_used_but_not_required_in_if);
 			add_check(NODE_TT_RULE, ck, "W-002",
-			          check_type_used_but_not_required_in_if);
+			          check_name_used_but_not_required_in_if);
 		}
 		if (CHECK_ENABLED("W-003")) {
 			add_check(NODE_DECL, ck, "W-003",
-			          check_type_required_but_not_used_in_if);
+			          check_name_required_but_not_used_in_if);
 		}
 		if (CHECK_ENABLED("W-004")) {
 			add_check(NODE_FC_ENTRY, ck, "W-004", check_file_context_regex);

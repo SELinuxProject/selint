@@ -120,7 +120,7 @@ struct check_result *check_unquoted_gen_require_block(__attribute__((unused)) co
 	return NULL;
 }
 
-struct check_result *check_type_used_but_not_required_in_if(const struct
+struct check_result *check_name_used_but_not_required_in_if(const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node)
@@ -131,9 +131,9 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 
 	const struct policy_node *cur = node;
 
-	struct string_list *types_in_current_node = get_types_in_node(node);
+	struct string_list *names_in_current_node = get_names_in_node(node);
 
-	if (!types_in_current_node) {
+	if (!names_in_current_node) {
 		return NULL;
 	}
 
@@ -145,27 +145,27 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 	}
 
 	if (!cur) {
-		free_string_list(types_in_current_node);
+		free_string_list(names_in_current_node);
 		return NULL;
 	}
 	// In a template or interface, and cur is a pointer to the definition node
 
 	cur = cur->first_child;
 
-	struct string_list *types_required = NULL;
-	struct string_list *types_required_tail = NULL;
+	struct string_list *names_required = NULL;
+	struct string_list *names_required_tail = NULL;
 
 	while (cur && cur != node) {
 	       if (cur->flavor == NODE_GEN_REQ
 	           || cur->flavor == NODE_REQUIRE) {
-			if (!types_required) {
-				types_required = get_types_required(cur);
-				types_required_tail = types_required;
+			if (!names_required) {
+				names_required = get_names_required(cur);
+				names_required_tail = names_required;
 			} else {
-				types_required_tail->next = get_types_required(cur);
+				names_required_tail->next = get_names_required(cur);
 			}
-			while (types_required_tail && types_required_tail->next) {
-				types_required_tail = types_required_tail->next;
+			while (names_required_tail && names_required_tail->next) {
+				names_required_tail = names_required_tail->next;
 			}
 		}
 
@@ -174,56 +174,56 @@ struct check_result *check_type_used_but_not_required_in_if(const struct
 		                     // for example in an ifdef
 	}
 
-	struct string_list *type_node = types_in_current_node;
+	const struct string_list *name_node = names_in_current_node;
 	const char *flavor = NULL;
 
-	while (type_node) {
-		if (!str_in_sl(type_node->string, types_required)) {
-			if (0 == strcmp(type_node->string, "system_r")) {
+	while (name_node) {
+		if (!str_in_sl(name_node->string, names_required)) {
+			if (0 == strcmp(name_node->string, "system_r")) {
 				// system_r is required by default in all modules
 				// so that is an exception that shouldn't be warned
 				// about.
-				type_node = type_node->next;
+				name_node = name_node->next;
 				continue;
 			}
-			if (look_up_in_decl_map(type_node->string, DECL_TYPE)) {
+			if (look_up_in_decl_map(name_node->string, DECL_TYPE)) {
 				flavor = "Type";
 			} else
 			if (look_up_in_decl_map
-			            (type_node->string, DECL_ATTRIBUTE)) {
+			            (name_node->string, DECL_ATTRIBUTE)) {
 				flavor = "Attribute";
 			} else
 			if (look_up_in_decl_map
-			            (type_node->string, DECL_ATTRIBUTE_ROLE)) {
+			            (name_node->string, DECL_ATTRIBUTE_ROLE)) {
 				flavor = "Role Attribute";
 			} else
 			if (look_up_in_decl_map
-			            (type_node->string, DECL_ROLE)) {
+			            (name_node->string, DECL_ROLE)) {
 				flavor = "Role";
 			} else {
 				// This is a string we don't recognize.  Other checks and/or
 				// the compiler catch invalid bare words
-				type_node = type_node->next;
+				name_node = name_node->next;
 				continue;
 			}
 
 			struct check_result *res =
 				make_check_result('W', W_ID_NO_REQ, NOT_REQ_MESSAGE,
-				                  flavor, type_node->string);
-			free_string_list(types_in_current_node);
-			free_string_list(types_required);
+				                  flavor, name_node->string);
+			free_string_list(names_in_current_node);
+			free_string_list(names_required);
 			return res;
 		}
-		type_node = type_node->next;
+		name_node = name_node->next;
 	}
 
-	free_string_list(types_in_current_node);
-	free_string_list(types_required);
+	free_string_list(names_in_current_node);
+	free_string_list(names_required);
 
 	return NULL;
 }
 
-struct check_result *check_type_required_but_not_used_in_if(const struct
+struct check_result *check_name_required_but_not_used_in_if(const struct
                                                             check_data *data,
                                                             const struct
                                                             policy_node *node)
@@ -264,8 +264,8 @@ struct check_result *check_type_required_but_not_used_in_if(const struct
 		return NULL;
 	}
 
-	struct string_list *types_to_check = get_types_in_node(node);
-	if (!types_to_check) {
+	struct string_list *names_to_check = get_names_in_node(node);
+	if (!names_to_check) {
 		// This should never happen
 		return alloc_internal_error(
 			"Declaration with no declared items");
@@ -281,12 +281,12 @@ struct check_result *check_type_required_but_not_used_in_if(const struct
 	int depth = 0;
 
 	while (cur) {
-		struct string_list *types_used = get_types_in_node(cur);
-		if (types_used) {
+		struct string_list *names_used = get_names_in_node(cur);
+		if (names_used) {
 			if (!sl_head) {
-				sl_head = sl_end = types_used;
+				sl_head = sl_end = names_used;
 			} else {
-				sl_end->next = types_used;
+				sl_end->next = names_used;
 			}
 
 			while (sl_end->next) {
@@ -305,23 +305,23 @@ struct check_result *check_type_required_but_not_used_in_if(const struct
 		}
 	}
 
-	struct string_list *type_node = types_to_check;
+	const struct string_list *name_node = names_to_check;
 
 	struct check_result *res = NULL;
 
-	while (type_node) {
-		if (!str_in_sl(type_node->string, sl_head)) {
+	while (name_node) {
+		if (!str_in_sl(name_node->string, sl_head)) {
 			res = make_check_result('W',
 			                        W_ID_UNUSED_REQ,
 			                        "%s %s is listed in require block but not used in interface",
 			                        flavor,
-			                        type_node->string);
+			                        name_node->string);
 			break;
 		}
-		type_node = type_node->next;
+		name_node = name_node->next;
 	}
 
 	free_string_list(sl_head);
-	free_string_list(types_to_check);
+	free_string_list(names_to_check);
 	return res;
 }
