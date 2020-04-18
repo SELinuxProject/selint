@@ -172,7 +172,25 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 
 	case NODE_RT_RULE:
 		rt_data = node->data.rt_data;
-		ret = copy_string_list(rt_data->targets);
+		cur = ret = copy_string_list(rt_data->sources);
+		if (cur) {
+			while (cur->next) {
+				cur = cur->next;
+			}
+			cur->next = copy_string_list(rt_data->targets);
+		} else {
+			cur = ret = copy_string_list(rt_data->targets);
+		}
+		if (cur) {
+			while (cur->next) {
+				cur = cur->next;
+			}
+			cur->next = calloc(1, sizeof(struct string_list));
+			cur->next->string = strdup(rt_data->default_role);
+		} else {
+			cur = ret = calloc(1, sizeof(struct string_list));
+			cur->string = strdup(rt_data->default_role);
+		}
 		break;
 
 	case NODE_DECL:
@@ -198,12 +216,14 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 		ret->next = calloc(1, sizeof(struct string_list));
 		ret->next->string = strdup(ra_data->to);
 		break;
+
 	case NODE_ROLE_TYPES:
 		rtyp_data = node->data.rtyp_data;
 		ret = calloc(1, sizeof(struct string_list));
 		ret->string = strdup(rtyp_data->role);
 		ret->next = copy_string_list(rtyp_data->types);
 		break;
+
 	case NODE_TYPE_ATTRIBUTE:
 	case NODE_ROLE_ATTRIBUTE:
 		at_data = node->data.at_data;
@@ -211,21 +231,36 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 		ret->string = strdup(at_data->type);
 		ret->next = copy_string_list(at_data->attrs);
 		break;
+
 	case NODE_ALIAS:
+	case NODE_TYPE_ALIAS:
+	case NODE_PERMISSIVE:
 		ret = calloc(1, sizeof(struct string_list));
 		ret->string = strdup(node->data.str);
 		break;
+
 	/*
+	   NODE_TE_FILE,
+	   NODE_IF_FILE,
+	   NODE_FC_FILE,
 	   NODE_HEADER,
 	   NODE_M4_CALL,
 	   NODE_OPTIONAL_POLICY,
 	   NODE_OPTIONAL_ELSE,
+	   NODE_TUNABLE_POLICY,
+	   NODE_IFDEF,
 	   NODE_M4_ARG,
 	   NODE_START_BLOCK,
 	   NODE_INTERFACE_DEF,
 	   NODE_TEMP_DEF,
 	   NODE_REQUIRE,
 	   NODE_GEN_REQ,
+	   NODE_FC_ENTRY,
+	   NODE_COMMENT,
+	   NODE_EMPTY,
+	   NODE_SEMICOLON,
+	   NODE_CLEANUP,
+	   NODE_ERROR
 	 */
 	default:
 		break;
