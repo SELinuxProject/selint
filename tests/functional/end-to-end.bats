@@ -270,25 +270,22 @@ test_one_check() {
 	echo $output
 	[ "$count" -eq 0 ]
 
-	run ${SELINT_PATH} -F -c configs/default.conf policies/misc/disable_multiple*
+	run ${SELINT_PATH} -F -s -c configs/default.conf policies/misc/disable_multiple*
 	[ "$status" -eq 0 ]
-	[ "$output" == "" ]
 
-	run ${SELINT_PATH} -F -c configs/default.conf -d S-008 policies/misc/disable_require_start.*
+	run ${SELINT_PATH} -F -s -c configs/default.conf -d S-008 policies/misc/disable_require_start.*
 	[ "$status" -eq 0 ]
-	[ "$output" == "" ]
 
-	run ${SELINT_PATH} -F -c configs/default.conf policies/misc/disable_require_decl.*
+	run ${SELINT_PATH} -F -s -c configs/default.conf policies/misc/disable_require_decl.*
 	[ "$status" -eq 0 ]
-	[ "$output" == "" ]
 }
 
 @test "nonexistent file" {
-	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.te
+	run ${SELINT_PATH} -s -c configs/default.conf doesnt_exist.te
 	[ "$status" -eq 70 ]
-	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.if
+	run ${SELINT_PATH} -s -c configs/default.conf doesnt_exist.if
 	[ "$status" -eq 70 ]
-	run ${SELINT_PATH} -c configs/default.conf doesnt_exist.fc
+	run ${SELINT_PATH} -s -c configs/default.conf doesnt_exist.fc
 	[ "$status" -eq 70 ]
 }
 
@@ -298,24 +295,24 @@ test_one_check() {
 }
 
 @test "Bad check ids" {
-	run ${SELINT_PATH} -c configs/default.conf policies/misc/no_issues.te
+	run ${SELINT_PATH} -s -c configs/default.conf policies/misc/no_issues.te
 	count=$(echo ${output} | grep -o "Warning" | wc -l)
-	[ "$count" -eq 0 ]
+	[ "$count" -eq 1 ] #"Failed to find a valid modules.conf"
 
-	run ${SELINT_PATH} -c configs/default.conf -e foo policies/misc/no_issues.te
-	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	run ${SELINT_PATH} -s -c configs/default.conf -e foo policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
 	[ "$count" -eq 1 ]
 
-	run ${SELINT_PATH} -c configs/default.conf -d foo policies/misc/no_issues.te
-	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	run ${SELINT_PATH} -s -c configs/default.conf -d foo policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
 	[ "$count" -eq 1 ]
 
-	run ${SELINT_PATH} -c configs/bad_ids.conf policies/misc/no_issues.te
-	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	run ${SELINT_PATH} -s -c configs/bad_ids.conf policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
 	[ "$count" -eq 2 ]
 
-	run ${SELINT_PATH} -c configs/bad_ids.conf -e foo -d bar -d baz policies/misc/no_issues.te
-	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	run ${SELINT_PATH} -s -c configs/bad_ids.conf -e foo -d bar -d baz policies/misc/no_issues.te
+	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
 	[ "$count" -eq 5 ]
 }
 
