@@ -18,13 +18,13 @@
 #include <string.h>
 #include "tree.h"
 #include "parse.h"
-int yylineno;
 extern void yyerror(const char *);
 %}
 %option nounput
 %option noinput
 %option noyywrap
 %option nodefault
+%option yylineno
 %%
 policy_module { return POLICY_MODULE; }
 module { return MODULE; }
@@ -103,10 +103,10 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 \!\= { return NOT_EQUAL; }
 \! { return NOT; }
 \=\= { return EQUAL; }
-^\#.*\n { yylineno++; return COMMENT; }
-\#selint\-disable\:[CSWEF]\-[0-9]+(\,[CSWEF]\-[0-9]+)*\n { yylineno++; yylval.string = strdup(yytext); return SELINT_COMMAND; }
-(\#.*)?\n { yylineno++; }
-dnl(.*)?\n { yylineno++; }
+^\#.*\n { return COMMENT; }
+\#selint\-disable\:[CSWEF]\-[0-9]+(\,[CSWEF]\-[0-9]+)*\n { yylval.string = strdup(yytext); return SELINT_COMMAND; }
+(\#.*)?\n ;
+dnl(.*)?\n ;
 [ \t] ; /* normally skip whitespace */
 . {
     const size_t len = strlen("Invalid character: ") + 1 /*character*/ + 2 /*quotes*/ + 1 /*null*/;
