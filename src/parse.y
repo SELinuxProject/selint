@@ -13,6 +13,9 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
+%define parse.error verbose
+
 %{
 	#include <stdio.h>
 	#include <string.h>
