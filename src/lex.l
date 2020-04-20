@@ -108,4 +108,10 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 (\#.*)?\n { yylineno++; }
 dnl(.*)?\n { yylineno++; }
 [ \t] ; /* normally skip whitespace */
-. { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); }
+. {
+    const size_t len = strlen("Invalid character: ") + 1 /*character*/ + 2 /*quotes*/ + 1 /*null*/;
+    char *str = malloc(len);
+    snprintf(str, len, "Invalid character: '%c'", *yytext);
+    yyerror(str);
+    free(str);
+  }
