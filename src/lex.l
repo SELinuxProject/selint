@@ -107,5 +107,4 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 (\#.*)?\n { yylineno++; }
 dnl(.*)?\n { yylineno++; }
 [ \t] ; /* normally skip whitespace */
-\% { yyerror("Invalid character: %%"); /* will be run through printf again */ }
 . { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); }
