@@ -23,6 +23,7 @@ extern void yyerror(const char *);
 %}
 %option nounput
 %option noinput
+%option noyywrap
 %%
 policy_module { return POLICY_MODULE; }
 module { return MODULE; }
@@ -108,16 +109,3 @@ dnl(.*)?\n { yylineno++; }
 [ \t] ; /* normally skip whitespace */
 \% { yyerror("Invalid character: %%"); /* will be run through printf again */ }
 . { char *str = malloc(strlen(yytext) + 1); sprintf(str, "Invalid character: %s", yytext); yyerror(str); free(str); }
-
-%%
-int yywrap(void) {
-	return 1;
-}
-/*
-int main() {
-	for(int i=0; i < 20; i++) {
-		yylex();
-	}
-	return 0;
-}
-*/
