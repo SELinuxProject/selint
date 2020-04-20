@@ -24,6 +24,7 @@ extern void yyerror(const char *);
 %option nounput
 %option noinput
 %option noyywrap
+%option nodefault
 %%
 policy_module { return POLICY_MODULE; }
 module { return MODULE; }
