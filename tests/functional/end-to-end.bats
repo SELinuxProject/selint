@@ -207,12 +207,12 @@ test_one_check() {
 }
 
 @test "usage" {
-	run ${SELINT_PATH}
+	run ${SELINT_PATH} -c configs/empty.conf
 	[ "$status" -eq 64 ]
 	usage_presence=$(echo ${output} | grep -o "^Usage" | wc -l)
 	[ "$usage_presence" -eq 1 ]
 
-	run ${SELINT_PATH} -Z
+	run ${SELINT_PATH} -c configs/empty.conf -Z
 	[ "$status" -eq 64 ]
 	usage_presence=$(echo ${output} | grep -o "Usage" | wc -l)
 	[ "$usage_presence" -eq 1 ]
