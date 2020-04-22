@@ -98,3 +98,6 @@ genfscon rootfs / -l gen_context(system_u:object_r:rootfs_t, s0)
 neverallow { domain -foo_t } secret_stuff_t:file read;
 
 empty_string_first(`', foo_t)
+
+type type_t alias { alias1 alias2 alias3 }, attribute1;
+type type_t alias { alias1 alias2 alias3 }, attribute1, attribute2, attribute3;
