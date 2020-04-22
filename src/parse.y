@@ -298,13 +298,10 @@ type_declaration:
 	|
 	TYPE STRING ALIAS string_list SEMICOLON { insert_declaration(&cur, DECL_TYPE, $2, NULL, yylineno); free($2); insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
 	|
-	TYPE STRING ALIAS STRING COMMA comma_string_list SEMICOLON {
-				insert_declaration(&cur, DECL_TYPE, $2, NULL, yylineno);
+	TYPE STRING ALIAS string_list COMMA comma_string_list SEMICOLON {
+				insert_declaration(&cur, DECL_TYPE, $2, $6, yylineno);
 				free($2);
-				struct string_list *tmp = calloc(1, sizeof(struct string_list));
-				tmp->string = $4;
-				tmp->next = $6;
-				insert_aliases(&cur, tmp, DECL_TYPE, yylineno); }
+				insert_aliases(&cur, $4, DECL_TYPE, yylineno); }
 	;
 
 bool_declaration:
