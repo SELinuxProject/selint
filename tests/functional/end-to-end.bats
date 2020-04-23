@@ -88,7 +88,7 @@ test_one_check() {
 }
 
 @test "C-005" {
-	test_one_check "C-005" "c05.te"
+	test_one_check_expect "C-005" "c05.te" 2
 	test_one_check "C-005" "c05.if"
 }
 

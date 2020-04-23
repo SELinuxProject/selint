@@ -1,3 +1,5 @@
 policy_module(c05, 1.0)
 
 allow source target:cls { foo bar };
+
+allow source target:cls { foo foo };
