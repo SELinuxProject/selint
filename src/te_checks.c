@@ -100,12 +100,21 @@ struct check_result *check_unordered_perms(__attribute__((unused)) const struct 
 	}
 
 	while (cur) {
-		if (prev && strcmp(prev->string, "~") != 0 && strcmp(prev->string, cur->string) > 0) {
-			return make_check_result('C', C_ID_UNORDERED_PERM,
-			                         "Permissions in %s not ordered (%s before %s)",
-			                         flavor,
-			                         prev->string,
-			                         cur->string);
+		if (prev && strcmp(prev->string, "~") != 0) {
+			const int compare = strcmp(prev->string, cur->string);
+
+			if (compare > 0) {
+				return make_check_result('C', C_ID_UNORDERED_PERM,
+			                                 "Permissions in %s not ordered (%s before %s)",
+			                                 flavor,
+			                                 prev->string,
+			                                 cur->string);
+			} else if (compare == 0) {
+				return make_check_result('C', C_ID_UNORDERED_PERM,
+			                                 "Permissions in %s repeated (%s)",
+			                                 flavor,
+			                                 cur->string);
+			}
 		}
 
 		prev = cur;
