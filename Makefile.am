@@ -13,11 +13,15 @@
 # limitations under the License.
 
 AUTOMAKE_OPTIONS = foreign
+
+if WITH_CHECK
 SUBDIRS = src . tests . man
+check-valgrind:
+	CK_FORK=no $(MAKE) -C tests check-valgrind-memcheck-am
+else
+SUBDIRS = src . man
+endif
 
 selintconfdir = $(sysconfdir)
 selintconf_DATA = selint.conf
 EXTRA_DIST = selint.conf CHANGELOG LICENSE NOTICE check_examples.txt
-
-check-valgrind:
-	CK_FORK=no $(MAKE) -C tests check-valgrind-memcheck-am

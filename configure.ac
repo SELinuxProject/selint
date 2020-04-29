@@ -28,7 +28,14 @@ AC_PROG_CC_STDC
 AC_PROG_LEX
 AC_PROG_YACC
 
-PKG_CHECK_MODULES([CHECK], [check >= 0.11.0], [], [AC_MSG_ERROR([Check not found])])
+# Check for testsuite Check library
+AC_ARG_ENABLE([check],
+        [AS_HELP_STRING([--disable-check],
+                [Disable testsuite depending on Check (default: testsuite is enabled)])],
+                [enable_check=${enableval}],
+                [enable_check=yes])
+AM_CONDITIONAL([WITH_CHECK], [test "x$enable_check" = "xyes"])
+AS_IF([test "x$enable_check" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check >= 0.11.0], [], [AC_MSG_ERROR([Check not found])])])
 
 # Checks for libraries.
 AC_SEARCH_LIBS([cfg_init], [confuse], [], [
