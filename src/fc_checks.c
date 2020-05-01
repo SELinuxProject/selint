@@ -26,7 +26,7 @@
 	if (node->flavor != NODE_FC_ENTRY) { \
 		return alloc_internal_error("File context type check called on non file context entry"); \
 	} \
-	struct fc_entry *entry = node->data.fc_data; \
+	const struct fc_entry *entry = node->data.fc_data; \
 	if (!entry) { \
 		return alloc_internal_error("Policy node data field is NULL"); \
 	} \
@@ -106,7 +106,7 @@ struct check_result *check_file_context_regex(__attribute__((unused)) const stru
 
 	SETUP_FOR_FC_CHECK(node)
 
-	char *path = entry->path;
+	const char *path = entry->path;
 	char cur = *path;
 	char prev = '\0';
 	int error = 0;
