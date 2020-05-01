@@ -489,32 +489,27 @@ require_line:
 
 require_bare:
 	TYPE comma_string_list SEMICOLON {
-		const struct string_list *iter = $2;
-		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_TYPE, iter->string, NULL, yylineno);
+		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_TYPE, iter->string, NULL, yylineno);
 		free_string_list($2);
 		}
 	|
 	ATTRIBUTE comma_string_list SEMICOLON {
-		const struct string_list *iter = $2;
-		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE, iter->string, NULL, yylineno);
+		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE, iter->string, NULL, yylineno);
 		free_string_list($2);
 		}
 	|
 	ROLE comma_string_list SEMICOLON {
-		const struct string_list *iter = $2;
-		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ROLE, iter->string, NULL, yylineno);
+		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ROLE, iter->string, NULL, yylineno);
 		free_string_list($2);
 		}
 	|
 	ATTRIBUTE_ROLE comma_string_list SEMICOLON {
-		const struct string_list *iter = $2;
-		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, iter->string, NULL, yylineno);
+		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, iter->string, NULL, yylineno);
 		free_string_list($2);
 		}
 	|
 	BOOL comma_string_list SEMICOLON {
-		const struct string_list *iter = $2;
-		for (iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_BOOL, iter->string, NULL, yylineno);
+		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_BOOL, iter->string, NULL, yylineno);
 		free_string_list($2);
 		}
 	|
