@@ -673,6 +673,9 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	case ORDER_SECTION:
 		node_section = get_section(this_node);
 		other_section = get_section(other_node);
+		if (!node_section || !other_section) {
+			return NULL; // Error
+		}
 		if (0 == strcmp("_declarations", node_section)) {
 			// This is the first section
 			reason_str = "that is not a declaration";
