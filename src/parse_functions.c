@@ -374,8 +374,6 @@ enum selint_error insert_role_transition(struct policy_node **cur,
 
 static int is_filetrans_if_name(const char *if_name)
 {
-	const char *suffix;
-
 	if (0 == strcmp(if_name, "filetrans_pattern")) {
 		return 1;
 	}
@@ -384,7 +382,7 @@ static int is_filetrans_if_name(const char *if_name)
 		return 1;
 	}
 
-	suffix = strrchr(if_name, '_');
+	const char *suffix = strrchr(if_name, '_');
 	if (suffix &&
 	    (0 == strcmp(suffix, "_filetrans"))) {
 		return 1;
