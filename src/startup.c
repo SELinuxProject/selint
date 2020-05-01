@@ -176,8 +176,8 @@ IGNORE_CONST_DISCARD_END;
 
 	FTSENT *file = fts_read(ftsp);
 	while (file) {
-		char *suffix = file->fts_path + file->fts_pathlen - 3;
-		if (!strcmp(suffix, ".if")) {
+		const char *suffix = (file->fts_pathlen > 3) ? (file->fts_path + file->fts_pathlen - 3) : NULL;
+		if (suffix && !strcmp(suffix, ".if")) {
 			file_list_push_back(context_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
