@@ -309,21 +309,22 @@ struct check_result *make_check_result(char severity, unsigned int check_id,
 
 void free_checks(struct checks *to_free)
 {
+	if (to_free == NULL) {
+		return;
+	}
+
 	for (int i=0; i < NODE_ERROR + 1; i++) {
-		if (to_free->check_nodes[i]) {
-			free_check_node(to_free->check_nodes[i]);
-		}
+		free_check_node(to_free->check_nodes[i]);
 	}
 	free(to_free);
 }
 
 void free_check_node(struct check_node *to_free)
 {
-
-	if (to_free->next) {
-		free_check_node(to_free->next);
+	while (to_free) {
+		struct check_node *tmp = to_free;
+		to_free = to_free->next;
+		free(tmp->check_id);
+		free(tmp);
 	}
-	free(to_free->check_id);
-	free(to_free);
-
 }
