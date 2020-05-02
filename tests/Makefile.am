@@ -110,6 +110,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/configs/broken.conf \
 			functional/configs/default.conf \
 			functional/configs/empty.conf \
+			functional/configs/fc_macros.conf \
 			functional/configs/order_ref.conf \
 			functional/configs/order_lax.conf \
 			functional/policies/check_triggers/c04.if \
@@ -193,6 +194,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/misc/disable_require_decl.if \
 			functional/policies/misc/disable_require_start.te \
 			functional/policies/misc/disable.te \
+			functional/policies/misc/fc_macros.fc \
 			functional/policies/misc/needs_context.te \
 			functional/policies/misc/nesting.if \
 			functional/policies/misc/nesting.te \
