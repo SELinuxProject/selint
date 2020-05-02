@@ -207,7 +207,12 @@ cleanup:
 	return NULL;
 }
 
-struct policy_node *parse_fc_file(const char *filename)
+bool check_for_fc_macro(const char *line, const struct string_list *custom_fc_macros)
+{
+	return false; //TODO
+}
+
+struct policy_node *parse_fc_file(const char *filename, const struct string_list *custom_fc_macros)
 {
 	FILE *fd = fopen(filename, "r");
 
@@ -242,6 +247,10 @@ struct policy_node *parse_fc_file(const char *filename)
 		}
 		// TODO: Right now whitespace parses as an error
 		// We may want to detect it and report a lower severity issue
+
+		if (check_for_fc_macro(line, custom_fc_macros)) {
+			continue;
+		}
 
 		struct fc_entry *entry = parse_fc_line(line);
 		enum node_flavor flavor;

@@ -128,7 +128,7 @@ START_TEST (test_parse_fc_line_with_obj) {
 END_TEST
 
 START_TEST (test_parse_basic_fc_file) {
-	struct policy_node *ast = parse_fc_file(BASIC_FC_FILENAME);
+	struct policy_node *ast = parse_fc_file(BASIC_FC_FILENAME, NULL);
 
 	ck_assert_ptr_nonnull(ast);
 	ck_assert_int_eq(ast->flavor, NODE_FC_FILE);
@@ -164,7 +164,7 @@ START_TEST (test_parse_basic_fc_file) {
 END_TEST
 
 START_TEST (test_parse_m4) {
-	struct policy_node *ast = parse_fc_file(WITH_M4_FILENAME);
+	struct policy_node *ast = parse_fc_file(WITH_M4_FILENAME, NULL);
 
 	ck_assert_ptr_nonnull(ast);
 	ck_assert_int_eq(ast->flavor, NODE_FC_FILE);
@@ -192,7 +192,7 @@ START_TEST (test_parse_m4) {
 END_TEST
 
 START_TEST (test_parse_none_context) {
-	struct policy_node *ast = parse_fc_file(NONE_CONTEXT_FILENAME);
+	struct policy_node *ast = parse_fc_file(NONE_CONTEXT_FILENAME, NULL);
 
 	ck_assert_ptr_nonnull(ast);
 	ck_assert_int_eq(ast->flavor, NODE_FC_FILE);

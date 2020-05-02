@@ -17,6 +17,8 @@
 #ifndef PARSE_FC_H
 #define PARSE_FC_H
 
+#include <stdbool.h>
+
 #include "tree.h"
 
 // Takes in a null terminated string that is an fc entry and populates an fc_entry struct
@@ -24,6 +26,9 @@ struct fc_entry *parse_fc_line(char *line);
 
 struct sel_context *parse_context(char *context_str);
 
+// Return true if the line contains a defined custom fc macro, and false otherwise
+bool check_for_custom_fc_macros(const char *line, const struct string_list *custom_fc_macros);
+
 // Parse an fc file and return a pointer to an abstract syntax tree representing the file
-struct policy_node *parse_fc_file(const char *filename);
+struct policy_node *parse_fc_file(const char *filename, const struct string_list *custom_fc_macros);
 #endif
