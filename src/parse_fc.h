@@ -27,7 +27,7 @@ struct fc_entry *parse_fc_line(char *line);
 struct sel_context *parse_context(char *context_str);
 
 // Return true if the line contains a defined custom fc macro, and false otherwise
-bool check_for_custom_fc_macros(const char *line, const struct string_list *custom_fc_macros);
+bool check_for_fc_macro(const char *line, const struct string_list *custom_fc_macros);
 
 // Parse an fc file and return a pointer to an abstract syntax tree representing the file
 struct policy_node *parse_fc_file(const char *filename, const struct string_list *custom_fc_macros);

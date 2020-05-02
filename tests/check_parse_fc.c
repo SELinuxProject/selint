@@ -16,6 +16,7 @@
 
 #include <check.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../src/tree.h"
 #include "../src/parse_fc.h"
@@ -211,6 +212,19 @@ START_TEST (test_parse_none_context) {
 }
 END_TEST
 
+START_TEST (test_check_for_fc_macro) {
+	ck_assert_int_eq(0, check_for_fc_macro("foo(`bar')", NULL));
+
+	struct string_list *cfm = calloc(1, sizeof(struct string_list));
+	cfm->string = strdup("foo");
+
+	ck_assert_int_eq(1, check_for_fc_macro("foo(`bar')", cfm));
+	ck_assert_int_eq(0, check_for_fc_macro("baz(`bar')", cfm));
+	ck_assert_int_eq(0, check_for_fc_macro("a", cfm));
+
+	free_string_list(cfm);
+}
+END_TEST
 
 Suite *parse_fc_suite(void) {
 	Suite *s;
@@ -228,6 +242,7 @@ Suite *parse_fc_suite(void) {
 	tcase_add_test(tc_core, test_parse_basic_fc_file);
 	tcase_add_test(tc_core, test_parse_m4);
 	tcase_add_test(tc_core, test_parse_none_context);
+	tcase_add_test(tc_core, test_check_for_fc_macro);
 	suite_add_tcase(s, tc_core);
 
 	return s;

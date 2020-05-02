@@ -209,7 +209,23 @@ cleanup:
 
 bool check_for_fc_macro(const char *line, const struct string_list *custom_fc_macros)
 {
-	return false; //TODO
+	if (!custom_fc_macros) {
+		return false;
+	}
+	size_t line_len = strlen(line);
+	for (;custom_fc_macros; custom_fc_macros = custom_fc_macros->next){
+		size_t custom_fc_len = strlen(custom_fc_macros->string);
+		if (line_len <= custom_fc_len) {
+			continue;
+		}
+		if (line[custom_fc_len] != '(') {
+			continue;
+		}
+		if (0 == strncmp(line, custom_fc_macros->string, custom_fc_len)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 struct policy_node *parse_fc_file(const char *filename, const struct string_list *custom_fc_macros)
