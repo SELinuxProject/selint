@@ -33,6 +33,19 @@ struct check_result *check_interface_definitions_have_comment(const struct
                                                               *node);
 
 /*********************************************
+* Check that declaration in require blocks are ordered
+* Called on NODE_REQUIRE and NODE_GEN_REQ nodes.
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue C-006
+*********************************************/
+struct check_result *check_unordered_declaration_in_require(const struct
+                                                            check_data *data,
+                                                            const struct
+                                                            policy_node
+                                                            *node);
+
+/*********************************************
 * Check that interfaces do not call templates
 * Called on NODE_IF_CALL nodes
 * data - metadata about the file

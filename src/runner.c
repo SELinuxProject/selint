@@ -128,6 +128,12 @@ struct checks *register_checks(char level,
 			add_check(NODE_DECL, ck, "C-005",
 			          check_unordered_perms);
 		}
+		if (CHECK_ENABLED("C-006")) {
+			add_check(NODE_REQUIRE, ck, "C-006",
+			          check_unordered_declaration_in_require);
+			add_check(NODE_GEN_REQ, ck, "C-006",
+			          check_unordered_declaration_in_require);
+		}
 		// FALLTHRU
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {

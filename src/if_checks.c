@@ -45,6 +45,117 @@ struct check_result *check_interface_definitions_have_comment(__attribute__((unu
 	}
 }
 
+static int compare_declaration_flavors(enum decl_flavor a, enum decl_flavor b, const struct config_check_data *config)
+{
+	if (a == b) {
+		return 0;
+	}
+
+	for (unsigned short i = 0; i < (sizeof config->order_requires / sizeof *config->order_requires); ++i) {
+		if (a == config->order_requires[i]) {
+			return -1;
+		}
+		if (b == config->order_requires[i]) {
+			return 1;
+		}
+	}
+
+	// should never happen
+	return 0;
+}
+
+static int compare_declarations(const struct declaration_data *a, const struct declaration_data *b, const struct config_check_data *config)
+{
+	int r = compare_declaration_flavors(a->flavor, b->flavor, config);
+	if (r != 0) {
+		return r;
+	}
+
+	if (!config->ordering_requires_same_flavor) {
+		// ordering names of the same flavor is disabled in the config file
+		return -1;
+	}
+
+	// ignore _t suffix, e.g. sort ssh_t before ssh_exec_t
+	const char *a_ptr = a->name;
+	const char *b_ptr = b->name;
+	while (*a_ptr && *b_ptr) {
+		if ((unsigned char)*a_ptr != (unsigned char)*b_ptr) {
+			break;
+		}
+
+		++a_ptr;
+		++b_ptr;
+	}
+
+	if (*a_ptr == 't' && !*(a_ptr + 1) && a_ptr != a->name && *(a_ptr - 1) == '_') {
+		--a_ptr;
+	}
+
+	if (*b_ptr == 't' && !*(b_ptr + 1) && b_ptr != b->name && *(b_ptr - 1) == '_') {
+		--b_ptr;
+	}
+
+	return (unsigned char)*a_ptr - (unsigned char)*b_ptr;
+}
+
+struct check_result *check_unordered_declaration_in_require(const struct
+                                                            check_data *data,
+                                                            const struct
+                                                            policy_node *node)
+{
+	if (node->flavor != NODE_REQUIRE && node->flavor != NODE_GEN_REQ) {
+		return alloc_internal_error(
+			"Unordered declaration in require check called on non require node");
+	}
+
+	const struct policy_node *child = node->first_child;
+	if (!child || child->flavor != NODE_START_BLOCK) {
+		return alloc_internal_error(
+			"No start-block node in require block");
+	}
+
+	child = child->next;
+	if (!child) {
+		return make_check_result('C', C_ID_UNORDERED_REQ,
+					 "Empty require block");
+	}
+
+	const struct declaration_data *prev_decl_data = NULL;
+	for (const struct policy_node *cur = child; cur; cur = cur->next) {
+		if (cur->flavor != NODE_DECL) {
+			return alloc_internal_error(
+				"Non declaration node in require block");
+		}
+
+		const struct declaration_data *decl_data = cur->data.d_data;
+
+		if (prev_decl_data) {
+			const int compare = compare_declarations(prev_decl_data, decl_data, data->config_check_data);
+
+			if (compare > 0) {
+				return make_check_result('C', C_ID_UNORDERED_REQ,
+							 "Unordered declaration in require block (%s %s before %s %s)",
+							 decl_flavor_to_string(prev_decl_data->flavor),
+							 prev_decl_data->name,
+							 decl_flavor_to_string(decl_data->flavor),
+							 decl_data->name);
+			}
+
+			if (compare == 0) {
+				return make_check_result('C', C_ID_UNORDERED_REQ,
+							 "Repeated declaration in require block (%s %s)",
+							 decl_flavor_to_string(decl_data->flavor),
+							 decl_data->name);
+			}
+		}
+
+		prev_decl_data = decl_data;
+	}
+
+	return NULL;
+}
+
 struct check_result *check_if_calls_template(const struct
                                              check_data *data,
                                              const struct

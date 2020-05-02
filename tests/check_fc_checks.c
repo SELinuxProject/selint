@@ -97,7 +97,7 @@ START_TEST (test_check_file_context_types_in_mod) {
 	data->filename = strdup("foo");
 	data->mod_name = strdup("foo");
 	data->flavor = FILE_FC_FILE;
-	struct config_check_data cfg = { ORDER_LAX, true };
+	const struct config_check_data cfg = { ORDER_LAX, {}, true, true };
 	data->config_check_data = &cfg;
 
 	struct policy_node *node = malloc(sizeof(struct policy_node));

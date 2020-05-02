@@ -1,0 +1,16 @@
+# comment
+interface(`c06_interface',`
+	gen_require(`
+		bool c06_bool;
+		class a { a_perm };
+		class b { b_perm };
+		role sysadm_r;
+		attribute_role c06_roles;
+		attribute c06_domain;
+		type c06_t, c06_exec_t;
+		type c06_tmp_t;
+		type c06_unit_t;
+	')
+
+	# empty
+')
