@@ -327,8 +327,11 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 	data.flavor = flavor;
 
 	while (file) {
-
-		data.filename = strdup(basename(file->file->filename));
+		{
+			char *copy = strdup(file->file->filename);
+			data.filename = strdup(basename(copy));
+			free(copy);
+		}
 		data.mod_name = strdup(data.filename);
 		data.config_check_data = ccd;
 
