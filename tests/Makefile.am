@@ -88,7 +88,8 @@ SAMPLE_CONFIG_FILES=sample_configs/bad_format_2.conf \
 			sample_configs/severity_style.conf \
 			sample_configs/severity_warning.conf \
 			sample_configs/bad_order.conf \
-			sample_configs/refpolicy_ordering.conf
+			sample_configs/refpolicy_ordering.conf \
+			sample_configs/order_requires.conf
 
 SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf \
 			sample_policy_files/bad_obj_perm_sets.spt \
@@ -122,6 +123,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/c04.if \
 			functional/policies/check_triggers/c05.if \
 			functional/policies/check_triggers/c05.te \
+			functional/policies/check_triggers/c06.pass.if \
+			functional/policies/check_triggers/c06.warn.if \
 			functional/policies/check_triggers/e02.fc \
 			functional/policies/check_triggers/e03e04e05.fc \
 			functional/policies/check_triggers/e06.te \

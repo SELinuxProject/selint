@@ -21,6 +21,13 @@ C-005:
 
 	allow foo_t bar_t:file { write read };
 
+C-006:
+
+	gen_require(`
+		type foo_t, bar_t;
+		class foobar;
+	')
+
 Style:
 
 S-001:

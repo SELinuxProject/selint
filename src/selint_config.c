@@ -80,15 +80,17 @@ enum selint_error parse_config(const char *config_filename,
 
 IGNORE_CONST_DISCARD_BEGIN;
 	cfg_opt_t opts[] = {
-		CFG_STR("severity",                    "convention",    CFGF_NONE),
-		CFG_STR_LIST("disable",                "{}",            CFGF_NONE),
-		CFG_STR_LIST("enable_normal",          "{}",            CFGF_NONE),
-		CFG_STR_LIST("enable_source",          "{}",            CFGF_NONE),
-		CFG_STR_LIST("assume_users",           "{}",            CFGF_NONE),
-		CFG_STR_LIST("assume_roles",           "{}",            CFGF_NONE),
-		CFG_STR_LIST("custom_fc_macros",       "{}",            CFGF_NONE),
-		CFG_STR("ordering_rules",              "refpolicy-lax", CFGF_NONE),
-		CFG_STR("skip_checking_generated_fcs", "true",          CFGF_NONE),
+		CFG_STR("severity",                      "convention",    CFGF_NONE),
+		CFG_STR_LIST("disable",                  "{}",            CFGF_NONE),
+		CFG_STR_LIST("enable_normal",            "{}",            CFGF_NONE),
+		CFG_STR_LIST("enable_source",            "{}",            CFGF_NONE),
+		CFG_STR_LIST("assume_users",             "{}",            CFGF_NONE),
+		CFG_STR_LIST("assume_roles",             "{}",            CFGF_NONE),
+		CFG_STR_LIST("custom_fc_macros",         "{}",            CFGF_NONE),
+		CFG_STR("ordering_rules",                "refpolicy-lax", CFGF_NONE),
+		CFG_STR_LIST("ordering_requires",        "{ bool, class, role, attribute_role, attribute, type }", CFGF_NONE),
+		CFG_STR("ordering_requires_same_flavor", "true",          CFGF_NONE),
+		CFG_STR("skip_checking_generated_fcs",   "true",          CFGF_NONE),
 		CFG_END()
 	};
 IGNORE_CONST_DISCARD_END;
@@ -147,19 +149,79 @@ IGNORE_CONST_DISCARD_END;
 	} else if (strcmp(config_ordering_rules, "refpolicy-lax") == 0) {
 		config_check_data->order_conf = ORDER_LAX;
 	} else {
-		printf("Invalid ordering rules (%s), specified in config.\n"\
+		printf("Invalid ordering rules (%s) specified in config.\n"\
 		       "Options are \"refpolicy\" and \"refpolicy-lax\"\n",
 		       config_ordering_rules);
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;
 	}
 
+	// ordering_requires
+	const unsigned count = cfg_size(cfg, "ordering_requires");
+	if (count != 6) {
+		printf("Incorrect amount of ordering_requires flavors (%u) specified in config.\n"\
+		       "The required amount is 6.\n",
+		       count);
+		cfg_free(cfg);
+		return SELINT_CONFIG_PARSE_ERROR;
+	}
+	for (unsigned i = 0; i < 6; ++i) {
+		const char *cfg_flavor = cfg_getnstr(cfg, "ordering_requires", i);
+		enum decl_flavor parsed_flavor;
+		if (0 == strcmp("attribute", cfg_flavor)) {
+			parsed_flavor = DECL_ATTRIBUTE;
+		} else if (0 == strcmp("attribute_role", cfg_flavor)) {
+			parsed_flavor = DECL_ATTRIBUTE_ROLE;
+		} else if (0 == strcmp("bool", cfg_flavor)) {
+			parsed_flavor = DECL_BOOL;
+		} else if (0 == strcmp("class", cfg_flavor)) {
+			parsed_flavor = DECL_CLASS;
+		} else if (0 == strcmp("role", cfg_flavor)) {
+			parsed_flavor = DECL_ROLE;
+		} else if (0 == strcmp("type", cfg_flavor)) {
+			parsed_flavor = DECL_TYPE;
+		} else {
+			printf("Invalid ordering_requires flavor (%s) specified in config.\n"\
+			       "See configuration file for available options\n",
+			       cfg_flavor);
+			cfg_free(cfg);
+			return SELINT_CONFIG_PARSE_ERROR;
+		}
+
+		for (unsigned j = 0; j < i; ++j) {
+			if (config_check_data->order_requires[j] == parsed_flavor) {
+				printf("Duplicate ordering_requires flavor (%s) specified in config.\n",
+				       cfg_flavor);
+				cfg_free(cfg);
+				return SELINT_CONFIG_PARSE_ERROR;
+			}
+		}
+
+		config_check_data->order_requires[i] = parsed_flavor;
+	}
+
+	// ordering_requires_same_flavor
+	const char *config_ordering_requires_same_flavor = cfg_getstr(cfg, "ordering_requires_same_flavor");
+	bool ordering_requires_same_flavor;
+
+	enum selint_error r = parse_bool(config_ordering_requires_same_flavor, &ordering_requires_same_flavor);
+	if (r != SELINT_SUCCESS) {
+		printf("Invalid ordering_requires_same_flavor setting (%s) specified in config.\n"\
+		       "Options are \"true\" and \"false\"\n",
+		       config_ordering_requires_same_flavor);
+		cfg_free(cfg);
+		return r;
+	}
+
+	config_check_data->ordering_requires_same_flavor = ordering_requires_same_flavor;
+
+	// skip_checking_generated_fcs
 	const char *config_skip_checking_generated_fcs = cfg_getstr(cfg, "skip_checking_generated_fcs");
 	bool skip_checking_generated_fcs;
 
-	enum selint_error r = parse_bool(config_skip_checking_generated_fcs, &skip_checking_generated_fcs);
+	r = parse_bool(config_skip_checking_generated_fcs, &skip_checking_generated_fcs);
 	if (r != SELINT_SUCCESS) {
-		printf("Invalid skip_checking_generated_fcs setting (%s), specified in config.\n"\
+		printf("Invalid skip_checking_generated_fcs setting (%s) specified in config.\n"\
 		       "Options are \"true\" and \"false\"\n",
 		       config_skip_checking_generated_fcs);
 		cfg_free(cfg);

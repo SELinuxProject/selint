@@ -28,6 +28,7 @@
 #define SEVERITY_FATAL_FILENAME CONFIGS_DIR "severity_fatal.conf"
 #define CHECKS_FILENAME CONFIGS_DIR "check_config.conf"
 #define REFPOL_ORDERING_FILENAME CONFIGS_DIR "refpolicy_ordering.conf"
+#define ORDER_REQUIRES_FILENAME CONFIGS_DIR "order_requires.conf"
 #define BAD_FORMAT_1 CONFIGS_DIR "bad_format.conf"
 #define BAD_FORMAT_2 CONFIGS_DIR "bad_format_2.conf"
 #define BAD_OPTION CONFIGS_DIR "invalid_option.conf"
@@ -92,13 +93,40 @@ START_TEST (test_parse_config_checks) {
 }
 END_TEST
 
-START_TEST (test_parse_config_ordering) {
+START_TEST (test_parse_config_ordering_rules) {
 	char severity = '\0';
 	struct config_check_data ccd;
 
 	ck_assert_int_eq(SELINT_SUCCESS, parse_config(REFPOL_ORDERING_FILENAME, 0, &severity, NULL, NULL, NULL, &ccd));
 
 	ck_assert_int_eq(ORDER_REF, ccd.order_conf);
+}
+END_TEST
+
+START_TEST (test_parse_config_ordering_requires) {
+
+	char severity = '\0';
+	struct config_check_data ccd;
+
+	// default
+	ck_assert_int_eq(SELINT_SUCCESS, parse_config("", 0, &severity, NULL, NULL, NULL, &ccd));
+	ck_assert_int_eq(DECL_BOOL, ccd.order_requires[0]);
+	ck_assert_int_eq(DECL_CLASS, ccd.order_requires[1]);
+	ck_assert_int_eq(DECL_ROLE, ccd.order_requires[2]);
+	ck_assert_int_eq(DECL_ATTRIBUTE_ROLE, ccd.order_requires[3]);
+	ck_assert_int_eq(DECL_ATTRIBUTE, ccd.order_requires[4]);
+	ck_assert_int_eq(DECL_TYPE, ccd.order_requires[5]);
+	ck_assert_int_eq(true, ccd.ordering_requires_same_flavor);
+
+	// custom
+	ck_assert_int_eq(SELINT_SUCCESS, parse_config(ORDER_REQUIRES_FILENAME, 0, &severity, NULL, NULL, NULL, &ccd));
+	ck_assert_int_eq(DECL_BOOL, ccd.order_requires[0]);
+	ck_assert_int_eq(DECL_ATTRIBUTE, ccd.order_requires[1]);
+	ck_assert_int_eq(DECL_ATTRIBUTE_ROLE, ccd.order_requires[2]);
+	ck_assert_int_eq(DECL_TYPE, ccd.order_requires[3]);
+	ck_assert_int_eq(DECL_CLASS, ccd.order_requires[4]);
+	ck_assert_int_eq(DECL_ROLE, ccd.order_requires[5]);
+	ck_assert_int_eq(false, ccd.ordering_requires_same_flavor);
 }
 END_TEST
 
@@ -146,7 +174,8 @@ Suite *selint_config_suite(void) {
 
 	tcase_add_test(tc_core, test_parse_config_severity);
 	tcase_add_test(tc_core, test_parse_config_checks);
-	tcase_add_test(tc_core, test_parse_config_ordering);
+	tcase_add_test(tc_core, test_parse_config_ordering_rules);
+	tcase_add_test(tc_core, test_parse_config_ordering_requires);
 	tcase_add_test(tc_core, test_bad_configs);
 	suite_add_tcase(s, tc_core);
 

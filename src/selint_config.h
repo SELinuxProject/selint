@@ -31,6 +31,8 @@ enum order_conf {
 
 struct config_check_data {
 	enum order_conf order_conf;
+	enum decl_flavor order_requires[6];
+	bool ordering_requires_same_flavor;
 	bool skip_checking_generated_fcs;
 };
 

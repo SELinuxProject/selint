@@ -1,0 +1,24 @@
+# comment
+interface(`c06_fail_interface',`
+	gen_require(`
+		type foo;
+		class bar { bar_perm };
+	')
+
+	gen_require(`
+		type foo, bar;
+	')
+
+	gen_require(`
+		type foo;
+		type bar;
+	')
+
+	gen_require(`
+		type bar_conf_t, bar_t;
+	')
+
+	gen_require(`
+		type foo_t, foo_t;
+	')
+')
