@@ -76,6 +76,7 @@ enum selint_error parse_config(const char *config_filename,
                                char *severity,
                                struct string_list **config_disabled_checks,
                                struct string_list **config_enabled_checks,
+			       struct string_list **custom_fc_macros,
                                struct config_check_data *config_check_data)
 {
 
@@ -87,6 +88,7 @@ IGNORE_CONST_DISCARD_BEGIN;
 		CFG_STR_LIST("enable_source",          "{}",            CFGF_NONE),
 		CFG_STR_LIST("assume_users",           "{}",            CFGF_NONE),
 		CFG_STR_LIST("assume_roles",           "{}",            CFGF_NONE),
+		CFG_STR_LIST("custom_fc_macros",       "{}",            CFGF_NONE),
 		CFG_STR("ordering_rules",              "refpolicy-lax", CFGF_NONE),
 		CFG_STR("skip_checking_generated_fcs", "true",          CFGF_NONE),
 		CFG_END()
@@ -137,6 +139,8 @@ IGNORE_CONST_DISCARD_END;
 
 	insert_config_declarations(cfg, "assume_users", DECL_USER);
 	insert_config_declarations(cfg, "assume_roles", DECL_ROLE);
+
+	READ_STRING_LIST_FROM_CONFIG(custom_fc_macros, "custom_fc_macros");
 
 	char *config_ordering_rules = cfg_getstr(cfg, "ordering_rules");
 

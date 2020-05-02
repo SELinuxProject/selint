@@ -78,7 +78,7 @@ struct check_data {
 	char *mod_name;
 	char *filename;
 	enum file_flavor flavor;
-	struct config_check_data *config_check_data;
+	const struct config_check_data *config_check_data;
 };
 
 // A check is responsible for filling out all fields except lineno
@@ -132,7 +132,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 * node - the node to check
 * returns SELINT_SUCCESS or an error code on failure
 *********************************************/
-enum selint_error call_checks(struct checks *ck,
+enum selint_error call_checks(const struct checks *ck,
                               const struct check_data *data,
                               const struct policy_node *node);
 

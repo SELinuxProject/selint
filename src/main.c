@@ -110,6 +110,8 @@ int main(int argc, char **argv)
 	struct string_list *cl_disabled_checks = NULL;
 	struct string_list *cl_enabled_checks = NULL;
 
+	struct string_list *custom_fc_macros = NULL;
+
 	struct string_list *cl_e_cursor = NULL;
 	struct string_list *cl_d_cursor = NULL;
 
@@ -320,7 +322,7 @@ int main(int argc, char **argv)
 		char cfg_severity;
 		if (SELINT_SUCCESS != parse_config(config_filename, source_flag,
 		                                   &cfg_severity, &config_disabled_checks,
-		                                   &config_enabled_checks, &ccd)) {
+		                                   &config_enabled_checks, &custom_fc_macros, &ccd)) {
 			// Error message printed by parse_config()
 			exit(EX_CONFIG);
 		}
@@ -520,7 +522,7 @@ int main(int argc, char **argv)
 
 	free(modules_conf_path);
 
-	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_te_files, context_if_files, &ccd);
+	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_te_files, context_if_files, custom_fc_macros, &ccd);
 	switch (res) {
 	case SELINT_SUCCESS:
 		if (summary_flag) {
