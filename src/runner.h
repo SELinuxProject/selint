@@ -79,7 +79,7 @@ enum selint_error parse_all_fc_files_in_list(struct policy_file_list *files,
 * head - The head of the AST for that file
 * Returns SELINT_SUCCESS on success or an error code
 ****************************************************/
-enum selint_error run_checks_on_one_file(const struct checks *ck,
+enum selint_error run_checks_on_one_file(struct checks *ck,
                                          const struct check_data *data,
                                          const struct policy_node *head);
 
@@ -90,7 +90,7 @@ enum selint_error run_checks_on_one_file(const struct checks *ck,
 * files - The list of files of that type to check
 * Returns SELINT_SUCCESS on success or an error code
 ****************************************************/
-enum selint_error run_all_checks(const struct checks *ck, enum file_flavor flavor,
+enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
                                  struct policy_file_list *files,
                                  const struct config_check_data *ccd);
 
@@ -109,7 +109,7 @@ enum selint_error run_all_checks(const struct checks *ck, enum file_flavor flavo
 * ccd - Information loaded from the config to be given to checks
 * Returns SELINT_SUCCESS on success or an error code
 ****************************************************/
-enum selint_error run_analysis(const struct checks *ck,
+enum selint_error run_analysis(struct checks *ck,
                                struct policy_file_list *te_files,
                                struct policy_file_list *if_files,
                                struct policy_file_list *fc_files,

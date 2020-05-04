@@ -134,7 +134,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 * node - the node to check
 * returns SELINT_SUCCESS or an error code on failure
 *********************************************/
-enum selint_error call_checks(const struct checks *ck,
+enum selint_error call_checks(struct checks *ck,
                               const struct check_data *data,
                               const struct policy_node *node);
 

@@ -76,7 +76,7 @@ enum selint_error parse_config(const char *config_filename,
                                char *severity,
                                struct string_list **config_disabled_checks,
                                struct string_list **config_enabled_checks,
-			       struct string_list **custom_fc_macros,
+                               struct string_list **custom_fc_macros,
                                struct config_check_data *config_check_data)
 {
 
