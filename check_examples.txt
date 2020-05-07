@@ -64,6 +64,10 @@ S-009:
 
 	allow foo_t bar_t:file read_fifo_file_perms;
 
+S-010:
+
+	allow foo_t bar_t:file { open read };
+
 Warning:
 
 W-001:

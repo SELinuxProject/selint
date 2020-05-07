@@ -172,6 +172,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "S-009",
 			          check_perm_macro_class_mismatch);
 		}
+		if (CHECK_ENABLED("S-010")) {
+			add_check(NODE_AV_RULE, ck, "S-010",
+			          check_perm_macro_available);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {

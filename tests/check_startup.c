@@ -86,6 +86,7 @@ START_TEST (test_load_obj_perm_sets_source) {
 	ck_assert_int_eq(0, str_in_sl("admin", rw_socket_perms));
 
 	ck_assert_ptr_null(look_up_in_permmacros_map("dir_file_class_set"));
+	ck_assert_ptr_null(look_up_in_permmacros_map("remount_fs_perms"));
 
 	res = load_obj_perm_sets_source(BAD_OBJ_PERM_SETS_PATH);
 	ck_assert_int_eq(SELINT_PARSE_ERROR, res);
