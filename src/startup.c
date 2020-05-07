@@ -21,6 +21,7 @@
 #include "maps.h"
 #include "tree.h"
 #include "util.h"
+#include "parse.h"
 
 void load_access_vectors_normal(const char *av_path)
 {
@@ -130,6 +131,29 @@ enum selint_error load_modules_source(const char *modules_conf_path)
 	}
 	free(line);
 	fclose(fd);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error load_obj_perm_sets_source(const char *obj_perm_sets_path)
+{
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
+	ast->flavor = NODE_SPT_FILE;
+
+	FILE *f = fopen(obj_perm_sets_path, "r");
+	if (!f) {
+		free_policy_node(ast);
+		return SELINT_IO_ERROR;
+	}
+
+	if (0 != yyparse_wrapper(f, obj_perm_sets_path, &ast)) {
+		free_policy_node(ast);
+		fclose(f);
+		return SELINT_PARSE_ERROR;
+	}
+
+	free_policy_node(ast);
+	fclose(f);
 
 	return SELINT_SUCCESS;
 }

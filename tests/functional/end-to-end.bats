@@ -306,7 +306,7 @@ test_one_check() {
 
 @test "Bad check ids" {
 	run ${SELINT_PATH} -s -c configs/default.conf policies/misc/no_issues.te
-	count=$(echo ${output} | grep -o "Warning" | wc -l)
+	count=$(echo ${output} | grep -o "Warning: Failed to locate modules.conf file." | wc -l)
 	[ "$count" -eq 1 ] #"Failed to find a valid modules.conf"
 
 	run ${SELINT_PATH} -s -c configs/default.conf -e foo policies/misc/no_issues.te

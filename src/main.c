@@ -389,6 +389,7 @@ int main(int argc, char **argv)
 	FTSENT *file = fts_read(ftsp);
 
 	char *modules_conf_path = NULL;
+	char *obj_perm_sets_path = NULL;
 
 	while (file) {
 		const char *suffix = (file->fts_pathlen > 3) ? (file->fts_path + file->fts_pathlen - 3) : NULL;
@@ -413,6 +414,10 @@ int main(int argc, char **argv)
 		           && !strcmp(file->fts_name, "modules.conf")) {
 			// TODO: Make modules.conf name configurable
 			modules_conf_path = strdup(file->fts_path);
+		} else if (source_flag
+		           && !strcmp(file->fts_name, "obj_perm_sets.spt")) {
+			// TODO: Make obj_perm_sets.spt name configurable
+			obj_perm_sets_path = strdup(file->fts_path);
 		} else {
 			// Directories might get traversed twice: preorder and final visit.
 			// Print only the final visit
@@ -470,6 +475,10 @@ int main(int argc, char **argv)
                                    && !modules_conf_path
                                    && 0 == strcmp(file->fts_name, "modules.conf")) {
 				modules_conf_path = strdup(file->fts_path);
+			} else if (source_flag
+                                   && !obj_perm_sets_path
+                                   && 0 == strcmp(file->fts_name, "obj_perm_sets.spt")) {
+				obj_perm_sets_path = strdup(file->fts_path);
 			}
 			file = fts_read(ftsp);
 		}
@@ -493,12 +502,14 @@ int main(int argc, char **argv)
 		free_file_list(fc_files);
 		free_file_list(context_te_files);
 		free_file_list(context_if_files);
+		free(obj_perm_sets_path);
 		free(modules_conf_path);
 		return EX_CONFIG;
 	}
 	// Load object classes and permissions
 	if (source_flag) {
 		load_access_vectors_source();
+
 		if (modules_conf_path) {
 			enum selint_error res =
 				load_modules_source(modules_conf_path);
@@ -511,6 +522,20 @@ int main(int argc, char **argv)
 		} else {
 			printf("%sWarning%s: Failed to locate modules.conf file.\n", color_warning(), color_reset());
 		}
+
+		if (obj_perm_sets_path) {
+			enum selint_error res =
+				load_obj_perm_sets_source(obj_perm_sets_path);
+			if (res != SELINT_SUCCESS) {
+				printf("%sWarning%s: Failed to load obj_perm_sets.spt: %d\n", color_warning(), color_reset(), res);
+			} else {
+				print_if_verbose("Loaded permission and class set macros from %s\n",
+				                 obj_perm_sets_path);
+			}
+		} else {
+			printf("%sWarning%s: Failed to locate obj_perm_sets.spt file.\n", color_warning(), color_reset());
+		}
+
 	} else {
 		load_access_vectors_normal("/sys/fs/selinux/class");
 		load_modules_normal();
@@ -520,6 +545,7 @@ int main(int argc, char **argv)
 		}
 	}
 
+	free(obj_perm_sets_path);
 	free(modules_conf_path);
 
 	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_te_files, context_if_files, custom_fc_macros, &ccd);

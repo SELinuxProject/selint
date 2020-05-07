@@ -23,6 +23,7 @@
 	#include "tree.h"
 	#include "parse_functions.h"
 	#include "check_hooks.h"
+	#include "util.h"
 
 	// lexer
 	extern unsigned int yylineno;
@@ -167,6 +168,10 @@ selinux_file:
 	if_file
 	|
 	comments if_file
+	|
+	spt_file
+	|
+	comments spt_file
 	|
 	comments
 	;
@@ -788,6 +793,38 @@ if_keyword:
 	INTERFACE { $$ = NODE_INTERFACE_DEF; }
 	|
 	TEMPLATE { $$ = NODE_TEMP_DEF; }
+	;
+
+	// spt file parsing
+spt_file:
+	support_def spt_lines
+	|
+	support_def
+	;
+
+spt_lines:
+	spt_lines spt_line
+	|
+	spt_line
+	;
+
+spt_line:
+	support_def
+	|
+	COMMENT
+	;
+
+support_def:
+	DEFINE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK string_list SINGLE_QUOTE CLOSE_PAREN {
+			if (ends_with($4, strlen($4), "_perms", strlen("_perms"))) {
+				insert_into_permmacros_map($4, $8);
+			} else {
+				free_string_list($8);
+			}
+			free($4); }
+	|
+	DEFINE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK string_list refpolicywarn SINGLE_QUOTE CLOSE_PAREN {
+			free($4); free_string_list($8); } // do not import
 	;
 
 %%
