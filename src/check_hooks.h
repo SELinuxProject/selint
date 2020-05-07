@@ -58,11 +58,12 @@ enum warn_ids {
 };
 
 enum error_ids {
-	E_ID_FC_ERROR      = 2,
-	E_ID_FC_USER       = 3,
-	E_ID_FC_ROLE       = 4,
-	E_ID_FC_TYPE       = 5,
-	E_ID_DECL_IF_CLASH = 6,
+	E_ID_FC_ERROR          = 2,
+	E_ID_FC_USER           = 3,
+	E_ID_FC_ROLE           = 4,
+	E_ID_FC_TYPE           = 5,
+	E_ID_DECL_IF_CLASH     = 6,
+	E_ID_UNKNOWN_PERMMACRO = 7,
 	E_END
 };
 

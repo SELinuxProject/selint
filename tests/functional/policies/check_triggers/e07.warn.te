@@ -1,0 +1,3 @@
+policy_module(w12, 1.0)
+
+allow source target:file reed_file_perms;

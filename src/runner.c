@@ -259,6 +259,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_DECL, ck, "E-006",
 				check_declaration_interface_nameclash);
 		}
+		if (CHECK_ENABLED("E-007")) {
+			add_check(NODE_AV_RULE, ck, "E-007",
+				  check_unknown_permission_macro);
+		}
 	case 'F':
 		break;
 	default:

@@ -1,0 +1,1 @@
+define(`read_file_perms',`{ read open getattr lock ioctl }')

@@ -157,3 +157,7 @@ E-006:
 	attribute foo;
 
 	interface(`foo',`')
+
+E-007:
+
+	allow foo_t bar_t:file reed_file_perms;
