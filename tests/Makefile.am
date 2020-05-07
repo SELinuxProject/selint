@@ -90,6 +90,7 @@ SAMPLE_CONFIG_FILES=sample_configs/bad_format_2.conf \
 			sample_configs/refpolicy_ordering.conf
 
 SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf \
+			sample_policy_files/bad_obj_perm_sets.spt \
 			sample_policy_files/bad_role_allow.te \
 			sample_policy_files/basic.fc \
 			sample_policy_files/basic.if \
@@ -101,6 +102,7 @@ SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf \
 			sample_policy_files/modules.conf \
 			sample_policy_files/nested_templates.if \
 			sample_policy_files/none_context.fc \
+			sample_policy_files/obj_perm_sets.spt \
 			sample_policy_files/syntax_error.te \
 			sample_policy_files/uncommon.te \
 			sample_policy_files/with_m4.fc
@@ -227,14 +229,14 @@ FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
 FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}
 MAPS_HEADS=$(top_builddir)/src/maps.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
 MAPS_OBJS=$(top_builddir)/src/maps.o ${TREE_OBJS}
-STARTUP_HEADS=$(top_builddir)/src/startup.h ${SELINT_ERROR_HEADS} ${FILE_LIST_HEADS}
-STARTUP_OBJS=$(top_builddir)/src/startup.o ${FILE_LIST_OBJS}
 TEMPLATE_HEADS=$(top_builddir)/src/template.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
 TEMPLATE_OBJS=$(top_builddir)/src/template.o ${TREE_OBJS}
 PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${SELINT_ERROR_HEADS} ${TREE_HEADS} ${MAPS_HEADS}
 PARSE_FUNCTIONS_OBJS=$(top_builddir)/src/parse_functions.o ${TEMPLATE_OBJS} ${ORDERING_OBJS}
 PARSE_HEADS=$(top_builddir)/src/parse.h ${PARSE_FUNCTIONS_HEADS}
 PARSE_OBJS=$(top_builddir)/src/parse.o $(top_builddir)/src/lex.o ${CHECK_HOOKS_OBJS} ${PARSE_FUNCTIONS_OBJS}
+STARTUP_HEADS=$(top_builddir)/src/startup.h ${SELINT_ERROR_HEADS} ${FILE_LIST_HEADS} ${PARSE_HEADS}
+STARTUP_OBJS=$(top_builddir)/src/startup.o ${FILE_LIST_OBJS} ${PARSE_OBJS}
 PARSE_FC_HEADS = $(top_builddir)/src/parse_fc.h $(TREE_HEADS)
 PARSE_FC_OBJS = $(top_builddir)/src/parse_fc.o $(TREE_OBJS)
 CHECK_HOOKS_HEADS=$(top_builddir)/src/check_hooks.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}

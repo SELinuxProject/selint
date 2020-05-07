@@ -1,0 +1,25 @@
+########################################
+#
+# Macros for sets of classes
+#
+
+#
+# All directory and file classes
+#
+define(`dir_file_class_set', `{ dir file_class_set }')
+
+
+########################################
+#
+# Macros for sets of permissions
+#
+
+#
+# Permissions to mount and unmount file systems.
+#
+define(`mount_fs_perms', `{ mount remount unmount getattr }')
+
+#
+# Permissions for using sockets.
+#
+define(`rw_socket_perms', `{ ioctl read getattr write setattr append bind connect getopt setopt shutdown }')

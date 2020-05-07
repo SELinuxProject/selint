@@ -22,6 +22,8 @@
 
 #define MODULES_CONF_PATH SAMPLE_POL_DIR "modules.conf"
 #define BAD_MODULES_CONF_PATH SAMPLE_POL_DIR "bad_modules.conf"
+#define OBJ_PERM_SETS_PATH SAMPLE_POL_DIR "obj_perm_sets.spt"
+#define BAD_OBJ_PERM_SETS_PATH SAMPLE_POL_DIR "bad_obj_perm_sets.spt"
 #define SAMPLE_AV_PATH SAMPLE_AV_DIR
 
 START_TEST (test_load_access_vectors_normal) {
@@ -60,6 +62,39 @@ START_TEST (test_load_modules_source) {
 }
 END_TEST
 
+START_TEST (test_load_obj_perm_sets_source) {
+
+	enum selint_error res = load_obj_perm_sets_source(OBJ_PERM_SETS_PATH);
+	ck_assert_int_eq(SELINT_SUCCESS, res);
+
+	const struct string_list *mount_fs_perms = look_up_in_permmacros_map("mount_fs_perms");
+	ck_assert_ptr_nonnull(mount_fs_perms);
+	ck_assert_int_eq(1, str_in_sl("mount", mount_fs_perms));
+	ck_assert_int_eq(1, str_in_sl("remount", mount_fs_perms));
+	ck_assert_int_eq(1, str_in_sl("unmount", mount_fs_perms));
+	ck_assert_int_eq(1, str_in_sl("getattr", mount_fs_perms));
+	ck_assert_int_eq(0, str_in_sl("search", mount_fs_perms));
+
+	const struct string_list *rw_socket_perms = look_up_in_permmacros_map("rw_socket_perms");
+	ck_assert_ptr_nonnull(rw_socket_perms);
+	ck_assert_int_eq(1, str_in_sl("ioctl", rw_socket_perms));
+	ck_assert_int_eq(1, str_in_sl("getattr", rw_socket_perms));
+	ck_assert_int_eq(1, str_in_sl("setattr", rw_socket_perms));
+	ck_assert_int_eq(1, str_in_sl("bind", rw_socket_perms));
+	ck_assert_int_eq(1, str_in_sl("getopt", rw_socket_perms));
+	ck_assert_int_eq(1, str_in_sl("shutdown", rw_socket_perms));
+	ck_assert_int_eq(0, str_in_sl("admin", rw_socket_perms));
+
+	ck_assert_ptr_null(look_up_in_permmacros_map("dir_file_class_set"));
+
+	res = load_obj_perm_sets_source(BAD_OBJ_PERM_SETS_PATH);
+	ck_assert_int_eq(SELINT_PARSE_ERROR, res);
+
+	free_all_maps();
+
+}
+END_TEST
+
 Suite *startup_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -70,6 +105,7 @@ Suite *startup_suite(void) {
 
 	tcase_add_test(tc_core, test_load_access_vectors_normal);
 	tcase_add_test(tc_core, test_load_modules_source);
+	tcase_add_test(tc_core, test_load_obj_perm_sets_source);
 	suite_add_tcase(s, tc_core);
 
 	return s;

@@ -256,6 +256,7 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 	   NODE_TE_FILE,
 	   NODE_IF_FILE,
 	   NODE_FC_FILE,
+	   NODE_SPT_FILE,
 	   NODE_HEADER,
 	   NODE_M4_CALL,
 	   NODE_OPTIONAL_POLICY,
