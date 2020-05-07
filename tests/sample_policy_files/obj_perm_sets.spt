@@ -19,6 +19,12 @@ define(`dir_file_class_set', `{ dir file_class_set }')
 #
 define(`mount_fs_perms', `{ mount remount unmount getattr }')
 
+# deprecated
+define(`remount_fs_perms',`
+        { remount getattr }
+        refpolicywarn(`remount_fs_perms is deprecated')
+')
+
 #
 # Permissions for using sockets.
 #

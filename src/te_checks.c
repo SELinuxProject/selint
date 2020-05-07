@@ -19,6 +19,7 @@
 #include "tree.h"
 #include "ordering.h"
 #include "util.h"
+#include "perm_macro.h"
 
 struct check_result *check_te_order(const struct check_data *data,
                                     const struct policy_node *node)
@@ -265,6 +266,34 @@ report:
 	}
 
 	return NULL;
+}
+
+struct check_result *check_perm_macro_available(__attribute__((unused)) const struct check_data *data,
+                                                const struct policy_node *node)
+{
+	// ignore non allow rules
+	if (node->data.av_data->flavor != AV_RULE_ALLOW) {
+		return NULL;
+	}
+
+	// ignore multi class av rules
+	const struct string_list *class = node->data.av_data->object_classes;
+	if (class->next ||
+	    ends_with(class->string, strlen(class->string), "_class_set", strlen("_class_set"))) {
+		return NULL;
+	}
+
+	char *check_str = permmacro_check(node->data.av_data->object_classes->string,
+					  node->data.av_data->perms);
+	if (!check_str) {
+		return NULL;
+	}
+
+	struct check_result *res = make_check_result('S', S_ID_PERMMACRO,
+						"%s",
+						check_str);
+	free(check_str);
+	return res;
 }
 
 // Helper for check_no_explicit_declaration.  Returns 1 is there is a require block

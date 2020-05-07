@@ -160,6 +160,7 @@ CHECK IDS
 	S-007: Call to gen_context omits mls component
 	S-008: Unquoted gen_require block
 	S-009: Permission macro suffix does not match class name
+	S-010: Permission macro usage suggested
 
 	W-001: Type or attribute referenced without explicit declaration
 	W-002: Type, attribute or role used but not listed in require block in interface

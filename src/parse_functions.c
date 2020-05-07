@@ -22,6 +22,7 @@
 #include "tree.h"
 #include "template.h"
 #include "ordering.h"
+#include "perm_macro.h"
 
 char *module_name = NULL;
 
@@ -710,6 +711,8 @@ void cleanup_parsing()
 		free(module_name);
 		module_name = NULL;
 	}
+
+	free_permmacros();
 
 	free_all_maps();
 }
