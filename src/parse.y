@@ -342,22 +342,15 @@ av_type:
 string_list:
 	OPEN_CURLY strings CLOSE_CURLY { $$ = $2; }
 	|
-	TILDA string_list { $$ = calloc(1, sizeof(struct string_list));
-			$$->string = strdup("~");
-			$$->next = $2; }
+	TILDA string_list { $$ = sl_from_str("~"); $$->next = $2; }
 	|
 	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
 	|
-	STAR { $$ = calloc(1, sizeof(struct string_list)); $$->string = strdup("*"); $$->next = NULL; }
+	STAR { $$ = sl_from_str("*"); }
 	;
 
 strings:
-	strings sl_item { struct string_list *current = $1; while (current->next) { current = current->next; }
-			current->next = calloc(1, sizeof(struct string_list));
-			current->next->string = strdup($2);
-			current->next->next = NULL;
-			free($2);
-			$$ = $1; }
+	strings sl_item { $$ = concat_string_lists($1, sl_from_str($2)); free($2); }
 	|
 	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
 	;
@@ -375,14 +368,9 @@ sl_item:
 	;
 
 comma_string_list:
-	comma_string_list COMMA STRING { struct string_list *current = $1; while (current->next) { current = current->next; }
-					current->next = calloc(1, sizeof(struct string_list));
-					current->next->string = strdup($3);
-					current->next->next = NULL;
-					free($3);
-					$$ = $1; }
+	comma_string_list COMMA STRING { $$ = concat_string_lists($1, sl_from_str($3)); free($3); }
 	|
-	STRING { $$ = calloc(1, sizeof(struct string_list)); $$->string = strdup($1); $$->next = NULL; free($1); }
+	STRING { $$ = sl_from_str($1); free($1); }
 	;
 
 role_allow:
@@ -626,29 +614,18 @@ arg:
 	|
 	BACKTICK strings SINGLE_QUOTE { $$ = $2; }
 	|
-	BACKTICK SINGLE_QUOTE { char *empty = malloc(1);
-				empty[0] = '\0';
-				$$ = malloc(sizeof(struct string_list));
-				$$->string = empty;
-				$$->next = NULL; }
+	BACKTICK SINGLE_QUOTE { $$ = sl_from_str(""); }
 	;
 
 args:
 	arg
 	|
-	args COMMA arg
-	{ struct string_list *current = $1;
-	while (current->next) { current = current->next; }
-	current->next = $3;
-	$$ = $1; }
+	args COMMA arg { $$ = concat_string_lists($1, $3); }
 	|
-	args sl_item
-	{ struct string_list *current = $1;
-	while (current->next) { current = current->next; }
-	current->next = calloc(1, sizeof(struct string_list));
-	current->next->string = $2;
-	current->next->has_incorrect_space = 1;
-	$$ = $1; }
+	args sl_item { struct string_list *sl = calloc(1, sizeof(struct string_list));
+			sl->string = $2;
+			sl->has_incorrect_space = 1;
+			$$ = concat_string_lists($1, sl); }
 	;
 
 mls_range:

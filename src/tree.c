@@ -186,11 +186,9 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 			while (cur->next) {
 				cur = cur->next;
 			}
-			cur->next = calloc(1, sizeof(struct string_list));
-			cur->next->string = strdup(tt_data->default_type);
+			cur->next = sl_from_str(tt_data->default_type);
 		} else {
-			cur = ret = calloc(1, sizeof(struct string_list));
-			cur->string = strdup(tt_data->default_type);
+			cur = ret = sl_from_str(tt_data->default_type);
 		}
 		break;
 
@@ -209,19 +207,16 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 			while (cur->next) {
 				cur = cur->next;
 			}
-			cur->next = calloc(1, sizeof(struct string_list));
-			cur->next->string = strdup(rt_data->default_role);
+			cur->next = sl_from_str(rt_data->default_role);
 		} else {
-			cur = ret = calloc(1, sizeof(struct string_list));
-			cur->string = strdup(rt_data->default_role);
+			cur = ret = sl_from_str(rt_data->default_role);
 		}
 		break;
 
 	case NODE_DECL:
 		d_data = node->data.d_data;
 		if (d_data->name) {
-			ret = calloc(1, sizeof(struct string_list));
-			ret->string = strdup(d_data->name);
+			ret = sl_from_str(d_data->name);
 			ret->next = copy_string_list(d_data->attrs);
 		} else {
 			ret = copy_string_list(d_data->attrs);
@@ -235,32 +230,26 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 
 	case NODE_ROLE_ALLOW:
 		ra_data = node->data.ra_data;
-		ret = calloc(1, sizeof(struct string_list));
-		ret->string = strdup(ra_data->from);
-		ret->next = calloc(1, sizeof(struct string_list));
-		ret->next->string = strdup(ra_data->to);
+		ret = sl_from_strs(2, ra_data->from, ra_data->to);
 		break;
 
 	case NODE_ROLE_TYPES:
 		rtyp_data = node->data.rtyp_data;
-		ret = calloc(1, sizeof(struct string_list));
-		ret->string = strdup(rtyp_data->role);
+		ret = sl_from_str(rtyp_data->role);
 		ret->next = copy_string_list(rtyp_data->types);
 		break;
 
 	case NODE_TYPE_ATTRIBUTE:
 	case NODE_ROLE_ATTRIBUTE:
 		at_data = node->data.at_data;
-		ret = calloc(1, sizeof(struct string_list));
-		ret->string = strdup(at_data->type);
+		ret = sl_from_str(at_data->type);
 		ret->next = copy_string_list(at_data->attrs);
 		break;
 
 	case NODE_ALIAS:
 	case NODE_TYPE_ALIAS:
 	case NODE_PERMISSIVE:
-		ret = calloc(1, sizeof(struct string_list));
-		ret->string = strdup(node->data.str);
+		ret = sl_from_str(node->data.str);
 		break;
 
 	/*
