@@ -30,6 +30,7 @@ static struct hash_elem *ifs_map = NULL;
 static struct bool_hash_elem *transform_map = NULL;
 static struct bool_hash_elem *filetrans_map = NULL;
 static struct bool_hash_elem *role_if_map = NULL;
+static struct sl_hash_elem *permmacros_map = NULL;
 static struct template_hash_elem *template_map = NULL;
 
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
@@ -505,6 +506,51 @@ const struct if_call_list *look_up_call_in_template_map(const char *name)
 	}
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
+void insert_into_permmacros_map(const char *name, struct string_list *permissions)
+{
+
+	struct sl_hash_elem *perm_macro;
+
+	HASH_FIND(hh_permmacros, permmacros_map, name, strlen(name), perm_macro);
+
+	if (!perm_macro) {
+		perm_macro = malloc(sizeof(struct sl_hash_elem));
+		perm_macro->key = strdup(name);
+		perm_macro->val = permissions;
+		HASH_ADD_KEYPTR(hh_permmacros, permmacros_map, perm_macro->key, strlen(perm_macro->key),
+		                perm_macro);
+	}
+}
+
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
+const struct string_list *look_up_in_permmacros_map(const char *name)
+{
+
+	struct sl_hash_elem *perm_macro;
+
+	HASH_FIND(hh_permmacros, permmacros_map, name, strlen(name), perm_macro);
+
+	if (perm_macro == NULL) {
+		return NULL;
+	} else {
+		return perm_macro->val;
+	}
+}
+
+void visit_all_in_permmacros_map(void (*visitor)(const char *name, const struct string_list *permissions))
+{
+	const struct sl_hash_elem *cur_sl, *tmp_sl;
+
+	HASH_ITER(hh_permmacros, permmacros_map, cur_sl, tmp_sl) {
+		visitor(cur_sl->key, cur_sl->val);
+	}
+}
+
 #define FREE_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) { \
 		HASH_DELETE(hh_ ## mn, mn ## _map, cur_decl); \
 		free(cur_decl->key); \
@@ -552,6 +598,15 @@ void free_all_maps()
 	FREE_BOOL_MAP(filetrans);
 
 	FREE_BOOL_MAP(role_if);
+
+	struct sl_hash_elem *cur_sl, *tmp_sl;
+
+	HASH_ITER(hh_permmacros, permmacros_map, cur_sl, tmp_sl) {
+		HASH_DELETE(hh_permmacros, permmacros_map, cur_sl);
+		free(cur_sl->key);
+		free_string_list(cur_sl->val);
+		free(cur_sl);
+	}
 
 	struct template_hash_elem *cur_template, *tmp_template;
 
