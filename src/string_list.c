@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -55,6 +56,59 @@ struct string_list *copy_string_list(const struct string_list *sl)
 		cur = cur->next;
 	}
 	return ret;
+}
+
+struct string_list *sl_from_str(const char *string)
+{
+	struct string_list *ret = malloc(sizeof(struct string_list));
+	ret->string = strdup(string);
+	ret->next = NULL;
+	ret->has_incorrect_space = 0;
+
+	return ret;
+}
+
+struct string_list *sl_from_strn(const char *string, size_t len)
+{
+	struct string_list *ret = malloc(sizeof(struct string_list));
+	ret->string = strndup(string, len);
+	ret->next = NULL;
+	ret->has_incorrect_space = 0;
+
+	return ret;
+}
+
+struct string_list *sl_from_strs(int count, ...)
+{
+	struct string_list *ret = NULL;
+
+	va_list args;
+	va_start(args, count);
+	for (int i = 0; i < count; ++i) {
+		ret = concat_string_lists(ret, sl_from_str(va_arg(args, const char *)));
+	}
+	va_end(args);
+
+	return ret;
+}
+
+struct string_list *concat_string_lists(struct string_list *head, struct string_list *tail)
+{
+	if (!head) {
+		return tail;
+	}
+
+	if (!tail) {
+		return head;
+	}
+
+	struct string_list *cur = head;
+	while (cur->next) {
+		cur = cur->next;
+	}
+	cur->next = tail;
+
+	return head;
 }
 
 void free_string_list(struct string_list *list)
