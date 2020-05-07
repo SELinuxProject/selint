@@ -176,7 +176,7 @@ struct check_result *check_module_file_name_mismatch(const struct check_data
  * Called on NODE_IF_CALL nodes.
  * data - metadata about the file currently being scanned
  * node - the node to check
- * returns NULL if passed or check_result for issue W-009
+ * returns NULL if passed or check_result for issue W-010
 *********************************************/
 struct check_result *check_unknown_interface_call(const struct check_data
                                                   *data,
@@ -196,4 +196,17 @@ struct check_result *check_declaration_interface_nameclash(const struct check_da
                                                            *data,
                                                            const struct policy_node
                                                            *node);
+
+/*********************************************
+ * Check for usage of unknown permission macro.
+ * Called on NODE_AV_RULE nodes.
+ * data - metadata about the file currently being scanned
+ * node - the node to check
+ * returns NULL if passed or check_result for issue E-007
+*********************************************/
+struct check_result *check_unknown_permission_macro(const struct check_data
+                                                    *data,
+                                                    const struct policy_node
+                                                    *node);
+
 #endif

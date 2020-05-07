@@ -551,6 +551,11 @@ void visit_all_in_permmacros_map(void (*visitor)(const char *name, const struct 
 	}
 }
 
+unsigned int permmacros_map_count()
+{
+	return HASH_CNT(hh_permmacros, permmacros_map);
+}
+
 #define FREE_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) { \
 		HASH_DELETE(hh_ ## mn, mn ## _map, cur_decl); \
 		free(cur_decl->key); \

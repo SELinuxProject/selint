@@ -603,3 +603,42 @@ struct check_result *check_declaration_interface_nameclash(__attribute__((unused
 
 	return NULL;
 }
+
+struct check_result *check_unknown_permission_macro(__attribute__((unused)) const struct check_data
+						    *data,
+						    const struct policy_node
+						    *node)
+{
+	static unsigned int permmacros_count = (unsigned int)-1;
+
+	if (permmacros_count == (unsigned int)-1) {
+		permmacros_count = permmacros_map_count();
+	}
+
+	// ignore if no permission macro was parsed
+	if (permmacros_count == 0) {
+		return NULL;
+	}
+
+	for (const struct string_list *cur = node->data.av_data->perms; cur; cur = cur->next) {
+		// ignore permissions without '_perms' suffix; they are probably not macros
+		if (!ends_with(cur->string, strlen(cur->string), "_perms", strlen("_perms"))) {
+			continue;
+		}
+
+		// ignore generated all_ permission macros
+		if (0 == strncmp(cur->string, "all_", strlen("all_"))) {
+			continue;
+		}
+
+		if (look_up_in_permmacros_map(cur->string)) {
+			continue;
+		}
+
+		return make_check_result('E', E_ID_UNKNOWN_PERMMACRO,
+					 "Unknown permission macro %s used",
+					 cur->string);
+	}
+
+	return NULL;
+}

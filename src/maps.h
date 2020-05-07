@@ -99,6 +99,8 @@ const struct string_list *look_up_in_permmacros_map(const char *name);
 
 void visit_all_in_permmacros_map(void (*visitor)(const char *name, const struct string_list *permissions));
 
+unsigned int permmacros_map_count(void);
+
 unsigned int decl_map_count(enum decl_flavor flavor);
 
 void free_all_maps(void);
