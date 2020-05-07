@@ -25,9 +25,7 @@
 	if (slp) { \
 		struct string_list *end = NULL; \
 		for (unsigned int i = 0; i < cfg_size(cfg, config_name); i++) { \
-			struct string_list *cur = calloc(1, sizeof(struct string_list)); \
-			cur->string = strdup(cfg_getnstr(cfg, config_name, i)); \
-			cur->next = NULL; \
+			struct string_list *cur = sl_from_str(cfg_getnstr(cfg, config_name, i)); \
 			if (!end) { \
 				*slp = end = cur; \
 			} else { \
