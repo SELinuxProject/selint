@@ -60,6 +60,10 @@ S-008:
 		type foo_t;
 	)
 
+S-009:
+
+	allow foo_t bar_t:file read_fifo_file_perms;
+
 Warning:
 
 W-001:
