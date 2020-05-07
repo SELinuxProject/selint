@@ -211,6 +211,45 @@ START_TEST (test_insert_call_into_template_map) {
 }
 END_TEST
 
+static size_t test_permmacro_map_count = 0;
+
+static void test_permmacro_map_visitor(const char *key, const struct string_list *val)
+{
+
+	test_permmacro_map_count += strlen(key);
+	test_permmacro_map_count += strlen(val->string);
+
+}
+
+START_TEST (test_permmacro_map) {
+
+	struct string_list *sl1 = sl_from_str("test");
+	ck_assert_ptr_nonnull(sl1);
+
+	struct string_list *sl2 = sl_from_strs(3, "hello", "world", "!");
+	ck_assert_ptr_nonnull(sl2);
+
+	insert_into_permmacros_map("test", sl1); // consumes sl1
+	insert_into_permmacros_map("standard", sl2); // consumes sl2
+
+	ck_assert_ptr_null(look_up_in_permmacros_map("hello"));
+	ck_assert_ptr_null(look_up_in_permmacros_map("Test"));
+
+	const struct string_list *csl = look_up_in_permmacros_map("standard");
+	ck_assert_ptr_nonnull(csl);
+	ck_assert_str_eq("hello", csl->string);
+	ck_assert_ptr_nonnull(csl->next);
+	ck_assert_str_eq("world", csl->next->string);
+
+	visit_all_in_permmacros_map(test_permmacro_map_visitor);
+
+	ck_assert_uint_eq(2 * strlen("test") + strlen("standard") + strlen("hello"), test_permmacro_map_count);
+
+	free_all_maps();
+
+}
+END_TEST
+
 Suite *maps_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -226,6 +265,7 @@ Suite *maps_suite(void) {
 	tcase_add_test(tc_core, test_mods_map);
 	tcase_add_test(tc_core, test_insert_decl_into_template_map);
 	tcase_add_test(tc_core, test_insert_call_into_template_map);
+	tcase_add_test(tc_core, test_permmacro_map);
 	suite_add_tcase(s, tc_core);
 
 	return s;

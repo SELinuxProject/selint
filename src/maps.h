@@ -35,6 +35,12 @@ struct bool_hash_elem {
 	UT_hash_handle hh_transform, hh_filetrans, hh_role_if;
 };
 
+struct sl_hash_elem {
+	char *key;
+	struct string_list *val;
+	UT_hash_handle hh_permmacros;
+};
+
 struct template_hash_elem {
 	char *name;
 	struct decl_list *declarations;
@@ -86,6 +92,12 @@ const struct template_hash_elem *look_up_in_template_map(const char *name);
 const struct decl_list *look_up_decl_in_template_map(const char *name);
 
 const struct if_call_list *look_up_call_in_template_map(const char *name);
+
+void insert_into_permmacros_map(const char *name, struct string_list *permissions);
+
+const struct string_list *look_up_in_permmacros_map(const char *name);
+
+void visit_all_in_permmacros_map(void (*visitor)(const char *name, const struct string_list *permissions));
 
 unsigned int decl_map_count(enum decl_flavor flavor);
 
