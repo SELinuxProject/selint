@@ -21,6 +21,7 @@
 #include "if_checks.h"
 #include "tree.h"
 #include "maps.h"
+#include "util.h"
 
 #define NOT_REQ_MESSAGE "%s %s is used in interface but not required"
 
@@ -261,6 +262,12 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 	if ((cur->flavor != NODE_INTERFACE_DEF && cur->flavor != NODE_TEMP_DEF)
 	    || !req_block_node) {
 		// This check only applies to nodes in require blocks in interfaces
+		return NULL;
+	}
+
+	// ignore interfaces with the ending '_stub'; used in Refpolicy as optional block decider
+	if (cur->flavor == NODE_INTERFACE_DEF &&
+	    ends_with(cur->data.str, strlen(cur->data.str), "_stub", strlen("_stub"))) {
 		return NULL;
 	}
 
