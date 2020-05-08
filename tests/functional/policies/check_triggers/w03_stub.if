@@ -1,0 +1,6 @@
+#comment
+interface(`w03_stub',`
+	gen_require(`
+		type w03_t;
+	')
+')

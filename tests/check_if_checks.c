@@ -130,6 +130,7 @@ END_TEST
 START_TEST (test_check_type_required_but_not_used_in_if) {
 	struct policy_node *head = calloc(1, sizeof(struct policy_node));
 	head->flavor = NODE_INTERFACE_DEF;
+	head->data.str = strdup("interface_name");
 
 	struct policy_node *cur = head->first_child = calloc(1, sizeof(struct policy_node));
 
