@@ -45,7 +45,7 @@ void print_if_verbose(const char *format, ...);
 * str - The string to check.
 * str_len - The length of the string to check.
 * suffix - The suffix to check against.
-* suffix_len - The lenght of the suffix to check against.
+* suffix_len - The length of the suffix to check against.
 * Returns true if the string ends with the given suffi, else false.
 ****************************************************/
 bool ends_with(const char *str, size_t str_len, const char *suffix, size_t suffix_len);

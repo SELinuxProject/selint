@@ -51,7 +51,7 @@ OPTIONS
 		No checks are run on these files. Implies -s.
 
 	--debug-parser
-		Enable debug ouput for the internal policy parser.
+		Enable debug output for the internal policy parser.
 		Very noisy, useful to debug parsing failures.
 
 	-d CHECKID, --disable=CHECKID

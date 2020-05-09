@@ -59,7 +59,7 @@ static void usage(void)
 		"\t\t\t\tfiles to parse, but not scan.  SELint will assume the scanned policy files\n"\
 		"\t\t\t\tare intended to be compiled together with the context files.\n"\
 		"\t\t\t\tare intended to be compiled together with the context files.  Implies -s.\n"\
-		"      --debug-parser\t\tEnable debug ouput for the internal policy parser.\n"\
+		"      --debug-parser\t\tEnable debug output for the internal policy parser.\n"\
 		"\t\t\t\tVery noisy, useful to debug parsing failures.\n"\
 		"  -d, --disable=CHECKID\t\tDisable check with the given ID.\n"\
 		"  -e, --enable=CHECKID\t\tEnable check with the given ID.\n"\
@@ -253,7 +253,7 @@ int main(int argc, char **argv)
 			break;
 
 		case SCAN_HIDDEN_DIRS_ID:
-			// Scan hidden direcories in recursive mode
+			// Scan hidden directories in recursive mode
 			scan_hidden_dirs = 1;
 			break;
 
