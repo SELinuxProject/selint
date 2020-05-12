@@ -29,13 +29,13 @@ AC_PROG_LEX
 AC_PROG_YACC
 
 # Check for testsuite Check library
-AC_ARG_ENABLE([check],
-        [AS_HELP_STRING([--disable-check],
-                [Disable testsuite depending on Check (default: testsuite is enabled)])],
-                [enable_check=${enableval}],
-                [enable_check=yes])
-AM_CONDITIONAL([WITH_CHECK], [test "x$enable_check" = "xyes"])
-AS_IF([test "x$enable_check" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check >= 0.11.0], [], [AC_MSG_ERROR([Check not found])])])
+AC_ARG_WITH([check],
+        [AS_HELP_STRING([--without-check],
+                [Build without testsuite depending on Check (default: Build with testsuite)])],
+                [with_check=${withval}],
+                [with_check=yes])
+AM_CONDITIONAL([WITH_CHECK], [test "x$with_check" = "xyes"])
+AS_IF([test "x$with_check" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check >= 0.11.0], [], [AC_MSG_ERROR([Check not found])])])
 
 # Checks for libraries.
 AC_SEARCH_LIBS([cfg_init], [confuse], [], [
