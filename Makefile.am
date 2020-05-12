@@ -20,6 +20,9 @@ check-valgrind:
 	CK_FORK=no $(MAKE) -C tests check-valgrind-memcheck-am
 else
 SUBDIRS = src . man
+check-local:
+	@echo "SELint was configured without Check support!!"
+	@exit 1
 endif
 
 selintconfdir = $(sysconfdir)
