@@ -18,13 +18,79 @@
 #include <string.h>
 #include "tree.h"
 #include "parse.h"
-extern void yyerror(const char *);
+
+
+extern void reset_current_lines(void);
+
+/*
+ * Callback by the lexer, called prior to every matched rule's action.
+ * Update the source file location accordingly.
+ */
+#define YY_USER_ACTION                                  \
+    yylloc->first_line = yylloc->last_line = yylineno;  \
+    yylloc->first_column = yycolumn;                    \
+    yylloc->last_column = yycolumn + yyleng - 1;        \
+    yycolumn += yyleng;
+
+// used by parser
+char* current_lines[LINES_TO_CACHE] = { NULL };
+unsigned line_cache_index = 0;
+
+// internal state for cached lines
+static size_t current_lines_alloc[LINES_TO_CACHE] = { 0 };
+static size_t current_line_sent = 0;
+static size_t current_line_len = 0;
+
+void reset_current_lines(void) {
+    for (unsigned i = 0; i < LINES_TO_CACHE; ++i) {
+        free(current_lines[i]);
+        current_lines[i] = NULL;
+        current_lines_alloc[i] = 0;
+    }
+    line_cache_index = 0;
+    current_line_sent = current_line_len = 0;
+}
+
+/*
+ * Override the input method of the lexer.
+ * Read a complete line and save it for error printing.
+ * Must be a macro to access yyin.
+ */
+#undef YY_INPUT
+#define YY_INPUT(buf, result, max_size)                                          \
+    size_t _avail = current_line_len - current_line_sent;                        \
+    if (_avail == 0) {                                                           \
+        current_line_sent = 0;                                                   \
+        line_cache_index = (line_cache_index + 1) % LINES_TO_CACHE;              \
+        const ssize_t _res = getline(&current_lines[line_cache_index],           \
+                                     &current_lines_alloc[line_cache_index],     \
+                                     yyin);                                      \
+        if (_res < 0) {                                                          \
+            if (ferror(yyin)) {                                                  \
+                YY_FATAL_ERROR("Error reading input");                           \
+            }                                                                    \
+            _avail = 0;                                                          \
+        } else {                                                                 \
+            _avail = (size_t)_res;                                               \
+        }                                                                        \
+        current_line_len = _avail;                                               \
+    }                                                                            \
+    if (_avail > (size_t)(max_size)) {                                           \
+        _avail = (size_t)(max_size);                                             \
+    }                                                                            \
+    memcpy((buf), current_lines[line_cache_index] + current_line_sent, _avail);  \
+    current_line_sent += _avail;                                                 \
+    (result) = (int)_avail;
+
 %}
 %option nounput
 %option noinput
 %option noyywrap
 %option nodefault
 %option yylineno
+%option reentrant
+%option bison-bridge
+%option bison-locations
 %%
 policy_module { return POLICY_MODULE; }
 module { return MODULE; }
@@ -82,13 +148,13 @@ typebounds { return TYPEBOUNDS; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
 userdebug_or_eng { return USERDEBUG_OR_ENG; }
-[0-9]+\.[0-9]+(\.[0-9]+)? { yylval.string = strdup(yytext); return VERSION_NO; }
-[0-9]+ { yylval.string = strdup(yytext); return NUMBER; }
-[a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval.string = strdup(yytext); return STRING; }
-[0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval.string = strdup(yytext); return NUM_STRING; }
-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval.string = strdup(yytext); return IPV4; }
-([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})? { yylval.string = strdup(yytext); return IPV6; }
-\"[a-zA-Z0-9_\.\-\:~\$]*\" { yylval.string = strdup(yytext); return QUOTED_STRING; }
+[0-9]+\.[0-9]+(\.[0-9]+)? { yylval->string = strdup(yytext); return VERSION_NO; }
+[0-9]+ { yylval->string = strdup(yytext); return NUMBER; }
+[a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = strdup(yytext); return STRING; }
+[0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = strdup(yytext); return NUM_STRING; }
+[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval->string = strdup(yytext); return IPV4; }
+([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})? { yylval->string = strdup(yytext); return IPV6; }
+\"[a-zA-Z0-9_\.\-\:~\$]*\" { yylval->string = strdup(yytext); return QUOTED_STRING; }
 \-[\-ldbcsp][ \t] { return FILE_TYPE_SPECIFIER; }
 \( { return OPEN_PAREN; }
 \) { return CLOSE_PAREN; }
@@ -109,15 +175,8 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 \!\= { return NOT_EQUAL; }
 \! { return NOT; }
 \=\= { return EQUAL; }
-^\#.*\n { return COMMENT; }
-\#selint\-disable\:\ ?[CSWEF]\-[0-9]+(\,\ ?[CSWEF]\-[0-9]+)*\n { yylval.string = strdup(yytext); return SELINT_COMMAND; }
-(\#.*)?\n ;
-dnl(.*)?\n ;
-[ \t] ; /* normally skip whitespace */
-. {
-    const size_t len = strlen("Invalid character: ") + 1 /*character*/ + 2 /*quotes*/ + 1 /*null*/;
-    char *str = malloc(len);
-    snprintf(str, len, "Invalid character: '%c'", *yytext);
-    yyerror(str);
-    free(str);
-  }
+\#selint\-disable\:\ ?[CSWEF]\-[0-9]+(\,\ ?[CSWEF]\-[0-9]+)*$ { yylval->string = strdup(yytext); return SELINT_COMMAND; }
+\#.*$ { return COMMENT; }
+dnl(.*)?$ ; /* skip m4 comment lines */
+[ \t\n\r] ; /* normally skip whitespace */
+. { yylval->symbol = *yytext; return UNKNOWN_TOKEN; }

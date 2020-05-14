@@ -73,6 +73,48 @@ test_one_check() {
 	test_one_check_expect $1 $2 1
 }
 
+test_parse_error_run() {
+	local USE_VALGRIND=$1
+
+	test_parse_error_impl $USE_VALGRIND test1.te test1.output
+
+	test_parse_error_impl $USE_VALGRIND test2.te test2.output
+
+	printf "#comment\n    policy_module( 	     test2, 	\n    \n\n	    	0.0.1  \n  )	\n\n" > ./policies/parse_errors/test3_tmp.if
+	test_parse_error_impl $USE_VALGRIND test3_tmp.if test3.output
+
+	test_parse_error_impl $USE_VALGRIND test4.te test4.output
+
+	printf "policy_module(test5, 0.0.1)\r\n\r\n# comment\r\nallow \r\n	source\r\ntarget	\r\n  clas\r\n 	   perm\r\n; # comment\r\n\r\n" > ./policies/parse_errors/test5_tmp.te
+	test_parse_error_impl $USE_VALGRIND test5_tmp.te test5.output
+
+	printf "#comment\r\n    policy_module( 	     test2, 	\r\n    \r\n\r\n	    	0.0.1  \r\n  )	\r\n\r\n" > ./policies/parse_errors/test6_tmp.if
+	test_parse_error_impl $USE_VALGRIND test6_tmp.if test6.output
+
+	test_parse_error_impl $USE_VALGRIND test7.if test7.output
+}
+
+test_parse_error_impl() {
+	local USE_VALGRIND=$1
+	local SOURCE_FILENAME=$2
+	local OUTPUT_FILENAME=$3
+
+	if [ $USE_VALGRIND -eq 1 ]; then
+		run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=23 ${SELINT_PATH} -c configs/default.conf ./policies/parse_errors/${SOURCE_FILENAME}
+		[ "$status" -eq 70 ]
+	else
+		run ${SELINT_PATH} -c configs/default.conf ./policies/parse_errors/${SOURCE_FILENAME}
+		echo ${output}
+		[ "$status" -eq 70 ]
+		local EXPECTED_OUTPUT=$(cat ./policies/parse_errors/${OUTPUT_FILENAME})
+		echo ${EXPECTED_OUTPUT}
+		# compatibility for different bison versions and ignore NOTE output
+		local NORMALIZED_OUTPUT=$(grep -vE '^Note: ' <<< "${output/, expecting \$end/, expecting end of file}")
+		echo ${NORMALIZED_OUTPUT}
+		[ "${NORMALIZED_OUTPUT}" == "${EXPECTED_OUTPUT}" ]
+	fi
+}
+
 @test "C-001" {
 	test_ordering "simple"
 	test_ordering "interleaved"
@@ -375,4 +417,15 @@ test_one_check() {
 	count=$(echo ${output} | grep -o "E-002" | wc -l)
 	echo ${output}
 	[ "$count" -eq 0 ]
+}
+
+@test "parse_error_printing" {
+	test_parse_error_run 0
+}
+
+@test "parse_error_printing_valgrind" {
+	if [ -z ${BATS_TIME_EXPENSIVE} ]; then
+		skip "BATS_TIME_EXPENSIVE not set"
+	fi
+	test_parse_error_run 1
 }

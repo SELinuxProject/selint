@@ -50,6 +50,12 @@ void print_if_verbose(const char *format, ...);
 ****************************************************/
 bool ends_with(const char *str, size_t str_len, const char *suffix, size_t suffix_len);
 
+/****************************************************
+* Remove whitespaces of the end of a string.
+* str - The string to trim.
+* Return the passed and now trimed string.
+****************************************************/
+char* trim_right(char *str);
 
 /****************************************************
 *

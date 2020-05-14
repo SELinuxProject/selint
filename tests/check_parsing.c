@@ -296,7 +296,7 @@ START_TEST (test_disable_comment) {
 	ck_assert_int_eq(NODE_DECL, ast->next->next->flavor);
 	ck_assert_ptr_nonnull(ast->next->next->next);
 	ck_assert_int_eq(NODE_AV_RULE, ast->next->next->next->flavor);
-	ck_assert_str_eq("W-001\n", ast->next->next->next->exceptions);
+	ck_assert_str_eq("W-001", ast->next->next->next->exceptions);
 
 	free_policy_node(ast);
 	cleanup_parsing();

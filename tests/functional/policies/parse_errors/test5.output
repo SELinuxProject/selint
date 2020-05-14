@@ -1,0 +1,4 @@
+test5_tmp.te:         7: (F): syntax error, unexpected STRING, expecting COLON or SEMICOLON (F-001)
+    7 |   clas
+      |   ^~~~
+Error: Failed to parse files

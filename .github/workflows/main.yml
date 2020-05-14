@@ -93,7 +93,7 @@ jobs:
     - name: functional tests
       run : |
         cd ./tests/functional
-        bats end-to-end.bats
+        BATS_TIME_EXPENSIVE=1 bats end-to-end.bats
     - name: Test distribution
       run : |
         make VERSION=pipeline-test dist
@@ -102,7 +102,7 @@ jobs:
         ./configure --enable-werror CFLAGS="-Wno-error=conversion -Wno-error=sign-conversion"
         make
         cd tests/functional
-        bats end-to-end.bats
+        BATS_TIME_EXPENSIVE=1 bats end-to-end.bats
     - name: Codecov upload
       run: |
         if [[ ${{ matrix.cc }} == 'gcc' ]]
