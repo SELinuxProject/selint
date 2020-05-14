@@ -19,6 +19,7 @@
 #include "../src/startup.h"
 #include "../src/maps.h"
 #include "../src/selint_error.h"
+#include "../src/parse_functions.h"
 
 #define MODULES_CONF_PATH SAMPLE_POL_DIR "modules.conf"
 #define BAD_MODULES_CONF_PATH SAMPLE_POL_DIR "bad_modules.conf"
@@ -91,7 +92,7 @@ START_TEST (test_load_obj_perm_sets_source) {
 	res = load_obj_perm_sets_source(BAD_OBJ_PERM_SETS_PATH);
 	ck_assert_int_eq(SELINT_PARSE_ERROR, res);
 
-	free_all_maps();
+	cleanup_parsing();
 
 }
 END_TEST

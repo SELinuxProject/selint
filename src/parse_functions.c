@@ -24,6 +24,8 @@
 #include "ordering.h"
 #include "perm_macro.h"
 
+extern int yylex_destroy(void);
+
 char *module_name = NULL;
 
 enum selint_error insert_header(struct policy_node **cur, const char *mn,
@@ -715,4 +717,6 @@ void cleanup_parsing()
 	free_permmacros();
 
 	free_all_maps();
+
+	yylex_destroy();
 }

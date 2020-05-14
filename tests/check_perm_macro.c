@@ -20,6 +20,7 @@
 #include "../src/maps.h"
 #include "../src/selint_error.h"
 #include "../src/perm_macro.h"
+#include "../src/parse_functions.h"
 
 #define PERMS_PATH SAMPLE_POL_DIR "perms.spt"
 
@@ -222,8 +223,7 @@ START_TEST (test_permmacro_dirs) {
 	free_string_list(permissions);
 
 	// cleanup
-	free_permmacros();
-	free_all_maps();
+	cleanup_parsing();
 
 }
 END_TEST
@@ -392,8 +392,7 @@ START_TEST (test_permmacro_files) {
 	free_string_list(permissions);
 
 	// cleanup
-	free_permmacros();
-	free_all_maps();
+	cleanup_parsing();
 
 }
 END_TEST
