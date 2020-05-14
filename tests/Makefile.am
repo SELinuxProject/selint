@@ -219,7 +219,18 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/misc/needs_context.te \
 			functional/policies/misc/nesting.if \
 			functional/policies/misc/nesting.te \
-			functional/policies/misc/no_issues.te
+			functional/policies/misc/no_issues.te \
+			functional/policies/parse_errors/test1.output \
+			functional/policies/parse_errors/test1.te \
+			functional/policies/parse_errors/test2.output \
+			functional/policies/parse_errors/test2.te \
+			functional/policies/parse_errors/test3.output \
+			functional/policies/parse_errors/test4.output \
+			functional/policies/parse_errors/test4.te \
+			functional/policies/parse_errors/test5.output \
+			functional/policies/parse_errors/test6.output \
+			functional/policies/parse_errors/test7.if \
+			functional/policies/parse_errors/test7.output
 
 EXTRA_DIST = ${AV_FILE_PERM_FILES} ${AV_SOCKET_PERM_FILES} ${AV_X_CURSOR_PERM_FILES} ${SAMPLE_CONFIG_FILES} ${SAMPLE_POLICY_FILES} ${FUNCTIONAL_TEST_FILES}
 

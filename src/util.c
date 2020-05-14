@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -44,4 +45,15 @@ bool ends_with(const char *str, size_t str_len, const char *suffix, size_t suffi
 	}
 
 	return (0 == strncmp(str + str_len - suffix_len, suffix, suffix_len));
+}
+
+char* trim_right(char *str)
+{
+	size_t len = strlen(str);
+	while (len > 0 && isspace((unsigned char)str[len-1])) {
+		str[len-1] = '\0';
+		len--;
+	}
+
+	return str;
 }
