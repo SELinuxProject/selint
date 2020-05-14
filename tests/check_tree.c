@@ -96,6 +96,8 @@ START_TEST (test_is_template_call) {
 	ck_assert_int_eq(1, is_template_call(node));
 
 	free_policy_node(node);
+	free_all_maps();
+
 }
 END_TEST
 

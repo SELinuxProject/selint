@@ -194,9 +194,9 @@ START_TEST (test_nested_template_declarations) {
 	ck_assert_ptr_null(look_up_in_decl_map("second_foo_t", DECL_TYPE));
 	ck_assert_ptr_null(look_up_in_decl_map("third_bar_t", DECL_TYPE));
 
-	free_policy_node(ast);
-	free_all_maps();
 	free_string_list(called_args);
+	free_policy_node(ast);
+	cleanup_parsing();
 
 }
 END_TEST
@@ -254,7 +254,7 @@ START_TEST (test_declaring_template) {
 	// cleanup
 	free_policy_node(ast_te);
 	free_policy_node(ast_if);
-	free_all_maps();
+	cleanup_parsing();
 
 }
 END_TEST

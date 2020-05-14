@@ -13,6 +13,7 @@
 # limitations under the License.
 
 @VALGRIND_CHECK_RULES@
+VALGRIND_memcheck_FLAGS=--leak-check=full --show-reachable=yes --show-leak-kinds=all --errors-for-leak-kinds=all
 
 TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering check_perm_macro
 check_PROGRAMS = ${TESTS}
@@ -280,8 +281,8 @@ check_tree_LDADD = @CHECK_LIBS@ $(sort ${TREE_OBJS} ${MAPS_OBJS} ${TEST_UTILS_OB
 check_file_list_SOURCES = check_file_list.c ${FILE_LIST_HEADS}
 check_file_list_LDADD = @CHECK_LIBS@ $(sort ${FILE_LIST_OBJS})
 
-check_parse_functions_SOURCES = check_parse_functions.c ${PARSE_FUNCTIONS_HEADS} ${MAPS_HEADS} ${SELINT_ERROR_HEADS}
-check_parse_functions_LDADD = @CHECK_LIBS@ $(sort ${PARSE_FUNCTIONS_OBJS} ${MAPS_OBJS})
+check_parse_functions_SOURCES = check_parse_functions.c ${PARSE_FUNCTIONS_HEADS} ${MAPS_HEADS} ${PARSE_HEADS} ${SELINT_ERROR_HEADS}
+check_parse_functions_LDADD = @CHECK_LIBS@ $(sort ${PARSE_FUNCTIONS_OBJS} ${MAPS_OBJS} ${PARSE_OBJS})
 
 check_parsing_SOURCES = check_parsing.c ${PARSE_HEADS} ${TREE_HEADS} ${PARSE_FUNCTIONS_HEADS} ${SELINT_ERROR_HEADS}
 check_parsing_LDADD = @CHECK_LIBS@ $(sort ${PARSE_OBJS} ${TREE_OBJS} ${PARSE_FUNCTIONS_OBJS})
