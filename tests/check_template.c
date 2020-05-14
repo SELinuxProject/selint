@@ -25,6 +25,8 @@
 
 #define POLICIES_DIR SAMPLE_POL_DIR
 #define NESTED_IF_FILENAME POLICIES_DIR "nested_templates.if"
+#define DECLARING_IF_FILENAME POLICIES_DIR "declaring_template.if"
+#define DECLARING_TE_FILENAME POLICIES_DIR "declaring_template.te"
 
 START_TEST (test_replace_m4) {
 	const char *orig1 = "$1_t";
@@ -192,8 +194,67 @@ START_TEST (test_nested_template_declarations) {
 	ck_assert_ptr_null(look_up_in_decl_map("second_foo_t", DECL_TYPE));
 	ck_assert_ptr_null(look_up_in_decl_map("third_bar_t", DECL_TYPE));
 
+	free_policy_node(ast);
 	free_all_maps();
 	free_string_list(called_args);
+
+}
+END_TEST
+
+START_TEST (test_declaring_template) {
+
+	// setup
+	struct policy_node *ast_if = calloc(1, sizeof(struct policy_node));
+	ck_assert_ptr_nonnull(ast_if);
+	ast_if->flavor = NODE_IF_FILE;
+	set_current_module_name("declaring_template_if");
+
+	FILE *f_if = fopen(DECLARING_IF_FILENAME, "r");
+	ck_assert_ptr_nonnull(f_if);
+	ck_assert_int_eq(0, yyparse_wrapper(f_if, DECLARING_IF_FILENAME, &ast_if));
+	fclose(f_if);
+
+	struct policy_node *ast_te = calloc(1, sizeof(struct policy_node));
+	ck_assert_ptr_nonnull(ast_te);
+	ast_te->flavor = NODE_IF_FILE;
+	set_current_module_name("declaring_template_te");
+
+	FILE *f_te = fopen(DECLARING_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f_te);
+	ck_assert_int_eq(0, yyparse_wrapper(f_te, DECLARING_TE_FILENAME, &ast_te));
+	fclose(f_te);
+
+	// checks
+	const char *mod_name;
+
+	ck_assert_uint_eq(6, decl_map_count(DECL_TYPE));
+	mod_name = look_up_in_decl_map("prefix_foo_suffix", DECL_TYPE);
+	ck_assert_str_eq("declaring_template_te", mod_name);
+	mod_name = look_up_in_decl_map("bar_t", DECL_TYPE);
+	ck_assert_str_eq("declaring_template_te", mod_name);
+	mod_name = look_up_in_decl_map("prefix_good_suffix", DECL_TYPE);
+	ck_assert_str_eq("declaring_template_te", mod_name);
+	mod_name = look_up_in_decl_map("morning_t", DECL_TYPE);
+	ck_assert_str_eq("declaring_template_te", mod_name);
+	// these are called via an interface so the mod_name is wrong
+	mod_name = look_up_in_decl_map("prefix_hello_suffix", DECL_TYPE);
+	ck_assert_str_eq("declaring_template_if", mod_name);
+	mod_name = look_up_in_decl_map("world_t", DECL_TYPE);
+	ck_assert_str_eq("declaring_template_if", mod_name);
+
+	ck_assert_uint_eq(3, decl_map_count(DECL_ROLE));
+	mod_name = look_up_in_decl_map("bar_r", DECL_ROLE);
+	ck_assert_str_eq("declaring_template_te", mod_name);
+	mod_name = look_up_in_decl_map("morning_r", DECL_ROLE);
+	ck_assert_str_eq("declaring_template_te", mod_name);
+	// this is called via an interface so the mod_name is wrong
+	mod_name = look_up_in_decl_map("world_t", DECL_TYPE);
+	ck_assert_str_eq("declaring_template_if", mod_name);
+
+	// cleanup
+	free_policy_node(ast_te);
+	free_policy_node(ast_if);
+	free_all_maps();
 
 }
 END_TEST
@@ -213,6 +274,7 @@ Suite *template_suite(void) {
 	tcase_add_test(tc_core, test_replace_m4_list);
 	tcase_add_test(tc_core, test_replace_m4_list_too_few_args);
 	tcase_add_test(tc_core, test_nested_template_declarations);
+	tcase_add_test(tc_core, test_declaring_template);
 	suite_add_tcase(s, tc_core);
 
 	return s;
