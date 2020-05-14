@@ -216,7 +216,7 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 // Returns 1 if the node is a template call, and 0 if not
 int is_template_call(const struct policy_node *node);
 
-char *get_name_if_in_template(struct policy_node *cur);
+const char *get_name_if_in_template(const struct policy_node *cur);
 
 struct string_list *get_names_in_node(const struct policy_node *node);
 

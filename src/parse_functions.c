@@ -92,7 +92,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 		// In a require block, the objects aren't being declared
 		// Otherwise, we need to insert them into the appropriate map
 
-		char *temp_name = get_name_if_in_template(*cur);
+		const char *temp_name = get_name_if_in_template(*cur);
 
 		if (temp_name) {
 			// We are inside a template, so we need to save declarations in the template map
@@ -152,7 +152,7 @@ enum selint_error insert_aliases(struct policy_node **cur,
 	struct string_list *alias = aliases;
 
 	while (alias) {
-		char *temp_name = get_name_if_in_template(*cur);
+		const char *temp_name = get_name_if_in_template(*cur);
 		if (temp_name) {
 			insert_decl_into_template_map(temp_name, flavor,
 			                              alias->string);

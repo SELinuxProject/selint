@@ -108,7 +108,7 @@ int is_template_call(const struct policy_node *node)
 	return 0;
 }
 
-char *get_name_if_in_template(struct policy_node *cur)
+const char *get_name_if_in_template(const struct policy_node *cur)
 {
 	while (cur->parent) {
 		cur = cur->parent;
