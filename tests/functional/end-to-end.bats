@@ -256,7 +256,7 @@ test_one_check() {
 }
 
 @test "valgrind" {
-	run valgrind --leak-check=full --error-exitcode=1 ${SELINT_PATH} -c configs/default.conf -r -s policies/check_triggers
+	run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 ${SELINT_PATH} -c configs/default.conf -r -s policies/check_triggers
 	[ "$status" -eq 0 ]
 }
 
@@ -305,7 +305,7 @@ test_one_check() {
 }
 
 @test "Broken config" {
-	run valgrind --leak-check=full --error-exitcode=1 ${SELINT_PATH} -c configs/broken.conf -rs policies/check_triggers
+	run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 ${SELINT_PATH} -c configs/broken.conf -rs policies/check_triggers
 	[ "$status" -eq 78 ]
 }
 
