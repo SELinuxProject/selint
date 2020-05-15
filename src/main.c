@@ -332,6 +332,10 @@ int main(int argc, char **argv)
 		// roles that we wouldn't otherwise know about
 		insert_into_decl_map("system_u", "__assumed__", DECL_USER);
 		insert_into_decl_map("object_r", "__assumed__", DECL_ROLE);
+
+		// initialize to default settings
+		ccd.order_conf = ORDER_LAX;
+		ccd.skip_checking_generated_fcs = true;
 	}
 
 	for (const struct string_list *config_check_id = config_disabled_checks; config_check_id; config_check_id = config_check_id->next) {
