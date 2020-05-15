@@ -169,13 +169,12 @@ END_TEST
 
 START_TEST (test_nested_template_declarations) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
-	ast->flavor = NODE_IF_FILE;
 	set_current_module_name("nested");
 
 	FILE *f = fopen(NESTED_IF_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, NESTED_IF_FILENAME, &ast));
+	struct policy_node *ast = yyparse_wrapper(f, NESTED_IF_FILENAME, NODE_IF_FILE);
+	ck_assert_ptr_nonnull(ast);
 	fclose(f);
 
 	struct string_list *called_args = calloc(1,sizeof(struct string_list));
@@ -204,24 +203,20 @@ END_TEST
 START_TEST (test_declaring_template) {
 
 	// setup
-	struct policy_node *ast_if = calloc(1, sizeof(struct policy_node));
-	ck_assert_ptr_nonnull(ast_if);
-	ast_if->flavor = NODE_IF_FILE;
 	set_current_module_name("declaring_template_if");
 
 	FILE *f_if = fopen(DECLARING_IF_FILENAME, "r");
 	ck_assert_ptr_nonnull(f_if);
-	ck_assert_int_eq(0, yyparse_wrapper(f_if, DECLARING_IF_FILENAME, &ast_if));
+	struct policy_node *ast_if = yyparse_wrapper(f_if, DECLARING_IF_FILENAME, NODE_IF_FILE);
+	ck_assert_ptr_nonnull(ast_if);
 	fclose(f_if);
 
-	struct policy_node *ast_te = calloc(1, sizeof(struct policy_node));
-	ck_assert_ptr_nonnull(ast_te);
-	ast_te->flavor = NODE_IF_FILE;
 	set_current_module_name("declaring_template_te");
 
 	FILE *f_te = fopen(DECLARING_TE_FILENAME, "r");
 	ck_assert_ptr_nonnull(f_te);
-	ck_assert_int_eq(0, yyparse_wrapper(f_te, DECLARING_TE_FILENAME, &ast_te));
+	struct policy_node *ast_te = yyparse_wrapper(f_te, DECLARING_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast_te);
 	fclose(f_te);
 
 	// checks

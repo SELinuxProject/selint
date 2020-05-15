@@ -34,13 +34,12 @@
 
 START_TEST (test_parse_basic_te) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
-	ast->flavor = NODE_TE_FILE;
 	set_current_module_name("basic");
 
 	FILE *f = fopen(BASIC_TE_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, BASIC_TE_FILENAME, &ast));
+	struct policy_node *ast = yyparse_wrapper(f, BASIC_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
 
 	struct policy_node *current = ast;
 
@@ -100,13 +99,12 @@ END_TEST
 
 START_TEST (test_parse_basic_if) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
-	ast->flavor = NODE_IF_FILE;
 	set_current_module_name("basic");
 
 	FILE *f = fopen(BASIC_IF_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, BASIC_IF_FILENAME, &ast));
+	struct policy_node *ast = yyparse_wrapper(f, BASIC_IF_FILENAME, NODE_IF_FILE);
+	ck_assert_ptr_nonnull(ast);
 
 	struct policy_node *current = ast;
 
@@ -180,12 +178,12 @@ END_TEST
 
 START_TEST (test_parse_uncommon_constructs) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("uncommon");
 
 	FILE *f = fopen(UNCOMMON_TE_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, UNCOMMON_TE_FILENAME, &ast));
+	struct policy_node *ast = yyparse_wrapper(f, UNCOMMON_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
 
 	ck_assert_ptr_nonnull(ast);
 
@@ -197,12 +195,12 @@ END_TEST
 
 START_TEST (test_parse_blocks) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("blocks");
 
 	FILE *f = fopen(BLOCKS_TE_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, BLOCKS_TE_FILENAME, &ast));
+	struct policy_node *ast = yyparse_wrapper(f, BLOCKS_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
 
 	ck_assert_ptr_nonnull(ast);
 
@@ -234,13 +232,11 @@ END_TEST
 
 START_TEST (test_parse_empty_file) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("empty");
 
 	FILE *f = fopen(EMPTY_TE_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, EMPTY_TE_FILENAME, &ast));
-
+	struct policy_node *ast = yyparse_wrapper(f, EMPTY_TE_FILENAME, NODE_TE_FILE);
 	ck_assert_ptr_nonnull(ast);
 
 	ck_assert_int_eq(NODE_EMPTY, ast->flavor);
@@ -256,14 +252,12 @@ END_TEST
 
 START_TEST (test_syntax_error) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("syntax_error");
 
 	FILE *f = fopen(SYNTAX_ERROR_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(1, yyparse_wrapper(f, SYNTAX_ERROR_FILENAME, &ast));
+	ck_assert_ptr_null(yyparse_wrapper(f, SYNTAX_ERROR_FILENAME, NODE_TE_FILE));
 
-	free_policy_node(ast);
 	cleanup_parsing();
 	fclose(f);
 
@@ -272,14 +266,12 @@ END_TEST
 
 START_TEST (test_parse_bad_role_allow) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("bad_ra");
 
 	FILE *f = fopen(BAD_RA_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(1, yyparse_wrapper(f, BAD_RA_FILENAME, &ast));
+	ck_assert_ptr_null(yyparse_wrapper(f, BAD_RA_FILENAME, NODE_TE_FILE));
 
-	free_policy_node(ast);
 	cleanup_parsing();
 	fclose(f);
 
@@ -288,12 +280,12 @@ END_TEST
 
 START_TEST (test_disable_comment) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("disable_comment");
 
 	FILE *f = fopen(DISABLE_COMMENT_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, DISABLE_COMMENT_FILENAME, &ast));
+	struct policy_node *ast = yyparse_wrapper(f, DISABLE_COMMENT_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
 
 	ck_assert_ptr_nonnull(ast);
 	ck_assert_int_eq(NODE_TE_FILE, ast->flavor);
@@ -314,12 +306,12 @@ END_TEST
 
 START_TEST (test_bool_declarations) {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
 	set_current_module_name("bool_declarations");
 
 	FILE *f = fopen(BOOL_DECLARATION_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
-	ck_assert_int_eq(0, yyparse_wrapper(f, BOOL_DECLARATION_FILENAME, &ast));
+	struct policy_node *ast = yyparse_wrapper(f, BOOL_DECLARATION_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
 
 	struct policy_node *current = ast;
 
@@ -435,6 +427,20 @@ START_TEST (test_bool_declarations) {
 }
 END_TEST
 
+START_TEST (test_file_flavor_mismatch) {
+
+	set_current_module_name("basic");
+
+	FILE *f = fopen(BASIC_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	ck_assert_ptr_null(yyparse_wrapper(f, BASIC_TE_FILENAME, NODE_IF_FILE));
+
+	cleanup_parsing();
+	fclose(f);
+
+}
+END_TEST
+
 Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -452,6 +458,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_bad_role_allow);
 	tcase_add_test(tc_core, test_disable_comment);
 	tcase_add_test(tc_core, test_bool_declarations);
+	tcase_add_test(tc_core, test_file_flavor_mismatch);
 	suite_add_tcase(s, tc_core);
 
 	return s;

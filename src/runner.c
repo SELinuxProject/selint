@@ -32,8 +32,6 @@
 struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor)
 {
 
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
-	ast->flavor = flavor;
 	char *copy = strdup(filename);
 	char *mod_name = basename(copy);
 	mod_name[strlen(mod_name) - 3] = '\0'; // Remove suffix
@@ -43,14 +41,10 @@ struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor
 	FILE *f = fopen(filename, "r");
 	if (!f) {
 		printf("Error opening %s\n", filename);
-		free_policy_node(ast);
 		return NULL;
 	}
-	if (0 != yyparse_wrapper(f, filename, &ast)) {
-		free_policy_node(ast);
-		fclose(f);
-		return NULL;
-	}
+
+	struct policy_node *ast = yyparse_wrapper(f, filename, flavor);
 	fclose(f);
 
 	// dont run cleanup_parsing until everything is done because it frees the maps
