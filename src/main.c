@@ -40,8 +40,6 @@
 
 extern int yydebug;
 
-extern int yylex_destroy(void);
-
 extern int verbose_flag;
 
 static void usage(void)
@@ -563,8 +561,6 @@ int main(int argc, char **argv)
 		printf("%sError%s: Internal error: %d\n", color_error(), color_reset(), res);
 		exit_code = EX_SOFTWARE;
 	}
-
-	yylex_destroy();
 
 	if (config_enabled_checks) {
 		free_string_list(config_enabled_checks);
