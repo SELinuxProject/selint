@@ -37,11 +37,12 @@
 	// local variables
 	static const char *parsing_filename;
 	static struct policy_node *cur;
+	static enum node_flavor expected_node_flavor;
 %}
 
 %code provides {
 	// global prototype
-	int yyparse_wrapper(FILE *filefd, const char *filename, struct policy_node **ast);
+	struct policy_node *yyparse_wrapper(FILE *filefd, const char *filename, enum node_flavor expected_flavor);
 }
 
 %union {
@@ -194,9 +195,19 @@ comment:
 
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA header_version CLOSE_PAREN { insert_header(&cur, $3, HEADER_MACRO, yylineno); free($3); } // Version number isn't needed
+	POLICY_MODULE OPEN_PAREN STRING COMMA header_version CLOSE_PAREN {
+			if (expected_node_flavor != NODE_TE_FILE) {
+				free($3);
+				yyerror("Error: Unexpected te-file parsed"); YYERROR;
+			}
+			insert_header(&cur, $3, HEADER_MACRO, yylineno); free($3); } // Version number isn't needed
 	|
-	MODULE STRING header_version SEMICOLON { insert_header(&cur, $2, HEADER_BARE, yylineno); free($2); }
+	MODULE STRING header_version SEMICOLON {
+			if (expected_node_flavor != NODE_TE_FILE) {
+				free($2);
+				yyerror("Error: Unexpected te-file parsed"); YYERROR;
+			}
+			insert_header(&cur, $2, HEADER_BARE, yylineno); free($2); }
 	;
 
 header_version:
@@ -776,9 +787,11 @@ if_line:
 	;
 
 interface_def:
-	start_interface lines end_interface
+	start_interface { if (expected_node_flavor != NODE_IF_FILE) { yyerror("Error: Unexpected if-file parsed"); YYERROR; } }
+	lines end_interface
 	|
-	start_interface end_interface
+	start_interface { if (expected_node_flavor != NODE_IF_FILE) { yyerror("Error: Unexpected if-file parsed"); YYERROR; } }
+	end_interface
 	;
 
 start_interface:
@@ -816,6 +829,10 @@ spt_line:
 
 support_def:
 	DEFINE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK string_list SINGLE_QUOTE CLOSE_PAREN {
+			if (expected_node_flavor != NODE_SPT_FILE) {
+				free($4); free_string_list($8);
+				yyerror("Error: Unexpected spt-file parsed"); YYERROR;
+			}
 			if (ends_with($4, strlen($4), "_perms", strlen("_perms"))) {
 				insert_into_permmacros_map($4, $8);
 			} else {
@@ -824,6 +841,10 @@ support_def:
 			free($4); }
 	|
 	DEFINE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK string_list refpolicywarn SINGLE_QUOTE CLOSE_PAREN {
+			if (expected_node_flavor != NODE_SPT_FILE) {
+				free($4); free_string_list($8);
+				yyerror("Error: Unexpected spt-file parsed"); YYERROR;
+			}
 			free($4); free_string_list($8); } // do not import
 	;
 
@@ -844,11 +865,19 @@ void yyerror(const char* s) {
 	free_check_result(res);
 }
 
-int yyparse_wrapper(FILE *filefd, const char *filename, struct policy_node **ast) {
+struct policy_node *yyparse_wrapper(FILE *filefd, const char *filename, enum node_flavor expected_flavor) {
+	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
+	ast->flavor = expected_node_flavor = expected_flavor;
 	yyrestart(filefd);
 	yylineno = 1;
 	parsing_filename = filename;
-	cur = *ast;
+	cur = ast;
 
-	return yyparse();
+	if (0 != yyparse()) {
+		// parser will have printed an error message
+		free_policy_node(ast);
+		return NULL;
+	}
+
+	return ast;
 }
