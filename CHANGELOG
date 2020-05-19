@@ -1,6 +1,6 @@
 # SELint Changelog
 
-## Unreleased
+## [1.1.0] 2020-05-19
 ### Added (general features)
 - -S flag to print a summary of issue found following an analysis
 - --context flag to specify additional files to parse but not scan.
