@@ -5,7 +5,7 @@ template(`declaring_template',`
 ')
 
 interface(`declaring_helper_if',`
-	# this will not delcare the types in the current module
+	# this will not declare the types in the current module
 	# but there will be a S-004 issued
 	declaring_template(hello, world)
 ')
