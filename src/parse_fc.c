@@ -26,7 +26,7 @@
 
 struct fc_entry *parse_fc_line(char *line)
 {
-	char whitespace[] = " \t";
+	const char *whitespace = " \t";
 
 	struct fc_entry *out = malloc(sizeof(struct fc_entry));
 
