@@ -739,6 +739,12 @@ struct check_result *check_block_contains_invalid_statement(__attribute__((unuse
 			block_kind = "conditional";
 		}
 		break;
+	case NODE_BOOLEAN_POLICY:
+		stmt_kind = "boolean block";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
 	case NODE_TUNABLE_POLICY:
 		stmt_kind = "tunable block";
 		if (node->nested & NESTED_CONDITIONAL) {

@@ -29,3 +29,7 @@ tunable_policy(`tun1',`
 tunable_policy(`tun2',`
 	e08_template(c)  # warning no3
 ')
+
+if(bool1) {
+	type d;  # warning no4
+}

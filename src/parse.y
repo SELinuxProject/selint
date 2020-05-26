@@ -531,8 +531,6 @@ require_bare:
 m4_call:
 	ifdef
 	|
-	tunable
-	|
 	ifelse
 	|
 	refpolicywarn
@@ -548,18 +546,12 @@ ifdef:
 if_or_ifn:
 	IFDEF
 	|
-	IFNDEF;
-
-tunable:
-	TUNABLE_POLICY OPEN_PAREN BACKTICK { begin_tunable_policy(&cur, yylineno); }
-	condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
-	|
-	TUNABLE_POLICY OPEN_PAREN { begin_tunable_policy(&cur, yylineno); }
-	condition COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
+	IFNDEF
 	;
 
 ifelse:
 	IFELSE OPEN_PAREN m4_args CLOSE_PAREN
+	;
 
 refpolicywarn:
 	REFPOLICYWARN OPEN_PAREN BACKTICK arbitrary_m4_string SINGLE_QUOTE CLOSE_PAREN
@@ -672,10 +664,30 @@ mls_component:
 	;
 
 cond_expr:
-	IF OPEN_PAREN condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
+	tunable_block
 	|
-	IF OPEN_PAREN condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
-	ELSE OPEN_CURLY lines CLOSE_CURLY
+	boolean_block
+	;
+
+boolean_block:
+	boolean_open condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY { end_boolean_policy(&cur); }
+	|
+	boolean_open condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
+	ELSE OPEN_CURLY lines CLOSE_CURLY { end_boolean_policy(&cur); }
+	;
+
+boolean_open:
+	IF OPEN_PAREN { begin_boolean_policy(&cur, yylineno); }
+	|
+	IF OPEN_PAREN SELINT_COMMAND { begin_boolean_policy(&cur, yylineno); save_command(cur->parent, $3); free($3); }
+	;
+
+tunable_block:
+	TUNABLE_POLICY OPEN_PAREN BACKTICK { begin_tunable_policy(&cur, yylineno); }
+	condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
+	|
+	TUNABLE_POLICY OPEN_PAREN { begin_tunable_policy(&cur, yylineno); }
+	condition COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
 	;
 
 genfscon:

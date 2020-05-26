@@ -212,6 +212,7 @@ const char *get_section(const struct policy_node *node)
 	// complicated than this
 	case NODE_OPTIONAL_POLICY:
 	case NODE_OPTIONAL_ELSE:
+	case NODE_BOOLEAN_POLICY:
 	case NODE_TUNABLE_POLICY:
 	case NODE_IFDEF:
 		return get_section(node->first_child);

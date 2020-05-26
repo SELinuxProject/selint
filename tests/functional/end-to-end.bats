@@ -208,7 +208,7 @@ test_one_check() {
 }
 
 @test "E-008" {
-	test_one_check_expect "E-008" "e08.*" 3
+	test_one_check_expect "E-008" "e08.*" 4
 }
 
 @test "assume_user" {

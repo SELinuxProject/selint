@@ -266,6 +266,7 @@ struct checks *register_checks(char level,
 			add_check(NODE_ROLE_ALLOW, ck, "E-008", check_block_contains_invalid_statement);
 			add_check(NODE_RT_RULE, ck, "E-008", check_block_contains_invalid_statement);
 			add_check(NODE_ROLE_TYPES, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_BOOLEAN_POLICY, ck, "E-008", check_block_contains_invalid_statement);
 			add_check(NODE_TUNABLE_POLICY, ck, "E-008", check_block_contains_invalid_statement);
 			add_check(NODE_IF_CALL, ck, "E-008", check_block_contains_invalid_statement);
 		}
