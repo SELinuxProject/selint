@@ -1,0 +1,31 @@
+policy_module(e08, 1.0.0)
+
+type a;
+
+tunable_policy(`tun1',`
+	type b;  # warning no1
+')
+
+tunable_policy(`tun1',`
+	tunable_policy(`tun2',`  # warning no2
+		allow a self:process getattr;
+	')
+')
+
+optional_policy(`
+	gen_require(`
+		type x;
+	')
+
+	allow a x:process getattr;
+')
+
+type c;
+
+tunable_policy(`tun1',`
+	e08_interface(c)
+')
+
+tunable_policy(`tun2',`
+	e08_template(c)  # warning no3
+')

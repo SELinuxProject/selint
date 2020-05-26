@@ -23,7 +23,9 @@
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,
                                            enum node_flavor flavor,
-                                           union node_data data, unsigned int lineno)
+                                           union node_data data,
+                                           nested_t nested,
+                                           unsigned int lineno)
 {
 
 	if (parent == NULL) {
@@ -40,6 +42,7 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 	to_insert->first_child = NULL;
 	to_insert->flavor = flavor;
 	to_insert->data = data;
+	to_insert->nested = nested;
 	to_insert->exceptions = NULL;
 	to_insert->lineno = lineno;
 
@@ -64,7 +67,9 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 
 enum selint_error insert_policy_node_next(struct policy_node *prev,
                                           enum node_flavor flavor,
-                                          union node_data data, unsigned int lineno)
+                                          union node_data data,
+                                          nested_t nested,
+                                          unsigned int lineno)
 {
 
 	if (prev == NULL) {
@@ -84,6 +89,7 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 	to_insert->flavor = flavor;
 	to_insert->data = data;
 	to_insert->prev = prev;
+	to_insert->nested = nested;
 	to_insert->exceptions = NULL;
 	to_insert->lineno = lineno;
 

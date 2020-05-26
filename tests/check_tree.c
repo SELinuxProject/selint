@@ -36,7 +36,7 @@ START_TEST (test_insert_policy_node_child) {
 	union node_data nd;
 	nd.av_data =  make_example_av_rule();
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(&parent_node, NODE_AV_RULE, nd, 1234));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(&parent_node, NODE_AV_RULE, nd, NESTED_TOP_LEVEL, 1234));
 
 	ck_assert_ptr_null(parent_node.next);
 	ck_assert_ptr_nonnull(parent_node.first_child);
@@ -62,7 +62,7 @@ START_TEST (test_insert_policy_node_next) {
 	union node_data nd;
 	nd.av_data = make_example_av_rule();
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_next(&prev_node, NODE_AV_RULE, nd, 1234));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_next(&prev_node, NODE_AV_RULE, nd, NESTED_TOP_LEVEL, 1234));
 
 	ck_assert_ptr_null(prev_node.first_child);
 	ck_assert_ptr_nonnull(prev_node.next);

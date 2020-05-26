@@ -278,7 +278,7 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 
 		union node_data nd;
 		nd.fc_data = entry;
-		if (insert_policy_node_next(cur, flavor, nd, lineno) !=
+		if (insert_policy_node_next(cur, flavor, nd, NESTED_TOP_LEVEL, lineno) !=
 		    SELINT_SUCCESS) {
 			free_policy_node(head);
 			fclose(fd);

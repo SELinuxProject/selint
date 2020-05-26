@@ -642,3 +642,165 @@ struct check_result *check_unknown_permission_macro(__attribute__((unused)) cons
 
 	return NULL;
 }
+
+struct check_result *check_block_contains_invalid_statement(__attribute__((unused)) const struct check_data
+							    *data,
+							    const struct policy_node
+							    *node)
+{
+	const char *stmt_kind = NULL;
+	const char *stmt_extra_info = NULL;
+	const char *block_kind = NULL;
+
+	// Note: require blocks are parsed specially and only contain supported statements by the grammar
+
+	switch(node->flavor) {
+	case NODE_DECL:
+		switch(node->data.d_data->flavor) {
+		case DECL_TYPE:
+			stmt_kind = "type declaration";
+			if (node->nested & NESTED_CONDITIONAL) {
+				block_kind = "conditional";
+			}
+			// declarations in optional blocks seem to work, but might work inconsistently
+			//else if (node->nested & NESTED_OPTIONAL && !(node->nested & NESTED_REQUIRE)) {
+			//	block_kind = "optional";
+			//}
+			break;
+		case DECL_ATTRIBUTE:
+			stmt_kind = "type attribute declaration";
+			if (node->nested & NESTED_CONDITIONAL) {
+				block_kind = "conditional";
+			}
+			break;
+		case DECL_ROLE:
+			stmt_kind = "role declaration";
+			if (node->nested & NESTED_CONDITIONAL) {
+				block_kind = "conditional";
+			}
+			break;
+		case DECL_ATTRIBUTE_ROLE:
+			stmt_kind = "role attribute declaration";
+			if (node->nested & NESTED_CONDITIONAL) {
+				block_kind = "conditional";
+			}
+			break;
+		case DECL_BOOL:
+			stmt_kind = "boolean declaration";
+			if (node->nested & NESTED_CONDITIONAL) {
+				block_kind = "conditional";
+			}
+			break;
+		case DECL_CLASS:
+		case DECL_PERM:
+		case DECL_USER:
+			break;
+		}
+		break;
+	case NODE_TYPE_ATTRIBUTE:
+		stmt_kind = "type attribute";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_TYPE_ALIAS:
+		stmt_kind = "type alias";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_PERMISSIVE:
+		stmt_kind = "permissive";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_ROLE_ATTRIBUTE:
+		stmt_kind = "role attribute";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_ROLE_ALLOW:
+		stmt_kind = "role allow";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_RT_RULE:
+		stmt_kind = "role transition";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_ROLE_TYPES:
+		stmt_kind = "role transition";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_TUNABLE_POLICY:
+		stmt_kind = "tunable block";
+		if (node->nested & NESTED_CONDITIONAL) {
+			block_kind = "conditional";
+		}
+		break;
+	case NODE_IF_CALL:
+		if (look_up_in_template_map(node->data.ic_data->name)) {
+			stmt_kind = "template call";
+			stmt_extra_info = node->data.ic_data->name;
+			if (node->nested & NESTED_CONDITIONAL) {
+				block_kind = "conditional";
+			}
+			// declarations in optional blocks seem to work, but might work inconsistently
+			//else if (node->nested & NESTED_OPTIONAL) {
+			//	block_kind = "optional";
+			//}
+		}
+		break;
+
+	// the following flavors are not constrained (except maybe from require blocks - see note above)
+	case NODE_TT_RULE:
+	case NODE_AV_RULE:
+	case NODE_OPTIONAL_POLICY:
+	case NODE_OPTIONAL_ELSE:
+	case NODE_GEN_REQ:
+	case NODE_REQUIRE:
+		return NULL;
+
+	// the following flavors are not real policy statements and therefore not constrained
+	case NODE_TE_FILE:
+	case NODE_IF_FILE:
+	case NODE_FC_FILE:
+	case NODE_SPT_FILE:
+	case NODE_HEADER:
+	case NODE_ALIAS:
+	case NODE_M4_CALL:
+	case NODE_IFDEF:
+	case NODE_START_BLOCK:
+	case NODE_COMMENT:
+	case NODE_EMPTY:
+	case NODE_SEMICOLON:
+	case NODE_M4_ARG:
+	case NODE_INTERFACE_DEF:
+	case NODE_TEMP_DEF:
+	case NODE_FC_ENTRY:
+	case NODE_CLEANUP:
+	case NODE_ERROR:
+		return NULL;
+
+	//default:
+	//	return alloc_internal_error("Invalid node given to E-008");
+	}
+
+	if (!stmt_kind || !block_kind) {
+		return NULL;
+	}
+
+	return make_check_result('E', E_ID_BLOCK_INV_STMT,
+				 "Invalid %s%s%s in %s block",
+				 stmt_kind,
+				 stmt_extra_info ? " " : "",
+				 stmt_extra_info ? stmt_extra_info : "",
+				 block_kind);
+}

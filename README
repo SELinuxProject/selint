@@ -180,6 +180,7 @@ CHECK IDS
 	E-005: Nonexistent type listed in fc file
 	E-006: Declaration and interface with same name
 	E-007: Usage of unknown permission macro
+	E-008: Block contains invalid statement
 
 	F-001: Policy syntax error prevents further processing
 	F-002: Internal error in SELint

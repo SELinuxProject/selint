@@ -27,6 +27,7 @@
 extern int yylex_destroy(void);
 
 char *module_name = NULL;
+static nested_t cur_nested = NESTED_TOP_LEVEL;
 
 enum selint_error insert_header(struct policy_node **cur, const char *mn,
                                 enum header_flavor flavor, unsigned int lineno)
@@ -48,7 +49,7 @@ enum selint_error insert_header(struct policy_node **cur, const char *mn,
 	union node_data nd;
 	nd.h_data = data;
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_HEADER, nd, lineno);
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_HEADER, nd, cur_nested, lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
 	}
@@ -75,7 +76,7 @@ enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno)
 	union node_data data;
 
 	data.str = NULL;
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_COMMENT, data, lineno);
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_COMMENT, data, cur_nested, lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
 	}
@@ -134,7 +135,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 	nd.d_data = data;
 
 	enum selint_error ret =
-		insert_policy_node_next(*cur, NODE_DECL, nd, lineno);
+		insert_policy_node_next(*cur, NODE_DECL, nd, cur_nested, lineno);
 
 	if (ret != SELINT_SUCCESS) {
 		free(data);
@@ -172,6 +173,7 @@ enum selint_error insert_aliases(struct policy_node **cur,
 		enum selint_error ret = insert_policy_node_child(*cur,
 		                                                 NODE_ALIAS,
 		                                                 nd,
+		                                                 cur_nested,
 		                                                 lineno);
 		if (ret != SELINT_SUCCESS) {
 			return ret;
@@ -194,6 +196,7 @@ enum selint_error insert_type_alias(struct policy_node **cur, const char *type,
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_TYPE_ALIAS,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
@@ -230,6 +233,7 @@ enum selint_error insert_av_rule(struct policy_node **cur,
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_AV_RULE,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_av_rule_data(av_data);
@@ -253,7 +257,7 @@ enum selint_error insert_role_allow(struct policy_node **cur, const char *from_r
 	nd.ra_data = ra_data;
 
 	enum selint_error ret =
-		insert_policy_node_next(*cur, NODE_ROLE_ALLOW, nd, lineno);
+		insert_policy_node_next(*cur, NODE_ROLE_ALLOW, nd, cur_nested, lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_ra_data(ra_data);
 		return ret;
@@ -287,7 +291,7 @@ enum selint_error insert_role_types(struct policy_node **cur, const char *role,
 	union node_data nd;
 	nd.rtyp_data = rtyp_data;
 
-	enum selint_error ret = insert_policy_node_next(*cur, NODE_ROLE_TYPES, nd, lineno);
+	enum selint_error ret = insert_policy_node_next(*cur, NODE_ROLE_TYPES, nd, cur_nested, lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_rtyp_data(rtyp_data);
 		return ret;
@@ -333,6 +337,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_TT_RULE,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_type_transition_data(tt_data);
@@ -363,6 +368,7 @@ enum selint_error insert_role_transition(struct policy_node **cur,
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_RT_RULE,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 
 	if (ret != SELINT_SUCCESS) {
@@ -426,6 +432,7 @@ enum selint_error insert_interface_call(struct policy_node **cur, const char *if
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_IF_CALL,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		free_if_call_data(if_data);
@@ -446,6 +453,7 @@ enum selint_error insert_permissive_statement(struct policy_node **cur,
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_PERMISSIVE,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
@@ -464,6 +472,7 @@ enum selint_error insert_semicolon(struct policy_node **cur, unsigned int lineno
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_SEMICOLON,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 	if (ret != SELINT_SUCCESS) {
 		return ret;
@@ -480,6 +489,7 @@ static enum selint_error begin_block(struct policy_node **cur,
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                block_type,
 	                                                nd,
+	                                                cur_nested,
 	                                                lineno);
 
 	if (ret != SELINT_SUCCESS) {
@@ -488,8 +498,24 @@ static enum selint_error begin_block(struct policy_node **cur,
 
 	*cur = (*cur)->next;
 
+	switch(block_type) {
+	case NODE_OPTIONAL_POLICY:
+	case NODE_OPTIONAL_ELSE:
+		cur_nested |= NESTED_OPTIONAL;
+		break;
+	case NODE_TUNABLE_POLICY:
+		cur_nested |= NESTED_CONDITIONAL;
+		break;
+	case NODE_REQUIRE:
+	case NODE_GEN_REQ:
+		cur_nested |= NESTED_REQUIRE;
+		break;
+	default:
+		break;
+	}
+
 	nd.str = NULL;
-	ret = insert_policy_node_child(*cur, NODE_START_BLOCK, nd, lineno);
+	ret = insert_policy_node_child(*cur, NODE_START_BLOCK, nd, cur_nested, lineno);
 	if (ret != SELINT_SUCCESS) {
 		*cur = (*cur)->prev;
 		free_policy_node((*cur)->next);
@@ -509,7 +535,10 @@ static enum selint_error end_block(struct policy_node **cur,
 		return SELINT_NOT_IN_BLOCK;
 	}
 
+	cur_nested = (*cur)->parent->nested;
+
 	*cur = (*cur)->parent;
+
 	return SELINT_SUCCESS;
 }
 
@@ -678,7 +707,7 @@ static enum selint_error insert_attribute(struct policy_node **cur, enum attr_fl
 	data->attrs = attrs;
 	data->flavor = flavor;
 
-	enum selint_error ret = insert_policy_node_next(*cur, attr_to_node_flavor(flavor), nd, lineno);
+	enum selint_error ret = insert_policy_node_next(*cur, attr_to_node_flavor(flavor), nd, cur_nested, lineno);
 	if (ret != SELINT_SUCCESS) {
 		free(data);
 		return ret;

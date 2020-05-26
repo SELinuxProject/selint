@@ -257,6 +257,18 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "E-007",
 				  check_unknown_permission_macro);
 		}
+		if (CHECK_ENABLED("E-008")) {
+			add_check(NODE_DECL, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_TYPE_ATTRIBUTE, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_TYPE_ALIAS, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_PERMISSIVE, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_ROLE_ATTRIBUTE, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_ROLE_ALLOW, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_RT_RULE, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_ROLE_TYPES, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_TUNABLE_POLICY, ck, "E-008", check_block_contains_invalid_statement);
+			add_check(NODE_IF_CALL, ck, "E-008", check_block_contains_invalid_statement);
+		}
 	case 'F':
 		break;
 	default:

@@ -168,11 +168,11 @@ START_TEST (test_check_no_explicit_declaration) {
 	cur->flavor = NODE_REQUIRE;
 	union node_data nd;
 	nd.d_data = NULL;
-	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(cur, NODE_START_BLOCK, nd, 0));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(cur, NODE_START_BLOCK, nd, NESTED_REQUIRE, 0));
 	nd.d_data = calloc(1, sizeof(struct declaration_data));
 	nd.d_data->flavor = DECL_TYPE;
 	nd.d_data->name = strdup("bar_t");
-	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(cur, NODE_DECL, nd, 0));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_policy_node_child(cur, NODE_DECL, nd, NESTED_REQUIRE, 0));
 
 	ck_assert_ptr_null(check_no_explicit_declaration(cd, cur->next));
 

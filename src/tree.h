@@ -17,6 +17,8 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include <stdint.h>
+
 #include "selint_error.h"
 #include "string_list.h"
 
@@ -60,6 +62,12 @@ enum node_flavor {
 	                        // as check_hooks.c assumes it when allocating an array of
 	                        // length equal to the number of node types
 };
+
+typedef uint8_t nested_t;
+#define NESTED_TOP_LEVEL	(0u     )
+#define NESTED_OPTIONAL		(1u     )
+#define NESTED_CONDITIONAL	(1u << 1)
+#define NESTED_REQUIRE		(1u << 2)
 
 enum header_flavor {
 	HEADER_BARE,
@@ -201,17 +209,18 @@ struct policy_node {
 	struct policy_node *first_child;
 	enum node_flavor flavor;
 	union node_data data;
+	nested_t nested;
 	char *exceptions;
 	unsigned int lineno;
 };
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,
                                            enum node_flavor flavor, union node_data data,
-                                           unsigned int lineno);
+                                           nested_t nested, unsigned int lineno);
 
 enum selint_error insert_policy_node_next(struct policy_node *prev,
                                           enum node_flavor flavor, union node_data data,
-                                          unsigned int lineno);
+                                          nested_t nested, unsigned int lineno);
 
 // Returns 1 if the node is a template call, and 0 if not
 int is_template_call(const struct policy_node *node);

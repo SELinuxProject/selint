@@ -64,6 +64,7 @@ enum error_ids {
 	E_ID_FC_TYPE           = 5,
 	E_ID_DECL_IF_CLASH     = 6,
 	E_ID_UNKNOWN_PERMMACRO = 7,
+	E_ID_BLOCK_INV_STMT    = 8,
 	E_END
 };
 
