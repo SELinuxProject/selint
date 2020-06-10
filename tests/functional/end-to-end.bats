@@ -131,7 +131,7 @@ test_one_check() {
 
 @test "S-009" {
 	test_one_check_expect "S-009" "s09.pass.te" 0
-	test_one_check_expect "S-009" "s09.warn.te" 4
+	test_one_check_expect "S-009" "s09.warn.te" 6
 }
 
 @test "W-001" {

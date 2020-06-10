@@ -168,6 +168,30 @@ struct check_result *check_bare_module_statement(__attribute__((unused)) const s
 	return NULL;
 }
 
+// check if all classes are netlink socket classes
+static bool all_netlink_socket_classes(const struct string_list *classes)
+{
+	for (; classes; classes = classes->next) {
+		if (0 != strncmp(classes->string, "netlink_", strlen("netlink_"))) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+// check if all classes are socket classes
+static bool all_socket_classes(const struct string_list *classes)
+{
+	for (; classes; classes = classes->next) {
+		if (!ends_with(classes->string, strlen(classes->string), "_socket", strlen("_socket"))) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 // check if '$STR' ends with '$SUFFIX_perms'
 static bool ends_with_suffix_perms(const char *str, size_t str_len, const char *suffix, size_t suffix_len)
 {
@@ -177,17 +201,38 @@ static bool ends_with_suffix_perms(const char *str, size_t str_len, const char *
 
 	// no need to check last 6 characters are actual '_perms'
 	// we call this only on strings we have checked to have this suffix
-	return (0 == strncmp(str + str_len - (suffix_len + strlen("_perms")), suffix, suffix_len));
+	return (0 == strncmp(str + str_len - (suffix_len + strlen("_perms")),
+			     suffix,
+			     suffix_len));
+}
+static bool ends_with_all_suffix_perms(const char *str, size_t str_len, const struct string_list *classes)
+{
+	for (; classes; classes = classes->next) {
+		if (!ends_with_suffix_perms(str, str_len, classes->string, strlen(classes->string))) {
+			// check class alias as fallback
+			static const char *const class_aliases[][2] = {
+				{ "chr_file", "term"   },
+				{ "process",  "signal" },
+			};
+			const char *class_alias = NULL;
+			for (size_t i = 0; i < (sizeof class_aliases / sizeof *class_aliases); ++i) {
+				if (0 == strcmp(classes->string, class_aliases[i][0])) {
+					class_alias = class_aliases[i][1];
+					break;
+				}
+			}
+			if (!class_alias || !ends_with_suffix_perms(str, str_len, class_alias, strlen(class_alias))) {
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 struct check_result *check_perm_macro_class_mismatch(__attribute__((unused)) const struct check_data *data,
                                                      const struct policy_node *node)
 {
-	static const char *const class_aliases[][2] = {
-		{ "chr_file", "term"   },
-		{ "process",  "signal" },
-	};
-
 	static const char *const file_suffix_classes[] = {
 		"lnk_file",
 		"chr_file",
@@ -196,26 +241,16 @@ struct check_result *check_perm_macro_class_mismatch(__attribute__((unused)) con
 		"fifo_file",
 	};
 
-	const char *class_name = node->data.av_data->object_classes->string;
-	const size_t class_name_len = strlen(class_name);
+	const struct string_list *classes = node->data.av_data->object_classes;
 
-	// ignore multi class av rules
-	if (node->data.av_data->object_classes->next ||
-	    ends_with(class_name, class_name_len, "_class_set", strlen("_class_set"))) {
+	// ignore class set av rules
+	if (ends_with(classes->string, strlen(classes->string), "_class_set", strlen("_class_set"))) {
 		return NULL;
 	}
 
-	const char *class_alias = NULL;
-	for (size_t i = 0; i < (sizeof class_aliases / sizeof *class_aliases); ++i) {
-		if (0 == strcmp(class_name, class_aliases[i][0])) {
-			class_alias = class_aliases[i][1];
-			break;
-		}
-	}
-	const size_t class_alias_len = class_alias ? strlen(class_alias) : 0;
-	const bool is_file_class = (0 == strcmp(class_name, "file"));
-	const bool is_netlink_socket_class = (0 == strncmp(class_name, "netlink_", strlen("netlink_")));
-	const bool is_socket_class = ends_with(class_name, class_name_len, "_socket", strlen("_socket"));
+	const bool is_file_class = str_in_sl("file", classes);
+	const bool is_netlink_socket_class = all_netlink_socket_classes(classes);
+	const bool is_socket_class = all_socket_classes(classes);
 
 	for (const struct string_list *perms = node->data.av_data->perms; perms; perms = perms->next) {
 		const size_t perm_len = strlen(perms->string);
@@ -226,7 +261,8 @@ struct check_result *check_perm_macro_class_mismatch(__attribute__((unused)) con
 		}
 
 		// ignore permissions matching 'something[_something]_$CLASSNAME_perms'
-		if (ends_with_suffix_perms(perms->string, perm_len, class_name, class_name_len)) {
+		// and 'something[_something]_$CLASSNAMEALIAS_perms'
+		if (ends_with_all_suffix_perms(perms->string, perm_len, classes)) {
 			// report usage of macros matching different class with actual class as suffix
 			// e.g. report 'something_fifo_file_perms' for class 'file'
 			if (is_file_class) {
@@ -253,16 +289,11 @@ struct check_result *check_perm_macro_class_mismatch(__attribute__((unused)) con
 			continue;
 		}
 
-		// ignore permissions 'something[_something]_$CLASSNAMEALIAS_perms'
-		if (class_alias && ends_with_suffix_perms(perms->string, perm_len, class_alias, class_alias_len)) {
-			continue;
-		}
-
 report:
 		return make_check_result('S', S_ID_PERM_SUFFIX,
 					 "Permission macro %s does not match class %s",
 					 perms->string,
-					 class_name);
+					 classes->next ? "(multi class av rule)" : classes->string);
 	}
 
 	return NULL;
