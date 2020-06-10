@@ -25,9 +25,9 @@
 #define SECTION_NON_ORDERED "_non_ordered"
 #define SECTION_DECLARATION "_declaration"
 
-int is_optional(const struct policy_node *node);
-int is_tunable(const struct policy_node *node);
-int is_in_ifdef(const struct policy_node *node);
+static bool is_optional(const struct policy_node *node);
+static bool is_tunable(const struct policy_node *node);
+static bool is_in_ifdef(const struct policy_node *node);
 
 struct ordering_metadata *prepare_ordering_metadata(const struct check_data *data, const struct policy_node *head)
 {
@@ -286,7 +286,7 @@ float get_avg_line_by_name(const char *section_name, const struct section_data *
 	return sections->avg_line;
 }
 
-static int is_self_rule(const struct policy_node *node)
+static bool is_self_rule(const struct policy_node *node)
 {
 	return node->flavor == NODE_AV_RULE &&
 	       node->data.av_data &&
@@ -294,17 +294,17 @@ static int is_self_rule(const struct policy_node *node)
 	       0 == strcmp(node->data.av_data->targets->string, "self");
 }
 
-static int is_own_module_rule(const struct policy_node *node, const char *current_mod_name)
+static bool is_own_module_rule(const struct policy_node *node, const char *current_mod_name)
 {
 	if (node->flavor != NODE_AV_RULE &&
 	    node->flavor != NODE_IF_CALL) {
-		return 0;
+		return false;
 	}
 
 	if (node->flavor == NODE_IF_CALL) {
 		// These should actually be patterns, not real calls
 		if (look_up_in_ifs_map(node->data.ic_data->name)) {
-			return 0;
+			return false;
 		}
 	}
 	struct string_list *names = get_names_in_node(node);
@@ -317,7 +317,7 @@ static int is_own_module_rule(const struct policy_node *node, const char *curren
 		if (module_of_type_or_attr &&
 		    0 != strcmp(module_of_type_or_attr, current_mod_name)) {
 			free_string_list(names);
-			return 0;
+			return false;
 		}
 		cur = cur->next;
 	}
@@ -327,110 +327,110 @@ static int is_own_module_rule(const struct policy_node *node, const char *curren
 	// "read_file_perms" for example.  However, in normal mode without context
 	// this could definitely be a problem because we won't find types from
 	// other modules
-	return 1;
+	return true;
 }
 
-static int is_kernel_mod_if_call(const struct policy_node *node)
+static bool is_kernel_mod_if_call(const struct policy_node *node)
 {
 	if (node->flavor != NODE_IF_CALL) {
-		return 0;
+		return false;
 	}
 	const char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
 	if (!mod_name) {
-		return 0;
+		return false;
 	}
 	if (0 == strcmp("kernel", mod_name)) {
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-static int is_own_mod_if_call(const struct policy_node *node, const char *current_mod_name)
+static bool is_own_mod_if_call(const struct policy_node *node, const char *current_mod_name)
 {
 	if (node->flavor != NODE_IF_CALL) {
-		return 0;
+		return false;
 	}
 	const char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
 	if (!mod_name) {
-		return 0;
+		return false;
 	}
 
 	if (current_mod_name &&
 	    0 != strcmp(current_mod_name, mod_name)) {
-		return 0;
+		return false;
 	}
-	return 1;
+	return true;
 }
 
-static int check_call_layer(const struct policy_node *node, const char *layer_to_check)
+static bool check_call_layer(const struct policy_node *node, const char *layer_to_check)
 {
 	if (node->flavor != NODE_IF_CALL) {
-		return 0;
+		return false;
 	}
 	const char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
 	if (!mod_name) {
 		// not an actual interface
-		return 0;
+		return false;
 	}
 	const char *layer_name = look_up_in_mod_layers_map(mod_name);
 	if (!layer_name) {
-		return 0;
+		return false;
 	}
 	return (0 == strcmp(layer_name, layer_to_check));
 }
 
-static int is_kernel_layer_if_call(const struct policy_node *node)
+static bool is_kernel_layer_if_call(const struct policy_node *node)
 {
 	return check_call_layer(node, "kernel");
 }
 
-static int is_system_layer_if_call(const struct policy_node *node)
+static bool is_system_layer_if_call(const struct policy_node *node)
 {
 	return check_call_layer(node, "system");
 }
 
-int is_optional(const struct policy_node *node)
+static bool is_optional(const struct policy_node *node)
 {
-	int ret = 0;
+	bool ret = false;
 	while (node) {
 		if (node->flavor == NODE_OPTIONAL_POLICY ||
 		    node->flavor == NODE_OPTIONAL_ELSE) {
-			ret = 1;
+			ret = true;
 		} else if (node->flavor == NODE_TUNABLE_POLICY ||
 		           node->flavor == NODE_IFDEF) {
-			ret = 0;
+			ret = false;
 		}
 		node = node->parent;
 	}
 	return ret;
 }
 
-int is_tunable(const struct policy_node *node)
+static bool is_tunable(const struct policy_node *node)
 {
-	int ret = 0;
+	bool ret = false;
 	while (node) {
 		if (node->flavor == NODE_TUNABLE_POLICY) {
-			ret = 1;
+			ret = true;
 		} else if (node->flavor == NODE_OPTIONAL_POLICY ||
 		           node->flavor == NODE_OPTIONAL_ELSE ||
 		           node->flavor == NODE_IFDEF) {
-			ret = 0;
+			ret = false;
 		}
 		node = node->parent;
 	}
 	return ret;
 }
 
-int is_in_ifdef(const struct policy_node *node)
+static bool is_in_ifdef(const struct policy_node *node)
 {
-	int ret = 0;
+	bool ret = false;
 	while (node) {
 		if (node->flavor == NODE_IFDEF) {
-			ret = 1;
+			ret = true;
 		} else if (node->flavor == NODE_OPTIONAL_POLICY ||
 		           node->flavor == NODE_OPTIONAL_ELSE ||
 		           node->flavor == NODE_TUNABLE_POLICY) {
-			ret = 0;
+			ret = false;
 		}
 
 		node = node->parent;
@@ -475,7 +475,7 @@ enum local_subsection get_local_subsection(const char *mod_name, const struct po
  *       foo   and foo_t
  *       foo   and foo_r
  */
-static int is_same_section(const char *first_section_name, const char *second_section_name)
+static bool is_same_section(const char *first_section_name, const char *second_section_name)
 {
 	size_t first_length = strlen(first_section_name);
 	size_t second_length = strlen(second_section_name);
