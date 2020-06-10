@@ -67,6 +67,10 @@ struct check_result *check_te_order(const struct check_data *data,
 					return NULL;
 				} else {
 					char *reason_str = get_ordering_reason(order_data, order_node_arr_index);
+					if (!reason_str) {
+						return alloc_internal_error("Failed to compute reason C-001");
+					}
+
 					struct check_result *to_ret = make_check_result('C',
 					                                                C_ID_TE_ORDER,
 					                                                "%s",
