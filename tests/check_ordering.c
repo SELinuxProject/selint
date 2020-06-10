@@ -386,6 +386,79 @@ START_TEST (test_alphabetical_if_calls) {
 }
 END_TEST
 
+START_TEST (test_alphabetical_optionals) {
+
+	// Setup
+
+	struct policy_node *cur = malloc(sizeof(struct policy_node));
+	memset(cur, 0, sizeof(struct policy_node));
+
+	cur->flavor = NODE_TE_FILE;
+
+	struct policy_node *head = cur;
+
+	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur, 1));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_interface_call(&cur, "moduleA_if", sl_from_str("foo_t"), 2));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_interface_call(&cur, "moduleD_if", sl_from_str("foo_t"), 2));
+	ck_assert_int_eq(SELINT_SUCCESS, end_optional_policy(&cur));
+
+	ck_assert_int_eq(SELINT_SUCCESS, begin_optional_policy(&cur, 4));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_interface_call(&cur, "moduleC_if", sl_from_str("foo_t"), 5));
+	ck_assert_int_eq(SELINT_SUCCESS, insert_interface_call(&cur, "moduleB_if", sl_from_str("foo_t"), 5));
+	ck_assert_int_eq(SELINT_SUCCESS, end_optional_policy(&cur));
+
+	insert_into_ifs_map("moduleA_if", "moduleA");
+	insert_into_ifs_map("moduleB_if", "moduleB");
+	insert_into_ifs_map("moduleC_if", "moduleC");
+	insert_into_ifs_map("moduleD_if", "moduleD");
+
+	const struct policy_node *A_call = head->next->first_child->next;
+	const struct policy_node *B_call = head->next->next->first_child->next->next;
+	const struct policy_node *C_call = head->next->next->first_child->next;
+	const struct policy_node *D_call = head->next->first_child->next->next;
+
+	ck_assert_int_eq(NODE_OPTIONAL_POLICY, head->next->flavor);
+	ck_assert_int_eq(NODE_START_BLOCK, head->next->first_child->flavor);
+	ck_assert_int_eq(NODE_OPTIONAL_POLICY, head->next->next->flavor);
+	ck_assert_int_eq(NODE_START_BLOCK, head->next->next->first_child->flavor);
+	ck_assert_int_eq(NODE_IF_CALL, A_call->flavor);
+	ck_assert_str_eq("moduleA_if", A_call->data.ic_data->name);
+	ck_assert_int_eq(NODE_IF_CALL, B_call->flavor);
+	ck_assert_str_eq("moduleB_if", B_call->data.ic_data->name);
+	ck_assert_int_eq(NODE_IF_CALL, C_call->flavor);
+	ck_assert_str_eq("moduleC_if", C_call->data.ic_data->name);
+	ck_assert_int_eq(NODE_IF_CALL, D_call->flavor);
+	ck_assert_str_eq("moduleD_if", D_call->data.ic_data->name);
+
+	struct check_data data;
+	data.mod_name = strdup("foo");
+	struct ordering_metadata *o = prepare_ordering_metadata(&data, head);
+
+	// Actual tests
+
+	// sort distinct optiona blocks
+	ck_assert_int_eq(ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, head->next, head->next->next));
+	ck_assert_int_eq(-ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, head->next->next, head->next));
+
+	// do not sort inside optional block
+	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, C_call, B_call));
+	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, B_call, C_call));
+	ck_assert_int_eq(ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, A_call, C_call));
+	ck_assert_int_eq(-ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, C_call, A_call));
+
+	// do not sort on non-first ndoes
+	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, D_call, C_call));
+	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, C_call, D_call));
+
+	// Cleanup
+
+	free(data.mod_name);
+	free_ordering_metadata(o);
+	free_policy_node(head);
+	cleanup_parsing();
+}
+END_TEST
+
 Suite *ordering_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -404,6 +477,7 @@ Suite *ordering_suite(void) {
 	tcase_add_test(tc_core, test_get_local_subsection_related_if);
 	tcase_add_test(tc_core, test_compare_nodes_refpolicy);
 	tcase_add_test(tc_core, test_alphabetical_if_calls);
+	tcase_add_test(tc_core, test_alphabetical_optionals);
 	suite_add_tcase(s, tc_core);
 
 	return s;

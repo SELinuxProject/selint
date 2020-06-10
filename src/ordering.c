@@ -635,27 +635,41 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 		}
 	}
 
-	// alphabetical top-level interfaces
-	if (lss_first != LSS_BUILD_OPTION &&
-	    lss_first != LSS_CONDITIONAL &&
-	    lss_first != LSS_TUNABLE &&
-	    lss_first != LSS_OPTIONAL &&
-	    first->flavor == NODE_IF_CALL &&
-	    second->flavor == NODE_IF_CALL) {
-		const char *first_mod_name = look_up_in_ifs_map(first->data.ic_data->name);
-		const char *second_mod_name = look_up_in_ifs_map(second->data.ic_data->name);
+	if (variant == ORDER_REF || variant == ORDER_LIGHT) {
+		// alphabetical top-level interfaces
+		if (lss_first != LSS_BUILD_OPTION &&
+		    lss_first != LSS_CONDITIONAL &&
+		    lss_first != LSS_TUNABLE &&
+		    (lss_first != LSS_OPTIONAL ||
+		    // sort optionals only based on first node
+		    (lss_first == lss_second && first->prev->flavor == NODE_START_BLOCK && second->prev->flavor == NODE_START_BLOCK)) &&
+		    first->flavor == NODE_IF_CALL &&
+		    second->flavor == NODE_IF_CALL) {
+			const char *first_mod_name = look_up_in_ifs_map(first->data.ic_data->name);
+			const char *second_mod_name = look_up_in_ifs_map(second->data.ic_data->name);
 
-		if (first_mod_name && second_mod_name) {
-			const int compare = strcmp(first_mod_name, second_mod_name);
-			if (compare < 0) {
-				return ORDER_ALPHABETICAL;
-			} else if (compare > 0) {
-				return -ORDER_ALPHABETICAL;
+			if (first_mod_name && second_mod_name) {
+				const int compare = strcmp(first_mod_name, second_mod_name);
+				if (compare < 0) {
+					return ORDER_ALPHABETICAL;
+				} else if (compare > 0) {
+					return -ORDER_ALPHABETICAL;
+				}
 			}
 		}
-	}
 
-	// TODO: alphabetical optionals
+		// alphabetical optionals
+		// sort by the first node in a optional block
+		if (lss_first == LSS_OPTIONAL &&
+		    lss_second == LSS_OPTIONAL &&
+		    first->first_child && first->first_child->next &&
+		    second->first_child && second->first_child->next) {
+			return compare_nodes_refpolicy_generic(ordering_data,
+							    first->first_child->next,
+							    second->first_child->next,
+							    variant);
+		}
+	}
 
 	return ORDER_EQUAL;
 }
