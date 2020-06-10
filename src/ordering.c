@@ -804,31 +804,6 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	return ret;
 }
 
-int check_transform_interface_suffix(char *if_name)
-{
-	char *suffix = strrchr(if_name, '_');
-	if (suffix &&
-	    (0 == strcmp(suffix, "_type") ||
-	     0 == strcmp(suffix, "_file") ||
-	     0 == strcmp(suffix, "_domain") ||
-	     0 == strcmp(suffix, "_node") ||
-	     // Next three are found in mta module
-	     0 == strcmp(suffix, "_agent") ||
-	     0 == strcmp(suffix, "_delivery") ||
-	     0 == strcmp(suffix, "_sender") ||
-	     0 == strcmp(suffix, "_boolean") ||
-	     0 == strcmp(suffix, "_content") ||
-	     0 == strcmp(suffix, "_constrained") ||
-	     0 == strcmp(suffix, "_executable") ||
-	     0 == strcmp(suffix, "_exemption") ||
-	     0 == strcmp(suffix, "_object") ||
-	     0 == strcmp(suffix, "_mountpoint"))) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 void free_ordering_metadata(struct ordering_metadata *to_free)
 {
 	if (to_free == NULL) {
