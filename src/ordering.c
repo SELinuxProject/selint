@@ -655,18 +655,18 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	const struct policy_node *this_node = order_data->nodes[index].node;
 	const struct policy_node *other_node = order_data->nodes[nearest_index].node;
 
-	const char *before_after = NULL;
+	const char *before_after;
 	if (nearest_index > index) {
 		before_after = "before";
 	} else {
 		before_after = "after";
 	}
 
-	const char *reason_str = NULL;
+	const char *reason_str;
 	char *followup_str = NULL;
 	enum local_subsection other_lss;
-	const char *node_section = NULL;
-	const char *other_section = NULL;
+	const char *node_section;
+	const char *other_section;
 
 	switch (-reason) {
 	case ORDER_EQUAL:
