@@ -261,6 +261,7 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 	   NODE_M4_CALL,
 	   NODE_OPTIONAL_POLICY,
 	   NODE_OPTIONAL_ELSE,
+	   NODE_BOOLEAN_POLICY,
 	   NODE_TUNABLE_POLICY,
 	   NODE_IFDEF,
 	   NODE_M4_ARG,

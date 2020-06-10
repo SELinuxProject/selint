@@ -258,6 +258,11 @@ enum selint_error begin_tunable_policy(struct policy_node **cur,
 
 enum selint_error end_tunable_policy(struct policy_node **cur);
 
+enum selint_error begin_boolean_policy(struct policy_node **cur,
+                                        unsigned int lineno);
+
+enum selint_error end_boolean_policy(struct policy_node **cur);
+
 enum selint_error begin_interface_def(struct policy_node **cur,
                                       enum node_flavor flavor, const char *name,
                                       unsigned int lineno);

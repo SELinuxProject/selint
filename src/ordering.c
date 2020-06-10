@@ -27,6 +27,7 @@
 #define SECTION_DECLARATION "_declaration"
 
 static bool is_optional(const struct policy_node *node);
+static bool is_boolean(const struct policy_node *node);
 static bool is_tunable(const struct policy_node *node);
 static bool is_in_ifdef(const struct policy_node *node);
 
@@ -227,6 +228,7 @@ const char *get_section(const struct policy_node *node)
 	// complicated than this
 	case NODE_OPTIONAL_POLICY:
 	case NODE_OPTIONAL_ELSE:
+	case NODE_BOOLEAN_POLICY:
 	case NODE_TUNABLE_POLICY:
 	case NODE_IFDEF:
 		return get_section(node->first_child);
@@ -245,6 +247,7 @@ const char *get_section(const struct policy_node *node)
 			return SECTION_NON_ORDERED;
 		} else if (!is_optional(node) &&
 		    !is_in_ifdef(node) &&
+		    !is_boolean(node) &&
 		    !is_tunable(node) &&
 		    (look_up_in_template_map(node->data.ic_data->name) ||
 		     is_transform_if(node->data.ic_data->name) ||
@@ -443,7 +446,25 @@ static bool is_optional(const struct policy_node *node)
 		if (node->flavor == NODE_OPTIONAL_POLICY ||
 		    node->flavor == NODE_OPTIONAL_ELSE) {
 			ret = true;
+		} else if (node->flavor == NODE_BOOLEAN_POLICY ||
+		           node->flavor == NODE_TUNABLE_POLICY ||
+		           node->flavor == NODE_IFDEF) {
+			ret = false;
+		}
+		node = node->parent;
+	}
+	return ret;
+}
+
+static bool is_boolean(const struct policy_node *node)
+{
+	bool ret = false;
+	while (node) {
+		if (node->flavor == NODE_BOOLEAN_POLICY) {
+			ret = true;
 		} else if (node->flavor == NODE_TUNABLE_POLICY ||
+		           node->flavor == NODE_OPTIONAL_POLICY ||
+		           node->flavor == NODE_OPTIONAL_ELSE ||
 		           node->flavor == NODE_IFDEF) {
 			ret = false;
 		}
@@ -458,7 +479,8 @@ static bool is_tunable(const struct policy_node *node)
 	while (node) {
 		if (node->flavor == NODE_TUNABLE_POLICY) {
 			ret = true;
-		} else if (node->flavor == NODE_OPTIONAL_POLICY ||
+		} else if (node->flavor == NODE_BOOLEAN_POLICY ||
+		           node->flavor == NODE_OPTIONAL_POLICY ||
 		           node->flavor == NODE_OPTIONAL_ELSE ||
 		           node->flavor == NODE_IFDEF) {
 			ret = false;
@@ -476,6 +498,7 @@ static bool is_in_ifdef(const struct policy_node *node)
 			ret = true;
 		} else if (node->flavor == NODE_OPTIONAL_POLICY ||
 		           node->flavor == NODE_OPTIONAL_ELSE ||
+		           node->flavor == NODE_BOOLEAN_POLICY ||
 		           node->flavor == NODE_TUNABLE_POLICY) {
 			ret = false;
 		}
@@ -496,6 +519,8 @@ enum local_subsection get_local_subsection(const char *mod_name,
 		return LSS_BUILD_OPTION;
 	} else if (is_optional(node)) {
 		return LSS_OPTIONAL;
+	} else if (is_boolean(node)) {
+		return LSS_BOOLEAN;
 	} else if (is_tunable(node)) {
 		return LSS_TUNABLE;
 	} else if (is_self_rule(node)) {
@@ -621,7 +646,7 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 			CHECK_ORDERING(lss_first, lss_second, LSS_SYSTEM, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_BUILD_OPTION, ORDER_LOCAL_SUBSECTION);
-			CHECK_ORDERING(lss_first, lss_second, LSS_CONDITIONAL, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_BOOLEAN, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_TUNABLE, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_OPTIONAL, ORDER_LOCAL_SUBSECTION);
 		} else if (variant == ORDER_LIGHT) {
@@ -629,7 +654,7 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 			CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL_MOD, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_BUILD_OPTION, ORDER_LOCAL_SUBSECTION);
-			CHECK_ORDERING(lss_first, lss_second, LSS_CONDITIONAL, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_BOOLEAN, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_TUNABLE, ORDER_LOCAL_SUBSECTION);
 			CHECK_ORDERING(lss_first, lss_second, LSS_OPTIONAL, ORDER_LOCAL_SUBSECTION);
 		}
@@ -638,7 +663,7 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 	if (variant == ORDER_REF || variant == ORDER_LIGHT) {
 		// alphabetical top-level interfaces
 		if (lss_first != LSS_BUILD_OPTION &&
-		    lss_first != LSS_CONDITIONAL &&
+		    lss_first != LSS_BOOLEAN &&
 		    lss_first != LSS_TUNABLE &&
 		    (lss_first != LSS_OPTIONAL ||
 		    // sort optionals only based on first node
@@ -714,8 +739,8 @@ const char *lss_to_string(enum local_subsection lss)
 		return "general interfaces";
 	case LSS_BUILD_OPTION:
 		return "build options";
-	case LSS_CONDITIONAL:
-		return "conditional blocks";
+	case LSS_BOOLEAN:
+		return "boolean policy blocks";
 	case LSS_TUNABLE:
 		return "tunable policy blocks";
 	case LSS_OPTIONAL:
@@ -835,8 +860,8 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		case LSS_BUILD_OPTION:
 			reason_str = "that is controlled by a build option";
 			break;
-		case LSS_CONDITIONAL:
-			reason_str = "that is in a conditional policy block";
+		case LSS_BOOLEAN:
+			reason_str = "that is in a boolean block";
 			break;
 		case LSS_TUNABLE:
 			reason_str = "that is in a tunable block";
