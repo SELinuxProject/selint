@@ -16,9 +16,6 @@ allow source target:chr_file rw_term_perms;
 
 allow source target:process signal_perms;
 
-allow source target:{ file fifo_file } read_file_perms;
-allow source target:{ fifo_file file } read_file_perms;
-
 allow source target:{ tcp_socket udp_socket } create_socket_perms;
 
 allow source target:socket_class_set create_socket_perms;
