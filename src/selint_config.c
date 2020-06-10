@@ -146,11 +146,14 @@ IGNORE_CONST_DISCARD_END;
 
 	if (strcmp(config_ordering_rules, "refpolicy") == 0) {
 		config_check_data->order_conf = ORDER_REF;
+	} else if (strcmp(config_ordering_rules, "refpolicy-light") == 0) {
+		config_check_data->order_conf = ORDER_LIGHT;
 	} else if (strcmp(config_ordering_rules, "refpolicy-lax") == 0) {
 		config_check_data->order_conf = ORDER_LAX;
 	} else {
 		printf("Invalid ordering rules (%s) specified in config.\n"\
-		       "Options are \"refpolicy\" and \"refpolicy-lax\"\n",
+		       "Options are \"refpolicy\", \"refpolicy-light\"\n"\
+		       "and \"refpolicy-lax\"\n",
 		       config_ordering_rules);
 		cfg_free(cfg);
 		return SELINT_CONFIG_PARSE_ERROR;

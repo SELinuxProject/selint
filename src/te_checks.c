@@ -45,6 +45,9 @@ struct check_result *check_te_order(const struct check_data *data,
 		case ORDER_REF:
 			calculate_longest_increasing_subsequence(node, order_data, compare_nodes_refpolicy);
 			break;
+		case ORDER_LIGHT:
+			calculate_longest_increasing_subsequence(node, order_data, compare_nodes_refpolicy_light);
+			break;
 		case ORDER_LAX:
 			calculate_longest_increasing_subsequence(node, order_data, compare_nodes_refpolicy_lax);
 			break;
@@ -66,7 +69,7 @@ struct check_result *check_te_order(const struct check_data *data,
 				if (order_data->nodes[i].in_order) {
 					return NULL;
 				} else {
-					char *reason_str = get_ordering_reason(order_data, order_node_arr_index);
+					char *reason_str = get_ordering_reason(order_data, order_node_arr_index, data->config_check_data->order_conf);
 					if (!reason_str) {
 						return alloc_internal_error("Failed to compute reason C-001");
 					}
