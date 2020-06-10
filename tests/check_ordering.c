@@ -182,13 +182,13 @@ START_TEST (test_get_section) {
 	node->flavor = NODE_ROLE_ALLOW;
 	ck_assert_str_eq("_non_ordered", get_section(node));
 	node->flavor = NODE_DECL;
-	ck_assert_str_eq("_declarations", get_section(node));
+	ck_assert_str_eq("_declaration", get_section(node));
 	node->flavor = NODE_ALIAS;
-	ck_assert_str_eq("_declarations", get_section(node));
+	ck_assert_str_eq("_declaration", get_section(node));
 	node->flavor = NODE_TYPE_ALIAS;
-	ck_assert_str_eq("_declarations", get_section(node));
+	ck_assert_str_eq("_declaration", get_section(node));
 	node->flavor = NODE_TYPE_ATTRIBUTE;
-	ck_assert_str_eq("_declarations", get_section(node));
+	ck_assert_str_eq("_declaration", get_section(node));
 
 	node->flavor = NODE_OPTIONAL_POLICY;
 	node->first_child = calloc(1, sizeof(struct policy_node));
