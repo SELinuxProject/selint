@@ -21,7 +21,7 @@
 #include "selint_error.h"
 #include "tree.h"
 #include "template.h"
-#include "ordering.h"
+#include "util.h"
 #include "perm_macro.h"
 
 extern int yylex_destroy(void);
@@ -690,7 +690,7 @@ static enum selint_error insert_attribute(struct policy_node **cur, enum attr_fl
 
 	if ((*cur)->parent &&
 	    (*cur)->parent->flavor == NODE_INTERFACE_DEF &&
-	    (check_transform_interface_suffix((*cur)->parent->data.str) ||
+	    (is_transform_interface((*cur)->parent->data.str) ||
 	     0 == strcmp(get_current_module_name(), "mls") ||
 	     0 == strcmp(get_current_module_name(), "mcs"))) {
 		mark_transform_if((*cur)->parent->data.str);

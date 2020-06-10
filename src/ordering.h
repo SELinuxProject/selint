@@ -197,15 +197,6 @@ const char *lss_to_string(enum local_subsection lss);
 **********************************/
 char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index);
 
-
-/**********************************
-* Since the refpolicy style guide doesn't define what a "transform
-* interface" is, we use some heuristics.  This checks if the interface
-* name ends with one of several strings used in interfaces that appear
-* to be what the style guide intends
-**********************************/
-int check_transform_interface_suffix(char *if_name);
-
 void free_ordering_metadata(struct ordering_metadata *to_free);
 
 void free_section_data(struct section_data *to_free);

@@ -75,4 +75,42 @@ static const char *const RefPol_macros_with_module_prefix[] = {
 	"domain_transition_pattern",
 };
 
+/**********************************
+* Since the refpolicy style guide doesn't define what a "transform
+* interface" is, we use some heuristics.  This checks if the interface
+* name ends with one of several strings used in interfaces that appear
+* to be what the style guide intends
+**********************************/
+static const char *const RefPol_interface_transforming_suffixes[] = {
+	"_type",
+	"_file",
+	"_domain",
+	"_node",
+	// Next three are found in mta module
+	"_agent",
+	"_delivery",
+	"_sender",
+	"_boolean",
+	"_content",
+	"_constrained",
+	"_executable",
+	"_exemption",
+	"_object",
+	"_mountpoint",
+};
+static inline bool is_transform_interface(const char *if_name)
+{
+	const char *suffix = strrchr(if_name, '_');
+	if (!suffix) {
+		return false;
+	}
+
+	for (size_t i = 0; i < (sizeof RefPol_interface_transforming_suffixes / sizeof *RefPol_interface_transforming_suffixes); i++) {
+		if (0 == strcmp(suffix, RefPol_interface_transforming_suffixes[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 #endif
