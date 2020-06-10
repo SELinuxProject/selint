@@ -823,10 +823,11 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			}
 		} else {
 			reason_str = "that is in a different section";
-			int r = asprintf(&followup_str, "  (This node is in the section for %s rules and the other is in the section for %s rules.)", node_section, other_section);
-			if (r == -1) {
-				return NULL; //ERROR
-			}
+		}
+
+		int r = asprintf(&followup_str, "  (This node is in the section for %s rules and the other is in the section for %s rules.)", node_section, other_section);
+		if (r == -1) {
+			return NULL; //ERROR
 		}
 		break;
 	case ORDER_DECLARATION_SUBSECTION:
