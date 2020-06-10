@@ -724,27 +724,27 @@ const char *lss_to_string(enum local_subsection lss)
 {
 	switch (lss) {
 	case LSS_SELF:
-		return "self";
+		return "self rule";
 	case LSS_OWN:
-		return "own module rules";
+		return "own module rule";
 	case LSS_RELATED:
 		return "related module interface";
 	case LSS_KERNEL_MOD:
-		return "kernel_mod";
+		return "kernel module interface";
 	case LSS_KERNEL:
-		return "kernel";
+		return "kernel layer interface";
 	case LSS_SYSTEM:
-		return "system";
+		return "system layer interface";
 	case LSS_OTHER:
-		return "general interfaces";
+		return "general interface";
 	case LSS_BUILD_OPTION:
-		return "build options";
+		return "build option";
 	case LSS_BOOLEAN:
-		return "boolean policy blocks";
+		return "boolean policy block";
 	case LSS_TUNABLE:
-		return "tunable policy blocks";
+		return "tunable policy block";
 	case LSS_OPTIONAL:
-		return "optional policy blocks";
+		return "optional policy block";
 	case LSS_UNKNOWN:
 	default:
 		return "unknown subsection";
@@ -877,13 +877,12 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		}
 		if (other_lss == LSS_KERNEL || other_lss == LSS_SYSTEM || other_lss == LSS_OTHER) {
 			enum local_subsection this_lss = get_local_subsection(order_data->mod_name, this_node, variant);
-			if (this_lss == LSS_KERNEL || this_lss == LSS_SYSTEM) {
-				int r = asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
-				if (r == -1) {
-					return NULL; //ERROR
-				}
+			if (this_lss == LSS_KERNEL) {
+				followup_str = strdup("  (This interface is in the kernel layer.)");
+			} else if (this_lss == LSS_SYSTEM) {
+				followup_str = strdup("  (This interface is in the system layer.)");
 			} else if (this_lss == LSS_OTHER) {
-				followup_str = strdup("  (This interface is in a layer other than kernel or system)");
+				followup_str = strdup("  (This interface is in a layer other than kernel or system.)");
 			} else if (this_lss == LSS_KERNEL_MOD) {
 				followup_str = strdup("  (This interface is in the kernel module.)");
 			}
