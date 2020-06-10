@@ -712,10 +712,6 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	case ORDER_DECLARATION_SUBSECTION:
 		reason_str = "that is associated with a different sort of declaration";
 		break;
-	case ORDER_LAYERS:
-		// TODO
-		reason_str = "that is in another layer";
-		break;
 	case ORDER_LOCAL_SUBSECTION:
 		other_lss = get_local_subsection(order_data->mod_name, other_node);
 		switch (other_lss) {
