@@ -22,6 +22,9 @@
 #include "ordering.h"
 #include "maps.h"
 
+#define SECTION_NON_ORDERED "_non_ordered"
+#define SECTION_DECLARATION "_declaration"
+
 int is_optional(const struct policy_node *node);
 int is_tunable(const struct policy_node *node);
 int is_in_ifdef(const struct policy_node *node);
@@ -161,7 +164,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_SPT_FILE:
 		return NULL; // Should never happen
 	case NODE_HEADER:
-		return "_non_ordered"; // Guaranteed at top by grammar
+		return SECTION_NON_ORDERED; // Guaranteed at top by grammar
 	case NODE_AV_RULE:
 		if (node->data.av_data->flavor == AV_RULE_NEVERALLOW) {
 			// These are somewhat of a unique situation, and the style guide
@@ -170,15 +173,15 @@ const char *get_section(const struct policy_node *node)
 			// Additionally, the below code assumes that the first string in
 			// the sources is a type or attribute, but in the case of neverallows
 			// it can be "~"
-			return "_non_ordered";
+			return SECTION_NON_ORDERED;
 		}
 		if (node->data.av_data->flavor == AV_RULE_AUDITALLOW) {
-			return "_non_ordered";
+			return SECTION_NON_ORDERED;
 		}
 		if (node->data.av_data->perms &&
 		    (str_in_sl("associate", node->data.av_data->perms) ||
 		     str_in_sl("mounton", node->data.av_data->perms))) {
-			return "_non_ordered"; // Can be transform or with rules
+			return SECTION_NON_ORDERED; // Can be transform or with rules
 		}
 		// The case of multiple source types is weird.  For now
 		// just using the first one seems fine.
@@ -190,25 +193,25 @@ const char *get_section(const struct policy_node *node)
 		// just using the first one seems fine.
 		return node->data.av_data->sources->string;
 	case NODE_RT_RULE:
-		return "_non_ordered";
+		return SECTION_NON_ORDERED;
 	case NODE_ROLE_ALLOW:
 	case NODE_ROLE_TYPES:
 		// These are not in the style guide. I normally see them grouped
 		// with declarations, but maybe a future ordering configuration
 		// can sort them that way
-		return "_non_ordered";
+		return SECTION_NON_ORDERED;
 	case NODE_DECL:
 	case NODE_ALIAS:
 	case NODE_TYPE_ALIAS:
 	case NODE_TYPE_ATTRIBUTE:
 	case NODE_ROLE_ATTRIBUTE:
 		if (is_in_require(node)) {
-			return "_non_ordered";
+			return SECTION_NON_ORDERED;
 		} else {
-			return "_declarations";
+			return SECTION_DECLARATION;
 		}
 	case NODE_M4_CALL:
-		return "_non_ordered"; // TODO: It's probably way more
+		return SECTION_NON_ORDERED; // TODO: It's probably way more
 	// complicated than this
 	case NODE_OPTIONAL_POLICY:
 	case NODE_OPTIONAL_ELSE:
@@ -216,31 +219,31 @@ const char *get_section(const struct policy_node *node)
 	case NODE_IFDEF:
 		return get_section(node->first_child);
 	case NODE_M4_ARG:
-		return "_non_ordered"; //TODO
+		return SECTION_NON_ORDERED; //TODO
 	case NODE_START_BLOCK:
 		if (node->next) {
 			return get_section(node->next);
 		} else {
-			return "_non_ordered"; // empty block
+			return SECTION_NON_ORDERED; // empty block
 		}
 	case NODE_IF_CALL:
 		// check for filetrans_if first to treat interfaces with the
 		// flags filetrans and transform as _non-ordered
 		if (is_filetrans_if(node->data.ic_data->name)) {
-			return "_non_ordered";
+			return SECTION_NON_ORDERED;
 		} else if (!is_optional(node) &&
 		    !is_in_ifdef(node) &&
 		    !is_tunable(node) &&
 		    (look_up_in_template_map(node->data.ic_data->name) ||
 		     is_transform_if(node->data.ic_data->name) ||
 		     is_role_if(node->data.ic_data->name))) {
-			return "_declarations";
+			return SECTION_DECLARATION;
 		} else {
 			if (node->data.ic_data->args) {
 				return node->data.ic_data->args->string;
 			} else {
 				// Empty interface call
-				return "_non_ordered";
+				return SECTION_NON_ORDERED;
 			}
 		}
 	case NODE_TEMP_DEF:
@@ -248,16 +251,16 @@ const char *get_section(const struct policy_node *node)
 		return NULL;           // if files only
 	case NODE_REQUIRE:
 	case NODE_GEN_REQ:
-		return "_non_ordered"; // Not in style guide
+		return SECTION_NON_ORDERED; // Not in style guide
 	case NODE_PERMISSIVE:
-		return "_non_ordered"; // Not in style guide
+		return SECTION_NON_ORDERED; // Not in style guide
 	case NODE_FC_ENTRY:
 		return NULL;           // fc files only
 	case NODE_COMMENT:
 	case NODE_EMPTY:
 	case NODE_SEMICOLON:
 	case NODE_ERROR:
-		return "_non_ordered";
+		return SECTION_NON_ORDERED;
 	default:
 		// Should never happen
 		return NULL;
@@ -516,14 +519,14 @@ enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_met
 		return ORDERING_ERROR;
 	}
 
-	if (0 == strcmp(first_section_name, "_non_ordered") ||
-	    0 == strcmp(second_section_name, "_non_ordered")) {
+	if (0 == strcmp(first_section_name, SECTION_NON_ORDERED) ||
+	    0 == strcmp(second_section_name, SECTION_NON_ORDERED)) {
 		return ORDER_EQUAL;
 	}
 
 	if (!is_same_section(first_section_name, second_section_name)) {
-		if (0 != strcmp(first_section_name, "_declarations") &&
-		    (0 == strcmp(second_section_name, "_declarations") ||
+		if (0 != strcmp(first_section_name, SECTION_DECLARATION) &&
+		    (0 == strcmp(second_section_name, SECTION_DECLARATION) ||
 		     (get_avg_line_by_name(first_section_name, ordering_data->sections) >
 		      get_avg_line_by_name(second_section_name, ordering_data->sections))) &&
 		    // allow raw section alphabetically following another raw section
@@ -536,7 +539,7 @@ enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_met
 
 	// If we made it to this point the two nodes are in the same section
 
-	if (0 == strcmp(first_section_name, "_declarations")) {
+	if (0 == strcmp(first_section_name, SECTION_DECLARATION)) {
 		if (first->flavor == NODE_DECL && second->flavor == NODE_DECL) {
 			if (first->data.d_data->flavor != second->data.d_data->flavor) {
 				CHECK_FLAVOR_ORDERING(d_data, DECL_BOOL, ORDER_DECLARATION_SUBSECTION);
@@ -677,10 +680,10 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		if (!node_section || !other_section) {
 			return NULL; // Error
 		}
-		if (0 == strcmp("_declarations", node_section)) {
+		if (0 == strcmp(SECTION_DECLARATION, node_section)) {
 			// This is the first section
 			reason_str = "that is not a declaration";
-		} else if (0 == strcmp("_declarations", other_section)) {
+		} else if (0 == strcmp(SECTION_DECLARATION, other_section)) {
 			// The other section is the first section
 			if (other_node->flavor == NODE_IF_CALL && is_transform_if(other_node->data.ic_data->name)) {
 				reason_str = "that is a transform interface";
