@@ -29,6 +29,17 @@ static bool is_optional(const struct policy_node *node);
 static bool is_tunable(const struct policy_node *node);
 static bool is_in_ifdef(const struct policy_node *node);
 
+// get next node, skip nodes marked with #selint-disable:C-001
+static const struct policy_node *ordering_next(const struct policy_node *node)
+{
+	const struct policy_node *next = node;
+	do {
+		next = dfs_next(next);
+	} while (next && next->exceptions && strstr(next->exceptions, "C-001"));
+
+	return next;
+}
+
 struct ordering_metadata *prepare_ordering_metadata(const struct check_data *data, const struct policy_node *head)
 {
 	const struct policy_node *cur = head->next; // head is file.  Order the contents
@@ -41,7 +52,7 @@ struct ordering_metadata *prepare_ordering_metadata(const struct check_data *dat
 			return NULL;
 		}
 		count += 1;
-		cur = dfs_next(cur);
+		cur = ordering_next(cur);
 	}
 	calculate_average_lines(sections);
 
@@ -65,12 +76,12 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 	int longest_seq = 0;
 	int index = 0;
 
-	struct policy_node *cur = head->next;
+	const struct policy_node *cur = head->next;
 
 	while (cur) {
 		// Save the node in the array
 		if (cur->flavor == NODE_START_BLOCK) {
-			cur = dfs_next(cur);
+			cur = ordering_next(cur);
 			continue;
 		}
 		nodes[index].node = cur;
@@ -100,7 +111,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 			longest_seq = low;
 		}
 		index++;
-		cur = dfs_next(cur);
+		cur = ordering_next(cur);
 	}
 
 	// Mark LIS elements
