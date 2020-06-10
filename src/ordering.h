@@ -38,6 +38,7 @@ enum order_difference_reason {
 enum local_subsection {
 	LSS_SELF,
 	LSS_OWN,
+	LSS_RELATED,
 	LSS_KERNEL_MOD,
 	LSS_KERNEL,
 	LSS_SYSTEM,
@@ -146,13 +147,18 @@ float get_avg_line_by_name(const char *section_name, const struct section_data *
 /**********************************
 * Get the subsection within the rules for a domain for a particular policy node
 **********************************/
-enum local_subsection get_local_subsection(const char *mod_name, const struct policy_node *node);
+enum local_subsection get_local_subsection(const char *mod_name,
+                                           const struct policy_node *node,
+                                           enum order_conf variant);
 
 /**********************************
 * Compare two nodes according to the refpolicy ordering conventions
 * located at https://github.com/SELinuxProject/refpolicy/wiki/StyleGuide
 * Variant is the config option for how strictly to enforce the style guide.
 * ORDER_REF - enforce the style guide as written
+* ORDER_LIGHT - enforce the style guide with the following exceptions:
+*     - No distinction between kernel and system layer,
+*       just kernel module -> non-optional -> optional
 * ORDER_LAX - enforce the style guide with the following exceptions:
 *     - No ordering restrictions are enforced on the relative ordering
 *     of interface calls and blocks
@@ -171,6 +177,13 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 enum order_difference_reason compare_nodes_refpolicy(const struct ordering_metadata *ordering_data,
                                                      const struct policy_node *first,
                                                      const struct policy_node *second);
+
+/**********************************
+* Wrapper for compare_nodes_refpolicy_generic for refpolicy-light ordering
+**********************************/
+enum order_difference_reason compare_nodes_refpolicy_light(const struct ordering_metadata *ordering_data,
+                                                           const struct policy_node *first,
+                                                           const struct policy_node *second);
 
 /**********************************
 * Wrapper for compare_nodes_refpolicy_generic for refpolicy-lax ordering
@@ -194,7 +207,7 @@ const char *lss_to_string(enum local_subsection lss);
 * in order and relatively out of order with this node and checking
 * what the reason for their out of order comparison is
 **********************************/
-char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index);
+char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index, enum order_conf variant);
 
 void free_ordering_metadata(struct ordering_metadata *to_free);
 

@@ -17,6 +17,7 @@
 #define _GNU_SOURCE
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "ordering.h"
@@ -373,6 +374,41 @@ static bool is_own_mod_if_call(const struct policy_node *node, const char *curre
 	return true;
 }
 
+static bool is_related_mod_if_call(const struct policy_node *node, const char *current_mod_name)
+{
+	if (node->flavor != NODE_IF_CALL) {
+		return false;
+	}
+
+	const char *current_mod_prefix = strchr(current_mod_name, '_');
+	size_t cur_prefix_len;
+	if (current_mod_prefix) {
+		cur_prefix_len = (size_t)(current_mod_prefix - current_mod_name);
+	} else {
+		cur_prefix_len = strlen(current_mod_name);
+	}
+
+	const char *mod_name = look_up_in_ifs_map(node->data.ic_data->name);
+	if (!mod_name) {
+		return false;
+	}
+
+	const char *mod_prefix = strchr(mod_name, '_');
+	size_t prefix_len;
+	if (mod_prefix) {
+		prefix_len = (size_t)(mod_prefix - mod_name);
+	} else {
+		prefix_len = strlen(mod_name);
+	}
+
+	if (cur_prefix_len == prefix_len &&
+	    0 == strncmp(current_mod_name, mod_name, cur_prefix_len)) {
+		return true;
+	}
+
+	return false;
+}
+
 static bool check_call_layer(const struct policy_node *node, const char *layer_to_check)
 {
 	if (node->flavor != NODE_IF_CALL) {
@@ -449,7 +485,9 @@ static bool is_in_ifdef(const struct policy_node *node)
 	return ret;
 }
 
-enum local_subsection get_local_subsection(const char *mod_name, const struct policy_node *node)
+enum local_subsection get_local_subsection(const char *mod_name,
+                                           const struct policy_node *node,
+                                           enum order_conf variant)
 {
 	if (!node) {
 		return LSS_UNKNOWN;
@@ -466,11 +504,13 @@ enum local_subsection get_local_subsection(const char *mod_name, const struct po
 		return LSS_OWN;
 	} else if (is_own_mod_if_call(node, mod_name)) {
 		return LSS_OWN;
+	} else if (variant != ORDER_REF && is_related_mod_if_call(node, mod_name)) {
+		return LSS_RELATED;
 	} else if (is_kernel_mod_if_call(node)) {
 		return LSS_KERNEL_MOD;
-	} else if (is_kernel_layer_if_call(node)) {
+	} else if (variant != ORDER_LIGHT && is_kernel_layer_if_call(node)) {
 		return LSS_KERNEL;
-	} else if (is_system_layer_if_call(node)) {
+	} else if (variant != ORDER_LIGHT && is_system_layer_if_call(node)) {
 		return LSS_SYSTEM;
 	} else if (node->flavor == NODE_IF_CALL) {
 		return LSS_OTHER;
@@ -521,7 +561,7 @@ static bool is_same_section(const char *first_section_name, const char *second_s
 enum order_difference_reason compare_nodes_refpolicy_generic(const struct ordering_metadata *ordering_data,
                                                              const struct policy_node *first,
                                                              const struct policy_node *second,
-						             enum order_conf variant)
+                                                             enum order_conf variant)
 {
 	const char *first_section_name = get_section(first);
 	const char *second_section_name = get_section(second);
@@ -564,28 +604,58 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 	}
 
 	// Local policy rules sections
-	enum local_subsection lss_first = get_local_subsection(ordering_data->mod_name, first);
-	enum local_subsection lss_second = get_local_subsection(ordering_data->mod_name, second);
+	const enum local_subsection lss_first = get_local_subsection(ordering_data->mod_name, first, variant);
+	const enum local_subsection lss_second = get_local_subsection(ordering_data->mod_name, second, variant);
 
 	if (lss_first == LSS_UNKNOWN || lss_second == LSS_UNKNOWN) {
 		return ORDER_EQUAL; // ... Maybe? Should this case be handled earlier?
 	}
 
-	CHECK_ORDERING(lss_first, lss_second, LSS_SELF, ORDER_LOCAL_SUBSECTION);
-	CHECK_ORDERING(lss_first, lss_second, LSS_OWN, ORDER_LOCAL_SUBSECTION);
+	if (lss_first != lss_second) {
+		CHECK_ORDERING(lss_first, lss_second, LSS_SELF, ORDER_LOCAL_SUBSECTION);
+		CHECK_ORDERING(lss_first, lss_second, LSS_OWN, ORDER_LOCAL_SUBSECTION);
 
-	if (variant == ORDER_REF) {
-		CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL_MOD, ORDER_LOCAL_SUBSECTION);
-		CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL, ORDER_LOCAL_SUBSECTION);
-		CHECK_ORDERING(lss_first, lss_second, LSS_SYSTEM, ORDER_LOCAL_SUBSECTION);
-		CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
-		CHECK_ORDERING(lss_first, lss_second, LSS_BUILD_OPTION, ORDER_LOCAL_SUBSECTION);
-		CHECK_ORDERING(lss_first, lss_second, LSS_CONDITIONAL, ORDER_LOCAL_SUBSECTION);
-		CHECK_ORDERING(lss_first, lss_second, LSS_TUNABLE, ORDER_LOCAL_SUBSECTION);
-		CHECK_ORDERING(lss_first, lss_second, LSS_OPTIONAL, ORDER_LOCAL_SUBSECTION);
+		if (variant == ORDER_REF) {
+			CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL_MOD, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_SYSTEM, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_BUILD_OPTION, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_CONDITIONAL, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_TUNABLE, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_OPTIONAL, ORDER_LOCAL_SUBSECTION);
+		} else if (variant == ORDER_LIGHT) {
+			CHECK_ORDERING(lss_first, lss_second, LSS_RELATED, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_KERNEL_MOD, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_OTHER, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_BUILD_OPTION, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_CONDITIONAL, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_TUNABLE, ORDER_LOCAL_SUBSECTION);
+			CHECK_ORDERING(lss_first, lss_second, LSS_OPTIONAL, ORDER_LOCAL_SUBSECTION);
+		}
 	}
 
-	// TODO: alphabetical
+	// alphabetical top-level interfaces
+	if (lss_first != LSS_BUILD_OPTION &&
+	    lss_first != LSS_CONDITIONAL &&
+	    lss_first != LSS_TUNABLE &&
+	    lss_first != LSS_OPTIONAL &&
+	    first->flavor == NODE_IF_CALL &&
+	    second->flavor == NODE_IF_CALL) {
+		const char *first_mod_name = look_up_in_ifs_map(first->data.ic_data->name);
+		const char *second_mod_name = look_up_in_ifs_map(second->data.ic_data->name);
+
+		if (first_mod_name && second_mod_name) {
+			const int compare = strcmp(first_mod_name, second_mod_name);
+			if (compare < 0) {
+				return ORDER_ALPHABETICAL;
+			} else if (compare > 0) {
+				return -ORDER_ALPHABETICAL;
+			}
+		}
+	}
+
+	// TODO: alphabetical optionals
 
 	return ORDER_EQUAL;
 }
@@ -595,6 +665,13 @@ enum order_difference_reason compare_nodes_refpolicy(const struct ordering_metad
                                                      const struct policy_node *second)
 {
 	return compare_nodes_refpolicy_generic(ordering_data, first, second, ORDER_REF);
+}
+
+enum order_difference_reason compare_nodes_refpolicy_light(const struct ordering_metadata *ordering_data,
+                                                           const struct policy_node *first,
+                                                           const struct policy_node *second)
+{
+	return compare_nodes_refpolicy_generic(ordering_data, first, second, ORDER_LIGHT);
 }
 
 enum order_difference_reason compare_nodes_refpolicy_lax(const struct ordering_metadata *ordering_data,
@@ -611,6 +688,8 @@ const char *lss_to_string(enum local_subsection lss)
 		return "self";
 	case LSS_OWN:
 		return "own module rules";
+	case LSS_RELATED:
+		return "related module interface";
 	case LSS_KERNEL_MOD:
 		return "kernel_mod";
 	case LSS_KERNEL:
@@ -633,7 +712,7 @@ const char *lss_to_string(enum local_subsection lss)
 	}
 }
 
-char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index)
+char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index, enum order_conf variant)
 {
 	unsigned int distance = 1;
 	unsigned int nearest_index = 0;
@@ -641,9 +720,10 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	while (nearest_index == 0) {
 		if (distance < index &&
 		    order_data->nodes[index-distance].in_order) {
-			reason = compare_nodes_refpolicy(order_data,
-							 order_data->nodes[index-distance].node,
-							 order_data->nodes[index].node);
+			reason = compare_nodes_refpolicy_generic(order_data,
+								 order_data->nodes[index-distance].node,
+								 order_data->nodes[index].node,
+								 variant);
 			if (reason < 0) {
 				nearest_index = index - distance;
 				break;
@@ -651,9 +731,10 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		}
 		if (index + distance < order_data->order_node_len &&
 		    order_data->nodes[index+distance].in_order) {
-			reason = compare_nodes_refpolicy(order_data,
-	                                                 order_data->nodes[index].node,
-	                                                 order_data->nodes[index+distance].node);
+			reason = compare_nodes_refpolicy_generic(order_data,
+								 order_data->nodes[index].node,
+								 order_data->nodes[index+distance].node,
+								 variant);
 			if (reason < 0) {
 				nearest_index = index + distance;
 				break;
@@ -713,13 +794,16 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 		reason_str = "that is associated with a different sort of declaration";
 		break;
 	case ORDER_LOCAL_SUBSECTION:
-		other_lss = get_local_subsection(order_data->mod_name, other_node);
+		other_lss = get_local_subsection(order_data->mod_name, other_node, variant);
 		switch (other_lss) {
 		case LSS_SELF:
 			reason_str = "that is a self rule";
 			break;
 		case LSS_OWN:
 			reason_str = "that refers to types owned by this module";
+			break;
+		case LSS_RELATED:
+			reason_str = "that calls an interface located in a related module";
 			break;
 		case LSS_KERNEL_MOD:
 			reason_str = "that calls an interface located in the kernel module";
@@ -731,7 +815,8 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			reason_str = "that calls an interface located in the system layer";
 			break;
 		case LSS_OTHER:
-			reason_str = "that calls an interface not located in the kernel or system layer";
+			reason_str = variant == ORDER_REF ? "that calls an interface not located in the kernel or system layer"
+							  : "that calls a non-optional interface";
 			break;
 		case LSS_BUILD_OPTION:
 			reason_str = "that is controlled by a build option";
@@ -752,7 +837,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 			return NULL;
 		}
 		if (other_lss == LSS_KERNEL || other_lss == LSS_SYSTEM || other_lss == LSS_OTHER) {
-			enum local_subsection this_lss = get_local_subsection(order_data->mod_name, this_node);
+			enum local_subsection this_lss = get_local_subsection(order_data->mod_name, this_node, variant);
 			if (this_lss == LSS_KERNEL || this_lss == LSS_SYSTEM) {
 				int r = asprintf(&followup_str, "  (This interface is in the %s layer.)", lss_to_string(this_lss));
 				if (r == -1) {
@@ -782,7 +867,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 	size_t str_len = strlen(reason_str) +
 	                 strlen(before_after) +
 	                 strlen("Line out of order.  It is of type ") +
-	                 strlen(lss_to_string(get_local_subsection(order_data->mod_name, this_node))) + 1 +
+	                 strlen(lss_to_string(get_local_subsection(order_data->mod_name, this_node, variant))) + 1 +
 	                 strlen(" line ") +
 	                 13; // 13 is enough for the maximum
 	                     // length of an unsigned int (10)
@@ -796,7 +881,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 
 	ssize_t written = snprintf(ret, str_len,
 	                           "Line out of order.  It is of type %s %s line %u %s.",
-	                           lss_to_string(get_local_subsection(order_data->mod_name, this_node)),
+	                           lss_to_string(get_local_subsection(order_data->mod_name, this_node, variant)),
 	                           before_after,
 	                           other_node->lineno,
 	                           reason_str);

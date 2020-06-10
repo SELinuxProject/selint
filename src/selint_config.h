@@ -26,6 +26,7 @@
 
 enum order_conf {
 	ORDER_REF,
+	ORDER_LIGHT,
 	ORDER_LAX
 };
 

@@ -233,14 +233,14 @@ START_TEST (test_calculate_average_lines) {
 END_TEST
 
 START_TEST (test_get_local_subsection) {
-	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection("foo", NULL));
+	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection("foo", NULL, ORDER_REF));
 	struct policy_node *node = calloc(1, sizeof(struct policy_node));
 	node->flavor = NODE_AV_RULE;
 	node->data.av_data = calloc(1, sizeof(struct av_rule_data));
 	node->data.av_data->targets = calloc(1, sizeof(struct string_list));
 	node->data.av_data->targets->string = strdup("self");
 
-	ck_assert_int_eq(LSS_SELF, get_local_subsection("foo", node));
+	ck_assert_int_eq(LSS_SELF, get_local_subsection("foo", node, ORDER_REF));
 
 	free(node->data.av_data->targets->string);
 	node->data.av_data->sources = calloc(1, sizeof(struct string_list));
@@ -251,22 +251,50 @@ START_TEST (test_get_local_subsection) {
 	insert_into_decl_map("foo_log_t", "foo", DECL_TYPE);
 	insert_into_decl_map("foo_config", "foo", DECL_ATTRIBUTE);
 
-	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo", node));
+	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo", node, ORDER_REF));
 
 	free(node->data.av_data->targets->string);
 	node->data.av_data->targets->string = strdup("foo_config");
 
-	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo", node));
+	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo", node, ORDER_REF));
 
 	free(node->data.av_data->targets->string);
 	node->data.av_data->targets->string = strdup("bar_data_t");
 	insert_into_decl_map("bar_data_t", "bar", DECL_TYPE);
 
 	// raw allow to other module.  Not mentioned in style guide
-	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection("foo", node));
+	ck_assert_int_eq(LSS_UNKNOWN, get_local_subsection("foo", node, ORDER_REF));
 
 	free_all_maps();
 	free_policy_node(node);
+}
+END_TEST
+
+START_TEST (test_get_local_subsection_related_if) {
+
+	struct policy_node *node = calloc(1, sizeof(struct policy_node));
+	node->flavor = NODE_IF_CALL;
+	node->data.ic_data = malloc(sizeof(struct if_call_data));
+	node->data.ic_data->name = strdup("foo_if");
+	node->data.ic_data->args = sl_from_str("foo_t");
+
+	insert_into_ifs_map("foo_if", "foo");
+	insert_into_ifs_map("foo_sub_if", "foo_sub");
+
+	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo", node, ORDER_LIGHT));
+	ck_assert_int_eq(LSS_RELATED, get_local_subsection("foo_sub", node, ORDER_LIGHT));
+	ck_assert_int_eq(LSS_OTHER, get_local_subsection("foo_sub", node, ORDER_REF));
+
+	free(node->data.ic_data->name);
+	node->data.ic_data->name = strdup("foo_sub_if");
+
+	ck_assert_int_eq(LSS_OWN, get_local_subsection("foo_sub", node, ORDER_LIGHT));
+	ck_assert_int_eq(LSS_RELATED, get_local_subsection("foo", node, ORDER_LIGHT));
+	ck_assert_int_eq(LSS_OTHER, get_local_subsection("foo", node, ORDER_REF));
+
+	free_policy_node(node);
+	free_all_maps();
+
 }
 END_TEST
 
@@ -311,6 +339,53 @@ START_TEST (test_compare_nodes_refpolicy) {
 }
 END_TEST
 
+START_TEST (test_alphabetical_if_calls) {
+	struct policy_node *head = calloc(1, sizeof(struct policy_node));
+	struct policy_node *first = calloc(1, sizeof(struct policy_node));
+	struct policy_node *second = calloc(1, sizeof(struct policy_node));
+	struct policy_node *third = calloc(1, sizeof(struct policy_node));
+
+	head->next = first;
+	first->next = second;
+	second->next = third;
+
+	first->flavor = NODE_IF_CALL;
+	second->flavor = NODE_IF_CALL;
+	third->flavor = NODE_IF_CALL;
+
+	first->data.ic_data = malloc(sizeof(struct if_call_data));
+	first->data.ic_data->name = strdup("moduleA_if1");
+	first->data.ic_data->args = sl_from_str("foo_t");
+
+	second->data.ic_data = malloc(sizeof(struct if_call_data));
+	second->data.ic_data->name = strdup("moduleA_if2");
+	second->data.ic_data->args = sl_from_str("foo_t");
+
+	third->data.ic_data = malloc(sizeof(struct if_call_data));
+	third->data.ic_data->name = strdup("moduleB_if");
+	third->data.ic_data->args = sl_from_str("foo_t");
+
+	struct check_data data;
+	data.mod_name = strdup("foo");
+
+	insert_into_ifs_map("moduleA_if1", "moduleA");
+	insert_into_ifs_map("moduleA_if2", "moduleA");
+	insert_into_ifs_map("moduleB_if", "moduleB");
+
+	struct ordering_metadata *o = prepare_ordering_metadata(&data, head);
+
+	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, first, second));
+	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, second, first));
+
+	ck_assert_int_eq(ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, second, third));
+	ck_assert_int_eq(-ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, third, second));
+
+	free(data.mod_name);
+	free_ordering_metadata(o);
+	free_policy_node(head);
+}
+END_TEST
+
 Suite *ordering_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -326,7 +401,9 @@ Suite *ordering_suite(void) {
 	tcase_add_test(tc_core, test_get_section);
 	tcase_add_test(tc_core, test_calculate_average_lines);
 	tcase_add_test(tc_core, test_get_local_subsection);
+	tcase_add_test(tc_core, test_get_local_subsection_related_if);
 	tcase_add_test(tc_core, test_compare_nodes_refpolicy);
+	tcase_add_test(tc_core, test_alphabetical_if_calls);
 	suite_add_tcase(s, tc_core);
 
 	return s;
