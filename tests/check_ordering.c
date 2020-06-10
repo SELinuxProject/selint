@@ -21,13 +21,13 @@
 #include "../src/ordering.h"
 #include "../src/maps.h"
 
-enum order_difference_reason always_greater(__attribute__((unused)) struct ordering_metadata *order_data,
+enum order_difference_reason always_greater(__attribute__((unused)) const struct ordering_metadata *order_data,
                                             __attribute__((unused)) const struct policy_node *first,
                                             __attribute__((unused)) const struct policy_node *second) {
 	return 1;
 }
 
-enum order_difference_reason always_less(__attribute__((unused)) struct ordering_metadata *order_data,
+enum order_difference_reason always_less(__attribute__((unused)) const struct ordering_metadata *order_data,
                                          __attribute__((unused)) const struct policy_node *first,
                                          __attribute__((unused)) const struct policy_node *second) {
 	return -1;

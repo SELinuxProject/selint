@@ -57,7 +57,7 @@ struct ordering_metadata *prepare_ordering_metadata(const struct check_data *dat
 
 void calculate_longest_increasing_subsequence(const struct policy_node *head,
                                               struct ordering_metadata *ordering,
-                                              enum order_difference_reason (*comp_func)(struct ordering_metadata *o,
+                                              enum order_difference_reason (*comp_func)(const struct ordering_metadata *o,
                                                                                         const struct policy_node *first,
                                                                                         const struct policy_node *second))
 {
@@ -275,7 +275,7 @@ void calculate_average_lines(struct section_data *sections)
 	}
 }
 
-float get_avg_line_by_name(const char *section_name, struct section_data *sections)
+float get_avg_line_by_name(const char *section_name, const struct section_data *sections)
 {
 	while (0 != strcmp(sections->section_name, section_name)) {
 		sections = sections->next;
@@ -507,7 +507,7 @@ static int is_same_section(const char *first_section_name, const char *second_se
 #define CHECK_FLAVOR_ORDERING(data_flavor, comp, ret) \
 	CHECK_ORDERING(first->data.data_flavor->flavor, second->data.data_flavor->flavor, comp, ret)
 
-enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_metadata *ordering_data,
+enum order_difference_reason compare_nodes_refpolicy_generic(const struct ordering_metadata *ordering_data,
                                                              const struct policy_node *first,
                                                              const struct policy_node *second,
 						             enum order_conf variant)
@@ -579,14 +579,14 @@ enum order_difference_reason compare_nodes_refpolicy_generic(struct ordering_met
 	return ORDER_EQUAL;
 }
 
-enum order_difference_reason compare_nodes_refpolicy(struct ordering_metadata *ordering_data,
+enum order_difference_reason compare_nodes_refpolicy(const struct ordering_metadata *ordering_data,
                                                      const struct policy_node *first,
                                                      const struct policy_node *second)
 {
 	return compare_nodes_refpolicy_generic(ordering_data, first, second, ORDER_REF);
 }
 
-enum order_difference_reason compare_nodes_refpolicy_lax(struct ordering_metadata *ordering_data,
+enum order_difference_reason compare_nodes_refpolicy_lax(const struct ordering_metadata *ordering_data,
                                                          const struct policy_node *first,
                                                          const struct policy_node *second)
 {
