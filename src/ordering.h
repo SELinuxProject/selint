@@ -26,7 +26,6 @@ enum order_difference_reason {
 	ORDER_EQUAL  =0,
 	ORDER_SECTION=1,
 	ORDER_DECLARATION_SUBSECTION,
-	ORDER_LAYERS,
 	ORDER_LOCAL_SUBSECTION,
 	ORDER_ALPHABETICAL,
 	ORDERING_ERROR=-1024, // Since we will be negating values of this enum
