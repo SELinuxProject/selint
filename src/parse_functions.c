@@ -347,6 +347,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 enum selint_error insert_role_transition(struct policy_node **cur,
                                          struct string_list *sources,
                                          struct string_list *targets,
+					 struct string_list *object_classes,
                                          char *default_role,
                                          unsigned int lineno)
 {
@@ -355,6 +356,7 @@ enum selint_error insert_role_transition(struct policy_node **cur,
 
 	rt_data->sources = sources;
 	rt_data->targets = targets;
+	rt_data->object_classes = object_classes;
 	rt_data->default_role = strdup(default_role);
 
 	union node_data nd;

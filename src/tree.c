@@ -501,6 +501,7 @@ enum selint_error free_role_transition_data(struct role_transition_data
 
 	free_string_list(to_free->sources);
 	free_string_list(to_free->targets);
+	free_string_list(to_free->object_classes);
 	free(to_free->default_role);
 
 	free(to_free);

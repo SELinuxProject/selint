@@ -426,7 +426,9 @@ range_transition:
 	;
 
 role_transition:
-	ROLE_TRANSITION string_list string_list STRING SEMICOLON { insert_role_transition(&cur, $2, $3, $4, yylineno); free($4); }
+	ROLE_TRANSITION string_list string_list STRING SEMICOLON { insert_role_transition(&cur, $2, $3, NULL, $4, yylineno); free($4); }
+	|
+	ROLE_TRANSITION string_list string_list COLON string_list STRING SEMICOLON { insert_role_transition(&cur, $2, $3, $5, $6, yylineno); free($6); }
 	;
 
 interface_call:
