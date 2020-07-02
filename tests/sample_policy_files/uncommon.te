@@ -90,6 +90,7 @@ ifdef(`test',`
 foo_filter_template(synchronizer,synchronizer,`')
 
 role_transition foo_r bar_exec_t bar_r;
+role_transition foo_r baz_exec_t:{file lnk_file sock_file} baz_r;
 
 genfscon rootfs / -- gen_context(system_u:object_r:rootfs_t, s0)
 genfscon rootfs / -l gen_context(system_u:object_r:rootfs_t, s0)

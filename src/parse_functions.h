@@ -181,6 +181,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 *	the newly allocated role transition node
 * sources (in) - (memory allocated by caller) The sources in the rule
 * targets (in) - (memory allocated by caller) the targets in the rule
+* object_classes (in) - (memory allocated by caller) the object classes in the rule
 * default_role (in) - The role to transition to
 * lineno (in) - The line number of the rule
 *
@@ -189,6 +190,7 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 enum selint_error insert_role_transition(struct policy_node **cur,
                                          struct string_list *sources,
                                          struct string_list *targets,
+					 struct string_list *object_classes,
                                          char *default_role,
                                          unsigned int lineno);
 

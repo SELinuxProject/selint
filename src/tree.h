@@ -131,6 +131,7 @@ struct type_transition_data {
 struct role_transition_data {
 	struct string_list *sources;
 	struct string_list *targets;
+	struct string_list *object_classes;
 	char *default_role;
 };
 
