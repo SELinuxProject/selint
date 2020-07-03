@@ -927,6 +927,7 @@ char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int ind
 
 	if (written < 0) {
 		free(followup_str);
+		free(ret);
 		return NULL;
 	}
 
