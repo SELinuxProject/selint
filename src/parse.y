@@ -583,6 +583,8 @@ m4_string_elem:
 	PERIOD
 	|
 	COLON
+	|
+	SEMICOLON
 	;
 
 condition:
