@@ -102,3 +102,5 @@ empty_string_first(`', foo_t)
 
 type type_t alias { alias1 alias2 alias3 }, attribute1;
 type type_t alias { alias1 alias2 alias3 }, attribute1, attribute2, attribute3;
+
+refpolicywarn(`$0($*) has been deprecated, please use foo(); instead.')
