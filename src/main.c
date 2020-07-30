@@ -308,7 +308,10 @@ int main(int argc, char **argv)
 		WARN_ON_INVALID_CHECK_ID(cur->string, "enabled on command line");
 	}
 
-	if (!config_filename) {
+	if (config_filename && 0 != access(config_filename, R_OK)) {
+		printf("%sError%s: No configuration file found at '%s'!\n", color_error(), color_reset(), config_filename);
+		exit(EX_USAGE);
+	} else if (!config_filename) {
 		config_filename = SYSCONFDIR "/selint.conf";    // Default install path
 		if (0 != access(config_filename, R_OK)) {
 			//No default config found
