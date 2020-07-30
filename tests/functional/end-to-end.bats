@@ -213,6 +213,7 @@ test_one_check() {
 }
 
 @test "assume_user" {
+	touch tmp.conf
 	do_test "E-003" "e03e04e05.fc" 1 "-e E-003"
 	echo "assume_users = { system_u }" >> tmp.conf
 	do_test "E-003" "e03e04e05.fc" 0 "-e E-003"
@@ -220,6 +221,7 @@ test_one_check() {
 }
 
 @test "assume_role" {
+	touch tmp.conf
 	do_test "E-004" "e03e04e05.fc" 1 "-e E-004"
 	echo "assume_roles = { object_r }" >> tmp.conf
 	do_test "E-004" "e03e04e05.fc" 0 "-e E-004"
