@@ -209,4 +209,16 @@ struct check_result *check_unknown_permission_macro(const struct check_data
                                                     const struct policy_node
                                                     *node);
 
+/*********************************************
+ * Check for empty optional and require macro blocks.
+ * Called on NODE_OPTIONAL_POLICY, NODE_GEN_REQ and NODE_REQUIRE nodes.
+ * data - metadata about the file currently being scanned
+ * node - the node to check
+ * returns NULL if passed or check_result for issue E-009
+*********************************************/
+struct check_result *check_empty_block(const struct check_data
+                                       *data,
+                                       const struct policy_node
+                                       *node);
+
 #endif
