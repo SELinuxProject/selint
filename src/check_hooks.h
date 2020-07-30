@@ -180,6 +180,13 @@ struct check_result *make_check_result(char severity,
 struct check_result *alloc_internal_error(const char *string);
 
 /*********************************************
+* Determine if a character represents a valid severity.
+* check_char - The character to check
+* returns true if it is a valid check and false otherwise
+*********************************************/
+bool is_valid_severity(char check_char);
+
+/*********************************************
 * Determine if a string represents a valid check.
 * This compares vs all checks that are defined in the ids enums
 * check_str - The string to check

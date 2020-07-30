@@ -117,6 +117,20 @@ struct check_result *alloc_internal_error(const char *string)
 	return make_check_result('F', F_ID_INTERNAL, "%s", string);
 }
 
+bool is_valid_severity(char check_char)
+{
+	switch (check_char) {
+	case 'C':
+	case 'S':
+	case 'W':
+	case 'E':
+	case 'F':
+		return true;
+	}
+
+	return false;
+}
+
 int is_valid_check(const char *check_str)
 {
 	if (!check_str) {

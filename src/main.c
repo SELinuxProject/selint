@@ -233,6 +233,11 @@ int main(int argc, char **argv)
 		case 'l':
 			// Set the severity level
 			severity = optarg[0];
+			if (!is_valid_severity(severity)) {
+				printf("Invalid argument '%s' given for option --level\n", optarg);
+				usage();
+				exit(EX_USAGE);
+			}
 			break;
 
 		case 'm':
