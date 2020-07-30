@@ -263,6 +263,11 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "E-007",
 				  check_unknown_permission_macro);
 		}
+		if (CHECK_ENABLED("E-009")) {
+			add_check(NODE_OPTIONAL_POLICY, ck, "E-009", check_empty_block);
+			add_check(NODE_GEN_REQ, ck, "E-009", check_empty_block);
+			add_check(NODE_REQUIRE, ck, "E-009", check_empty_block);
+		}
 	case 'F':
 		break;
 	default:

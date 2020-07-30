@@ -649,3 +649,23 @@ struct check_result *check_unknown_permission_macro(__attribute__((unused)) cons
 
 	return NULL;
 }
+
+struct check_result *check_empty_block(__attribute__((unused)) const struct check_data
+                                       *data,
+                                       const struct policy_node
+                                       *node)
+{
+	for (const struct policy_node *cur = node->first_child; cur; cur = cur->next) {
+		if (cur->flavor == NODE_START_BLOCK ||
+		    cur->flavor == NODE_COMMENT ||
+		    cur->flavor == NODE_SEMICOLON) {
+			continue;
+		}
+
+		// found a statement
+		return NULL;
+	}
+
+	return make_check_result('E', E_ID_EMPTY_BLOCK,
+				 "Empty block found");
+}

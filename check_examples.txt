@@ -168,3 +168,9 @@ E-006:
 E-007:
 
 	allow foo_t bar_t:file reed_file_perms;
+
+E-009:
+
+	optional_policy(`
+		#do_something(type_t)
+	')
