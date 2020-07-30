@@ -14,18 +14,31 @@
 * limitations under the License.
 */
 
+#include <errno.h>
 #include <fts.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "startup.h"
+#include "color.h"
 #include "maps.h"
+#include "parse.h"
+#include "parse_functions.h"
 #include "tree.h"
 #include "util.h"
 #include "parse.h"
 
-void load_access_vectors_normal(const char *av_path)
+enum selint_error load_access_vectors_kernel(const char *av_path)
 {
+	/* check if av_path really exists,
+	 * e.g. checking nonexistent /sys/fs/selinux/class
+	 * on a SELinux disabled system
+	 */
+	if (access(av_path, F_OK) != 0) {
+		return SELINT_IO_ERROR;
+	}
 
+	enum selint_error r = SELINT_PARSE_ERROR;
 	const char *paths[2] = { av_path, NULL };
 
 IGNORE_CONST_DISCARD_BEGIN;
@@ -47,15 +60,37 @@ IGNORE_CONST_DISCARD_END;
 			// File
 
 			insert_into_decl_map(file->fts_name, "perm", DECL_PERM);
+
+			r = SELINT_SUCCESS;
 		}
 		file = fts_read(ftsp);
 	}
 	fts_close(ftsp);
+
+	return r;
 }
 
-void load_access_vectors_source()
+enum selint_error load_access_vectors_source(const char *av_path)
 {
+	print_if_verbose("Parsing access_vector file %s\n", av_path);
 
+	set_current_module_name(av_path);
+
+	FILE *f = fopen(av_path, "r");
+	if (!f) {
+		printf("%sError%s: Failed to open %s: %s\n", color_error(), color_reset(), av_path, strerror(errno));
+		return SELINT_IO_ERROR;
+	}
+
+	struct policy_node *ast = yyparse_wrapper(f, av_path, NODE_AV_FILE);
+	fclose(f);
+
+	if (!ast) {
+		return SELINT_PARSE_ERROR;
+	}
+
+	free_policy_node(ast);
+	return SELINT_SUCCESS;
 }
 
 void load_modules_normal()

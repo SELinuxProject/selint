@@ -91,7 +91,8 @@ SAMPLE_CONFIG_FILES=sample_configs/bad_format_2.conf \
 			sample_configs/refpolicy_ordering.conf \
 			sample_configs/order_requires.conf
 
-SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf \
+SAMPLE_POLICY_FILES=sample_policy_files/access_vectors \
+			sample_policy_files/bad_modules.conf \
 			sample_policy_files/bad_obj_perm_sets.spt \
 			sample_policy_files/bad_role_allow.te \
 			sample_policy_files/basic.fc \

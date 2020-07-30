@@ -175,6 +175,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_IF_FILE:
 	case NODE_FC_FILE:
 	case NODE_SPT_FILE:
+	case NODE_AV_FILE:
 		return NULL; // Should never happen
 	case NODE_HEADER:
 		return SECTION_NON_ORDERED; // Guaranteed at top by grammar

@@ -400,6 +400,7 @@ int main(int argc, char **argv)
 
 	char *modules_conf_path = NULL;
 	char *obj_perm_sets_path = NULL;
+	char *access_vector_path = NULL;
 
 	while (file) {
 		const char *suffix = (file->fts_pathlen > 3) ? (file->fts_path + file->fts_pathlen - 3) : NULL;
@@ -428,6 +429,10 @@ int main(int argc, char **argv)
 		           && !strcmp(file->fts_name, "obj_perm_sets.spt")) {
 			// TODO: Make obj_perm_sets.spt name configurable
 			obj_perm_sets_path = strdup(file->fts_path);
+		} else if (source_flag
+		           && !strcmp(file->fts_name, "access_vectors")) {
+			// TODO: Make access_vectors name configurable
+			access_vector_path = strdup(file->fts_path);
 		} else {
 			// Directories might get traversed twice: preorder and final visit.
 			// Print only the final visit
@@ -489,6 +494,10 @@ int main(int argc, char **argv)
                                    && !obj_perm_sets_path
                                    && 0 == strcmp(file->fts_name, "obj_perm_sets.spt")) {
 				obj_perm_sets_path = strdup(file->fts_path);
+			} else if (source_flag
+                                   && !access_vector_path
+                                   && 0 == strcmp(file->fts_name, "access_vectors")) {
+				access_vector_path = strdup(file->fts_path);
 			}
 			file = fts_read(ftsp);
 		}
@@ -513,12 +522,22 @@ int main(int argc, char **argv)
 		free_file_list(context_te_files);
 		free_file_list(context_if_files);
 		free(obj_perm_sets_path);
+		free(access_vector_path);
 		free(modules_conf_path);
 		return EX_CONFIG;
 	}
 	// Load object classes and permissions
 	if (source_flag) {
-		load_access_vectors_source();
+		if (access_vector_path) {
+			enum selint_error res = load_access_vectors_source(access_vector_path);
+			if (res != SELINT_SUCCESS) {
+				printf("%sWarning%s: Failed to parse access_vectors: %d\n", color_warning(), color_reset(), res);
+			} else {
+				print_if_verbose("Loaded classes and permissions from %s\n", access_vector_path);
+			}
+		} else {
+			printf("%sWarning%s: Failed to locate access_vectors file.\n", color_warning(), color_reset());
+		}
 
 		if (modules_conf_path) {
 			enum selint_error res =
@@ -547,7 +566,17 @@ int main(int argc, char **argv)
 		}
 
 	} else {
-		load_access_vectors_normal("/sys/fs/selinux/class");
+		enum selint_error r = load_access_vectors_kernel("/sys/fs/selinux/class");
+		if (r != SELINT_SUCCESS) {
+			if (r == SELINT_IO_ERROR) {
+				printf("%sNote%s: Failed to load classes and perms probably due to running on a SELinux disabled system.\n",
+				       color_note(), color_reset());
+			} else {
+				printf("%sWarning%s: Failed to load classes and perms from current kernel.\n",
+				       color_warning(), color_reset());
+			}
+		}
+
 		load_modules_normal();
 		enum selint_error res = load_devel_headers(context_if_files);
 		if (res != SELINT_SUCCESS) {
@@ -556,6 +585,7 @@ int main(int argc, char **argv)
 	}
 
 	free(obj_perm_sets_path);
+	free(access_vector_path);
 	free(modules_conf_path);
 
 	enum selint_error res = run_analysis(ck, te_files, if_files, fc_files, context_te_files, context_if_files, custom_fc_macros, &ccd);

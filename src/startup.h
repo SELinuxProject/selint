@@ -20,9 +20,9 @@
 #include "selint_error.h"
 #include "file_list.h"
 
-void load_access_vectors_normal(const char *av_path);
+enum selint_error load_access_vectors_kernel(const char *av_path);
 
-void load_access_vectors_source(void);
+enum selint_error load_access_vectors_source(const char *av_path);
 
 void load_modules_normal(void);
 

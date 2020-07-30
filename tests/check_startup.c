@@ -26,10 +26,11 @@
 #define OBJ_PERM_SETS_PATH SAMPLE_POL_DIR "obj_perm_sets.spt"
 #define BAD_OBJ_PERM_SETS_PATH SAMPLE_POL_DIR "bad_obj_perm_sets.spt"
 #define SAMPLE_AV_PATH SAMPLE_AV_DIR
+#define ACCESS_VECTORS_PATH SAMPLE_POL_DIR "access_vectors"
 
-START_TEST (test_load_access_vectors_normal) {
+START_TEST (test_load_access_vectors_kernel) {
 
-	load_access_vectors_normal(SAMPLE_AV_PATH);
+	ck_assert_int_eq(load_access_vectors_kernel(SAMPLE_AV_PATH), SELINT_SUCCESS);
 
 	ck_assert_int_eq(decl_map_count(DECL_CLASS), 3);
 	ck_assert_int_eq(decl_map_count(DECL_PERM), 37);
@@ -38,6 +39,22 @@ START_TEST (test_load_access_vectors_normal) {
 	ck_assert_str_eq(look_up_in_decl_map("append", DECL_PERM), "perm");
 	ck_assert_str_eq(look_up_in_decl_map("listen", DECL_PERM), "perm");
 	ck_assert_str_eq(look_up_in_decl_map("use", DECL_PERM), "perm");
+
+	free_all_maps();
+
+}
+END_TEST
+
+START_TEST (test_load_access_vectors_source) {
+
+	ck_assert_int_eq(load_access_vectors_source(ACCESS_VECTORS_PATH), SELINT_SUCCESS);
+
+	ck_assert_int_eq(decl_map_count(DECL_CLASS), 8);
+	ck_assert_int_eq(decl_map_count(DECL_PERM), 33);
+
+	ck_assert_str_eq(look_up_in_decl_map("file", DECL_CLASS), "__av_file__");
+	ck_assert_str_eq(look_up_in_decl_map("append", DECL_PERM), "__av_file__");
+	ck_assert_str_eq(look_up_in_decl_map("use", DECL_PERM), "__av_file__");
 
 	free_all_maps();
 
@@ -105,7 +122,8 @@ Suite *startup_suite(void) {
 
 	tc_core = tcase_create("Core");
 
-	tcase_add_test(tc_core, test_load_access_vectors_normal);
+	tcase_add_test(tc_core, test_load_access_vectors_kernel);
+	tcase_add_test(tc_core, test_load_access_vectors_source);
 	tcase_add_test(tc_core, test_load_modules_source);
 	tcase_add_test(tc_core, test_load_obj_perm_sets_source);
 	suite_add_tcase(s, tc_core);
