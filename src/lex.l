@@ -60,6 +60,8 @@ tunable_policy { return TUNABLE_POLICY; }
 ifelse { return IFELSE; }
 refpolicywarn { return REFPOLICYWARN; }
 class { return CLASS; }
+common { return COMMON; }
+inherits { return INHERITS; }
 if { return IF; }
 else { return ELSE; }
 ifdef { return IFDEF; }

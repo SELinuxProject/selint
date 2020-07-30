@@ -104,6 +104,8 @@
 %token IFELSE;
 %token REFPOLICYWARN;
 %token CLASS;
+%token COMMON;
+%token INHERITS;
 %token IFDEF;
 %token IFNDEF;
 %token IF;
@@ -181,6 +183,10 @@ selinux_file:
 	spt_file
 	|
 	comments spt_file
+	|
+	av_file
+	|
+	comments av_file
 	|
 	comments
 	;
@@ -910,6 +916,75 @@ support_def:
 				yyerror("Error: Unexpected spt-file parsed"); YYERROR;
 			}
 			free($4); free_string_list($8); } // do not import
+	;
+
+// access-vector file
+
+av_file: // must not allow a comment to be first -> parser conflict
+	av_definition av_contents
+	|
+	av_definition
+	;
+
+av_contents:
+	av_contents av_content
+	|
+	av_content
+	;
+
+av_content:
+	av_definition
+	|
+	COMMENT
+	;
+
+av_definition:
+	av_class_definition
+	|
+	av_common_definition
+	;
+
+av_class_definition:
+	CLASS STRING av_permission_list {
+			if (expected_node_flavor != NODE_AV_FILE) {
+				free($2);
+				yyerror("Error: Unexpected av-file parsed"); YYERROR;
+			}
+			insert_into_decl_map($2, "__av_file__", DECL_CLASS); free($2); }
+	|
+	CLASS STRING INHERITS STRING {
+			if (expected_node_flavor != NODE_AV_FILE) {
+				free($2); free($4);
+				yyerror("Error: Unexpected av-file parsed"); YYERROR;
+			}
+			insert_into_decl_map($2, "__av_file__", DECL_CLASS); free($2); free($4); }
+	|
+	CLASS STRING INHERITS STRING av_permission_list {
+			if (expected_node_flavor != NODE_AV_FILE) {
+				free($2); free($4);
+				yyerror("Error: Unexpected av-file parsed"); YYERROR;
+			}
+			insert_into_decl_map($2, "__av_file__", DECL_CLASS); free($2); free($4); }
+	;
+
+av_common_definition:
+	COMMON STRING av_permission_list { free($2); }
+	;
+
+av_permission_list:
+	OPEN_CURLY av_permissions CLOSE_CURLY
+	;
+
+av_permissions:
+	av_permissions av_permission
+	|
+	av_permission
+	;
+
+av_permission:
+	STRING { insert_into_decl_map($1, "__av_file__", DECL_PERM); free($1); }
+	|
+	COMMENT
 	;
 
 %%
