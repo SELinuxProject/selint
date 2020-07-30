@@ -122,6 +122,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/configs/fc_macros.conf \
 			functional/configs/order_ref.conf \
 			functional/configs/order_lax.conf \
+			functional/policies/check_triggers/access_vectors \
 			functional/policies/check_triggers/c04.if \
 			functional/policies/check_triggers/c05.if \
 			functional/policies/check_triggers/c05.te \
@@ -133,6 +134,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/e06.if \
 			functional/policies/check_triggers/e07.pass.te \
 			functional/policies/check_triggers/e07.warn.te \
+			functional/policies/check_triggers/e08.pass.te \
+			functional/policies/check_triggers/e08.warn.te \
 			functional/policies/check_triggers/e09.te \
 			functional/policies/check_triggers/modules.conf \
 			functional/policies/check_triggers/obj_perm_sets.spt \

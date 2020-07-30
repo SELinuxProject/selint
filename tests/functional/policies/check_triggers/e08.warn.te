@@ -1,0 +1,9 @@
+policy_module(e08_warn, 1.0)
+
+allow source target:File read;
+
+allow source target:{ dir File } read;
+
+type_transition source entry:Dir target;
+
+role_transition source entry:dirr target;

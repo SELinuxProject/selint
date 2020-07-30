@@ -14,6 +14,10 @@
 * limitations under the License.
 */
 
+#include <ctype.h>
+#include <stdio.h>
+
+#include "color.h"
 #include "te_checks.h"
 #include "maps.h"
 #include "tree.h"
@@ -645,30 +649,43 @@ struct check_result *check_declaration_interface_nameclash(__attribute__((unused
 	return NULL;
 }
 
-struct check_result *check_unknown_permission_macro(__attribute__((unused)) const struct check_data
-						    *data,
-						    const struct policy_node
-						    *node)
+bool check_unknown_permission_condition()
 {
-	static unsigned int permmacros_count = (unsigned int)-1;
-
-	if (permmacros_count == (unsigned int)-1) {
-		permmacros_count = permmacros_map_count();
+	// ignore if no permission or permission macro have been parsed
+	if (permmacros_map_count() == 0) {
+		printf("%sNote%s: Check E-007 is not performed because no permission macro has been parsed.\n",
+		       color_note(), color_reset());
+		return false;
+	}
+	if (decl_map_count(DECL_PERM) == 0) {
+		printf("%sNote%s: Check E-007 is not performed because no permission has been parsed.\n",
+		       color_note(), color_reset());
+		return false;
 	}
 
-	// ignore if no permission macro was parsed
-	if (permmacros_count == 0) {
-		return NULL;
-	}
+	return true;
+}
 
+struct check_result *check_unknown_permission(__attribute__((unused)) const struct check_data
+					      *data,
+					      const struct policy_node
+					      *node)
+{
 	for (const struct string_list *cur = node->data.av_data->perms; cur; cur = cur->next) {
-		// ignore permissions without '_perms' suffix; they are probably not macros
-		if (!ends_with(cur->string, strlen(cur->string), "_perms", strlen("_perms"))) {
+
+		if (0 == strcmp(cur->string, "*") ||
+		    0 == strcmp(cur->string, "~")) {
 			continue;
 		}
 
 		// ignore generated all_ permission macros
-		if (0 == strncmp(cur->string, "all_", strlen("all_"))) {
+		if (0 == strncmp(cur->string, "all_", strlen("all_")) &&
+		    ends_with(cur->string, strlen(cur->string), "_perms", strlen("_perms"))) {
+			continue;
+		}
+
+		if (look_up_in_decl_map(cur->string, DECL_PERM)) {
+			// TODO: check if class supports this permission
 			continue;
 		}
 
@@ -676,8 +693,63 @@ struct check_result *check_unknown_permission_macro(__attribute__((unused)) cons
 			continue;
 		}
 
-		return make_check_result('E', E_ID_UNKNOWN_PERMMACRO,
-					 "Unknown permission macro %s used",
+		return make_check_result('E', E_ID_UNKNOWN_PERM,
+					 "Unknown permission %s used",
+					 cur->string);
+	}
+
+	return NULL;
+}
+
+bool check_unknown_class_condition()
+{
+	// ignore if no class has been parsed
+	if (decl_map_count(DECL_CLASS) == 0) {
+		printf("%sNote%s: Check E-008 is not performed because no class has been parsed.\n",
+		       color_note(), color_reset());
+		return false;
+	}
+
+	return true;
+}
+
+struct check_result *check_unknown_class(__attribute__((unused)) const struct check_data
+					 *data,
+					 const struct policy_node
+					 *node)
+{
+	const struct string_list *object_classes;
+	switch (node->flavor) {
+	case NODE_AV_RULE:
+		object_classes = node->data.av_data->object_classes;
+		break;
+	case NODE_RT_RULE:
+		object_classes = node->data.rt_data->object_classes;
+		break;
+	case NODE_TT_RULE:
+		object_classes = node->data.tt_data->object_classes;
+		break;
+	default:
+		return alloc_internal_error("Invalid node type for `check_unknown_class`");
+	}
+
+	for (const struct string_list *cur = object_classes; cur; cur = cur->next) {
+		// ignore interface parameters
+		if (cur->string[0] == '$' && isdigit((unsigned char)cur->string[1])) {
+			continue;
+		}
+
+		// ignore class sets
+		if (ends_with(cur->string, strlen(cur->string), "_class_set", strlen("_class_set"))) {
+			continue;
+		}
+
+		if (look_up_in_decl_map(cur->string, DECL_CLASS)) {
+			continue;
+		}
+
+		return make_check_result('E', E_ID_UNKNOWN_CLASS,
+					 "Unknown class %s used",
 					 cur->string);
 	}
 

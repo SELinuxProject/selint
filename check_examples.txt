@@ -169,6 +169,10 @@ E-007:
 
 	allow foo_t bar_t:file reed_file_perms;
 
+E-008:
+
+	allow foo_t bar_t:File read_file_perms;
+
 E-009:
 
 	optional_policy(`
