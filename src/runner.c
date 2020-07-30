@@ -265,9 +265,14 @@ struct checks *register_checks(char level,
 			add_check(NODE_DECL, ck, "E-006",
 				check_declaration_interface_nameclash);
 		}
-		if (CHECK_ENABLED("E-007")) {
+		if (CHECK_ENABLED("E-007") && check_unknown_permission_condition()) {
 			add_check(NODE_AV_RULE, ck, "E-007",
-				  check_unknown_permission_macro);
+				  check_unknown_permission);
+		}
+		if (CHECK_ENABLED("E-008") && check_unknown_class_condition()) {
+			add_check(NODE_AV_RULE, ck, "E-008", check_unknown_class);
+			add_check(NODE_RT_RULE, ck, "E-008", check_unknown_class);
+			add_check(NODE_TT_RULE, ck, "E-008", check_unknown_class);
 		}
 		if (CHECK_ENABLED("E-009")) {
 			add_check(NODE_OPTIONAL_POLICY, ck, "E-009", check_empty_block);

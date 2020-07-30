@@ -1,0 +1,11 @@
+policy_module(e08_pass, 1.0)
+
+allow source target:file read;
+
+allow source target:{ dir file } { open read };
+
+type_transition source entry:dir target;
+
+role_transition source entry:dir target;
+
+allow source target:$2 read;

@@ -507,25 +507,6 @@ int main(int argc, char **argv)
 
 	free(paths);
 
-	struct checks *ck = register_checks(severity,
-	                                    config_enabled_checks,
-	                                    config_disabled_checks,
-	                                    cl_enabled_checks,
-	                                    cl_disabled_checks,
-	                                    only_enabled);
-
-	if (!ck) {
-		printf("%sError%s: Failed to register checks (bad configuration)\n", color_error(), color_reset());
-		free_file_list(te_files);
-		free_file_list(if_files);
-		free_file_list(fc_files);
-		free_file_list(context_te_files);
-		free_file_list(context_if_files);
-		free(obj_perm_sets_path);
-		free(access_vector_path);
-		free(modules_conf_path);
-		return EX_CONFIG;
-	}
 	// Load object classes and permissions
 	if (source_flag) {
 		if (access_vector_path) {
@@ -582,6 +563,27 @@ int main(int argc, char **argv)
 		if (res != SELINT_SUCCESS) {
 			printf("%sWarning%s: Failed to load SELinux development header files.\n", color_warning(), color_reset());
 		}
+	}
+
+	/* Delay until support files have been parsed for check conditions. */
+	struct checks *ck = register_checks(severity,
+	                                    config_enabled_checks,
+	                                    config_disabled_checks,
+	                                    cl_enabled_checks,
+	                                    cl_disabled_checks,
+	                                    only_enabled);
+
+	if (!ck) {
+		printf("%sError%s: Failed to register checks (bad configuration)\n", color_error(), color_reset());
+		free_file_list(te_files);
+		free_file_list(if_files);
+		free_file_list(fc_files);
+		free_file_list(context_te_files);
+		free_file_list(context_if_files);
+		free(obj_perm_sets_path);
+		free(access_vector_path);
+		free(modules_conf_path);
+		return EX_CONFIG;
 	}
 
 	free(obj_perm_sets_path);

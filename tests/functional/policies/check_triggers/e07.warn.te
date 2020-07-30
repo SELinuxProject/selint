@@ -1,3 +1,11 @@
-policy_module(w12, 1.0)
+policy_module(e07_warn, 1.0)
+
+allow source target:file READ;
+
+allow source target:file some;
+
+allow source target:file { read some };
 
 allow source target:file reed_file_perms;
+
+allow source target:file read_file_permss;

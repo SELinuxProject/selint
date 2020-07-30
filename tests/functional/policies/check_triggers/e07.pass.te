@@ -1,3 +1,10 @@
-policy_module(w12, 1.0)
+policy_module(e07_pass, 1.0)
+
+allow source target:file read;
+
+allow source target:file { open read };
 
 allow source target:file read_file_perms;
+
+# TODO: class 'file' has no permission 'search'
+allow source target:file search;

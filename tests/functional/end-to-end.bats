@@ -21,7 +21,7 @@ do_test() {
 	local FILENAME=$2
 	local EXPECT=$3
 	local ARGS=$4
-	run ${SELINT_PATH} -s -c tmp.conf ${ARGS} ./policies/check_triggers/${FILENAME} ./policies/check_triggers/modules.conf ./policies/check_triggers/obj_perm_sets.spt
+	run ${SELINT_PATH} -s -c tmp.conf ${ARGS} ./policies/check_triggers/${FILENAME} ./policies/check_triggers/modules.conf ./policies/check_triggers/obj_perm_sets.spt ./policies/check_triggers/access_vectors
 	echo $output
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o ${CHECK_ID} | wc -l)
@@ -208,8 +208,13 @@ test_one_check() {
 }
 
 @test "E-007" {
-	test_one_check "E-007" "e07.warn.te"
+	test_one_check_expect "E-007" "e07.warn.te" 5
 	test_one_check_expect "E-007" "e07.pass.te" 0
+}
+
+@test "E-008" {
+	test_one_check_expect "E-008" "e08.warn.te" 4
+	test_one_check_expect "E-008" "e08.pass.te" 0
 }
 
 @test "E-009" {

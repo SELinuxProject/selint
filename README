@@ -185,7 +185,8 @@ CHECK IDS
 	E-004: Nonexistent role listed in fc file
 	E-005: Nonexistent type listed in fc file
 	E-006: Declaration and interface with same name
-	E-007: Usage of unknown permission macro
+	E-007: Usage of unknown permission or permission macro
+	E-008: Usage of unknown class
 	E-009: Empty optional or require macro block
 
 	F-001: Policy syntax error prevents further processing

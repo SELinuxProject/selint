@@ -198,16 +198,38 @@ struct check_result *check_declaration_interface_nameclash(const struct check_da
                                                            *node);
 
 /*********************************************
- * Check for usage of unknown permission macro.
+ * Verify whether the next check can be enabled.
+*********************************************/
+bool check_unknown_permission_condition(void);
+
+/*********************************************
+ * Check for usage of unknown permission or permission macro.
  * Called on NODE_AV_RULE nodes.
  * data - metadata about the file currently being scanned
  * node - the node to check
  * returns NULL if passed or check_result for issue E-007
 *********************************************/
-struct check_result *check_unknown_permission_macro(const struct check_data
-                                                    *data,
-                                                    const struct policy_node
-                                                    *node);
+struct check_result *check_unknown_permission(const struct check_data
+                                              *data,
+                                              const struct policy_node
+                                              *node);
+
+/*********************************************
+ * Verify whether the next check can be enabled.
+*********************************************/
+bool check_unknown_class_condition(void);
+
+/*********************************************
+ * Check for usage of unknown class.
+ * Called on NODE_AV_RULE, NODE_RT_RULE and NODE_TT_RULE nodes.
+ * data - metadata about the file currently being scanned
+ * node - the node to check
+ * returns NULL if passed or check_result for issue E-008
+*********************************************/
+struct check_result *check_unknown_class(const struct check_data
+                                         *data,
+                                         const struct policy_node
+                                         *node);
 
 /*********************************************
  * Check for empty optional and require macro blocks.

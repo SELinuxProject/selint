@@ -1,0 +1,3 @@
+class file { read open }
+
+class dir { read open search }
