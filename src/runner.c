@@ -109,6 +109,8 @@ struct checks *register_checks(char level,
 			          check_te_order);
 			add_check(NODE_AV_RULE, ck, "C-001",
 			          check_te_order);
+			add_check(NODE_XAV_RULE, ck, "C-001",
+			          check_te_order);
 			add_check(NODE_IF_CALL, ck, "C-001",
 			          check_te_order);
 			add_check(NODE_TT_RULE, ck, "C-001",
@@ -124,6 +126,8 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("C-005")) {
 			add_check(NODE_AV_RULE, ck, "C-005",
+			          check_unordered_perms);
+			add_check(NODE_XAV_RULE, ck, "C-005",
 			          check_unordered_perms);
 			add_check(NODE_DECL, ck, "C-005",
 			          check_unordered_perms);
@@ -180,6 +184,7 @@ struct checks *register_checks(char level,
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {
 			add_check(NODE_AV_RULE, ck, "W-001", check_no_explicit_declaration);
+			add_check(NODE_XAV_RULE, ck, "W-001", check_no_explicit_declaration);
 			add_check(NODE_IF_CALL, ck, "W-001", check_no_explicit_declaration);
 			add_check(NODE_TT_RULE, ck, "W-001", check_no_explicit_declaration);
 			add_check(NODE_RT_RULE, ck, "W-001", check_no_explicit_declaration);
@@ -193,6 +198,7 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("W-002")) {
 			add_check(NODE_AV_RULE, ck, "W-002", check_name_used_but_not_required_in_if);
+			add_check(NODE_XAV_RULE, ck, "W-002", check_name_used_but_not_required_in_if);
 			add_check(NODE_IF_CALL, ck, "W-002", check_name_used_but_not_required_in_if);
 			add_check(NODE_TT_RULE, ck, "W-002", check_name_used_but_not_required_in_if);
 			add_check(NODE_RT_RULE, ck, "W-002", check_name_used_but_not_required_in_if);

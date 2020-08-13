@@ -123,6 +123,30 @@ enum selint_error insert_av_rule(struct policy_node **cur,
                                  unsigned int lineno);
 
 /**********************************
+* insert_xperm_av_rule
+* Add an extended permission av rule node at the next node in the tree, allocating all memory for it
+* cur (in, out) - The current spot in the tree.  Will be updated to point to
+*	the newly allocated av rule node
+* flavor (in) - What sort of av rule this is
+* sources (in) - (memory allocated by caller) the sources in the rule
+* targets (in) - (memory allocated by caller) the targets in the rule
+* object_classes (in) - (memory allocated by caller) the object classes in the rule
+* operation (in) - the operation implemented by this rule
+* perms (in) - (memory allocated by caller) the extended permission in the rule
+* lineno (in) - The line number
+*
+* Returns - SELINT error code
+**********************************/
+enum selint_error insert_xperm_av_rule(struct policy_node **cur,
+                                       enum av_rule_flavor flavor,
+                                       struct string_list *sources,
+                                       struct string_list *targets,
+                                       struct string_list *object_classes,
+                                       const char *operation,
+                                       struct string_list *perms,
+                                       unsigned int lineno);
+
+/**********************************
 * insert_role_allow
 * Add a role allow node at the next node in the tree, allocating all memory for it
 * cur (in, out) - The current spot in the tree.  Will be updated to point to

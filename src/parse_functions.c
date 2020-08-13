@@ -241,6 +241,43 @@ enum selint_error insert_av_rule(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_xperm_av_rule(struct policy_node **cur,
+                                       enum av_rule_flavor flavor,
+                                       struct string_list *sources,
+                                       struct string_list *targets,
+                                       struct string_list *object_classes,
+                                       const char *operation,
+                                       struct string_list *perms,
+                                       unsigned int lineno)
+{
+
+	struct xav_rule_data *xav_data = malloc(sizeof(struct xav_rule_data));
+
+	xav_data->flavor = flavor;
+	xav_data->sources = sources;
+	xav_data->targets = targets;
+	xav_data->object_classes = object_classes;
+	xav_data->operation = strdup(operation);
+	xav_data->perms = perms;
+
+	union node_data nd;
+	nd.xav_data = xav_data;
+
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_XAV_RULE,
+	                                                nd,
+	                                                lineno);
+	if (ret != SELINT_SUCCESS) {
+		free_xav_rule_data(xav_data);
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+
+	return SELINT_SUCCESS;
+}
+
+
 enum selint_error insert_role_allow(struct policy_node **cur, const char *from_role,
                                     const char *to_role, unsigned int lineno)
 {

@@ -103,6 +103,7 @@ SAMPLE_POLICY_FILES=sample_policy_files/bad_modules.conf \
 			sample_policy_files/declaring_template.te \
 			sample_policy_files/disable_comment.te \
 			sample_policy_files/empty.te \
+			sample_policy_files/extended_perms.te \
 			sample_policy_files/modules.conf \
 			sample_policy_files/nested_templates.if \
 			sample_policy_files/none_context.fc \

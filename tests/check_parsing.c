@@ -31,6 +31,7 @@
 #define BAD_RA_FILENAME POLICIES_DIR "bad_role_allow.te"
 #define DISABLE_COMMENT_FILENAME POLICIES_DIR "disable_comment.te"
 #define BOOL_DECLARATION_FILENAME POLICIES_DIR "bool_declarations.te"
+#define EXTENDED_TE_FILENAME POLICIES_DIR "extended_perms.te"
 
 START_TEST (test_parse_basic_te) {
 
@@ -441,6 +442,144 @@ START_TEST (test_file_flavor_mismatch) {
 }
 END_TEST
 
+START_TEST (test_extended_perms) {
+
+	set_current_module_name("extended_perms");
+
+	FILE *f = fopen(EXTENDED_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	struct policy_node *ast = yyparse_wrapper(f, EXTENDED_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
+
+	struct policy_node *current = ast;
+
+	ck_assert_ptr_nonnull(current);
+	ck_assert_int_eq(NODE_TE_FILE, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = ast->next;
+	ck_assert_int_eq(NODE_HEADER, current->flavor);
+	struct header_data *hd = current->data.h_data;
+	ck_assert_int_eq(HEADER_MACRO, hd->flavor);
+	ck_assert_str_eq("extended_perms", hd->module_name);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	struct declaration_data *dd = current->data.d_data;
+	ck_assert_int_eq(DECL_TYPE, dd->flavor);
+	ck_assert_str_eq("basic_t", dd->name);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	dd = current->data.d_data;
+	ck_assert_int_eq(DECL_TYPE, dd->flavor);
+	ck_assert_str_eq("basic_dev_t", dd->name);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_ALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("~", current->data.xav_data->perms->string);
+	ck_assert_str_eq("0x8927", current->data.xav_data->perms->next->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_ALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("35072", current->data.xav_data->perms->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_ALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("0027", current->data.xav_data->perms->string);
+	ck_assert_str_eq("0028", current->data.xav_data->perms->next->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_ALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("0", current->data.xav_data->perms->string);
+	ck_assert_str_eq("0x00", current->data.xav_data->perms->next->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_ALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("0x0000", current->data.xav_data->perms->string);
+	ck_assert_str_eq("-", current->data.xav_data->perms->next->string);
+	ck_assert_str_eq("0x00ff", current->data.xav_data->perms->next->next->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_ALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("1024", current->data.xav_data->perms->string);
+	ck_assert_str_eq("-", current->data.xav_data->perms->next->string);
+	ck_assert_str_eq("2048", current->data.xav_data->perms->next->next->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_DONTAUDIT, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("1024-2048", current->data.xav_data->perms->string);
+	ck_assert_str_eq("35072", current->data.xav_data->perms->next->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_AUDITALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("ioctl_macro", current->data.xav_data->perms->string);
+	ck_assert_ptr_nonnull(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	current = current->next;
+	ck_assert_int_eq(NODE_XAV_RULE, current->flavor);
+	ck_assert_int_eq(AV_RULE_NEVERALLOW, current->data.xav_data->flavor);
+	ck_assert_str_eq("ioctl", current->data.xav_data->operation);
+	ck_assert_str_eq("ioctl_macro", current->data.xav_data->perms->string);
+	ck_assert_str_eq("0x40ff-0x41ff", current->data.xav_data->perms->next->string);
+	ck_assert_ptr_null(current->next);
+	ck_assert_ptr_null(current->first_child);
+
+	ck_assert_str_eq("extended_perms", look_up_in_decl_map("basic_t", DECL_TYPE));
+	ck_assert_int_eq(2, decl_map_count(DECL_TYPE));
+
+	free_policy_node(ast);
+
+	cleanup_parsing();
+
+	fclose(f);
+
+}
+END_TEST
+
 Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -459,6 +598,7 @@ Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_disable_comment);
 	tcase_add_test(tc_core, test_bool_declarations);
 	tcase_add_test(tc_core, test_file_flavor_mismatch);
+	tcase_add_test(tc_core, test_extended_perms);
 	suite_add_tcase(s, tc_core);
 
 	return s;
