@@ -39,9 +39,13 @@ role { return ROLE; }
 types {  return TYPES; }
 attribute_role { return ATTRIBUTE_ROLE; }
 allow { return ALLOW; }
+allowxperm { return ALLOW_XPERM; }
 auditallow { return AUDIT_ALLOW; }
+auditallowxperm { return AUDIT_ALLOW_XPERM; }
 dontaudit { return DONT_AUDIT; }
+dontauditxperm { return DONT_AUDIT_XPERM; }
 neverallow { return NEVER_ALLOW; }
+neverallowxperm { return NEVER_ALLOW_XPERM; }
 type_transition { return TYPE_TRANSITION; }
 type_member { return TYPE_MEMBER; }
 type_change { return TYPE_CHANGE; }

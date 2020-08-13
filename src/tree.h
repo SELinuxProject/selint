@@ -26,6 +26,7 @@ enum node_flavor {
 	NODE_FC_FILE,
 	NODE_SPT_FILE,
 	NODE_AV_RULE,
+	NODE_XAV_RULE,
 	NODE_TT_RULE,
 	NODE_RT_RULE,
 	NODE_HEADER,
@@ -110,6 +111,15 @@ struct av_rule_data {
 	struct string_list *perms;
 };
 
+struct xav_rule_data {
+	enum av_rule_flavor flavor;
+	struct string_list *sources;
+	struct string_list *targets;
+	struct string_list *object_classes;
+	char *operation;
+	struct string_list *perms;
+};
+
 struct role_allow_data {
 	char *from;
 	char *to;
@@ -184,6 +194,7 @@ struct gen_require_data {
 union node_data {
 	struct header_data *h_data;
 	struct av_rule_data *av_data;
+	struct xav_rule_data *xav_data;
 	struct role_allow_data *ra_data;
 	struct role_types_data *rtyp_data;
 	struct type_transition_data *tt_data;
@@ -240,6 +251,8 @@ enum selint_error free_policy_node(struct policy_node *to_free);
 enum selint_error free_header_data(struct header_data *to_free);
 
 enum selint_error free_av_rule_data(struct av_rule_data *to_free);
+
+enum selint_error free_xav_rule_data(struct xav_rule_data *to_free);
 
 enum selint_error free_ra_data(struct role_allow_data *to_free);
 

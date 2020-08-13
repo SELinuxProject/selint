@@ -1,0 +1,20 @@
+policy_module(extended_perms, 1.0)
+
+type basic_t;
+
+type basic_dev_t;
+
+allow basic_t basic_dev_t:chr_file ioctl;
+
+allowxperm basic_t basic_dev_t:chr_file ioctl ~0x8927;
+allowxperm basic_t basic_dev_t:chr_file ioctl 35072;
+allowxperm basic_t basic_dev_t:chr_file ioctl { 0027 0028 };
+allowxperm basic_t basic_dev_t:chr_file ioctl { 0 0x00 };
+allowxperm basic_t basic_dev_t:chr_file ioctl { 0x0000 - 0x00ff };
+allowxperm basic_t basic_dev_t:chr_file ioctl { 1024 - 2048 };
+
+dontauditxperm basic_t basic_dev_t:chr_file ioctl { 1024-2048 35072 };
+
+auditallowxperm basic_t basic_dev_t:chr_file ioctl ioctl_macro;
+
+neverallowxperm basic_t basic_dev_t:chr_file ioctl { ioctl_macro 0x40ff-0x41ff };

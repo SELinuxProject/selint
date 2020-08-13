@@ -83,9 +83,13 @@
 %token TYPES;
 %token ATTRIBUTE_ROLE;
 %token ALLOW;
+%token ALLOW_XPERM;
 %token AUDIT_ALLOW;
+%token AUDIT_ALLOW_XPERM;
 %token DONT_AUDIT;
+%token DONT_AUDIT_XPERM;
 %token NEVER_ALLOW;
+%token NEVER_ALLOW_XPERM;
 %token TYPE_TRANSITION;
 %token TYPE_MEMBER;
 %token TYPE_CHANGE;
@@ -145,17 +149,21 @@
 %type<sl> string_list
 %type<sl> comma_string_list
 %type<sl> strings
+%type<sl> xperm_list
+%type<sl> xperm_items
 %type<string> sl_item
+%type<string> xperm_item
 %type<sl> arg
 %type<sl> args
 %type<string> mls_range
 %type<string> mls_level
 %type<string> mls_component
 %type<av_flavor> av_type
+%type<av_flavor> xperm_av_type
 %type<node_flavor> if_keyword
 
-%destructor { free($$); } mls_component mls_level mls_range sl_item
-%destructor { free_string_list($$); } arg args comma_string_list string_list strings
+%destructor { free($$); } mls_component mls_level mls_range sl_item xperm_item
+%destructor { free_string_list($$); } arg args comma_string_list string_list strings xperm_list xperm_items
 
 %%
 selinux_file:
@@ -242,6 +250,8 @@ bare_line:
 	type_alias
 	|
 	rule
+	|
+	xperm_rule
 	|
 	role_allow
 	|
@@ -353,6 +363,44 @@ av_type:
 	DONT_AUDIT { $$ = AV_RULE_DONTAUDIT; }
 	|
 	NEVER_ALLOW { $$ = AV_RULE_NEVERALLOW; }
+	;
+
+xperm_rule:
+	xperm_av_type string_list string_list COLON string_list STRING xperm_list SEMICOLON { insert_xperm_av_rule(&cur, $1, $2, $3, $5, $6, $7, yylineno); free($6); }
+	;
+
+xperm_av_type:
+	ALLOW_XPERM { $$ = AV_RULE_ALLOW; }
+	|
+	AUDIT_ALLOW_XPERM { $$ = AV_RULE_AUDITALLOW; }
+	|
+	DONT_AUDIT_XPERM { $$ = AV_RULE_DONTAUDIT; }
+	|
+	NEVER_ALLOW_XPERM { $$ = AV_RULE_NEVERALLOW; }
+	;
+
+xperm_list:
+	OPEN_CURLY xperm_items CLOSE_CURLY { $$ = $2; }
+	|
+	TILDA xperm_list { $$ = sl_from_str("~"); $$->next = $2; }
+	|
+	xperm_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	;
+
+xperm_items:
+	xperm_items xperm_item { $$ = concat_string_lists($1, sl_from_str($2)); free($2); }
+	|
+	xperm_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	;
+
+xperm_item:
+	STRING { $$ = $1; }
+	|
+	NUM_STRING { $$ = $1; }
+	|
+	NUMBER { $$ = $1; }
+	|
+	DASH { $$ = strdup("-"); }  // TODO: validate usage: enforce two surrounding increasing elements
 	;
 
 string_list:

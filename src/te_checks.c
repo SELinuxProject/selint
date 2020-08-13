@@ -96,6 +96,9 @@ struct check_result *check_unordered_perms(__attribute__((unused)) const struct 
 	if (node->flavor == NODE_AV_RULE) {
 		cur = node->data.av_data->perms;
 		flavor = "av rule";
+	} else if (node->flavor == NODE_XAV_RULE) {
+		cur = node->data.xav_data->perms;
+		flavor = "xav rule";
 	} else if (node->flavor == NODE_DECL) {
 		// ignore non-class declarations
 		if (node->data.d_data->flavor != DECL_CLASS) {
@@ -108,7 +111,7 @@ struct check_result *check_unordered_perms(__attribute__((unused)) const struct 
 	}
 
 	while (cur) {
-		if (prev && strcmp(prev->string, "~") != 0) {
+		if (prev && strcmp(prev->string, "~") != 0 && strcmp(cur->string, "-") != 0) {
 			const int compare = strcmp(prev->string, cur->string);
 
 			if (compare > 0) {

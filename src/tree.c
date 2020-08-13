@@ -149,6 +149,7 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 	struct string_list *ret = NULL;
 	struct string_list *cur = NULL;
 	struct av_rule_data *av_data;
+	struct xav_rule_data *xav_data;
 	struct type_transition_data *tt_data;
 	struct role_transition_data *rt_data;
 	struct declaration_data *d_data;
@@ -168,6 +169,19 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 			cur->next = copy_string_list(av_data->targets);
 		} else {
 			ret = copy_string_list(av_data->targets);
+		}
+		break;
+
+	case NODE_XAV_RULE:
+		xav_data = node->data.xav_data;
+		cur = ret = copy_string_list(xav_data->sources);
+		if (cur) {
+			while (cur->next) {
+				cur = cur->next;
+			}
+			cur->next = copy_string_list(xav_data->targets);
+		} else {
+			ret = copy_string_list(xav_data->targets);
 		}
 		break;
 
@@ -361,6 +375,9 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	case NODE_AV_RULE:
 		free_av_rule_data(to_free->data.av_data);
 		break;
+	case NODE_XAV_RULE:
+		free_xav_rule_data(to_free->data.xav_data);
+		break;
 	case NODE_ROLE_ALLOW:
 		free_ra_data(to_free->data.ra_data);
 		break;
@@ -438,8 +455,23 @@ enum selint_error free_av_rule_data(struct av_rule_data *to_free)
 	free_string_list(to_free->object_classes);
 	free_string_list(to_free->perms);
 
-	to_free->sources = to_free->targets = to_free->object_classes =
-		to_free->perms = NULL;
+	free(to_free);
+
+	return SELINT_SUCCESS;
+}
+
+enum selint_error free_xav_rule_data(struct xav_rule_data *to_free)
+{
+
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
+
+	free_string_list(to_free->sources);
+	free_string_list(to_free->targets);
+	free_string_list(to_free->object_classes);
+	free(to_free->operation);
+	free_string_list(to_free->perms);
 
 	free(to_free);
 

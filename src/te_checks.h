@@ -37,7 +37,7 @@ struct check_result *check_te_order(const struct check_data *data,
 
 /*********************************************
 * Check for unordered permissions in av rules and class declarations.
-* Called on NODE_AV_RULE and NODE_DECL nodes.
+* Called on NODE_AV_RULE, NODE_XAV_RULE and NODE_DECL nodes.
 * data - metadata about the file currently being scanned
 * node - the node to check
 * returns NULL if passed or check_result for issue C-005
