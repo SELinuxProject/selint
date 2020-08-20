@@ -128,9 +128,14 @@ SEVERITY LEVELS
 
 SELINT EXCEPTIONS
 
-	To eliminate a check on one line, add a comment containing a string in the
-	following format:
-	"selint-disable:E-003"
+	To eliminate one or more checks on one line, add a comment containing a string
+	in any of the following formats:
+
+	* "selint-disable:E-003"
+	* "selint-disable: E-003"
+	* "selint-disable:E-003,E-004"
+	* "selint-disable: E-003, E-004"
+
 	This is currently only supported in te and if files
 
 OUTPUT
