@@ -103,21 +103,21 @@ struct header_data {
 	char *module_name;
 };
 
-struct av_rule_data {
-	enum av_rule_flavor flavor;
-	struct string_list *sources;
-	struct string_list *targets;
-	struct string_list *object_classes;
+#define AV_RULE_MEMBERS \
+	enum av_rule_flavor flavor;\
+	struct string_list *sources;\
+	struct string_list *targets;\
+	struct string_list *object_classes;\
 	struct string_list *perms;
+
+struct av_rule_data {
+	AV_RULE_MEMBERS;
 };
 
 struct xav_rule_data {
-	enum av_rule_flavor flavor;
-	struct string_list *sources;
-	struct string_list *targets;
-	struct string_list *object_classes;
+	AV_RULE_MEMBERS;
+	// All xav_rule specific members MUST go after AV_RULE ones
 	char *operation;
-	struct string_list *perms;
 };
 
 struct role_allow_data {

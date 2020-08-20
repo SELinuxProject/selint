@@ -149,7 +149,6 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 	struct string_list *ret = NULL;
 	struct string_list *cur = NULL;
 	struct av_rule_data *av_data;
-	struct xav_rule_data *xav_data;
 	struct type_transition_data *tt_data;
 	struct role_transition_data *rt_data;
 	struct declaration_data *d_data;
@@ -160,6 +159,9 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 
 	switch (node->flavor) {
 	case NODE_AV_RULE:
+	case NODE_XAV_RULE:
+		// Since the common elements are ordered identically, we can just look
+		// at the common subset for the XAV rule
 		av_data = node->data.av_data;
 		cur = ret = copy_string_list(av_data->sources);
 		if (cur) {
@@ -169,19 +171,6 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 			cur->next = copy_string_list(av_data->targets);
 		} else {
 			ret = copy_string_list(av_data->targets);
-		}
-		break;
-
-	case NODE_XAV_RULE:
-		xav_data = node->data.xav_data;
-		cur = ret = copy_string_list(xav_data->sources);
-		if (cur) {
-			while (cur->next) {
-				cur = cur->next;
-			}
-			cur->next = copy_string_list(xav_data->targets);
-		} else {
-			ret = copy_string_list(xav_data->targets);
 		}
 		break;
 
