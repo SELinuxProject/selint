@@ -179,6 +179,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_HEADER:
 		return SECTION_NON_ORDERED; // Guaranteed at top by grammar
 	case NODE_AV_RULE:
+	case NODE_XAV_RULE:
 		if (node->data.av_data->flavor == AV_RULE_NEVERALLOW) {
 			// These are somewhat of a unique situation, and the style guide
 			// doesn't mention them explicitly.  Maybe they should just group
@@ -199,22 +200,6 @@ const char *get_section(const struct policy_node *node)
 		// The case of multiple source types is weird.  For now
 		// just using the first one seems fine.
 		return node->data.av_data->sources->string;
-	case NODE_XAV_RULE:
-		if (node->data.xav_data->flavor == AV_RULE_NEVERALLOW) {
-			// These are somewhat of a unique situation, and the style guide
-			// doesn't mention them explicitly.  Maybe they should just group
-			// like other av rules, but they can often have multiple types.
-			// Additionally, the below code assumes that the first string in
-			// the sources is a type or attribute, but in the case of neverallows
-			// it can be "~"
-			return SECTION_NON_ORDERED;
-		}
-		if (node->data.xav_data->flavor == AV_RULE_AUDITALLOW) {
-			return SECTION_NON_ORDERED;
-		}
-		// The case of multiple source types is weird.  For now
-		// just using the first one seems fine.
-		return node->data.xav_data->sources->string;
 	case NODE_TT_RULE:
 		// TODO: Are type_member and type_change the same as tt
 		// from an ordering standpoint?
