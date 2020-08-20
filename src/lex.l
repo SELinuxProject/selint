@@ -104,7 +104,7 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 \! { return NOT; }
 \=\= { return EQUAL; }
 ^\#.*\n { return COMMENT; }
-\#selint\-disable\:[CSWEF]\-[0-9]+(\,[CSWEF]\-[0-9]+)*\n { yylval.string = strdup(yytext); return SELINT_COMMAND; }
+\#selint\-disable\:\ ?[CSWEF]\-[0-9]+(\,\ ?[CSWEF]\-[0-9]+)*\n { yylval.string = strdup(yytext); return SELINT_COMMAND; }
 (\#.*)?\n ;
 dnl(.*)?\n ;
 [ \t] ; /* normally skip whitespace */
