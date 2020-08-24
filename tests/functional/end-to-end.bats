@@ -22,10 +22,10 @@ do_test() {
 	local EXPECT=$3
 	local ARGS=$4
 	run ${SELINT_PATH} -s -c tmp.conf ${ARGS} ./policies/check_triggers/${FILENAME} ./policies/check_triggers/modules.conf ./policies/check_triggers/obj_perm_sets.spt
+	echo $output
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o ${CHECK_ID} | wc -l)
 	echo "Status: $status, Count: $count (expected ${EXPECT})"
-	echo $output
 	[ "$count" -eq ${EXPECT} ]
 }
 
