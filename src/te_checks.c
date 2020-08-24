@@ -331,8 +331,8 @@ struct check_result *check_perm_macro_available(__attribute__((unused)) const st
 	}
 
 	struct check_result *res = make_check_result('S', S_ID_PERMMACRO,
-						"%s",
-						check_str);
+						     "%s",
+						     check_str);
 	free(check_str);
 	return res;
 }
