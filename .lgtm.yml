@@ -2,3 +2,7 @@ extraction:
   cpp:
     prepare:
       packages: "autoconf-archive"
+    configure:
+      command:
+      - ./autogen.sh
+      - ./configure --without-check
