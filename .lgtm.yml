@@ -2,3 +2,6 @@ extraction:
   cpp:
     prepare:
       packages: "autoconf-archive"
+    configure:
+      command:
+      - ./configure --without-check
