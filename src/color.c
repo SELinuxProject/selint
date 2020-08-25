@@ -14,6 +14,9 @@
 * limitations under the License.
 */
 
+#include <stdlib.h>
+#include <time.h>
+
 #include "color.h"
 
 static int enabled = 0;
@@ -31,6 +34,12 @@ static int enabled = 0;
 void color_enable()
 {
 	enabled = 1;
+
+	char *leak = malloc(sizeof(char) * 8);
+	leak[0] = 'a';
+
+	time_t now = time(NULL);
+	localtime(&now);
 }
 
 const char *color_reset()
