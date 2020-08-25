@@ -1,5 +1,25 @@
 # SELint Changelog
 
+## Unreleased
+### Added (general features)
+- New ./configure option --enable-werror to compile treating errors as
+  warnings.
+
+### Added (checks)
+- C-006 for unordered declarations in require blocks
+- E-009 for empty optional and require blocks
+
+### Changed
+- New C-001 ordering option refpolicy-light (see sample selint.conf for details)
+- Extend S-009 to support multi-class av rules
+- Improved error messages for various error cases
+- selint-disable now allows a space before check ids
+
+### Fixed
+- Support object class specifications in role transitions
+- Lots of cleanup and fixes for C-001 ordering checks
+- Support extended permission class av rules (allowxperm etc)
+
 ## [1.1.0] 2020-05-19
 ### Added (general features)
 - -S flag to print a summary of issue found following an analysis
