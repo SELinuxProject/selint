@@ -512,7 +512,7 @@ int main(int argc, char **argv)
 		if (access_vector_path) {
 			enum selint_error res = load_access_vectors_source(access_vector_path);
 			if (res != SELINT_SUCCESS) {
-				printf("%sWarning%s: Failed to parse access_vectors: %d\n", color_warning(), color_reset(), res);
+				printf("%sWarning%s: Failed to parse access_vectors from %s: %d\n", color_warning(), color_reset(), access_vector_path, res);
 			} else {
 				print_if_verbose("Loaded classes and permissions from %s\n", access_vector_path);
 			}
@@ -524,7 +524,7 @@ int main(int argc, char **argv)
 			enum selint_error res =
 				load_modules_source(modules_conf_path);
 			if (res != SELINT_SUCCESS) {
-				printf("%sWarning%s: Failed to load modules.conf: %d\n", color_warning(), color_reset(), res);
+				printf("%sWarning%s: Failed to load modules from %s: %d\n", color_warning(), color_reset(), modules_conf_path, res);
 			} else {
 				print_if_verbose("Loaded modules from %s\n",
 				                 modules_conf_path);
@@ -537,7 +537,7 @@ int main(int argc, char **argv)
 			enum selint_error res =
 				load_obj_perm_sets_source(obj_perm_sets_path);
 			if (res != SELINT_SUCCESS) {
-				printf("%sWarning%s: Failed to load obj_perm_sets.spt: %d\n", color_warning(), color_reset(), res);
+				printf("%sWarning%s: Failed to permission and class set macros from %s: %d\n", color_warning(), color_reset(), obj_perm_sets_path, res);
 			} else {
 				print_if_verbose("Loaded permission and class set macros from %s\n",
 				                 obj_perm_sets_path);
