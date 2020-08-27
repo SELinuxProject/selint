@@ -69,7 +69,7 @@ jobs:
     - name: make check-valgrind
       run: make check-valgrind
     - name: make distcheck
-      run: make distcheck
+      run: make distcheck DISTCHECK_CONFIGURE_FLAGS=--enable-werror CFLAGS="-Wno-error=conversion -Wno-error=sign-conversion"
     - name: functional tests
       run : |
         cd ./tests/functional
