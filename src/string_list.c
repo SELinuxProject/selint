@@ -78,6 +78,16 @@ struct string_list *sl_from_strn(const char *string, size_t len)
 	return ret;
 }
 
+struct string_list *sl_from_str_consume(char *string)
+{
+	struct string_list *ret = malloc(sizeof(struct string_list));
+	ret->string = string;
+	ret->next = NULL;
+	ret->has_incorrect_space = 0;
+
+	return ret;
+}
+
 struct string_list *sl_from_strs(int count, ...)
 {
 	struct string_list *ret = NULL;
