@@ -1,4 +1,7 @@
 test1.te:             3: (F): syntax error, unexpected STRING, expecting COLON or SEMICOLON (F-001)
     3 | allow source target cls permission;
       |                     ^~~
+test1.te:             3: (F): Error: Invalid statement (F-001)
+    3 | allow source target cls permission;
+      | ^~~~~~~~~~~~~~~~~~~~~~~
 Error: Failed to parse files

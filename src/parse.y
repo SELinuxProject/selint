@@ -335,8 +335,12 @@ bare_line:
 	// Would like to do error recovery, but the best strategy seems to be to skip
 	// to next newline, which lex doesn't give us right now.
 	// Also, we would need to know in yyerror whether the error was recoverable
-	//|
-	//error { yyerrok; yyclearin;}
+	|
+	error {
+		const struct location loc = { @1.first_line, @1.first_column, @1.last_line, @1.last_column };
+		yyerror(&loc, NULL, "Error: Invalid statement");
+		YYABORT;
+		}
 	;
 
 declaration:
@@ -1108,7 +1112,13 @@ static void yyerror(const YYLTYPE *locp, __attribute__((unused)) yyscan_t scanne
 		for (unsigned i = tabs_before_hinter + 1; i < current_first_column; ++i) {
 			printf(" ");
 		}
-		printf("%s^", color_error());
+
+		if (k == lines_to_print) {
+			printf("%s^", color_error());
+		} else {
+			printf("%s~", color_error());
+		}
+
 		if (current_last_column > current_first_column) {
 			for (unsigned i = 0; i < (current_last_column - current_first_column); ++i) {
 				printf("~");
