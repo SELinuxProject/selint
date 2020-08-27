@@ -3,11 +3,11 @@ test7.if:             1: (F): Error: Unexpected te-file parsed (F-001)
     7 |   ,
       |   ^
     8 |
-      | ^
+      | ~
     9 |   0.0.1
-      |   ^~~~~
+      |   ~~~~~
    10 |
-      | ^
+      | ~
    11 |   )
-      |   ^
+      |   ~
 Error: Failed to parse files
