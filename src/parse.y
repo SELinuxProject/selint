@@ -676,7 +676,9 @@ m4_argument:
 	;
 
 arg:
-	string_list
+	xperm_list
+	|
+	QUOTED_STRING { $$ = sl_from_str_consume($1); }
 	|
 	BACKTICK strings SINGLE_QUOTE { $$ = $2; }
 	|
