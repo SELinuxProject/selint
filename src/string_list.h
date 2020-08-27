@@ -34,6 +34,10 @@ struct string_list *copy_string_list(const struct string_list *sl);
 struct string_list *sl_from_str(const char *string);
 struct string_list *sl_from_strn(const char *string, size_t len);
 
+// Return a string list with the given string as single item
+// Takes ownership of the given string
+struct string_list *sl_from_str_consume(char *string);
+
 // Return a string list with copies of the given strings
 struct string_list *sl_from_strs(int count, ...);
 

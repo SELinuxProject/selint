@@ -390,13 +390,13 @@ xperm_list:
 	|
 	TILDA xperm_list { $$ = sl_from_str("~"); $$->next = $2; }
 	|
-	xperm_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	xperm_item { $$ = sl_from_str_consume($1); }
 	;
 
 xperm_items:
 	xperm_items xperm_item { $$ = concat_string_lists($1, sl_from_str($2)); free($2); }
 	|
-	xperm_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	xperm_item { $$ = sl_from_str_consume($1); }
 	;
 
 xperm_item:
@@ -414,7 +414,7 @@ string_list:
 	|
 	TILDA string_list { $$ = sl_from_str("~"); $$->next = $2; }
 	|
-	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	sl_item { $$ = sl_from_str_consume($1); }
 	|
 	STAR { $$ = sl_from_str("*"); }
 	;
@@ -422,11 +422,11 @@ string_list:
 strings:
 	strings sl_item { $$ = concat_string_lists($1, sl_from_str($2)); free($2); }
 	|
-	sl_item { $$ = calloc(1, sizeof(struct string_list)); $$->string = $1; $$->next = NULL; }
+	sl_item { $$ = sl_from_str_consume($1); }
 	;
 
 sl_item:
-	STRING { $$ = strdup($1); free($1);}
+	STRING
 	|
 	DASH STRING { $$ = malloc(sizeof(char) * (strlen($2) + 2));
 			$$[0] = '-';
@@ -434,13 +434,13 @@ sl_item:
 			strcat($$, $2);
 			free($2);}
 	|
-	QUOTED_STRING { $$ = strdup($1); free($1);}
+	QUOTED_STRING
 	;
 
 comma_string_list:
 	comma_string_list COMMA STRING { $$ = concat_string_lists($1, sl_from_str($3)); free($3); }
 	|
-	STRING { $$ = sl_from_str($1); free($1); }
+	STRING { $$ = sl_from_str_consume($1); }
 	;
 
 role_allow:
