@@ -35,28 +35,37 @@ jobs:
         sudo apt-get update -q
     - name: install dependencies
       run: sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man clang-10
+    # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
+    # ck_assert_ptr_nonnull were added in 0.11.0
+    - name: checkout check
+      uses: actions/checkout@v2
+      with:
+        repository: libcheck/check
+        ref: 0.13.0
+        path: check
     - name: install check
       run : |
-        # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
-        # ck_assert_ptr_nonnull were added in 0.11.0
-        git clone https://github.com/libcheck/check.git --branch 0.13.0
-        cd check
+        cd check/
         autoreconf --install
         ./configure --prefix=/usr
         make
         sudo make install
         sudo ldconfig
         cd ..
-        rm -rf check
+        rm -rf check/
+    # Install bats.  Ubuntu is on 0.4.0 and the latest is 1.1.0.  This is to work around
+    # a bug with running a program multiple times in the same test
+    - name: checkout bats
+      uses: actions/checkout@v2
+      with:
+        repository: bats-core/bats-core
+        path: bats-core
     - name: install bats
       run : |
-        # Install bats.  Ubuntu is on 0.4.0 and the latest is 1.1.0.  This is to work around
-        # a bug with running a program multiple times in the same test
-        git clone https://github.com/bats-core/bats-core.git
-        cd bats-core
+        cd bats-core/
         sudo ./install.sh /usr/local
         cd ..
-        rm -rf bats-core
+        rm -rf bats-core/
     - name: autogen
       run: ./autogen.sh
     - name: configure
@@ -83,9 +92,13 @@ jobs:
         make
         cd tests/functional
         bats end-to-end.bats
+    - name: checkout refpolicy
+      uses: actions/checkout@v2
+      with:
+        repository: SELinuxProject/refpolicy
+        path: refpolicy
     - name: refpolicy parse test
       run : |
-        git clone --depth=1 https://github.com/SELinuxProject/refpolicy
         cd refpolicy/
         make conf
         ../src/selint -c ../selint.conf -s -r -e C-001 --summary-only .
