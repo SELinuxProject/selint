@@ -88,12 +88,6 @@ jobs:
       run: make check
     - name: make check-valgrind
       run: make check-valgrind
-    - name: Codecov upload
-      run: |
-        if [[ ${{ matrix.cc }} == 'gcc' ]]
-        then
-          bash <(curl -s https://codecov.io/bash)
-        fi
     - name: make distcheck
       run: make distcheck DISTCHECK_CONFIGURE_FLAGS=--enable-werror CFLAGS="-Wno-error=conversion -Wno-error=sign-conversion"
     - name: functional tests
@@ -109,6 +103,12 @@ jobs:
         make
         cd tests/functional
         bats end-to-end.bats
+    - name: Codecov upload
+      run: |
+        if [[ ${{ matrix.cc }} == 'gcc' ]]
+        then
+          bash <(curl -s https://codecov.io/bash)
+        fi
     - name: checkout refpolicy
       uses: actions/checkout@v2
       with:
@@ -119,7 +119,6 @@ jobs:
         cd refpolicy/
         make conf
         ../src/selint -c ../selint.conf -s -r -e C-001 --summary-only .
-
     - name: Release Info
       id: release_info
       run: |
