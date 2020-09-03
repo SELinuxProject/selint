@@ -207,6 +207,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/C-001/interfaces/system/init.if \
 			functional/policies/context/context.if \
 			functional/policies/context/context.te \
+			functional/policies/context2/context2.if \
+			functional/policies/context2/context2.te \
 			functional/policies/misc/disable.if \
 			functional/policies/misc/disable_multiple_other.te \
 			functional/policies/misc/disable_multiple.te \
@@ -235,15 +237,15 @@ TEST_UTILS_OBJS=$(top_builddir)/src/tree.o $(top_builddir)/src/string_list.o
 UTIL_HEADS=$(top_builddir)/src/util.h
 UTIL_OBJS=$(top_builddir)/src/util.o
 SELINT_ERROR_HEADS=$(top_builddir)/src/selint_error.h
-STRING_LIST_HEADS=$(top_builddir)/src/string_list.h
+STRING_LIST_HEADS=$(top_builddir)/src/string_list.h ${SELINT_ERROR_HEADS}
 STRING_LIST_OBJS=$(top_builddir)/src/string_list.o
 COLOR_HEADS=$(top_builddir)/src/color.h
 COLOR_OBJS=$(top_builddir)/src/color.o
 PERM_MACRO_HEADS=$(top_builddir)/src/perm_macro.h ${UTIL_HEADS} ${COLOR_HEADS}
 PERM_MACRO_OBJS=$(top_builddir)/src/perm_macro.o ${UTIL_OBJS} ${COLOR_OBJS}
-SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${SELINT_ERROR_HEADS} ${STRING_LIST_HEADS} ${TREE_HEADS} ${MAPS_HEADS} ${ORDERING_HEADS}
+SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${STRING_LIST_HEADS} ${TREE_HEADS} ${MAPS_HEADS} ${ORDERING_HEADS}
 SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${STRING_LIST_OBJS} ${TREE_OBJS} ${MAPS_OBJS} ${UTIL_OBJS}
-TREE_HEADS=$(top_builddir)/src/tree.h ${SELINT_ERROR_HEADS} ${STRING_LIST_HEADS}
+TREE_HEADS=$(top_builddir)/src/tree.h ${STRING_LIST_HEADS}
 TREE_OBJS=$(top_builddir)/src/tree.o ${STRING_LIST_OBJS} $(top_builddir)/src/maps.o
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
 FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}

@@ -177,6 +177,28 @@ START_TEST (test_concat_string_lists) {
 }
 END_TEST
 
+START_TEST (test_append_to_sl) {
+	struct string_list *list = NULL;
+
+	ck_assert_int_eq(SELINT_BAD_ARG, append_to_sl(list, "test"));
+
+	list = sl_from_str("test1");
+
+	ck_assert_int_eq(SELINT_SUCCESS, append_to_sl(list, "test2"));
+	ck_assert_int_eq(SELINT_SUCCESS, append_to_sl(list, "test3"));
+
+	ck_assert_str_eq(list->string, "test1");
+	ck_assert_ptr_nonnull(list->next);
+	ck_assert_str_eq(list->next->string, "test2");
+	ck_assert_ptr_nonnull(list->next->next);
+	ck_assert_str_eq(list->next->next->string, "test3");
+	ck_assert_ptr_null(list->next->next->next);
+
+	free_string_list(list);
+
+}
+END_TEST
+
 static Suite *string_list_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -192,6 +214,7 @@ static Suite *string_list_suite(void) {
 	tcase_add_test(tc_core, test_sl_from_strn);
 	tcase_add_test(tc_core, test_sl_from_strs);
 	tcase_add_test(tc_core, test_concat_string_lists);
+	tcase_add_test(tc_core, test_append_to_sl);
 	suite_add_tcase(s, tc_core);
 
 	return s;
