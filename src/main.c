@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 	int summary_flag = 0;
 	int fail_on_finding = 0;
 	int scan_hidden_dirs = 0;
-	char *context_path = NULL;
+	struct string_list *context_paths = NULL;
 	char color = 0;  // 0 auto, 1 off, 2 on
 
 	struct string_list *config_disabled_checks = NULL;
@@ -163,7 +163,11 @@ int main(int argc, char **argv)
 
 		case CONTEXT_ID:
 			// Specify a path for context files
-			context_path = optarg;
+			if (!context_paths) {
+				context_paths = sl_from_str(optarg);
+			} else {
+				append_to_sl(context_paths, optarg);
+			}
 			// Don't parse system devel policies if a context is given
 			source_flag = 1;
 			break;
@@ -465,8 +469,10 @@ int main(int argc, char **argv)
 
 	fts_close(ftsp);
 
-	if (context_path) {
-		paths[0] = context_path;
+	struct string_list *context_path_node = context_paths;
+
+	while (context_path_node) {
+		paths[0] = context_path_node->string;
 		paths[1] = NULL;
 
 		ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
@@ -503,8 +509,10 @@ int main(int argc, char **argv)
 		}
 
 		fts_close(ftsp);
+		context_path_node = context_path_node->next;
 	}
 
+	free_string_list(context_paths);
 	free(paths);
 
 	// Load object classes and permissions

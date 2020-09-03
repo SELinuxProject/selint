@@ -121,6 +121,21 @@ struct string_list *concat_string_lists(struct string_list *head, struct string_
 	return head;
 }
 
+enum selint_error append_to_sl(struct string_list *sl, const char *string)
+{
+	if (!sl) {
+		return SELINT_BAD_ARG;
+	}
+
+	while (sl->next) {
+		sl = sl->next;
+	}
+
+	sl->next = sl_from_str(string);
+
+	return SELINT_SUCCESS;
+}
+
 void free_string_list(struct string_list *list)
 {
 	if (list == NULL) {

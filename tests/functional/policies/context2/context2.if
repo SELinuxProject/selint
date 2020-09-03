@@ -1,0 +1,10 @@
+## <summary>Interfaces to test the --context selint flag</summary
+
+# Here is a comment to avoid selint complaining about C-004
+interface(`context2_signal',`
+	gen_require(`
+		type context2_t;
+	')
+
+	allow $1 context2_t:process signal;
+')

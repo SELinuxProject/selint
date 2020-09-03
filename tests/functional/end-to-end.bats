@@ -351,6 +351,8 @@ test_one_check() {
 	touch tmp.conf
 	do_test "W-001" "../misc/needs_context.te" 0
 	do_test "W-001" "../misc/needs_context.te" 1 "--context=policies/context"
+	do_test "W-001" "../misc/needs_context.te" 1 "--context=policies/context2"
+	do_test "W-001" "../misc/needs_context.te" 2 "--context=policies/context --context=policies/context2"
 	rm tmp.conf
 }
 

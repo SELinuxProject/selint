@@ -18,6 +18,7 @@
 #define STRING_LIST_H
 
 #include <stddef.h>
+#include "selint_error.h"
 
 struct string_list {
 	char *string;
@@ -44,6 +45,11 @@ struct string_list *sl_from_strs(int count, ...);
 // Concat two string lists, accepts NULL lists.
 // Note: freeing the returned list will free both original string lists
 struct string_list *concat_string_lists(struct string_list *head, struct string_list *tail);
+
+// Append a copy of a string on the end of the given string list
+// Note: this traverses the string list.  In performance critical
+// situations with multiple appends, you should save a pointer to the end of the list
+enum selint_error append_to_sl(struct string_list *sl, const char *string);
 
 void free_string_list(struct string_list *list);
 
