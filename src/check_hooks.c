@@ -199,8 +199,8 @@ if (node1_id == node2_id) {\
 // Return negative if n1 goes before n2, positive if n1 goes after n2 or equal if they are equivalent
 static int comp_check_nodes(const void *n1, const void *n2)
 {
-	const struct check_node *node1 = *(const struct check_node **)n1;
-	const struct check_node *node2 = *(const struct check_node **)n2;
+	const struct check_node *node1 = *(const struct check_node *const *)n1;
+	const struct check_node *node2 = *(const struct check_node *const *)n2;
 
 	int node1_id = atoi(node1->check_id + 2);
 	int node2_id = atoi(node2->check_id + 2);
