@@ -358,7 +358,7 @@ START_TEST (test_check_file_context_regex) {
 }
 END_TEST
 
-Suite *fc_checks_suite(void) {
+static Suite *fc_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

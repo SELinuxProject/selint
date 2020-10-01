@@ -200,7 +200,7 @@ START_TEST (test_increment_issues) {
 }
 END_TEST
 
-Suite *check_hooks_suite(void) {
+static Suite *check_hooks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

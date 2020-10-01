@@ -254,7 +254,7 @@ START_TEST (test_declaring_template) {
 }
 END_TEST
 
-Suite *template_suite(void) {
+static Suite *template_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

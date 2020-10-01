@@ -55,7 +55,7 @@ START_TEST (test_is_check_enabled) {
 }
 END_TEST
 
-Suite *runner_suite(void) {
+static Suite *runner_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

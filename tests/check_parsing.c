@@ -580,7 +580,7 @@ START_TEST (test_extended_perms) {
 }
 END_TEST
 
-Suite *parsing_suite(void) {
+static Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

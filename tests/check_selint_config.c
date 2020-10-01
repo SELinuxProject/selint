@@ -164,7 +164,7 @@ START_TEST (test_bad_configs) {
 }
 END_TEST
 
-Suite *selint_config_suite(void) {
+static Suite *selint_config_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

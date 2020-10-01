@@ -397,7 +397,7 @@ START_TEST (test_permmacro_files) {
 }
 END_TEST
 
-Suite *startup_suite(void) {
+static Suite *startup_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

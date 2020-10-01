@@ -250,7 +250,7 @@ START_TEST (test_permmacro_map) {
 }
 END_TEST
 
-Suite *maps_suite(void) {
+static Suite *maps_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

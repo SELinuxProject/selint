@@ -78,7 +78,7 @@ START_TEST (test_file_name_in_file_list) {
 }
 END_TEST
 
-Suite *file_list_suite(void) {
+static Suite *file_list_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

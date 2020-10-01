@@ -114,7 +114,7 @@ START_TEST (test_load_obj_perm_sets_source) {
 }
 END_TEST
 
-Suite *startup_suite(void) {
+static Suite *startup_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

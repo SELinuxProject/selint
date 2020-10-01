@@ -177,7 +177,7 @@ START_TEST (test_concat_string_lists) {
 }
 END_TEST
 
-Suite *string_list_suite(void) {
+static Suite *string_list_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 
