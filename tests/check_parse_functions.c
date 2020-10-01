@@ -491,7 +491,7 @@ START_TEST (test_insert_type_attribute) {
 }
 END_TEST
 
-Suite *parse_functions_suite(void) {
+static Suite *parse_functions_suite(void) {
 	Suite *s;
 	TCase *tc_core, *tc_blocks;
 

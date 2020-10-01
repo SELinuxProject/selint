@@ -239,7 +239,7 @@ START_TEST (test_system_r_exception) {
 }
 END_TEST
 
-Suite *if_checks_suite(void) {
+static Suite *if_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

@@ -269,7 +269,7 @@ START_TEST (test_check_attribute_interface_nameclash) {
 }
 END_TEST
 
-Suite *te_checks_suite(void) {
+static Suite *te_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

@@ -157,6 +157,7 @@ static const struct pm_ltable pm_ltable_common_file[] = {
 	{ "watch_reads",	PM_CF__UNCOVERED,	PM_CF__UNCOVERED_X },
 };
 
+unsigned short popcount(mask_t mask);
 void compute_perm_mask(const struct string_list *permissions, mask_t *mask_raw, mask_t *mask_extended);
 
 static void str_to_mask(const char *permission, mask_t *mask_raw, mask_t *mask_extended)

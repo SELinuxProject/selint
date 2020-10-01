@@ -226,7 +226,7 @@ START_TEST (test_check_for_fc_macro) {
 }
 END_TEST
 
-Suite *parse_fc_suite(void) {
+static Suite *parse_fc_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 

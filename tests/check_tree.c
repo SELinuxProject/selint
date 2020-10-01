@@ -259,7 +259,7 @@ START_TEST (test_get_types_in_node_exclusion) {
 }
 END_TEST
 
-Suite *tree_suite(void) {
+static Suite *tree_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 
