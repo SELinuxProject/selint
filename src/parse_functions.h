@@ -157,8 +157,9 @@ enum selint_error insert_xperm_av_rule(struct policy_node **cur,
 *
 * Returns - SELINT error code
 **********************************/
-enum selint_error insert_role_allow(struct policy_node **cur, const char *from_role,
-                                    const char *to_role, unsigned int lineno);
+enum selint_error insert_role_allow(struct policy_node **cur,
+                                    struct string_list *from_roles,
+                                    struct string_list *to_roles, unsigned int lineno);
 
 /**********************************
 * insert_role_types
