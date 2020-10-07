@@ -122,8 +122,8 @@ struct xav_rule_data {
 };
 
 struct role_allow_data {
-	char *from;
-	char *to;
+	struct string_list *from;
+	struct string_list *to;
 };
 
 struct role_types_data {

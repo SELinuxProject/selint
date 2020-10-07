@@ -227,8 +227,8 @@ START_TEST (test_system_r_exception) {
 
 	cur->flavor = NODE_ROLE_ALLOW;
 	cur->data.ra_data = calloc(1, sizeof(struct role_allow_data));
-	cur->data.ra_data->from = strdup("system_r");
-	cur->data.ra_data->to = strdup("staff_r");
+	cur->data.ra_data->from = sl_from_str("system_r");
+	cur->data.ra_data->to = sl_from_str("staff_r");
 
 	const struct check_data cdata = { NULL, NULL, FILE_IF_FILE, NULL };
 

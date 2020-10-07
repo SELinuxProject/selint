@@ -479,19 +479,16 @@ comma_string_list:
 	;
 
 role_allow:
-	// It is an error for this to be anything other than "ALLOW STRING STRING", but it
-	// is impossible for the parser to parse such a grammar since it doesn't know until
-	// getting to the semicolon whether to classify the tokens specifically or generically.
-	// So, we can just parse generically and then check for the failure case
-	av_type string_list string_list SEMICOLON { if ($1 != AV_RULE_ALLOW
-                                                        || $2->next != NULL
-                                                        || $3->next != NULL) {
-								free_string_list($2);
-								free_string_list($3);
+	// It is an error for av_type to be anything other than ALLOW, but specifying ALLOW here is
+	// a grammar conflict, so we leave it general in the parse rule and then check
+	av_type string_list string_list SEMICOLON { if ($1 != AV_RULE_ALLOW) {
+                                                                free_string_list($2);
+                                                                free_string_list($3);
+								const struct location loc = { @1.first_line, @1.first_column, @4.last_line, @4.last_column };
+								yyerror(&loc, NULL, "Incomplete AV rule");
 								YYERROR; }
-	                                            insert_role_allow(&cur, $2->string, $3->string, @$.first_line);
-	                                            free_string_list($2);
-	                                            free_string_list($3);}
+	                                            insert_role_allow(&cur, $2, $3, @$.first_line);
+	                                          }
 	;
 
 role_types:

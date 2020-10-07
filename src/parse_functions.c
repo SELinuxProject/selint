@@ -276,13 +276,14 @@ enum selint_error insert_xperm_av_rule(struct policy_node **cur,
 }
 
 
-enum selint_error insert_role_allow(struct policy_node **cur, const char *from_role,
-                                    const char *to_role, unsigned int lineno)
+enum selint_error insert_role_allow(struct policy_node **cur,
+                                    struct string_list *from_roles,
+                                    struct string_list *to_roles, unsigned int lineno)
 {
 	struct role_allow_data *ra_data = malloc(sizeof(struct role_allow_data));
 
-	ra_data->from = strdup(from_role);
-	ra_data->to = strdup(to_role);
+	ra_data->from = from_roles;
+	ra_data->to = to_roles;
 
 	union node_data nd;
 	nd.ra_data = ra_data;

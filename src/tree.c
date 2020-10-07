@@ -233,7 +233,11 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 
 	case NODE_ROLE_ALLOW:
 		ra_data = node->data.ra_data;
-		ret = sl_from_strs(2, ra_data->from, ra_data->to);
+		cur = ret = copy_string_list(ra_data->from);
+		while (cur->next) {
+			cur = cur->next;
+		}
+		cur->next = copy_string_list(ra_data->to);
 		break;
 
 	case NODE_ROLE_TYPES:
@@ -475,8 +479,8 @@ enum selint_error free_ra_data(struct role_allow_data *to_free)
 		return SELINT_BAD_ARG;
 	}
 
-	free(to_free->from);
-	free(to_free->to);
+	free_string_list(to_free->from);
+	free_string_list(to_free->to);
 	free(to_free);
 
 	return SELINT_SUCCESS;

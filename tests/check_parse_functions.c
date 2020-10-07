@@ -214,13 +214,19 @@ START_TEST (test_insert_role_allow) {
 
 	struct policy_node *head = cur;
 
-	ck_assert_int_eq(SELINT_SUCCESS, insert_role_allow(&cur, "staff_r", "dbadm_r", 20));
+	struct string_list *sl1 = sl_from_str("staff_r");
+	struct string_list *sl2 = sl_from_str("dbadm_r");
+
+	ck_assert_int_eq(SELINT_SUCCESS, insert_role_allow(&cur, sl1, sl2, 20));
 
 	ck_assert_ptr_nonnull(cur);
 	ck_assert_int_eq(NODE_ROLE_ALLOW, cur->flavor);
+
 	struct role_allow_data *ra = cur->data.ra_data;
-	ck_assert_str_eq("staff_r", ra->from);
-	ck_assert_str_eq("dbadm_r", ra->to);
+	ck_assert_str_eq("staff_r", ra->from->string);
+	ck_assert_ptr_null(ra->from->next);
+	ck_assert_str_eq("dbadm_r", ra->to->string);
+	ck_assert_ptr_null(ra->to->next);
 
 	free_policy_node(head);
 
