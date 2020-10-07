@@ -160,6 +160,7 @@
 %type<string> mls_range
 %type<string> mls_level
 %type<string> mls_component
+%type<string> maybe_string_comma
 %type<av_flavor> av_type
 %type<av_flavor> xperm_av_type
 %type<node_flavor> if_keyword
@@ -806,8 +807,16 @@ define:
 	DEFINE OPEN_PAREN m4_args CLOSE_PAREN
 	;
 
+maybe_string_comma:
+	STRING COMMA { $$ = $1; }
+	|
+	COMMA { $$ = strdup(""); }
+	;
+
 gen_user:
-	GEN_USER OPEN_PAREN args CLOSE_PAREN { free_string_list($3); }
+	GEN_USER OPEN_PAREN maybe_string_comma maybe_string_comma strings COMMA mls_range COMMA mls_range CLOSE_PAREN { free($3); free($4); free_string_list($5); free($7); free($9); }
+	|
+	GEN_USER OPEN_PAREN maybe_string_comma maybe_string_comma strings COMMA mls_range COMMA mls_range COMMA mls_range CLOSE_PAREN { free($3); free($4); free_string_list($5); free($7); free($9); free($11); }
 	;
 
 context:
