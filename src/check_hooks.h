@@ -26,6 +26,7 @@ enum convention_ids {
 	C_ID_IF_COMMENT     = 4,
 	C_ID_UNORDERED_PERM = 5,
 	C_ID_UNORDERED_REQ  = 6,
+	C_ID_SELF           = 7,
 	C_END
 };
 

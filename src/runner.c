@@ -138,6 +138,12 @@ struct checks *register_checks(char level,
 			add_check(NODE_GEN_REQ, ck, "C-006",
 			          check_unordered_declaration_in_require);
 		}
+		if (CHECK_ENABLED("C-007")) {
+			add_check(NODE_AV_RULE, ck, "C-007",
+			          check_no_self);
+			add_check(NODE_XAV_RULE, ck, "C-007",
+			          check_no_self);
+		}
 		// FALLTHRU
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {

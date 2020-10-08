@@ -156,6 +156,7 @@ CHECK IDS
 	C-004: Interface does not have documentation comment
 	C-005: Permissions in av rule or class declaration not ordered
 	C-006: Declarations in require block not ordered
+	C-007: Redudant type specification instead of self keyword
 
 	S-001: Require block used instead of interface call
 	S-002: File context file labels with type not declared in module

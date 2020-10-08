@@ -45,6 +45,19 @@ struct check_result *check_te_order(const struct check_data *data,
 struct check_result *check_unordered_perms(const struct check_data *data,
                                            const struct policy_node *node);
 
+
+/*********************************************
+* Check for av rules which could use the self keyword but do not.
+* Note that "av_rule attr_name self:..." and "av_rule attr_name attr_name:..."
+* Are not identical in behavior, so this should only detect types, not
+* attributes.
+* data - metadata about the file currently being scanned
+* node - the node to check
+* returns NULL if passed or check_result for issue C-007
+*********************************************/
+struct check_result *check_no_self(const struct check_data *data,
+                                   const struct policy_node *node);
+
 /*********************************************
 * Check for the presence of require blocks in TE files.
 * Interface calls are to be preferred.
