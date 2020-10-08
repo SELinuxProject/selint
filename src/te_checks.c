@@ -140,6 +140,36 @@ struct check_result *check_unordered_perms(__attribute__((unused)) const struct 
 
 }
 
+struct check_result *check_no_self(__attribute__((unused)) const struct check_data *data,
+                                   const struct policy_node *node)
+{
+	if (node->flavor != NODE_AV_RULE && node->flavor != NODE_XAV_RULE) {
+		return alloc_internal_error("Bad node type given to check C-007");
+	}
+	struct av_rule_data *av_data = node->data.av_data;
+
+	if (av_data->sources->next ||
+	    av_data->targets->next ||
+	    0 == strcmp(av_data->targets->string, "self") ||
+	    0 != strcmp(av_data->sources->string, av_data->targets->string)) {
+		return NULL;
+	}
+
+	if (av_data->sources->string[0] == '$') {
+		// On variables, we skip unless they are "_t" suffixed
+		if (!ends_with(av_data->sources->string, strlen(av_data->sources->string), "_t", 2)) {
+			return NULL;
+		}
+	} else if (!look_up_in_decl_map(av_data->sources->string, DECL_TYPE)) {
+		// skip attributes
+		return NULL;
+	}
+
+	return make_check_result('C', C_ID_SELF,
+	                         "Recommend use of self keyword instead of redundant type");
+
+}
+
 struct check_result *check_require_block(const struct check_data *data,
                                          const struct policy_node *node)
 {

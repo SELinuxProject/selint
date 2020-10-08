@@ -1,0 +1,5 @@
+template(`foo',`
+	allow $1_t $1_t:process signal;
+	allow $2_t self:process signal;
+	allow $1 $1:fd use; # No issue because $1 might be an attribute
+')

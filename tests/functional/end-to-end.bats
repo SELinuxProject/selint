@@ -146,6 +146,11 @@ test_parse_error_impl() {
 	test_one_check_expect "C-006" "c06.warn.if" 5
 }
 
+@test "C-007" {
+	test_one_check "C-007" "c07.te"
+	test_one_check "C-007" "c07.if"
+}
+
 @test "S-001" {
 	test_one_check "S-001" "s01.te"
 }
