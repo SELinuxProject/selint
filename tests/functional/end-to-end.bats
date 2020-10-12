@@ -92,6 +92,8 @@ test_parse_error_run() {
 	test_parse_error_impl $USE_VALGRIND test6_tmp.if test6.output
 
 	test_parse_error_impl $USE_VALGRIND test7.if test7.output
+
+	test_parse_error_impl $USE_VALGRIND test8.te test8.output
 }
 
 test_parse_error_impl() {

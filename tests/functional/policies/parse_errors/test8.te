@@ -1,0 +1,3 @@
+policy_module(test8, 1.0)
+
+dontaudit system_r auditadm_r;

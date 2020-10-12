@@ -230,7 +230,9 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/parse_errors/test5.output \
 			functional/policies/parse_errors/test6.output \
 			functional/policies/parse_errors/test7.if \
-			functional/policies/parse_errors/test7.output
+			functional/policies/parse_errors/test7.output \
+			functional/policies/parse_errors/test8.te \
+			functional/policies/parse_errors/test8.output
 
 EXTRA_DIST = ${AV_FILE_PERM_FILES} ${AV_SOCKET_PERM_FILES} ${AV_X_CURSOR_PERM_FILES} ${SAMPLE_CONFIG_FILES} ${SAMPLE_POLICY_FILES} ${FUNCTIONAL_TEST_FILES}
 
