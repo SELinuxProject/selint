@@ -311,9 +311,9 @@ struct check_result *make_check_result(char severity, unsigned int check_id,
 	va_start(args, format);
 
 	if (vasprintf(&res->message, format, args) == -1) {
-		free(res);
-		res = alloc_internal_error(
-			"Failed to generate check result message");
+		res->severity = 'F';
+		res->check_id = F_ID_INTERNAL;
+		res->message = strdup("Failed to generate check result message");
 	}
 
 	va_end(args);
