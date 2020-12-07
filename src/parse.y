@@ -308,6 +308,8 @@ bare_line:
 	|
 	m4_call
 	|
+	m4_simple_macro
+	|
 	cond_expr
 	|
 	genfscon
@@ -616,6 +618,10 @@ require_bare:
 	COMMENT
 	;
 
+m4_simple_macro:
+	STRING { free($1); }
+	;
+
 m4_call:
 	ifdef
 	|
@@ -701,8 +707,6 @@ m4_argument:
 	BACKTICK SINGLE_QUOTE
 	|
 	BACKTICK lines SINGLE_QUOTE
-	|
-	BACKTICK strings SINGLE_QUOTE { free_string_list($2); }
 	|
 	STRING { free($1); }
 	;
