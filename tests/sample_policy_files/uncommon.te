@@ -109,3 +109,13 @@ xperm_macro(foo_t, bar_t, 0x1234)
 xperm_macro(foo_t, bar_t, { 0x5000 - 0x50ff 1234 })
 
 gen_user(my_user_u,, some_role_r, s0, s0 - mls_systemhigh, mcs_allcats)
+
+bare_word
+bare_word;
+ifdef(`foo',`
+	bare_word
+')
+ifdef(`foo',`
+	# comment
+	bare_word
+')
