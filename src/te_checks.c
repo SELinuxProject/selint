@@ -776,6 +776,17 @@ struct check_result *check_empty_block(__attribute__((unused)) const struct chec
 				 "Empty block found");
 }
 
+static const struct policy_node *is_ifelse_argument(const struct policy_node *cur)
+{
+	for(; cur && cur->parent; cur = cur->parent) {
+		if (cur->flavor == NODE_M4_ARG && cur->parent->flavor == NODE_IFELSE) {
+			return cur;
+		}
+	}
+
+	return NULL;
+}
+
 struct check_result *check_stray_word(const struct check_data
 				      *data,
 				      const struct policy_node
@@ -785,6 +796,22 @@ struct check_result *check_stray_word(const struct check_data
 
 	if (str_in_sl(macro_name, data->config_check_data->custom_te_simple_macros)) {
 		return NULL;
+	}
+
+	// ignore comparison arguments to ifelse
+	// (do not ignore last node of block, which is never a comparison argument)
+	const struct policy_node *ifelse_arument = is_ifelse_argument(node);
+	if (ifelse_arument && ifelse_arument->next) {
+		int position = 0;
+		for (const struct policy_node *cur = ifelse_arument; cur->prev; cur = cur->prev) {
+			position++;
+		}
+
+		position = position % 3;
+
+		if ((position == 1 || position == 2)) {
+			return NULL;
+		}
 	}
 
 	return make_check_result('E', E_ID_STRAY_WORD,

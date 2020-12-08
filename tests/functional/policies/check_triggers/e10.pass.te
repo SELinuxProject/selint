@@ -8,7 +8,14 @@ ifdef(`foo',`
 ')
 
 ifelse(`bar', `true', `
-    allow source target:cls perm1;
-',`$2', `true', `
-    allow source target:cls perm2;
+    ignored_bare_word
+',`$2', true, `
+    ignored_bare_word
+')
+
+ifelse(`bar', `true', `
+    ignored_bare_word
+',`$2', true, `
+    ignored_bare_word', `
+    ignored_bare_word
 ')

@@ -8,3 +8,16 @@ ifdef(`foo',`
 	# comment
 	bare_word
 ')
+
+ifelse(`bar', `true', `
+    bare_word
+',`$2', `true', `
+    bare_word
+')
+
+ifelse(`bar', `true', `
+    bare_word
+',`$2', `true', `
+    bare_word', `
+    bare_word
+')
