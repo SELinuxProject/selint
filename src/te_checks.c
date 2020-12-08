@@ -775,3 +775,13 @@ struct check_result *check_empty_block(__attribute__((unused)) const struct chec
 	return make_check_result('E', E_ID_EMPTY_BLOCK,
 				 "Empty block found");
 }
+
+struct check_result *check_stray_word(__attribute__((unused)) const struct check_data
+				      *data,
+				      const struct policy_node
+				      *node)
+{
+	return make_check_result('E', E_ID_STRAY_WORD,
+				 "Found stray word %s. If it is a simple m4 macro please add an override.",
+				 node->data.str);
+}

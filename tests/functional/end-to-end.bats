@@ -265,6 +265,10 @@ test_parse_error_impl() {
 	test_one_check_expect "E-009" "e09.te" 4
 }
 
+@test "E-010" {
+	test_one_check_expect "E-010" "e10.te" 4
+}
+
 @test "assume_user" {
 	touch tmp.conf
 	do_test "E-003" "e03e04e05.fc" 1 "-e E-003"

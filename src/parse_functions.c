@@ -511,6 +511,24 @@ enum selint_error insert_semicolon(struct policy_node **cur, unsigned int lineno
 	return SELINT_SUCCESS;
 }
 
+enum selint_error insert_m4simplemacro(struct policy_node **cur, char *name, unsigned int lineno)
+{
+
+	union node_data nd;
+	nd.str = name;
+
+	enum selint_error ret = insert_policy_node_next(*cur,
+	                                                NODE_M4_SIMPLE_MACRO,
+	                                                nd,
+	                                                lineno);
+	if (ret != SELINT_SUCCESS) {
+		return ret;
+	}
+
+	*cur = (*cur)->next;
+	return SELINT_SUCCESS;
+}
+
 static enum selint_error begin_block(struct policy_node **cur,
                               enum node_flavor block_type, union node_data nd,
                               unsigned int lineno)
