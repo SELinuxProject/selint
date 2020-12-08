@@ -87,6 +87,7 @@ IGNORE_CONST_DISCARD_BEGIN;
 		CFG_STR_LIST("assume_users",             "{}",            CFGF_NONE),
 		CFG_STR_LIST("assume_roles",             "{}",            CFGF_NONE),
 		CFG_STR_LIST("custom_fc_macros",         "{}",            CFGF_NONE),
+		CFG_STR_LIST("custom_te_simple_macros",  "{}",            CFGF_NONE),
 		CFG_STR("ordering_rules",                "refpolicy-lax", CFGF_NONE),
 		CFG_STR_LIST("ordering_requires",        "{ bool, class, role, attribute_role, attribute, type }", CFGF_NONE),
 		CFG_STR("ordering_requires_same_flavor", "true",          CFGF_NONE),
@@ -106,7 +107,7 @@ IGNORE_CONST_DISCARD_END;
 		return SELINT_CONFIG_PARSE_ERROR;
 	}
 	// Not specified on command line.  Read from config
-	char *config_severity = cfg_getstr(cfg, "severity");
+	const char *config_severity = cfg_getstr(cfg, "severity");
 
 	if (strcmp(config_severity, "convention") == 0) {
 		*severity = 'C';
@@ -142,7 +143,9 @@ IGNORE_CONST_DISCARD_END;
 
 	READ_STRING_LIST_FROM_CONFIG(custom_fc_macros, "custom_fc_macros");
 
-	char *config_ordering_rules = cfg_getstr(cfg, "ordering_rules");
+	READ_STRING_LIST_FROM_CONFIG(&(config_check_data->custom_te_simple_macros), "custom_te_simple_macros");
+
+	const char *config_ordering_rules = cfg_getstr(cfg, "ordering_rules");
 
 	if (strcmp(config_ordering_rules, "refpolicy") == 0) {
 		config_check_data->order_conf = ORDER_REF;
@@ -236,4 +239,13 @@ IGNORE_CONST_DISCARD_END;
 	cfg_free(cfg);
 
 	return SELINT_SUCCESS;
+}
+
+void free_selint_config(struct config_check_data *config_check_data)
+{
+	if (!config_check_data) {
+		return;
+	}
+
+	free_string_list(config_check_data->custom_te_simple_macros);
 }

@@ -1,0 +1,14 @@
+policy_module(e10_pass, 1.0)
+
+ignored_bare_word
+
+ifdef(`foo',`
+	# comment
+	ignored_bare_word
+')
+
+ifelse(`bar', `true', `
+    allow source target:cls perm1;
+',`$2', `true', `
+    allow source target:cls perm2;
+')

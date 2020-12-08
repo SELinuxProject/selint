@@ -35,6 +35,7 @@ struct config_check_data {
 	enum decl_flavor order_requires[6];
 	bool ordering_requires_same_flavor;
 	bool skip_checking_generated_fcs;
+	struct string_list *custom_te_simple_macros;
 };
 
 /*******************************************************************
@@ -48,5 +49,7 @@ enum selint_error parse_config(const char *config_filename,
                                struct string_list **config_enabled_checks,
                                struct string_list **custom_fc_macros,
                                struct config_check_data *config_check_data);
+
+void free_selint_config(struct config_check_data *config_check_data);
 
 #endif

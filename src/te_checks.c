@@ -776,12 +776,18 @@ struct check_result *check_empty_block(__attribute__((unused)) const struct chec
 				 "Empty block found");
 }
 
-struct check_result *check_stray_word(__attribute__((unused)) const struct check_data
+struct check_result *check_stray_word(const struct check_data
 				      *data,
 				      const struct policy_node
 				      *node)
 {
+	const char *macro_name = node->data.str;
+
+	if (str_in_sl(macro_name, data->config_check_data->custom_te_simple_macros)) {
+		return NULL;
+	}
+
 	return make_check_result('E', E_ID_STRAY_WORD,
-				 "Found stray word %s. If it is a simple m4 macro please add an override.",
-				 node->data.str);
+				 "Found stray word %s. If it is a simple m4 macro please add an selint-disable comment or ignore in the SELint configuration file.",
+				 macro_name);
 }

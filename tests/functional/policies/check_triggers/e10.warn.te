@@ -1,8 +1,8 @@
-policy_module(e10, 1.0)
+policy_module(e10_warn, 1.0)
 
 bare_word
 
-bar word
+bare word
 
 ifdef(`foo',`
 	# comment
