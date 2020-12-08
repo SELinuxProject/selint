@@ -269,7 +269,7 @@ test_parse_error_impl() {
 }
 
 @test "E-010" {
-	test_one_check_expect "E-010" "e10.warn.te" 4
+	test_one_check_expect "E-010" "e10.warn.te" 9
 	test_one_check_expect "E-010" "e10.pass.te" 0
 }
 
