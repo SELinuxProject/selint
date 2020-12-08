@@ -35,6 +35,9 @@ test_one_check_expect() {
 	local EXPECT=$3
 
 	echo "disable = { $CHECK_ID } " > tmp.conf
+	# E-010
+	echo "custom_te_simple_macros = { ignored_bare_word }" >> tmp.conf
+
 	do_test ${CHECK_ID} ${FILENAME} 0
 
 	echo "enable_source = { $CHECK_ID }" >> tmp.conf
@@ -266,7 +269,8 @@ test_parse_error_impl() {
 }
 
 @test "E-010" {
-	test_one_check_expect "E-010" "e10.te" 4
+	test_one_check_expect "E-010" "e10.warn.te" 4
+	test_one_check_expect "E-010" "e10.pass.te" 0
 }
 
 @test "assume_user" {
