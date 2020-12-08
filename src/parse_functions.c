@@ -701,6 +701,18 @@ enum selint_error end_ifdef(struct policy_node **cur)
 	return end_block(cur, NODE_IFDEF);
 }
 
+enum selint_error begin_ifelse(struct policy_node **cur, unsigned int lineno)
+{
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_IFELSE, nd, lineno);
+}
+
+enum selint_error end_ifelse(struct policy_node **cur)
+{
+	return end_block(cur, NODE_IFELSE);
+}
+
 enum selint_error save_command(struct policy_node *cur, const char *comm)
 {
 	if (comm == NULL || cur == NULL) {

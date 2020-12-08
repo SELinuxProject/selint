@@ -644,7 +644,7 @@ if_or_ifn:
 	;
 
 ifelse:
-	IFELSE OPEN_PAREN m4_args CLOSE_PAREN
+	IFELSE OPEN_PAREN { begin_ifelse(&cur, @$.first_line); } m4_args CLOSE_PAREN { end_ifelse(&cur); }
 	;
 
 refpolicywarn:
