@@ -233,6 +233,7 @@ const char *get_section(const struct policy_node *node)
 	case NODE_BOOLEAN_POLICY:
 	case NODE_TUNABLE_POLICY:
 	case NODE_IFDEF:
+	case NODE_IFELSE:
 		return get_section(node->first_child);
 	case NODE_M4_ARG:
 		return SECTION_NON_ORDERED; //TODO
@@ -451,7 +452,8 @@ static bool is_optional(const struct policy_node *node)
 			ret = true;
 		} else if (node->flavor == NODE_BOOLEAN_POLICY ||
 		           node->flavor == NODE_TUNABLE_POLICY ||
-		           node->flavor == NODE_IFDEF) {
+		           node->flavor == NODE_IFDEF ||
+		           node->flavor == NODE_IFELSE) {
 			ret = false;
 		}
 		node = node->parent;
@@ -468,7 +470,8 @@ static bool is_boolean(const struct policy_node *node)
 		} else if (node->flavor == NODE_TUNABLE_POLICY ||
 		           node->flavor == NODE_OPTIONAL_POLICY ||
 		           node->flavor == NODE_OPTIONAL_ELSE ||
-		           node->flavor == NODE_IFDEF) {
+		           node->flavor == NODE_IFDEF ||
+		           node->flavor == NODE_IFELSE) {
 			ret = false;
 		}
 		node = node->parent;
@@ -485,7 +488,8 @@ static bool is_tunable(const struct policy_node *node)
 		} else if (node->flavor == NODE_BOOLEAN_POLICY ||
 		           node->flavor == NODE_OPTIONAL_POLICY ||
 		           node->flavor == NODE_OPTIONAL_ELSE ||
-		           node->flavor == NODE_IFDEF) {
+		           node->flavor == NODE_IFDEF ||
+		           node->flavor == NODE_IFELSE) {
 			ret = false;
 		}
 		node = node->parent;
@@ -497,7 +501,8 @@ static bool is_in_ifdef(const struct policy_node *node)
 {
 	bool ret = false;
 	while (node) {
-		if (node->flavor == NODE_IFDEF) {
+		if (node->flavor == NODE_IFDEF ||
+		    node->flavor == NODE_IFELSE) {
 			ret = true;
 		} else if (node->flavor == NODE_OPTIONAL_POLICY ||
 		           node->flavor == NODE_OPTIONAL_ELSE ||
