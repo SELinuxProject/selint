@@ -619,7 +619,7 @@ require_bare:
 	;
 
 m4_simple_macro:
-	STRING { free($1); }
+	STRING { insert_m4simplemacro(&cur, $1, @$.first_line); }
 	;
 
 m4_call:

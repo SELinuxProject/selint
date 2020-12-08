@@ -1,0 +1,10 @@
+policy_module(e10, 1.0)
+
+bare_word
+
+bar word
+
+ifdef(`foo',`
+	# comment
+	bare_word
+')

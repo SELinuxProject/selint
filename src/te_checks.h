@@ -243,4 +243,16 @@ struct check_result *check_empty_block(const struct check_data
                                        const struct policy_node
                                        *node);
 
+/*********************************************
+ * Check for stray words.
+ * Called on NODE_M4_SIMPLE_MACRO nodes.
+ * data - metadata about the file currently being scanned
+ * node - the node to check
+ * returns NULL if passed or check_result for issue E-010
+*********************************************/
+struct check_result *check_stray_word(const struct check_data
+                                      *data,
+                                      const struct policy_node
+                                      *node);
+
 #endif

@@ -279,6 +279,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_GEN_REQ, ck, "E-009", check_empty_block);
 			add_check(NODE_REQUIRE, ck, "E-009", check_empty_block);
 		}
+		if (CHECK_ENABLED("E-010")) {
+			add_check(NODE_M4_SIMPLE_MACRO, ck, "E-010",
+				  check_stray_word);
+		}
 	case 'F':
 		break;
 	default:
