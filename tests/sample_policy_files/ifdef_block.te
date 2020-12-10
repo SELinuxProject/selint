@@ -1,0 +1,21 @@
+policy_module(ifdef_block, 1.0)
+
+ifelse(`bool1', `true', `
+    # comment
+    allow source1 target1:cls perm1;
+
+    # comment
+    allow source1 target1:cls perm2;
+', `bool2', `true', `
+    # comment
+    allow source2 target2:cls perm1;
+
+    # comment
+    allow source2 target2:cls perm2;
+', `
+    # comment
+    allow source3 target3:cls perm1;
+
+    # comment
+    allow source3 target3:cls perm2;
+')

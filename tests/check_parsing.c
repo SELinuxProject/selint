@@ -32,6 +32,7 @@
 #define DISABLE_COMMENT_FILENAME POLICIES_DIR "disable_comment.te"
 #define BOOL_DECLARATION_FILENAME POLICIES_DIR "bool_declarations.te"
 #define EXTENDED_TE_FILENAME POLICIES_DIR "extended_perms.te"
+#define IFDEF_BLOCK_FILENAME POLICIES_DIR "ifdef_block.te"
 
 START_TEST (test_parse_basic_te) {
 
@@ -580,6 +581,241 @@ START_TEST (test_extended_perms) {
 }
 END_TEST
 
+START_TEST (test_parse_ifdef) {
+
+	set_current_module_name("ifdef_block");
+
+	FILE *f = fopen(IFDEF_BLOCK_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	struct policy_node *ast = yyparse_wrapper(f, IFDEF_BLOCK_FILENAME, NODE_TE_FILE);
+	const struct policy_node *current = ast;
+	const struct policy_node *ifelse_block;
+
+	ck_assert_ptr_nonnull(current);
+	ck_assert_int_eq(NODE_TE_FILE, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_HEADER, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_IFELSE, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_null(current->next);
+	ifelse_block = current;
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_M4_ARG, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
+	ck_assert_str_eq("bool1", current->data.str);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent->next;
+
+	ck_assert_int_eq(NODE_M4_ARG, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
+	ck_assert_str_eq("true", current->data.str);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent->next;
+
+	ck_assert_int_eq(NODE_M4_ARG, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_str_eq("source1", current->data.av_data->sources->string);
+	ck_assert_str_eq("perm1", current->data.av_data->perms->string);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_str_eq("source1", current->data.av_data->sources->string);
+	ck_assert_str_eq("perm2", current->data.av_data->perms->string);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent->next;
+
+	ck_assert_int_eq(NODE_M4_ARG, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
+	ck_assert_str_eq("bool2", current->data.str);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent->next;
+
+	ck_assert_int_eq(NODE_M4_ARG, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
+	ck_assert_str_eq("true", current->data.str);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent->next;
+
+	ck_assert_int_eq(NODE_M4_ARG, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_str_eq("source2", current->data.av_data->sources->string);
+	ck_assert_str_eq("perm1", current->data.av_data->perms->string);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_str_eq("source2", current->data.av_data->sources->string);
+	ck_assert_str_eq("perm2", current->data.av_data->perms->string);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent->next;
+
+	ck_assert_int_eq(NODE_M4_ARG, current->flavor);
+	ck_assert_ptr_nonnull(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->first_child;
+
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_str_eq("source3", current->data.av_data->sources->string);
+	ck_assert_str_eq("perm1", current->data.av_data->perms->string);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_nonnull(current->next);
+
+	current = current->next;
+
+	ck_assert_int_eq(NODE_AV_RULE, current->flavor);
+	ck_assert_str_eq("source3", current->data.av_data->sources->string);
+	ck_assert_str_eq("perm2", current->data.av_data->perms->string);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent;
+
+	ck_assert_ptr_null(current->next);
+
+	current = current->parent;
+
+	ck_assert_ptr_eq(ifelse_block, current);
+	ck_assert_ptr_null(current->next);
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(f);
+
+}
+END_TEST
+
 static Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -599,6 +835,7 @@ static Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_bool_declarations);
 	tcase_add_test(tc_core, test_file_flavor_mismatch);
 	tcase_add_test(tc_core, test_extended_perms);
+	tcase_add_test(tc_core, test_parse_ifdef);
 	suite_add_tcase(s, tc_core);
 
 	return s;
