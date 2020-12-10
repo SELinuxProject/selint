@@ -315,6 +315,10 @@ enum selint_error begin_ifelse(struct policy_node **cur, unsigned int lineno);
 
 enum selint_error end_ifelse(struct policy_node **cur);
 
+enum selint_error begin_m4_argument(struct policy_node **cur, unsigned int lineno);
+
+enum selint_error end_m4_argument(struct policy_node **cur);
+
 /**********************************
 * save_command
 * Save an selint control command in the tree.  These go at the end of lines

@@ -713,6 +713,18 @@ enum selint_error end_ifelse(struct policy_node **cur)
 	return end_block(cur, NODE_IFELSE);
 }
 
+enum selint_error begin_m4_argument(struct policy_node **cur, unsigned int lineno)
+{
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_M4_ARG, nd, lineno);
+}
+
+enum selint_error end_m4_argument(struct policy_node **cur)
+{
+	return end_block(cur, NODE_M4_ARG);
+}
+
 enum selint_error save_command(struct policy_node *cur, const char *comm)
 {
 	if (comm == NULL || cur == NULL) {

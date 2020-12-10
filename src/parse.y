@@ -698,9 +698,9 @@ condition:
 	;
 
 m4_args:
-	m4_argument
+	{ begin_m4_argument(&cur, @$.first_line); } m4_argument { end_m4_argument(&cur); }
 	|
-	m4_args COMMA m4_argument
+	m4_args COMMA { begin_m4_argument(&cur, @$.first_line); } m4_argument { end_m4_argument(&cur); }
 	;
 
 m4_argument:
