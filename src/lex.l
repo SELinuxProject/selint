@@ -70,6 +70,7 @@ void reset_current_lines(void) {
                 YY_FATAL_ERROR("Error reading input");                           \
             }                                                                    \
             _avail = 0;                                                          \
+            current_lines[line_cache_index][0] = '\0';                           \
         } else {                                                                 \
             _avail = (size_t)_res;                                               \
         }                                                                        \
