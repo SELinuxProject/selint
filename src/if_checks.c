@@ -415,10 +415,16 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 		if (cur->first_child) {
 			cur = cur->first_child;
 			depth++;
-		} else if (!cur->next && depth > 0 && cur->parent) {
-			cur = cur->parent->next;
-			depth--;
+		} else if (cur->next) {
+			cur = cur->next;
 		} else {
+			while (cur->parent && depth > 0) {
+				cur = cur->parent;
+				depth--;
+				if (cur->next) {
+					break;
+				}
+			}
 			cur = cur->next;
 		}
 	}
