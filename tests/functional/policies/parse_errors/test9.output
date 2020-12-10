@@ -1,0 +1,9 @@
+test9.te:             4: (F): syntax error, unexpected end of file, expecting BACKTICK (F-001)
+    4 |
+      | ^
+test9.te:             3: (F): Error: Invalid statement (F-001)
+    3 | ifdef(
+      | ^~~~~~
+    4 |
+      | ~
+Error: Failed to parse files

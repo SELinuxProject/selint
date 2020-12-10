@@ -94,6 +94,8 @@ test_parse_error_run() {
 	test_parse_error_impl $USE_VALGRIND test7.if test7.output
 
 	test_parse_error_impl $USE_VALGRIND test8.te test8.output
+
+	test_parse_error_impl $USE_VALGRIND test9.te test9.output
 }
 
 test_parse_error_impl() {
@@ -111,7 +113,7 @@ test_parse_error_impl() {
 		local EXPECTED_OUTPUT=$(cat ./policies/parse_errors/${OUTPUT_FILENAME})
 		echo ${EXPECTED_OUTPUT}
 		# compatibility for different bison versions and ignore NOTE output
-		local NORMALIZED_OUTPUT=$(grep -vE '^Note: ' <<< "${output/, expecting \$end/, expecting end of file}")
+		local NORMALIZED_OUTPUT=$(grep -vE '^Note: ' <<< "${output/ \$end/ end of file}")
 		echo ${NORMALIZED_OUTPUT}
 		[ "${NORMALIZED_OUTPUT}" == "${EXPECTED_OUTPUT}" ]
 	fi
