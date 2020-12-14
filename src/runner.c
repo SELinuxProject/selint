@@ -14,10 +14,12 @@
 * limitations under the License.
 */
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <libgen.h>
 
+#include "color.h"
 #include "runner.h"
 #include "fc_checks.h"
 #include "if_checks.h"
@@ -40,7 +42,7 @@ struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor
 
 	FILE *f = fopen(filename, "r");
 	if (!f) {
-		printf("Error opening %s\n", filename);
+		printf("%sError%s: Failed to open %s: %s\n", color_error(), color_reset(), filename, strerror(errno));
 		return NULL;
 	}
 
