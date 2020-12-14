@@ -69,6 +69,7 @@ enum error_ids {
 	E_ID_UNKNOWN_CLASS     = 8,
 	E_ID_EMPTY_BLOCK       = 9,
 	E_ID_STRAY_WORD        = 10,
+	E_ID_FC_DUPLICATE_ENTRY = 11,
 	E_END
 };
 

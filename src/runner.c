@@ -289,7 +289,10 @@ struct checks *register_checks(char level,
 		}
 		if (CHECK_ENABLED("E-010")) {
 			add_check(NODE_M4_SIMPLE_MACRO, ck, "E-010",
-				  check_stray_word);
+			          check_stray_word);
+		}
+		if (CHECK_ENABLED("E-011")) {
+			add_check(NODE_FC_ENTRY, ck, "E-011", check_file_contexts_duplicate_entry);
 		}
 	case 'F':
 		break;

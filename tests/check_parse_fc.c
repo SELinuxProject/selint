@@ -20,6 +20,7 @@
 
 #include "../src/tree.h"
 #include "../src/parse_fc.h"
+#include "../src/maps.h"
 
 #define POLICIES_DIR SAMPLE_POL_DIR
 #define BASIC_FC_FILENAME POLICIES_DIR "basic.fc"
@@ -58,7 +59,7 @@ END_TEST
 START_TEST (test_parse_fc_line_with_gen_context) {
 	char line[] = "/usr/bin(/.*)?		gen_context(system_u:object_r:bin_t, s0)";
 
-	struct fc_entry *out= parse_fc_line(line);
+	struct fc_entry *out= parse_fc_line(line, NULL);
 
 	ck_assert_ptr_nonnull(out);
 	ck_assert_str_eq("/usr/bin(/.*)?", out->path);
@@ -73,7 +74,7 @@ START_TEST (test_parse_fc_line_with_gen_context) {
 	free_fc_entry(out);
 
 	char line2[] = "/usr/bin(/.*)?		gen_context(system_u:object_r:bin_t)";
-	out= parse_fc_line(line2);
+	out= parse_fc_line(line2, NULL);
 
 	ck_assert_ptr_nonnull(out);
 	ck_assert_str_eq("/usr/bin(/.*)?", out->path);
@@ -92,7 +93,7 @@ END_TEST
 START_TEST (test_parse_fc_line) {
 	char line[] = "/usr/bin(/.*)?		system_u:object_r:bin_t:s0";
 
-	struct fc_entry *out= parse_fc_line(line);
+	struct fc_entry *out= parse_fc_line(line, NULL);
 
 	ck_assert_ptr_nonnull(out);
 	ck_assert_str_eq("/usr/bin(/.*)?", out->path);
@@ -112,7 +113,7 @@ END_TEST
 START_TEST (test_parse_fc_line_with_obj) {
 	char line[] = "/usr/bin(/.*)?		-d	system_u:object_r:bin_t:s0";
 
-	struct fc_entry *out= parse_fc_line(line);
+	struct fc_entry *out= parse_fc_line(line, NULL);
 
 	ck_assert_ptr_nonnull(out);
 	ck_assert_str_eq("/usr/bin(/.*)?", out->path);
@@ -161,6 +162,7 @@ START_TEST (test_parse_basic_fc_file) {
 	ck_assert_ptr_null(cur->next);
 
 	free_policy_node(ast);
+	free_all_maps();
 }
 END_TEST
 
@@ -189,6 +191,7 @@ START_TEST (test_parse_m4) {
 	ck_assert_ptr_null(cur->next);
 
 	free_policy_node(ast);
+	free_all_maps();
 }
 END_TEST
 
@@ -209,6 +212,7 @@ START_TEST (test_parse_none_context) {
 	ck_assert_ptr_null(data->context);
 
 	free_policy_node(ast);
+	free_all_maps();
 }
 END_TEST
 
