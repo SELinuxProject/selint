@@ -17,14 +17,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <libgen.h>
 
 #include "parse_fc.h"
 #include "tree.h"
+#include "maps.h"
 
 // "gen_context("
 #define GEN_CONTEXT_LEN 12
 
-struct fc_entry *parse_fc_line(char *line)
+struct fc_entry *parse_fc_line(char *line, struct conditional_data *conditional)
 {
 	const char *whitespace = " \t";
 
@@ -146,6 +148,12 @@ struct fc_entry *parse_fc_line(char *line)
 
 	}
 
+	if(conditional){
+		out->conditional = malloc(sizeof(struct conditional_data));
+		out->conditional->flavor = conditional->flavor;
+		out->conditional->condition = strdup(conditional->condition);
+	}
+
 	free(orig_line);
 	return out;
 
@@ -228,7 +236,7 @@ bool check_for_fc_macro(const char *line, const struct string_list *custom_fc_ma
 	return false;
 }
 
-struct policy_node *parse_fc_file(const char *filename, const struct string_list *custom_fc_macros)
+struct policy_node* parse_fc_file(const char *filename, const struct string_list *custom_fc_macros)
 {
 	FILE *fd = fopen(filename, "r");
 
@@ -243,22 +251,59 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 	struct policy_node *cur = head;
 
 	char *line = NULL;
+	char *ifdef_condition = NULL;
+	char *ifndef_condition = NULL;
+	char *token = NULL;
+	struct conditional_data *conditional = NULL;
 
 	ssize_t len_read = 0;
 	size_t buf_len = 0;
 	unsigned int lineno = 0;
+	bool is_within_ifdef = false;
+	bool is_within_ifndef = false;
 	while ((len_read = getline(&line, &buf_len, fd)) != -1) {
 		lineno++;
 		if (len_read <= 1 || line[0] == '#') {
 			continue;
-		}
-		// Skip over m4 constructs
-		if (strncmp(line, "ifdef", 5) == 0 ||
-		    strncmp(line, "ifndef", 6) == 0 ||
-		    strncmp(line, "')", 2) == 0 ||
-		    strncmp(line, "', `", 4) == 0 ||
-		    strncmp(line, "',`", 3) == 0) {
-
+		} else if (!strncmp(line, "ifdef", 5)) {
+			is_within_ifdef = true;
+			token = strtok(line, "`");
+			if (token) {
+				token = strtok(NULL, "'");
+				ifdef_condition = strdup(token);
+			}
+			continue;
+		} else if (!strncmp(line, "ifndef", 6)) {
+			is_within_ifndef = true;
+			token = strtok(line, "`");
+			if (token) {
+				token = strtok(NULL, "'");
+				ifndef_condition = strdup(token);
+			}
+			continue;
+		} else if (!strncmp(line, "')", 2)) {
+			//TODO
+			//The assumption made here is that ifdef/ifndef
+			//blocks always end with '), however there are
+			//other legal specifications that would be missed
+			//by this assumption. For instance, ending an ifdef
+			//block with '  )(note space).
+			//This needs to be reworked to account for such cases.
+			if (is_within_ifdef) {
+				is_within_ifdef = false;
+				free(ifdef_condition);
+				ifdef_condition = NULL;
+				free_conditional_data(conditional);
+				conditional = NULL;
+			} else if (is_within_ifndef) {
+				is_within_ifndef = false;
+				free(ifndef_condition);
+				ifndef_condition = NULL;
+				free_conditional_data(conditional);
+				conditional = NULL;
+			}
+			continue;
+		} else if (!strncmp(line, "', `", 4) || !strncmp(line, "',`", 3)) { // Skip over m4 constructs
 			continue;
 		}
 		// TODO: Right now whitespace parses as an error
@@ -268,18 +313,54 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 			continue;
 		}
 
-		struct fc_entry *entry = parse_fc_line(line);
+		if (is_within_ifdef) {
+			if(!conditional){
+				conditional = malloc(sizeof(struct conditional_data));
+				conditional->flavor = CONDITION_IFDEF;
+				conditional->condition = strdup(ifdef_condition);
+			}
+		} else if (is_within_ifndef) {
+			if(!conditional){
+				conditional = malloc(sizeof(struct conditional_data));
+				conditional->flavor = CONDITION_IFNDEF;
+				conditional->condition = strdup(ifndef_condition);
+			}
+		}
+
+		struct fc_entry *entry = parse_fc_line(line, conditional);
+
 		enum node_flavor flavor;
 		if (entry == NULL) {
 			flavor = NODE_ERROR;
+
 		} else {
 			flavor = NODE_FC_ENTRY;
+
+			struct fc_entry_map_info *info = look_up_in_fc_entries_map(entry->path);
+			if (!info) {
+				//generally we would check if the entry exist in the
+				//insert_into_fc_entries_map itself but,due to the
+				//fact that we are allocating memory for info and we
+				//are relying on the fc_entries_map destructor to free
+				//memory allocated for info we want to ensure that
+				//the entry does not exist already ahead of time else
+				//we will end up with memory leak on info.
+				info = malloc(sizeof(struct fc_entry_map_info));
+				char *copy = strdup(filename);
+				char *fc_name = basename(copy);
+				info->entry = entry;
+				info->lineno = lineno;
+				info->file_name = strdup(fc_name);
+
+				insert_into_fc_entries_map(info);
+				free(copy);
+			}
 		}
 
 		union node_data nd;
 		nd.fc_data = entry;
-		if (insert_policy_node_next(cur, flavor, nd, lineno) !=
-		    SELINT_SUCCESS) {
+		if (insert_policy_node_next(cur, flavor, nd, lineno)
+				!= SELINT_SUCCESS) {
 			free_policy_node(head);
 			fclose(fd);
 			return NULL;
@@ -289,8 +370,22 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 		line = NULL;
 		buf_len = 0;
 	}
-	free(line);             // getline alloc must be freed even if getline failed
+	free(line);            // getline alloc must be freed even if getline failed
 	fclose(fd);
+
+	//If for some reason there was an error parsing that file where
+	//an ifdef/ifndef block was never closed, those must be freed.
+	free(ifdef_condition);
+	free(ifndef_condition);
+	free_conditional_data(conditional);
+
+	//TODO remove comment, should we be returning NULL in this case above
+	//so that the parse_all_fc_files_in_list function returns a parse error?
+	//this will likely requires us to free a lot of stuff before attempting to
+	//return NULL, so it may not be worth the level of effort. Besides, missing
+	//closed ifdef/ifndef parenthesis would have result in a build error to begin
+	//with so that is an issue that should be caught prior to even attempting to
+	//run selint
 
 	return head;
 }

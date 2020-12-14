@@ -27,6 +27,7 @@ static struct hash_elem *perm_map = NULL;
 static struct hash_elem *mods_map = NULL;
 static struct hash_elem *mod_layers_map = NULL;
 static struct hash_elem *ifs_map = NULL;
+static struct fc_entry_hash *fc_entries_map = NULL;
 static struct bool_hash_elem *transform_map = NULL;
 static struct bool_hash_elem *filetrans_map = NULL;
 static struct bool_hash_elem *role_if_map = NULL;
@@ -75,6 +76,22 @@ static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor fl
 	}
 
 	return decl;
+}
+
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
+static struct fc_entry_hash *look_up_fcs_entry_hash(const char *path)
+{
+
+	if (!path) {
+		return NULL;
+	}
+
+	struct fc_entry_hash *out;
+	HASH_FIND(hh_fc_entry, fc_entries_map, path, strlen(path), out);
+
+	return out;
 }
 
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
@@ -143,6 +160,21 @@ const char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
 		return NULL;
 	} else {
 		return decl->val;
+	}
+}
+
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
+struct fc_entry_map_info *look_up_in_fc_entries_map(const char *path)
+{
+
+	struct fc_entry_hash *out = look_up_fcs_entry_hash(path);
+
+	if (!out) {
+		return NULL;
+	} else {
+			return out->val;
 	}
 }
 
@@ -437,6 +469,21 @@ static void insert_into_template_map(const char *name, void *new_node,
 	insertion_func(template, new_node);
 }
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
+void insert_into_fc_entries_map(struct fc_entry_map_info *info)
+{
+	struct fc_entry_hash *entry = look_up_fcs_entry_hash(info->entry->path);
+
+	if (!entry) {// Item not in hash table already
+		entry = malloc(sizeof(struct fc_entry_hash));
+		entry->key = strdup(info->entry->path);
+		entry->val = info;
+		HASH_ADD_KEYPTR(hh_fc_entry, fc_entries_map, entry->key, strlen(entry->key), entry);
+	}
+}
+
 void insert_template_into_template_map(const char *name)
 {
 	insert_into_template_map(name, NULL, insert_noop);
@@ -569,6 +616,19 @@ unsigned int permmacros_map_count()
 		free(cur_bool); \
 } \
 
+void free_fc_entry_map_info(struct fc_entry_map_info *to_free)
+{
+	//we do not call free_fc_entry(to_free->entry) here
+	//because fc_entry_map_info shares the memory address
+	// of the fc_entry structs which the free_fc_entry
+	//itself frees.
+
+	if (to_free) {
+		free(to_free->file_name);
+	}
+	free(to_free);
+}
+
 void free_all_maps()
 {
 
@@ -621,5 +681,14 @@ void free_all_maps()
 		free_decl_list(cur_template->declarations);
 		free_if_call_list(cur_template->calls);
 		free(cur_template);
+	}
+
+	struct fc_entry_hash *cur_elm, *tmp_elm;
+
+	HASH_ITER(hh_fc_entry, fc_entries_map, cur_elm, tmp_elm) {
+		HASH_DELETE(hh_fc_entry, fc_entries_map, cur_elm);
+		free(cur_elm->key);
+		free_fc_entry_map_info(cur_elm->val);
+		free(cur_elm);
 	}
 }

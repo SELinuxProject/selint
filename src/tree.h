@@ -19,6 +19,7 @@
 
 #include "selint_error.h"
 #include "string_list.h"
+#include "stdbool.h"
 
 enum node_flavor {
 	NODE_TE_FILE,
@@ -101,6 +102,11 @@ enum tt_flavor {
 	TT_RT
 };
 
+enum condition_flavor{
+	CONDITION_IFDEF ,
+	CONDITION_IFNDEF
+};
+
 struct header_data {
 	enum header_flavor flavor;
 	char *module_name;
@@ -178,10 +184,17 @@ struct sel_context {
 	char *range;
 };
 
+struct conditional_data{
+	char *condition;
+	enum condition_flavor flavor;
+	bool state;
+};
+
 struct fc_entry {
 	char *path;
 	char obj;
 	struct sel_context *context;
+	struct conditional_data *conditional;
 };
 
 struct attribute_data {
@@ -279,6 +292,8 @@ enum selint_error free_if_call_list(struct if_call_list *to_free);
 void free_fc_entry(struct fc_entry *to_free);
 
 void free_sel_context(struct sel_context *to_free);
+
+void free_conditional_data(struct conditional_data *to_free);
 
 void free_attribute_data(struct attribute_data *to_free);
 
