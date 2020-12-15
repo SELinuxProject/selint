@@ -119,3 +119,5 @@ ifdef(`foo',`
 	# comment
 	bare_word
 ')
+
+define(`not_foo',`-foo_t')

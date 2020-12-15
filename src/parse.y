@@ -677,6 +677,8 @@ m4_string_elem:
 	COLON
 	|
 	SEMICOLON
+	|
+	DASH
 	;
 
 condition:
@@ -839,7 +841,21 @@ fs_use:
 	;
 
 define:
-	DEFINE OPEN_PAREN m4_args CLOSE_PAREN
+	DEFINE OPEN_PAREN define_name COMMA define_expansion CLOSE_PAREN
+	;
+
+define_name:
+	BACKTICK STRING SINGLE_QUOTE { free($2); }
+	|
+	STRING { free($1); }
+	;
+
+define_expansion:
+	%empty
+	|
+	BACKTICK arbitrary_m4_string SINGLE_QUOTE
+	|
+	STRING { free($1); }
 	;
 
 maybe_string_comma:
