@@ -294,7 +294,9 @@ void display_check_issue_counts(const struct checks *ck)
 
 void free_check_result(struct check_result *res)
 {
-	free(res->message);
+	if (res) {
+		free(res->message);
+	}
 	free(res);
 }
 
