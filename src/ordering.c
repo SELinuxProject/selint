@@ -227,6 +227,7 @@ const char *get_section(const struct policy_node *node)
 		}
 	case NODE_M4_CALL:
 	case NODE_M4_SIMPLE_MACRO:
+	case NODE_DEFINE:
 		return SECTION_NON_ORDERED; // TODO: It's probably way more complicated than this
 	case NODE_OPTIONAL_POLICY:
 	case NODE_OPTIONAL_ELSE:

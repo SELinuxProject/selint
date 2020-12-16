@@ -841,7 +841,8 @@ fs_use:
 	;
 
 define:
-	DEFINE OPEN_PAREN define_name COMMA define_expansion CLOSE_PAREN
+	DEFINE OPEN_PAREN { begin_define(&cur, @$.first_line); }
+	define_name COMMA define_expansion CLOSE_PAREN { end_define(&cur); }
 	;
 
 define_name:

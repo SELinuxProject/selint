@@ -569,6 +569,19 @@ static enum selint_error end_block(struct policy_node **cur,
 	return SELINT_SUCCESS;
 }
 
+enum selint_error begin_define(struct policy_node **cur, unsigned int lineno)
+{
+	union node_data nd;
+	nd.str = NULL;
+	return begin_block(cur, NODE_DEFINE, nd, lineno);
+}
+
+enum selint_error end_define(struct policy_node **cur)
+{
+
+	return end_block(cur, NODE_DEFINE);
+}
+
 enum selint_error begin_optional_policy(struct policy_node **cur,
                                         unsigned int lineno)
 {
