@@ -235,6 +235,30 @@ enum selint_error insert_m4simplemacro(struct policy_node **cur,
                                        unsigned int lineno);
 
 /**********************************
+* begin_define
+* Add a define() node at the next node in the tree.  Create its first child
+* as the start of the block.  Set cur to the child node. Allocate all memory for
+* both nodes.
+* cur (in, out) - The current spot in the tree.  Will be updated to point to the
+* first child of the define() node
+* lineno (in) - The line number
+*
+* Returns - SELINT error code
+**********************************/
+enum selint_error begin_define(struct policy_node **cur, unsigned int lineno);
+
+
+/**********************************
+* end_define
+* Complete the define() block by moving cur back up to the parent level
+* cur (in, out) - The current spot in the tree.  Will be updated to point to the
+* parent define() node
+*
+* Returns - SELINT error code
+**********************************/
+enum selint_error end_define(struct policy_node **cur);
+
+/**********************************
 * begin_optional_policy
 * Add an optional policy node at the next node in the tree.  Create its first child
 * as the start of the block.  Set cur to the child node. Allocate all memory for
