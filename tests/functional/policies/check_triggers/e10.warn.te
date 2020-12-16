@@ -21,3 +21,8 @@ ifelse(`bar', `true', `
     bare_word', `
     bare_word
 ')
+
+# NOTE: a bare word inside define() body currently doesn't get flagged
+define(`not_really_a_bare_word',`
+	bare_word
+')

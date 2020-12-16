@@ -2,6 +2,13 @@ policy_module(e10_pass, 1.0)
 
 ignored_bare_word
 
+define(`not_really_a_bare_word',`
+	ignored_bare_word
+')
+define(not_really_a_bare_word, `
+	ignored_bare_word
+')
+
 ifdef(`foo',`
 	# comment
 	ignored_bare_word
