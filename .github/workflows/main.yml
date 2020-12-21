@@ -38,7 +38,9 @@ jobs:
           sudo apt-get install -y clang-10
         fi
     - name: install dependencies
-      run: sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man
     # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
     # ck_assert_ptr_nonnull were added in 0.11.0
     - name: checkout check
