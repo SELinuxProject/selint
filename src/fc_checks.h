@@ -20,6 +20,17 @@
 #include "check_hooks.h"
 
 /*********************************************
+ * Check for wide dir path file contexts.
+ * Called on NODE_FC_ENTRY nodes.
+ * node - the node to check
+ * returns NULL if passed or check_result for issue C-008
+ *********************************************/
+struct check_result *check_wide_dir_path_fcontext(const struct check_data
+                                                  *data,
+                                                  const struct policy_node
+                                                  *node);
+
+/*********************************************
 * Check for issues with file context labels type field.
 * Called on NODE_FC_ENTRY nodes.
 * node - the node to check

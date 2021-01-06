@@ -151,6 +151,10 @@ test_parse_error_impl() {
 	test_one_check "C-007" "c07.if"
 }
 
+@test "C-008" {
+	test_one_check "C-008" "c08.fc"
+}
+
 @test "S-001" {
 	test_one_check "S-001" "s01.te"
 }

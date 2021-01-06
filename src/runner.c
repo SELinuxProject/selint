@@ -146,6 +146,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_XAV_RULE, ck, "C-007",
 			          check_no_self);
 		}
+		if (CHECK_ENABLED("C-008")) {
+			add_check(NODE_FC_ENTRY, ck, "C-008",
+				  check_wide_dir_path_fcontext);
+		}
 		// FALLTHRU
 	case 'S':
 		if (CHECK_ENABLED("S-001")) {

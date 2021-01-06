@@ -34,6 +34,23 @@
 		return NULL; \
 	} \
 
+struct check_result *check_wide_dir_path_fcontext(__attribute__((unused)) const struct check_data
+                                                  *data,
+                                                  const struct policy_node
+                                                  *node)
+{
+	SETUP_FOR_FC_CHECK(node)
+
+	if (ends_with(entry->path, strlen(entry->path), "(/.*)?", strlen("(/.*)?"))) {
+		return make_check_result('C',
+					 C_ID_WIDE_DIR_FC,
+					 "File context path %s ends on '(/.*)?', which might match unwanted non-directory entries.",
+					 entry->path);
+	}
+
+	return NULL;
+}
+
 struct check_result *check_file_context_types_in_mod(const struct check_data
                                                      *data,
                                                      const struct policy_node

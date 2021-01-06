@@ -1,0 +1,1 @@
+/var/lib/myapp(/.*)?		--	gen_context(system_u:object_r:myapp_lib_t,s0)

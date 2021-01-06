@@ -32,6 +32,10 @@ C-007:
 
 	allow myapp_t myapp_t:process signal;
 
+C-008:
+
+	/var/lib/myapp(/.*)?  ...
+
 Style:
 
 S-001:
