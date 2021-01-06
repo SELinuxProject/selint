@@ -28,6 +28,10 @@ C-006:
 		class foobar;
 	')
 
+C-007:
+
+	allow myapp_t myapp_t:process signal;
+
 Style:
 
 S-001:
@@ -178,3 +182,7 @@ E-009:
 	optional_policy(`
 		#do_something(type_t)
 	')
+
+E-010:
+
+	bare_m4_macro
