@@ -21,4 +21,6 @@ CLEANFILES=$(MANPAGES)
 
 selint.1: ../src/main.c $(SOURCES)
 	$(HELP2MAN) -n "Perform static source code analysis on SELinux policy source files" -N -i selint.h2m -o $@ ../src/selint
+else
+EXTRA_DIST=$(SOURCES)
 endif
