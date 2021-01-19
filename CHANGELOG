@@ -1,6 +1,6 @@
 # SELint Changelog
 
-## [1.2.0] TODO date
+## [1.2.0] 2021-01-18
 ### Added (general features)
 - New ./configure option --enable-werror to compile treating errors as
   warnings.
