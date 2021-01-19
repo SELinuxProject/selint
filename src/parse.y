@@ -1109,9 +1109,9 @@ static void yyerror(const YYLTYPE *locp, __attribute__((unused)) yyscan_t scanne
 		}
 		for (const char *c = current_line; *c != '\0'; ++c) {
 			if (*c == '\t') {
-				if (c - current_line < current_first_column) {
+				if ((size_t)(c - current_line) < current_first_column) {
 					tabs_before_hinter++;
-				} else if (c - current_line < current_last_column) {
+				} else if ((size_t)(c - current_line) < current_last_column) {
 					tabs_inside_hinter++;
 				}
 				printf("    ");
