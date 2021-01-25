@@ -842,13 +842,19 @@ fs_use:
 
 define:
 	DEFINE OPEN_PAREN { begin_define(&cur, @$.first_line); }
-	define_name COMMA define_expansion CLOSE_PAREN { end_define(&cur); }
+	define_name define_content CLOSE_PAREN { end_define(&cur); }
 	;
 
 define_name:
 	BACKTICK STRING SINGLE_QUOTE { free($2); }
 	|
 	STRING { free($1); }
+	;
+
+define_content:
+	%empty
+	|
+	COMMA define_expansion
 	;
 
 define_expansion:
