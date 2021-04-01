@@ -358,6 +358,196 @@ START_TEST (test_check_file_context_regex) {
 }
 END_TEST
 
+START_TEST (test_check_file_contexts_duplicate_entry){
+	struct check_data *data = malloc(sizeof(struct check_data));
+
+	data->filename = strdup("foo.fc");
+
+	struct policy_node *node = malloc(sizeof(struct policy_node));
+	memset(node, 0, sizeof(struct policy_node));
+	node->flavor = NODE_FC_ENTRY;
+	node->lineno = 1;
+
+	struct fc_entry *node_entry = malloc(sizeof(struct fc_entry));
+	memset(node_entry, 0, sizeof(struct fc_entry));
+	node_entry->context = malloc(sizeof(struct sel_context));
+	memset(node_entry->context, 0, sizeof(struct sel_context));
+
+	node_entry->path = strdup("/foo/test/file");
+	node_entry->obj = '-';
+	node_entry->context->has_gen_context = 1;
+	node_entry->context->range = strdup("s0");
+	node_entry->context->role = strdup("object_r");
+	node_entry->context->user = strdup("system_u");
+	node_entry->context->type = strdup("foo_t");
+
+	node->data.fc_data = node_entry;
+
+	struct fc_entry *map_entry = malloc(sizeof(struct fc_entry));
+	memset(map_entry, 0, sizeof(struct fc_entry));
+	map_entry->context = malloc(sizeof(struct sel_context));
+	memset(map_entry->context, 0, sizeof(struct sel_context));
+
+	map_entry->path = strdup("/foo/test/file");
+	map_entry->obj = '-';
+	map_entry->context->has_gen_context = 1;
+	map_entry->context->range = strdup("s0");
+	map_entry->context->role = strdup("object_r");
+	map_entry->context->user = strdup("system_u");
+	map_entry->context->type = strdup("foo_t");
+
+	struct fc_entry_map_info *info = malloc(
+			sizeof(struct fc_entry_map_info));
+	info->entry = map_entry;
+	info->file_name = strdup(data->filename);
+	info->lineno = 2;
+
+	insert_into_fc_entries_map(info);
+
+	/****************    test1    *********************
+	 * check two duplicate within the same file none  *
+	 * of which are within any ifdef/ifndef           *
+	 **************************************************/
+	struct check_result *res = check_file_contexts_duplicate_entry(data,node);
+
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+
+	/****************    test2    *********************
+	 * checking for one duplicate within ifdef and    *
+	 * the other not within any ifdef/ifndef.         *
+	 **************************************************/
+	node_entry->conditional = malloc(sizeof(struct conditional_data));
+	memset(node_entry->conditional, 0, sizeof(struct conditional_data));
+	node_entry->conditional->condition = strdup("distro_gentoo");
+	node_entry->conditional->flavor = CONDITION_IFDEF;
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+	/****************    test3    *********************
+	 * checking for one duplicate within ifndef and   *
+	 * the other not within any ifdef/ifndef.         *
+	 **************************************************/
+	node_entry->conditional->flavor = CONDITION_IFNDEF;
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+	/****************    test4    *********************
+	 * checking for both duplicates within            *
+	 * the same ifdef condition                       *
+	 **************************************************/
+	node_entry->conditional->flavor = CONDITION_IFDEF;
+
+	map_entry->conditional = malloc(sizeof(struct conditional_data));
+	memset(map_entry->conditional, 0, sizeof(struct conditional_data));
+	map_entry->conditional->condition = strdup("distro_gentoo");
+	node_entry->conditional->flavor = CONDITION_IFDEF;
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+	/****************    test5    *********************
+	 * checking for both duplicates within            *
+	 * the same ifndef condition                      *
+	 **************************************************/
+	node_entry->conditional->flavor = CONDITION_IFNDEF;
+	map_entry->conditional->flavor = CONDITION_IFNDEF;
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+	/****************    test6    *********************
+	 * checking for one duplicate within ifdef        *
+	 * and the other one within ifndef of the same    *
+	 * condition                                      *
+	 **************************************************/
+	node_entry->conditional->flavor = CONDITION_IFDEF;
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_null(res);
+
+	/****************    test7    *********************
+	 * checking for one duplicate within ifdef        *
+	 * and the other one within ifndef and the        *
+	 * conditions differ                              *
+	 **************************************************/
+	free(node_entry->conditional->condition);
+	node_entry->conditional->condition = strdup("distro_redhat");
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+	/****************    test8    *********************
+	 * checking for both duplicates within ifdef      *
+	 * but the conditions differ                      *
+	 **************************************************/
+	map_entry->conditional->flavor = CONDITION_IFDEF;
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_null(res);
+
+	/****************    test9    *********************
+	 * checking for both duplicates within ifndef     *
+	 * but the conditions differ                      *
+	 **************************************************/
+	node_entry->conditional->flavor = CONDITION_IFNDEF;
+	map_entry->conditional->flavor = CONDITION_IFNDEF;
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+	/****************    test10    *********************
+	 * checking to find problematic duplicate          *
+	 * across different file contexts.                 *
+	 **************************************************/
+	free(data->filename);
+	data->filename = strdup("bar.fc");
+
+	res = check_file_contexts_duplicate_entry(data, node);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'E');
+	ck_assert_int_eq(res->check_id, E_ID_FC_DUPLICATE_ENTRY);
+	ck_assert_ptr_nonnull(res->message);
+	free_check_result(res);
+
+	free_all_maps();
+	free_fc_entry(map_entry);
+	free(data->filename);
+	free(data);
+	free_policy_node(node);
+}
+END_TEST
+
 static Suite *fc_checks_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -374,6 +564,7 @@ static Suite *fc_checks_suite(void) {
 	tcase_add_test(tc_core, test_check_file_context_error_nodes);
 	tcase_add_test(tc_core, test_check_file_context_regex);
 	tcase_add_test(tc_core, test_fc_checks_handle_null_context_fields);
+	tcase_add_test(tc_core, test_check_file_contexts_duplicate_entry);
 	suite_add_tcase(s, tc_core);
 
 	return s;

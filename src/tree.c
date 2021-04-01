@@ -600,6 +600,9 @@ void free_fc_entry(struct fc_entry *to_free)
 	if (to_free->context) {
 		free_sel_context(to_free->context);
 	}
+	if (to_free->conditional) {
+		free_conditional_data(to_free->conditional);
+	}
 	free(to_free);
 }
 
@@ -616,6 +619,14 @@ void free_sel_context(struct sel_context *to_free)
 	}
 	if (to_free->range) {
 		free(to_free->range);
+	}
+	free(to_free);
+}
+
+void free_conditional_data(struct conditional_data *to_free)
+{
+	if (to_free) {
+		free(to_free->condition);
 	}
 	free(to_free);
 }

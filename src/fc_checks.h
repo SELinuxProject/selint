@@ -91,4 +91,16 @@ struct check_result *check_file_context_types_exist(const struct check_data
                                                     const struct policy_node
                                                     *node);
 
+/*********************************************
+* Check for duplicate entry or multiple specification
+* across file contexts.
+* Called on NODE_FC_ENTRY nodes.
+* node - the node to check
+* returns NULL if passed or check_result for issue E-011
+*********************************************/
+struct check_result *check_file_contexts_duplicate_entry(const struct check_data
+                                                    *data,
+                                                    const struct policy_node
+                                                    *node);
+
 #endif

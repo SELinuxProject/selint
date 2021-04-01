@@ -48,6 +48,20 @@ struct template_hash_elem {
 	UT_hash_handle hh;
 };
 
+struct fc_entry_map_info {
+	struct fc_entry *entry;
+	unsigned int lineno;
+	char *file_name;
+};
+
+struct fc_entry_hash {
+	char *key;
+	struct fc_entry_map_info *val;
+	UT_hash_handle hh_fc_entry;
+};
+
+
+
 void insert_into_decl_map(const char *name, const char *module_name,
                           enum decl_flavor flavor);
 
@@ -64,6 +78,10 @@ const char *look_up_in_mod_layers_map(const char *mod_name);
 void insert_into_ifs_map(const char *if_name, const char *mod_name);
 
 const char *look_up_in_ifs_map(const char *if_name);
+
+void insert_into_fc_entries_map(struct fc_entry_map_info *info);
+
+struct fc_entry_map_info *look_up_in_fc_entries_map(const char *path);
 
 void mark_transform_if(const char *if_name);
 
@@ -102,6 +120,8 @@ void visit_all_in_permmacros_map(void (*visitor)(const char *name, const struct 
 unsigned int permmacros_map_count(void);
 
 unsigned int decl_map_count(enum decl_flavor flavor);
+
+void free_fc_entry_map_info(struct fc_entry_map_info *to_free);
 
 void free_all_maps(void);
 
