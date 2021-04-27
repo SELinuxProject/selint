@@ -33,21 +33,21 @@ jobs:
         if [[ ${{ matrix.cc }} == 'clang' ]]
         then
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key 2>/dev/null | sudo apt-key add -
-          sudo add-apt-repository 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main' -y
+          sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main' -y
           sudo apt-get update -q
-          sudo apt-get install -y clang-10
+          sudo apt-get install -y clang-12
         fi
     - name: install dependencies
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man
+        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man bats
     # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
     # ck_assert_ptr_nonnull were added in 0.11.0
     - name: checkout check
       uses: actions/checkout@v2
       with:
         repository: libcheck/check
-        ref: 0.13.0
+        ref: 0.15.2
         path: check
     - name: install check
       run : |
@@ -59,30 +59,15 @@ jobs:
         sudo ldconfig
         cd ..
         rm -rf check/
-    # Install bats.  Ubuntu is on 0.4.0 and the latest is 1.1.0.  This is to work around
-    # a bug with running a program multiple times in the same test
-    - name: checkout bats
-      uses: actions/checkout@v2
-      with:
-        repository: bats-core/bats-core
-        ref: v1.2.1
-        path: bats-core
-    - name: install bats
-      run : |
-        cd bats-core/
-        sudo ./install.sh /usr/local
-        cd ..
-        rm -rf bats-core/
     - name: autogen
       run: ./autogen.sh
     - name: configure
-      # old flex/bison versions might not generate conversion warning free code
       run: |
         if [[ ${{ matrix.cc }} == 'gcc' ]]
         then
-          ./configure --enable-werror CFLAGS="-Wno-error=conversion -Wno-error=sign-conversion --coverage"
+          ./configure --enable-werror CFLAGS=--coverage
         else
-          ./configure --enable-werror CFLAGS="-Wno-error=conversion -Wno-error=sign-conversion"
+          ./configure --enable-werror
         fi
     - name: make
       run: make
@@ -91,7 +76,7 @@ jobs:
     - name: make check-valgrind
       run: make check-valgrind
     - name: make distcheck
-      run: make distcheck DISTCHECK_CONFIGURE_FLAGS=--enable-werror CFLAGS="-Wno-error=conversion -Wno-error=sign-conversion"
+      run: make distcheck DISTCHECK_CONFIGURE_FLAGS=--enable-werror
     - name: functional tests
       run : |
         cd ./tests/functional
@@ -101,7 +86,7 @@ jobs:
         make VERSION=pipeline-test dist
         tar xvzf selint-pipeline-test.tar.gz
         cd selint-pipeline-test
-        ./configure --enable-werror CFLAGS="-Wno-error=conversion -Wno-error=sign-conversion"
+        ./configure --enable-werror
         make
         cd tests/functional
         BATS_TIME_EXPENSIVE=1 bats end-to-end.bats
