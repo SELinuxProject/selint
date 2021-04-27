@@ -90,12 +90,6 @@ jobs:
         make
         cd tests/functional
         BATS_TIME_EXPENSIVE=1 bats end-to-end.bats
-    - name: Codecov upload
-      run: |
-        if [[ ${{ matrix.cc }} == 'gcc' ]]
-        then
-          bash <(curl -s https://codecov.io/bash)
-        fi
     - name: checkout refpolicy
       uses: actions/checkout@v2
       with:
