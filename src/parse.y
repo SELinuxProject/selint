@@ -706,6 +706,8 @@ m4_args:
 	;
 
 m4_argument:
+	%empty
+	|
 	BACKTICK SINGLE_QUOTE
 	|
 	BACKTICK lines SINGLE_QUOTE
