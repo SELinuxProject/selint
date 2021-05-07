@@ -123,3 +123,7 @@ ifdef(`foo',`
 define(`not_foo',`-foo_t')
 
 define(`foobar')
+
+ifelse(`$1',,, `
+    refpolicywarn(`dollar one defined')
+')
