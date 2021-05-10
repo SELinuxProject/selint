@@ -28,6 +28,7 @@
 #include "parse.h"
 #include "util.h"
 #include "startup.h"
+#include "infer.h"
 
 #define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
@@ -439,6 +440,10 @@ enum selint_error run_analysis(struct checks *ck,
 	all_if_files->tail = context_if_files->tail;
 
 	mark_transform_interfaces(all_if_files);
+	res = infer_all_interfaces(all_if_files);
+	if (res != SELINT_SUCCESS) {
+		goto out;
+	}
 
 	// Restore
 	if (if_files->tail) {

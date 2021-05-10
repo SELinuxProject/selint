@@ -307,6 +307,148 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 	return ret;
 }
 
+void visit_names_in_node(const struct policy_node *node, node_visior visitor_func, void *visitor_data)
+{
+	const struct av_rule_data *av_data;
+	const struct type_transition_data *tt_data;
+	const struct role_transition_data *rt_data;
+	const struct declaration_data *d_data;
+	const struct if_call_data *ifc_data;
+	const struct role_allow_data *ra_data;
+	const struct role_types_data *rtyp_data;
+	const struct attribute_data *at_data;
+	unsigned short id = 1;
+
+	switch (node->flavor) {
+	case NODE_AV_RULE:
+		av_data = node->data.av_data;
+		for (const struct string_list *sl = av_data->sources; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_TYPE_OR_ATTRIBUTE, 0, visitor_data);
+		}
+		for (const struct string_list *sl = av_data->targets; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_TYPE_OR_ATTRIBUTE, 0, visitor_data);
+		}
+		break;
+
+	case NODE_TT_RULE:
+		tt_data = node->data.tt_data;
+		for (const struct string_list *sl = tt_data->sources; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_TYPE_OR_ATTRIBUTE, 0, visitor_data);
+		}
+		for (const struct string_list *sl = tt_data->targets; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_TYPE_OR_ATTRIBUTE, 0, visitor_data);
+		}
+		for (const struct string_list *sl = tt_data->object_classes; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_CLASS, 0, visitor_data);
+		}
+		visitor_func(tt_data->default_type, NAME_TYPE, 0, visitor_data);
+		visitor_func(tt_data->name, NAME_OBJECT_NAME, 0, visitor_data);
+		break;
+
+	case NODE_RT_RULE:
+		rt_data = node->data.rt_data;
+		for (const struct string_list *sl = rt_data->sources; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_ROLE_OR_ATTRIBUTE, 0, visitor_data);
+		}
+		for (const struct string_list *sl = rt_data->targets; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_TYPE_OR_ATTRIBUTE, 0, visitor_data);
+		}
+		for (const struct string_list *sl = rt_data->object_classes; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_CLASS, 0, visitor_data);
+		}
+		visitor_func(rt_data->default_role, NAME_ROLE, 0, visitor_data);
+		break;
+
+	case NODE_DECL:
+		d_data = node->data.d_data;
+		// skip declared name
+		if (d_data->flavor == DECL_TYPE) {
+			for (const struct string_list *sl = d_data->attrs; sl; sl = sl->next) {
+				visitor_func(sl->string, NAME_TYPEATTRIBUTE, 0, visitor_data);
+			}
+		}
+		break;
+
+	case NODE_IF_CALL:
+		ifc_data = node->data.ic_data;
+		for (const struct string_list *sl = ifc_data->args; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_IF_PARAM, id++, visitor_data);
+		}
+		break;
+
+	case NODE_ROLE_ALLOW:
+		ra_data = node->data.ra_data;
+		for (const struct string_list *sl = ra_data->from; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_ROLE, 0, visitor_data);
+		}
+		for (const struct string_list *sl = ra_data->to; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_ROLE, 0, visitor_data);
+		}
+		break;
+
+	case NODE_ROLE_TYPES:
+		rtyp_data = node->data.rtyp_data;
+		visitor_func(rtyp_data->role, NAME_ROLE, 0, visitor_data);
+		for (const struct string_list *sl = rtyp_data->types; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_TYPE_OR_ATTRIBUTE, 0, visitor_data);
+		}
+		break;
+
+	case NODE_TYPE_ATTRIBUTE:
+		at_data = node->data.at_data;
+		visitor_func(at_data->type, NAME_TYPE, 0, visitor_data);
+		for (const struct string_list *sl = at_data->attrs; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_TYPEATTRIBUTE, 0, visitor_data);
+		}
+		break;
+
+	case NODE_ROLE_ATTRIBUTE:
+		at_data = node->data.at_data;
+		visitor_func(at_data->type, NAME_ROLE, 0, visitor_data);
+		for (const struct string_list *sl = at_data->attrs; sl; sl = sl->next) {
+			visitor_func(sl->string, NAME_ROLEATTRIBUTE, 0, visitor_data);
+		}
+		break;
+
+	//TODO:
+	//case NODE_ALIAS:
+	//case NODE_TYPE_ALIAS:
+	//	ret = calloc(1, sizeof(struct string_list));
+	//	ret->string = strdup(node->data.str);
+	//	break;
+
+	case NODE_PERMISSIVE:
+		visitor_func(node->data.str, NAME_TYPE, 0, visitor_data);
+		break;
+
+	/*
+	   NODE_TE_FILE,
+	   NODE_IF_FILE,
+	   NODE_FC_FILE,
+	   NODE_HEADER,
+	   NODE_M4_CALL,
+	   NODE_OPTIONAL_POLICY,
+	   NODE_OPTIONAL_ELSE,
+	   NODE_TUNABLE_POLICY,
+	   NODE_IFDEF,
+	   NODE_M4_ARG,
+	   NODE_START_BLOCK,
+	   NODE_INTERFACE_DEF,
+	   NODE_TEMP_DEF,
+	   NODE_REQUIRE,
+	   NODE_GEN_REQ,
+	   NODE_FC_ENTRY,
+	   NODE_COMMENT,
+	   NODE_EMPTY,
+	   NODE_SEMICOLON,
+	   NODE_CLEANUP,
+	   NODE_ERROR
+	 */
+	default:
+		break;
+	}
+}
+
 struct string_list *get_names_required(const struct policy_node *node)
 {
 	struct string_list *ret = NULL;

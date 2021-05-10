@@ -32,6 +32,7 @@ tests/check_startup
 tests/check_te_checks
 tests/check_ordering
 tests/check_perm_macro
+tests/check_infer
 tests/functional/policies/parse_errors/test3_tmp.if
 tests/functional/policies/parse_errors/test5_tmp.te
 tests/functional/policies/parse_errors/test6_tmp.if

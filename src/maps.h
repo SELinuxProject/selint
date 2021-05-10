@@ -21,13 +21,21 @@
 
 #include "tree.h"
 #include "selint_error.h"
+#include "infer.h"
 
 struct hash_elem {
+	char *key;
+	void *val;
+	UT_hash_handle hh_type, hh_role, hh_user, hh_attr_type, hh_attr_role, hh_bool,
+	               hh_class, hh_perm, hh_mods, hh_ifs, hh_mod_layers, hh_if_traits;
+};
+
+/*struct hash_elem {
 	char *key;
 	char *val;
 	UT_hash_handle hh_type, hh_role, hh_user, hh_attr_type, hh_attr_role, hh_bool,
 	               hh_class, hh_perm, hh_mods, hh_ifs, hh_mod_layers;
-};
+};*/
 
 struct bool_hash_elem {
 	char *key;
@@ -100,6 +108,10 @@ const struct string_list *look_up_in_permmacros_map(const char *name);
 void visit_all_in_permmacros_map(void (*visitor)(const char *name, const struct string_list *permissions));
 
 unsigned int permmacros_map_count(void);
+
+void insert_into_if_traits_map(const char *if_name, struct interface_trait *trait);
+
+struct interface_trait *look_up_in_if_traits_map(const char *if_name);
 
 unsigned int decl_map_count(enum decl_flavor flavor);
 

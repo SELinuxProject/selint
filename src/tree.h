@@ -237,6 +237,20 @@ const char *get_name_if_in_template(const struct policy_node *cur);
 
 struct string_list *get_names_in_node(const struct policy_node *node);
 
+enum name_flavor {
+	NAME_TYPE,
+	NAME_TYPEATTRIBUTE,
+	NAME_TYPE_OR_ATTRIBUTE,
+	NAME_ROLE,
+	NAME_ROLEATTRIBUTE,
+	NAME_ROLE_OR_ATTRIBUTE,
+	NAME_IF_PARAM,
+	NAME_CLASS,
+	NAME_OBJECT_NAME,
+};
+typedef void (*node_visior)(const char *name, enum name_flavor flavor, unsigned short id, void *visitor_data);
+void visit_names_in_node(const struct policy_node *node, node_visior visitor_func, void *visitor_data);
+
 struct string_list *get_names_required(const struct policy_node *node);
 
 const char *decl_flavor_to_string(enum decl_flavor flavor);

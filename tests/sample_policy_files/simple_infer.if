@@ -1,0 +1,22 @@
+interface(`sample_infer_typeorattribute1',`
+	allow $1 target:cls perm;
+')
+
+interface(`sample_infer_typeorattribute2',`
+	type $1_advanced_t;
+	allow $1 target:cls perm;
+')
+
+interface(`sample_infer_unknown1',`
+	sample_infer_typeorattribute2($1)
+')
+
+template(`sample_infer_temp1',`
+	type $1_t;
+	role $2 types $1_t;
+	allow $1_t $3:fd use;
+')
+
+interface(`sample_redirect_if',`
+	sample_infer_typeorattribute1($*)
+')
