@@ -157,6 +157,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/s08.if \
 			functional/policies/check_triggers/s09.pass.te \
 			functional/policies/check_triggers/s09.warn.te \
+			functional/policies/check_triggers/s11.if \
+			functional/policies/check_triggers/s12.if \
 			functional/policies/check_triggers/w01_other.te \
 			functional/policies/check_triggers/w01.te \
 			functional/policies/check_triggers/w02.if \

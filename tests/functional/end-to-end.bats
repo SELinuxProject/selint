@@ -188,6 +188,14 @@ test_parse_error_impl() {
 	test_one_check_expect "S-009" "s09.warn.te" 6
 }
 
+@test "S-011" {
+	test_one_check "S-011" "s11.if"
+}
+
+@test "S-012" {
+	test_one_check "S-012" "s12.if"
+}
+
 @test "W-001" {
 	test_one_check_expect "W-001" "w01*" 5
 }

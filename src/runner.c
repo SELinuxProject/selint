@@ -189,6 +189,14 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "S-010",
 			          check_perm_macro_available);
 		}
+		if (CHECK_ENABLED("S-011")) {
+			add_check(NODE_INTERFACE_DEF, ck, "S-011",
+			          check_text_param_in_interface);
+		}
+		if (CHECK_ENABLED("S-012")) {
+			add_check(NODE_TEMP_DEF, ck, "S-012",
+			          check_unnecessary_template_definition);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {

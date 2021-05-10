@@ -232,6 +232,80 @@ struct check_result *check_unquoted_gen_require_block(__attribute__((unused)) co
 	return NULL;
 }
 
+struct check_result *check_text_param_in_interface(__attribute__((unused)) const struct
+                                                   check_data *data,
+                                                   const struct
+                                                   policy_node *node)
+{
+	const char *if_name = node->data.str;
+	const struct interface_trait *trait = look_up_in_if_traits_map(if_name);
+	if (!trait || !trait->is_inferred) {
+		return NULL;
+	}
+
+	for (int i = 0; i < TRAIT_MAX_PARAMETERS; i++) {
+		if (trait->parameters[i] == PARAM_TEXT) {
+			return make_check_result('S', S_ID_TEXT_IF_PARAM,
+						 "Interface %s should be a template, due to parameter %d",
+						 if_name,
+						 i + 1);
+		}
+
+		if (trait->parameters[i] == PARAM_INITIAL) {
+			break;
+		}
+	}
+
+	return NULL;
+}
+
+struct check_result *check_unnecessary_template_definition(__attribute__((unused)) const struct
+                                                           check_data *data,
+                                                           const struct
+                                                           policy_node *node)
+{
+	const char *temp_name = node->data.str;
+	const struct interface_trait *trait = look_up_in_if_traits_map(temp_name);
+	if (!trait || !trait->is_inferred) {
+		return NULL;
+	}
+
+	for (int i = 0; i < TRAIT_MAX_PARAMETERS; i++) {
+		if (trait->parameters[i] == PARAM_TEXT) {
+			return NULL;
+		}
+
+		if (trait->parameters[i] == PARAM_INITIAL) {
+			break;
+		}
+	}
+
+	for (const struct policy_node *cur = node->first_child; cur; cur = dfs_next(cur)) {
+		if (cur == node || cur == node->next) {
+			break;
+		}
+
+		if (cur->flavor == NODE_GEN_REQ || cur->flavor == NODE_REQUIRE) {
+			cur = cur->next;
+		}
+
+		if (cur->flavor == NODE_DECL) {
+			return NULL;
+		}
+
+		if (cur->flavor == NODE_IF_CALL) {
+			const struct if_call_data *ic_data = cur->data.ic_data;
+			if (look_up_in_template_map(ic_data->name)) {
+				return NULL;
+			}
+		}
+	}
+
+	return make_check_result('S', S_ID_VOID_TEMP_DECL,
+				 "Template %s might be declared as an interface",
+				 temp_name);
+}
+
 struct check_result *check_name_used_but_not_required_in_if(const struct
                                                             check_data *data,
                                                             const struct
