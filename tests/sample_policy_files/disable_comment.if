@@ -1,0 +1,3 @@
+interface(`foo', ` #selint-disable:S-012
+	# empty
+')

@@ -930,7 +930,11 @@ if_line:
 interface_def:
 	start_interface lines end_interface
 	|
+	start_interface SELINT_COMMAND lines end_interface { save_command(cur, $2); free($2); }
+	|
 	start_interface end_interface
+	|
+	start_interface SELINT_COMMAND end_interface  { save_command(cur, $2); free($2); }
 	;
 
 start_interface:
