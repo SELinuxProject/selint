@@ -1,4 +1,4 @@
-policy_module(delcaring_template, 1.0.0)
+policy_module(declaring_template, 1.0.0)
 
 declaring_template(foo, bar)
 
