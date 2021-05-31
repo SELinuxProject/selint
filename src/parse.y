@@ -670,6 +670,10 @@ m4_string_elem:
 	|
 	CLOSE_PAREN
 	|
+	OPEN_CURLY
+	|
+	CLOSE_CURLY
+	|
 	COMMA
 	|
 	PERIOD
