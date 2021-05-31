@@ -76,6 +76,8 @@ gen_tunable(hello,world)
 
 define(yes, no)
 
+define(`list_of_things', `{ thing1 thing2 }')
+
 typebounds foo_t bar_t;
 
 call_with_backtick_args(foo_t,bar_t,`in')
