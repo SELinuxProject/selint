@@ -27,6 +27,7 @@ static struct hash_elem *perm_map = NULL;
 static struct hash_elem *mods_map = NULL;
 static struct hash_elem *mod_layers_map = NULL;
 static struct hash_elem *ifs_map = NULL;
+static struct hash_elem *if_traits_map = NULL;
 static struct bool_hash_elem *transform_map = NULL;
 static struct bool_hash_elem *filetrans_map = NULL;
 static struct bool_hash_elem *role_if_map = NULL;
@@ -582,6 +583,29 @@ __attribute__((no_sanitize("unsigned-integer-overflow")))
 __attribute__((no_sanitize("unsigned-shift-base")))
 #endif
 #endif
+void insert_into_if_traits_map(const char *if_name, struct interface_trait *trait)
+{
+	struct hash_elem *if_trait;
+
+	HASH_FIND(hh_if_traits, if_traits_map, if_name, strlen(if_name), if_trait);
+
+	if (!if_trait) {
+		if_trait = malloc(sizeof(struct hash_elem));
+		if_trait->key = strdup(if_name);
+		if_trait->val = trait;
+		HASH_ADD_KEYPTR(hh_if_traits, if_traits_map, if_trait->key,
+		                strlen(if_trait->key), if_trait);
+	} else {
+		free_interface_trait(trait);
+	}
+}
+
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#if (__clang_major__ >= 12)
+__attribute__((no_sanitize("unsigned-shift-base")))
+#endif
+#endif
 const struct string_list *look_up_in_permmacros_map(const char *name)
 {
 
@@ -610,10 +634,29 @@ unsigned int permmacros_map_count()
 	return HASH_CNT(hh_permmacros, permmacros_map);
 }
 
-#define FREE_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) { \
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#if (__clang_major__ >= 12)
+__attribute__((no_sanitize("unsigned-shift-base")))
+#endif
+#endif
+struct interface_trait *look_up_in_if_traits_map(const char *if_name)
+{
+	struct hash_elem *if_trait;
+
+	HASH_FIND(hh_if_traits, if_traits_map, if_name, strlen(if_name), if_trait);
+
+	if (if_trait == NULL) {
+		return NULL;
+	} else {
+		return if_trait->val;
+	}
+}
+
+#define FREE_MAP(mn, free_func) HASH_ITER(hh_ ## mn, mn ## _map, cur_decl, tmp_decl) { \
 		HASH_DELETE(hh_ ## mn, mn ## _map, cur_decl); \
+		free_func(cur_decl->val); \
 		free(cur_decl->key); \
-		free(cur_decl->val); \
 		free(cur_decl); \
 } \
 
@@ -628,27 +671,29 @@ void free_all_maps()
 
 	struct hash_elem *cur_decl, *tmp_decl;
 
-	FREE_MAP(type);
+	FREE_MAP(type, free);
 
-	FREE_MAP(role);
+	FREE_MAP(role, free);
 
-	FREE_MAP(user);
+	FREE_MAP(user, free);
 
-	FREE_MAP(attr_type);
+	FREE_MAP(attr_type, free);
 
-	FREE_MAP(attr_role);
+	FREE_MAP(attr_role, free);
 
-	FREE_MAP(bool);
+	FREE_MAP(bool, free);
 
-	FREE_MAP(class);
+	FREE_MAP(class, free);
 
-	FREE_MAP(perm);
+	FREE_MAP(perm, free);
 
-	FREE_MAP(mods);
+	FREE_MAP(mods, free);
 
-	FREE_MAP(mod_layers);
+	FREE_MAP(mod_layers, free);
 
-	FREE_MAP(ifs);
+	FREE_MAP(ifs, free);
+
+	FREE_MAP(if_traits, free_interface_trait);
 
 	struct bool_hash_elem *cur_bool, *tmp_bool;
 

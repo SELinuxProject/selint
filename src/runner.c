@@ -28,6 +28,7 @@
 #include "parse.h"
 #include "util.h"
 #include "startup.h"
+#include "infer.h"
 
 #define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
@@ -187,6 +188,14 @@ struct checks *register_checks(char level,
 		if (CHECK_ENABLED("S-010")) {
 			add_check(NODE_AV_RULE, ck, "S-010",
 			          check_perm_macro_available);
+		}
+		if (CHECK_ENABLED("S-011")) {
+			add_check(NODE_INTERFACE_DEF, ck, "S-011",
+			          check_text_param_in_interface);
+		}
+		if (CHECK_ENABLED("S-012")) {
+			add_check(NODE_TEMP_DEF, ck, "S-012",
+			          check_unnecessary_template_definition);
 		}
 		// FALLTHRU
 	case 'W':
@@ -439,6 +448,10 @@ enum selint_error run_analysis(struct checks *ck,
 	all_if_files->tail = context_if_files->tail;
 
 	mark_transform_interfaces(all_if_files);
+	res = infer_all_interfaces(all_if_files);
+	if (res != SELINT_SUCCESS) {
+		goto out;
+	}
 
 	// Restore
 	if (if_files->tail) {

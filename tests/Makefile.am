@@ -15,7 +15,7 @@
 @VALGRIND_CHECK_RULES@
 VALGRIND_memcheck_FLAGS=--leak-check=full --show-reachable=yes --show-leak-kinds=all --errors-for-leak-kinds=all
 
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering check_perm_macro
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering check_perm_macro check_infer
 check_PROGRAMS = ${TESTS}
 
 AV_FILE_PERM_FILES=sample_av/file/index \
@@ -106,11 +106,13 @@ SAMPLE_POLICY_FILES=sample_policy_files/access_vectors \
 			sample_policy_files/empty.te \
 			sample_policy_files/extended_perms.te \
 			sample_policy_files/ifdef_block.te \
+			sample_policy_files/infer_loop.if \
 			sample_policy_files/modules.conf \
 			sample_policy_files/nested_templates.if \
 			sample_policy_files/none_context.fc \
 			sample_policy_files/obj_perm_sets.spt \
 			sample_policy_files/perms.spt \
+			sample_policy_files/simple_infer.if \
 			sample_policy_files/syntax_error.te \
 			sample_policy_files/uncommon.te \
 			sample_policy_files/with_m4.fc
@@ -155,6 +157,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/s08.if \
 			functional/policies/check_triggers/s09.pass.te \
 			functional/policies/check_triggers/s09.warn.te \
+			functional/policies/check_triggers/s11.if \
+			functional/policies/check_triggers/s12.if \
 			functional/policies/check_triggers/w01_other.te \
 			functional/policies/check_triggers/w01.te \
 			functional/policies/check_triggers/w02.if \
@@ -263,14 +267,16 @@ COLOR_HEADS=$(top_builddir)/src/color.h
 COLOR_OBJS=$(top_builddir)/src/color.o
 PERM_MACRO_HEADS=$(top_builddir)/src/perm_macro.h ${UTIL_HEADS} ${COLOR_HEADS}
 PERM_MACRO_OBJS=$(top_builddir)/src/perm_macro.o ${UTIL_OBJS} ${COLOR_OBJS}
-SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${STRING_LIST_HEADS} ${TREE_HEADS} ${MAPS_HEADS} ${ORDERING_HEADS}
+INFER_HEADS=$(top_builddir)/src/infer.h ${COLOR_HEADS} ${UTIL_HEADS}
+INFER_OBJS=$(top_builddir)/src/infer.o ${COLOR_OBJS} ${UTIL_OBJS}
+SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${SELINT_ERROR_HEADS} ${STRING_LIST_HEADS} ${TREE_HEADS} ${MAPS_HEADS} ${ORDERING_HEADS}
 SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${STRING_LIST_OBJS} ${TREE_OBJS} ${MAPS_OBJS} ${UTIL_OBJS}
-TREE_HEADS=$(top_builddir)/src/tree.h ${STRING_LIST_HEADS}
-TREE_OBJS=$(top_builddir)/src/tree.o ${STRING_LIST_OBJS} $(top_builddir)/src/maps.o
+TREE_HEADS=$(top_builddir)/src/tree.h ${SELINT_ERROR_HEADS} ${STRING_LIST_HEADS}
+TREE_OBJS=$(top_builddir)/src/tree.o ${STRING_LIST_OBJS} $(top_builddir)/src/maps.o ${INFER_OBJS}
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
 FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}
-MAPS_HEADS=$(top_builddir)/src/maps.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
-MAPS_OBJS=$(top_builddir)/src/maps.o ${TREE_OBJS}
+MAPS_HEADS=$(top_builddir)/src/maps.h ${SELINT_ERROR_HEADS} ${TREE_HEADS} ${INFER_HEADS}
+MAPS_OBJS=$(top_builddir)/src/maps.o ${TREE_OBJS} ${INFER_OBJS}
 TEMPLATE_HEADS=$(top_builddir)/src/template.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
 TEMPLATE_OBJS=$(top_builddir)/src/template.o ${TREE_OBJS}
 PARSE_FUNCTIONS_HEADS=$(top_builddir)/src/parse_functions.h ${SELINT_ERROR_HEADS} ${TREE_HEADS} ${MAPS_HEADS} ${PERM_MACRO_HEADS}
@@ -344,5 +350,8 @@ check_ordering_LDADD = @CHECK_LIBS@ $(sort ${ORDERING_OBJS} ${RUNNER_OBJS} ${MAP
 
 check_perm_macro_SOURCES = check_perm_macro.c ${PERM_MACRO_HEADS} ${STARTUP_HEADS} ${SELINT_ERROR_HEADS} ${MAPS_HEADS}
 check_perm_macro_LDADD = @CHECK_LIBS@ $(sort ${PERM_MACRO_OBJS} ${STARTUP_OBJS} ${MAPS_OBJS})
+
+check_infer_SOURCES = check_infer.c ${INFER_HEADS} ${MAPS_HEADS} ${PARSE_HEADS}
+check_infer_LDADD = @CHECK_LIBS@ $(sort ${INFER_OBJS} ${MAPS_OBJS} ${PARSE_OBJS})
 
 MOSTLYCLEANFILES = *.gcov *.gcda *.gcno

@@ -1,0 +1,20 @@
+interface(`foo1', `
+	gen_require(`
+		type foo_t;
+	')
+
+	allow $1 foo_t:file read;
+')
+
+interface(`foo2', `
+	gen_require(`
+		type foo_t;
+	')
+
+	allow $1_t foo_t:file read;
+')
+
+interface(`foo3', `
+	type foo_t;
+	allow $1 foo_t:file read;
+')

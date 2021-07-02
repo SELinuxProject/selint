@@ -1,0 +1,7 @@
+interface(`sample_infer_loop1',`
+	sample_infer_loop2($1)
+')
+
+interface(`sample_infer_loop2',`
+	sample_infer_loop1($1)
+')
