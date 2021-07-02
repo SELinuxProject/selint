@@ -203,6 +203,7 @@ struct checks *register_checks(char level,
 			add_check(NODE_TYPE_ATTRIBUTE, ck, "W-001", check_no_explicit_declaration);
 			add_check(NODE_ROLE_ATTRIBUTE, ck, "W-001", check_no_explicit_declaration);
 			add_check(NODE_PERMISSIVE, ck, "W-001", check_no_explicit_declaration);
+			add_check(NODE_DECL, ck, "W-001", check_no_explicit_declaration);
 		}
 		if (CHECK_ENABLED("W-002")) {
 			add_check(NODE_AV_RULE, ck, "W-002", check_name_used_but_not_required_in_if);
@@ -217,6 +218,7 @@ struct checks *register_checks(char level,
 			add_check(NODE_TYPE_ATTRIBUTE, ck, "W-002", check_name_used_but_not_required_in_if);
 			add_check(NODE_ROLE_ATTRIBUTE, ck, "W-002", check_name_used_but_not_required_in_if);
 			add_check(NODE_PERMISSIVE, ck, "W-002", check_name_used_but_not_required_in_if);
+			add_check(NODE_DECL, ck, "W-002", check_name_used_but_not_required_in_if);
 		}
 		if (CHECK_ENABLED("W-003")) {
 			add_check(NODE_DECL, ck, "W-003",

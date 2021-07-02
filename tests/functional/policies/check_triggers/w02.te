@@ -1,3 +1,5 @@
 policy_module(w02, 1.0)
 
+attribute foo_attr;
+
 type bin_t;
