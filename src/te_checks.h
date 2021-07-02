@@ -59,6 +59,16 @@ struct check_result *check_no_self(const struct check_data *data,
                                    const struct policy_node *node);
 
 /*********************************************
+* Check for  violations of refpolicy style naming conventions.
+* Called on NODE_DECL nodes.
+* data - metadata about the file currently being scanned
+* node - the node to check
+* returns NULL if passed or check_result for issue C-005
+*********************************************/
+struct check_result *check_naming(const struct check_data *data,
+                                  const struct policy_node *node);
+
+/*********************************************
 * Check for the presence of require blocks in TE files.
 * Interface calls are to be preferred.
 * Called on NODE_REQUIRE and NODE_GEN_REQ nodes.

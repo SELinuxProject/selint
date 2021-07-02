@@ -131,6 +131,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/c06.warn.if \
 			functional/policies/check_triggers/c07.te \
 			functional/policies/check_triggers/c07.if \
+			functional/policies/check_triggers/c08.te \
+			functional/policies/check_triggers/c08.if \
 			functional/policies/check_triggers/e02.fc \
 			functional/policies/check_triggers/e03e04e05.fc \
 			functional/policies/check_triggers/e06.te \
@@ -288,7 +290,7 @@ FC_CHECKS_OBJS=$(top_builddir)/src/fc_checks.o ${CHECK_HOOKS_OBJS}
 IF_CHECKS_HEADS=$(top_builddir)/src/if_checks.h ${CHECK_HOOKS_HEADS} ${UTIL_HEADS}
 IF_CHECKS_OBJS=$(top_builddir)/src/if_checks.o ${CHECK_HOOKS_OBJS} ${UTIL_OBJS}
 TE_CHECKS_HEADS=$(top_builddir)/src/te_checks.h ${CHECK_HOOKS_HEADS} ${UTIL_HEADS}
-TE_CHECKS_OBJS=$(top_builddir)/src/te_checks.o ${CHECK_HOOKS_OBJS} $(top_builddir)/src/ordering.o ${UTIL_OBJS}
+TE_CHECKS_OBJS=$(top_builddir)/src/te_checks.o ${CHECK_HOOKS_OBJS} $(top_builddir)/src/ordering.o $(top_builddir)/src/naming.o ${UTIL_OBJS}
 RUNNER_HEADS=$(top_builddir)/src/runner.h ${SELINT_ERROR_HEADS} ${CHECK_HOOKS_HEADS} ${PARSE_FUNCTIONS_HEADS} ${FILE_LIST_HEADS}
 RUNNER_OBJS=$(top_builddir)/src/runner.o ${CHECK_HOOKS_OBJS} ${PARSE_FUNCTIONS_OBJS} ${FILE_LIST_OBJS} ${FC_CHECKS_OBJS} ${IF_CHECKS_OBJS} ${TE_CHECKS_OBJS} ${PARSE_FC_OBJS} ${UTIL_OBJS} ${STARTUP_OBJS} ${PARSE_OBJS}
 ORDERING_HEADS=$(top_builddir)/src/ordering.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
