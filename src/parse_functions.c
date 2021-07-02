@@ -83,7 +83,8 @@ enum selint_error insert_comment(struct policy_node **cur, unsigned int lineno)
 }
 
 enum selint_error insert_declaration(struct policy_node **cur,
-                                     enum decl_flavor flavor, const char *name,
+                                     enum decl_flavor flavor,
+                                     const char *name,
                                      struct string_list *attrs,
                                      unsigned int lineno)
 {
@@ -98,7 +99,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 			// We are inside a template, so we need to save declarations in the template map
 			// 'role foo types bar_t, baz_t;' statements are not declarations.
 			insert_decl_into_template_map(temp_name, flavor, name);
-		} else if (name && '$' != name[0]) {
+		} else if ('$' != name[0]) {
 			// If the name starts with $ we're probably doing something like associating
 			// a role with types in interfaces
 
@@ -121,11 +122,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 	memset(data, 0, sizeof(struct declaration_data));
 
 	data->flavor = flavor;
-	if (name) {
-		data->name = strdup(name);
-	} else {
-		data->name = NULL;
-	}
+	data->name = strdup(name);
 	data->attrs = attrs;
 
 	union node_data nd;

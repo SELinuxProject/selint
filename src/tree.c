@@ -218,12 +218,8 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 
 	case NODE_DECL:
 		d_data = node->data.d_data;
-		if (d_data->name) {
-			ret = sl_from_str(d_data->name);
-			ret->next = copy_string_list(d_data->attrs);
-		} else {
-			ret = copy_string_list(d_data->attrs);
-		}
+		ret = sl_from_str(d_data->name);
+		ret->next = copy_string_list(d_data->attrs);
 		break;
 
 	case NODE_IF_CALL:
