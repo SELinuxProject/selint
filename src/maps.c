@@ -16,6 +16,16 @@
 
 #include "maps.h"
 
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
+#if (__clang_major__ >= 12)
+#define no_sanitize_unsigned_integer_       __attribute__((no_sanitize("unsigned-integer-overflow", "unsigned-shift-base")))
+#else
+#define no_sanitize_unsigned_integer_       __attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
+#else
+#define no_sanitize_unsigned_integer_
+#endif
+
 static struct hash_elem *type_map = NULL;
 static struct hash_elem *role_map = NULL;
 static struct hash_elem *user_map = NULL;
@@ -33,12 +43,7 @@ static struct bool_hash_elem *role_if_map = NULL;
 static struct sl_hash_elem *permmacros_map = NULL;
 static struct template_hash_elem *template_map = NULL;
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor flavor)
 {
 
@@ -80,12 +85,7 @@ static struct hash_elem *look_up_hash_elem(const char *name, enum decl_flavor fl
 	return decl;
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void insert_into_decl_map(const char *name, const char *module_name,
                           enum decl_flavor flavor)
 {
@@ -152,12 +152,7 @@ const char *look_up_in_decl_map(const char *name, enum decl_flavor flavor)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void insert_into_mods_map(const char *mod_name, const char *status)
 {
 
@@ -174,12 +169,7 @@ void insert_into_mods_map(const char *mod_name, const char *status)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 const char *look_up_in_mods_map(const char *mod_name)
 {
 
@@ -194,12 +184,7 @@ const char *look_up_in_mods_map(const char *mod_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void insert_into_mod_layers_map(const char *mod_name, const char *layer)
 {
 	struct hash_elem *mod;
@@ -216,12 +201,7 @@ void insert_into_mod_layers_map(const char *mod_name, const char *layer)
 
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 const char *look_up_in_mod_layers_map(const char *mod_name)
 {
 	struct hash_elem *mod;
@@ -235,12 +215,7 @@ const char *look_up_in_mod_layers_map(const char *mod_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void insert_into_ifs_map(const char *if_name, const char *mod_name)
 {
 
@@ -257,12 +232,7 @@ void insert_into_ifs_map(const char *if_name, const char *mod_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 const char *look_up_in_ifs_map(const char *if_name)
 {
 
@@ -301,12 +271,7 @@ unsigned int decl_map_count(enum decl_flavor flavor)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void mark_transform_if(const char *if_name)
 {
 	struct bool_hash_elem *transform_if;
@@ -324,12 +289,7 @@ void mark_transform_if(const char *if_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 int is_transform_if(const char *if_name)
 {
 	struct bool_hash_elem *transform_if;
@@ -341,12 +301,7 @@ int is_transform_if(const char *if_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void mark_filetrans_if(const char *if_name)
 {
 	struct bool_hash_elem *filetrans_if;
@@ -364,12 +319,7 @@ void mark_filetrans_if(const char *if_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 int is_filetrans_if(const char *if_name)
 {
 	struct bool_hash_elem *filetrans_if;
@@ -381,12 +331,7 @@ int is_filetrans_if(const char *if_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void mark_role_if(const char *if_name)
 {
 	struct bool_hash_elem *role_if;
@@ -404,12 +349,7 @@ void mark_role_if(const char *if_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 int is_role_if(const char *if_name)
 {
 	struct bool_hash_elem *role_if;
@@ -453,12 +393,7 @@ static void insert_noop(__attribute__((unused)) struct template_hash_elem *templ
 	return;
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 static void insert_into_template_map(const char *name, void *new_node,
                               void (*insertion_func)(struct template_hash_elem
                                                      *, void *))
@@ -516,12 +451,7 @@ void insert_call_into_template_map(const char *name, struct if_call_data *call)
 	insert_into_template_map(name, new_node, insert_call);
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 const struct template_hash_elem *look_up_in_template_map(const char *name)
 {
 
@@ -554,12 +484,7 @@ const struct if_call_list *look_up_call_in_template_map(const char *name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void insert_into_permmacros_map(const char *name, struct string_list *permissions)
 {
 
@@ -576,12 +501,7 @@ void insert_into_permmacros_map(const char *name, struct string_list *permission
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 const struct string_list *look_up_in_permmacros_map(const char *name)
 {
 
