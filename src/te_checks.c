@@ -425,7 +425,13 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 
 	struct string_list *names = get_names_in_node(node);
 
-	for (const struct string_list *name = names; name; name = name->next) {
+	const struct string_list *name = names;
+	/* In declarations skip the first name, which is the new declared type */
+	if (node->flavor == NODE_DECL) {
+		name = name->next;
+	}
+
+	for (; name; name = name->next) {
 		const char *mod_name;
 		enum decl_flavor flavor;
 

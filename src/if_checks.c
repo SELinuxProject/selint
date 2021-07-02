@@ -287,6 +287,10 @@ struct check_result *check_name_used_but_not_required_in_if(const struct
 	}
 
 	const struct string_list *name_node = names_in_current_node;
+	/* In declarations skip the first name, which is the new declared type */
+	if (node->flavor == NODE_DECL) {
+		name_node = name_node->next;
+	}
 	const char *flavor = NULL;
 
 	while (name_node) {
