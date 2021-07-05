@@ -744,7 +744,7 @@ mls_level:
 	;
 
 mls_component:
-	STRING { $$ = strdup($1); free($1); }
+	STRING
 	|
 	STRING PERIOD STRING { size_t len = strlen($1) + strlen($3) + 1 /* PERIOD */ + 1 /* NT */;
 				$$ = malloc(len);
