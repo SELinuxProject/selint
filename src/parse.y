@@ -89,14 +89,6 @@
 %token <string> VERSION_NO;
 %token <string> SELINT_COMMAND;
 
-%destructor { free($$); } STRING
-%destructor { free($$); } NUM_STRING
-%destructor { free($$); } IPV4
-%destructor { free($$); } IPV6
-%destructor { free($$); } NUMBER
-%destructor { free($$); } QUOTED_STRING
-%destructor { free($$); } VERSION_NO
-
 %token UNKNOWN_TOKEN;
 %token POLICY_MODULE;
 %token MODULE;
@@ -194,8 +186,8 @@
 %type<av_flavor> xperm_av_type
 %type<node_flavor> if_keyword
 
-%destructor { free($$); } mls_component mls_level mls_range sl_item xperm_item
-%destructor { free_string_list($$); } arg args comma_string_list string_list strings xperm_list xperm_items
+%destructor { free($$); } <string>
+%destructor { free_string_list($$); } <sl>
 
 %%
 selinux_file:
