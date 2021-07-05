@@ -1,0 +1,4 @@
+interface(`conflict_infer',`
+	allow $1 target:cls perm;
+	role $1 types target;
+')

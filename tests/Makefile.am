@@ -106,13 +106,14 @@ SAMPLE_POLICY_FILES=sample_policy_files/access_vectors \
 			sample_policy_files/empty.te \
 			sample_policy_files/extended_perms.te \
 			sample_policy_files/ifdef_block.te \
+			sample_policy_files/infer_conflict.if \
 			sample_policy_files/infer_loop.if \
+			sample_policy_files/infer_simple.if \
 			sample_policy_files/modules.conf \
 			sample_policy_files/nested_templates.if \
 			sample_policy_files/none_context.fc \
 			sample_policy_files/obj_perm_sets.spt \
 			sample_policy_files/perms.spt \
-			sample_policy_files/simple_infer.if \
 			sample_policy_files/syntax_error.te \
 			sample_policy_files/uncommon.te \
 			sample_policy_files/with_m4.fc

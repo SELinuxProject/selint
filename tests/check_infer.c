@@ -22,7 +22,8 @@
 #include "../src/parse_functions.h"
 
 #define POLICIES_DIR SAMPLE_POL_DIR
-#define SIMPLE_INFER_IF POLICIES_DIR "simple_infer.if"
+#define CONFLICT_INFER_IF POLICIES_DIR "infer_conflict.if"
+#define SIMPLE_INFER_IF POLICIES_DIR "infer_simple.if"
 #define INFER_LOOP_IF POLICIES_DIR "infer_loop.if"
 
 extern enum selint_error infer_interfaces_deep(const struct policy_node *node);
@@ -31,7 +32,7 @@ extern enum selint_error infer_interfaces_shallow(const struct policy_node *node
 START_TEST (test_infer_simple) {
 
 	// setup
-	set_current_module_name("simple_infer");
+	set_current_module_name("infer_simple");
 
 	FILE *f = fopen(SIMPLE_INFER_IF, "r");
 	ck_assert_ptr_nonnull(f);
@@ -223,6 +224,51 @@ START_TEST (test_infer_loop) {
 }
 END_TEST
 
+START_TEST (test_infer_conflict) {
+
+	// setup
+	set_current_module_name("infer_conflict");
+
+	FILE *f = fopen(CONFLICT_INFER_IF, "r");
+	ck_assert_ptr_nonnull(f);
+	struct policy_node *ast = yyparse_wrapper(f, CONFLICT_INFER_IF, NODE_IF_FILE);
+	fclose(f);
+	ck_assert_ptr_nonnull(ast);
+
+	ck_assert_int_eq(SELINT_SUCCESS, infer_interfaces_shallow(ast));
+
+	const struct interface_trait *if_trait;
+
+	// conflict_infer
+	if_trait = look_up_in_if_traits_map("conflict_infer");
+	ck_assert_ptr_nonnull(if_trait);
+	ck_assert_str_eq("conflict_infer", if_trait->name);
+	ck_assert_int_eq(INTERFACE_TRAIT, if_trait->type);
+	ck_assert_int_eq(true, if_trait->is_inferred);
+	ck_assert_int_eq(PARAM_ROLE, if_trait->parameters[0]);  // TODO: report conflict, not PARAM_ROLE
+	for (int i = 1; i < TRAIT_MAX_PARAMETERS; ++i) ck_assert_int_eq(PARAM_INITIAL, if_trait->parameters[i]);
+	ck_assert_ptr_nonnull(if_trait->node);
+
+	ck_assert_int_eq(SELINT_SUCCESS, infer_interfaces_deep(ast));
+
+	// conflict_infer
+	if_trait = look_up_in_if_traits_map("conflict_infer");
+	ck_assert_ptr_nonnull(if_trait);
+	ck_assert_str_eq("conflict_infer", if_trait->name);
+	ck_assert_int_eq(INTERFACE_TRAIT, if_trait->type);
+	ck_assert_int_eq(true, if_trait->is_inferred);
+	ck_assert_int_eq(PARAM_ROLE, if_trait->parameters[0]);
+	for (int i = 1; i < TRAIT_MAX_PARAMETERS; ++i) ck_assert_int_eq(PARAM_INITIAL, if_trait->parameters[i]);
+	ck_assert_ptr_nonnull(if_trait->node);
+
+	// cleanup
+	free_policy_node(ast);
+
+	cleanup_parsing();
+
+}
+END_TEST
+
 static Suite *parsing_suite(void) {
 	Suite *s;
 	TCase *tc_core;
@@ -233,6 +279,7 @@ static Suite *parsing_suite(void) {
 
 	tcase_add_test(tc_core, test_infer_simple);
 	tcase_add_test(tc_core, test_infer_loop);
+	tcase_add_test(tc_core, test_infer_conflict);
 	suite_add_tcase(s, tc_core);
 
 	return s;
