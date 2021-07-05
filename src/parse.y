@@ -189,6 +189,7 @@
 %type<string> mls_level
 %type<string> mls_component
 %type<string> maybe_string_comma
+%type<string> maybe_selint_disable
 %type<av_flavor> av_type
 %type<av_flavor> xperm_av_type
 %type<node_flavor> if_keyword
@@ -236,6 +237,12 @@ comment:
 	COMMENT	{ insert_comment(&cur, @$.first_line); }
 	;
 
+maybe_selint_disable:
+	SELINT_COMMAND
+	|
+	%empty { $$ = NULL; }
+	;
+
 
 header:
 	POLICY_MODULE OPEN_PAREN STRING COMMA header_version CLOSE_PAREN {
@@ -272,9 +279,7 @@ lines:
 	;
 
 line:
-	bare_line
-	|
-	bare_line SELINT_COMMAND { save_command(cur, $2); free($2); }
+	bare_line maybe_selint_disable { save_command(cur, $2); free($2); }
 	;
 
 bare_line:
@@ -541,32 +546,22 @@ optional_block:
 	;
 
 optional_open:
-	OPTIONAL_POLICY OPEN_PAREN BACKTICK { begin_optional_policy(&cur, @$.first_line); }
-	|
-	OPTIONAL_POLICY OPEN_PAREN BACKTICK SELINT_COMMAND { begin_optional_policy(&cur, @$.first_line); save_command(cur->parent, $4); free($4); }
+	OPTIONAL_POLICY OPEN_PAREN BACKTICK maybe_selint_disable { begin_optional_policy(&cur, @$.first_line); save_command(cur->parent, $4); free($4); }
 	;
 
 require:
 	gen_require_begin
-	BACKTICK require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur, 0); }
-	|
-	gen_require_begin
-	BACKTICK SELINT_COMMAND require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur, 0); save_command(cur, $3); free($3); }
+	BACKTICK maybe_selint_disable require_lines SINGLE_QUOTE CLOSE_PAREN { end_gen_require(&cur, 0); save_command(cur, $3); free($3); }
 	|
 	gen_require_begin
 	require_lines CLOSE_PAREN { end_gen_require(&cur, 1); }
 	|
-	REQUIRE OPEN_CURLY { begin_require(&cur, @$.first_line); }
+	REQUIRE OPEN_CURLY maybe_selint_disable { begin_require(&cur, @$.first_line); save_command(cur->parent, $3); free($3); }
 	require_lines CLOSE_CURLY { end_require(&cur); }
-	|
-	REQUIRE OPEN_CURLY SELINT_COMMAND { begin_require(&cur, @$.first_line); save_command(cur->parent, $3); }
-	require_lines CLOSE_CURLY { end_require(&cur); free($3); }
 	;
 
 gen_require_begin:
-	GEN_REQUIRE OPEN_PAREN { begin_gen_require(&cur, @$.first_line); }
-	|
-	GEN_REQUIRE OPEN_PAREN SELINT_COMMAND { begin_gen_require(&cur, @$.first_line); save_command(cur->parent, $3); free($3); }
+	GEN_REQUIRE OPEN_PAREN maybe_selint_disable { begin_gen_require(&cur, @$.first_line); save_command(cur->parent, $3); free($3); }
 	;
 
 require_lines:
@@ -576,9 +571,7 @@ require_lines:
 	;
 
 require_line:
-	require_bare
-	|
-	require_bare SELINT_COMMAND { save_command(cur, $2); free($2); }
+	require_bare maybe_selint_disable { save_command(cur, $2); free($2); }
 	;
 
 require_bare:
@@ -781,9 +774,7 @@ boolean_block:
 	;
 
 boolean_open:
-	IF OPEN_PAREN { begin_boolean_policy(&cur, @$.first_line); }
-	|
-	IF OPEN_PAREN SELINT_COMMAND { begin_boolean_policy(&cur, @$.first_line); save_command(cur->parent, $3); free($3); }
+	IF OPEN_PAREN maybe_selint_disable { begin_boolean_policy(&cur, @$.first_line); save_command(cur->parent, $3); free($3); }
 	;
 
 tunable_block:
@@ -932,13 +923,9 @@ if_line:
 	;
 
 interface_def:
-	start_interface lines end_interface
+	start_interface maybe_selint_disable lines end_interface { save_command(cur, $2); free($2); }
 	|
-	start_interface SELINT_COMMAND lines end_interface { save_command(cur, $2); free($2); }
-	|
-	start_interface end_interface
-	|
-	start_interface SELINT_COMMAND end_interface  { save_command(cur, $2); free($2); }
+	start_interface maybe_selint_disable end_interface  { save_command(cur, $2); free($2); }
 	;
 
 start_interface:

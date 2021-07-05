@@ -461,7 +461,7 @@ START_TEST (test_save_command) {
 
 	struct policy_node *cur = calloc(1, sizeof(struct policy_node));
 	ck_assert_int_eq(SELINT_BAD_ARG, save_command(NULL, "foo"));
-	ck_assert_int_eq(SELINT_BAD_ARG, save_command(cur, NULL));
+	ck_assert_int_eq(SELINT_SUCCESS, save_command(cur, NULL));
 
 	ck_assert_int_eq(SELINT_PARSE_ERROR, save_command(cur, "foo"));
 
