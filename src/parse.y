@@ -428,7 +428,7 @@ xperm_list:
 	;
 
 xperm_items:
-	xperm_items xperm_item { $$ = concat_string_lists($1, sl_from_str($2)); free($2); }
+	xperm_items xperm_item { $$ = concat_string_lists($1, sl_from_str_consume($2)); }
 	|
 	xperm_item { $$ = sl_from_str_consume($1); }
 	|
@@ -454,7 +454,7 @@ string_list:
 	;
 
 strings:
-	strings sl_item { $$ = concat_string_lists($1, sl_from_str($2)); free($2); }
+	strings sl_item { $$ = concat_string_lists($1, sl_from_str_consume($2)); }
 	|
 	sl_item { $$ = sl_from_str_consume($1); }
 	;
@@ -472,7 +472,7 @@ sl_item:
 	;
 
 comma_string_list:
-	comma_string_list COMMA STRING { $$ = concat_string_lists($1, sl_from_str($3)); free($3); }
+	comma_string_list COMMA STRING { $$ = concat_string_lists($1, sl_from_str_consume($3)); }
 	|
 	STRING { $$ = sl_from_str_consume($1); }
 	;
