@@ -737,8 +737,11 @@ enum selint_error end_m4_argument(struct policy_node **cur)
 
 enum selint_error save_command(struct policy_node *cur, const char *comm)
 {
-	if (comm == NULL || cur == NULL) {
+	if (cur == NULL) {
 		return SELINT_BAD_ARG;
+	}
+	if (comm == NULL) {
+		return SELINT_SUCCESS;
 	}
 	while (*comm != 's' && *comm != '\0') {
 		comm++;
