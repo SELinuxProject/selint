@@ -130,3 +130,8 @@ define(`foobar')
 ifelse(`$1',,, `
     refpolicywarn(`dollar one defined')
 ')
+
+example_interface(foo_t, `s0:c0')
+example_interface(foo_t, `s15:c100.c102')
+range_transition foo_t foo_t:file s0:c0 - s15:c100.c102;
+example_interface(foo_t, `s0:c0 - s15:c100.c102')
