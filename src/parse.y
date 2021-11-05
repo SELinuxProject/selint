@@ -436,11 +436,11 @@ xperm_items:
 	;
 
 xperm_item:
-	STRING { $$ = $1; }
+	STRING
 	|
-	NUM_STRING { $$ = $1; }
+	NUM_STRING
 	|
-	NUMBER { $$ = $1; }
+	NUMBER
 	;
 
 string_list:
@@ -855,7 +855,7 @@ define_expansion:
 	;
 
 maybe_string_comma:
-	STRING COMMA { $$ = $1; }
+	STRING COMMA
 	|
 	COMMA { $$ = strdup(""); }
 	;
