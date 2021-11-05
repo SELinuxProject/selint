@@ -434,6 +434,8 @@ xperm_items:
 	xperm_items xperm_item { $$ = concat_string_lists($1, sl_from_str($2)); free($2); }
 	|
 	xperm_item { $$ = sl_from_str_consume($1); }
+	|
+	xperm_item DASH xperm_item { $$ = concat_string_lists(sl_from_str_consume($1), concat_string_lists(sl_from_str("-"), sl_from_str_consume($3))); } // TODO: validate usage: enforce two surrounding increasing elements
 	;
 
 xperm_item:
@@ -442,8 +444,6 @@ xperm_item:
 	NUM_STRING { $$ = $1; }
 	|
 	NUMBER { $$ = $1; }
-	|
-	DASH { $$ = strdup("-"); }  // TODO: validate usage: enforce two surrounding increasing elements
 	;
 
 string_list:
