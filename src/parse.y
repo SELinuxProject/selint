@@ -724,7 +724,7 @@ arg:
 	|
 	QUOTED_STRING { $$ = sl_from_str_consume($1); }
 	|
-	BACKTICK strings SINGLE_QUOTE { $$ = $2; }
+	BACKTICK mls_range SINGLE_QUOTE { $$ = sl_from_str_consume($2); }
 	|
 	BACKTICK SINGLE_QUOTE { $$ = sl_from_str(""); }
 	;
