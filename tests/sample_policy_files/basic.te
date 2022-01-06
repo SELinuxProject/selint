@@ -1,4 +1,4 @@
-policy_module(basic, 1.0)
+policy_module(basic)
 
 type basic_t;
 
