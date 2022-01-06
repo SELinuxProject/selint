@@ -237,10 +237,10 @@ maybe_selint_disable:
 
 
 header:
-	POLICY_MODULE OPEN_PAREN STRING COMMA header_version CLOSE_PAREN {
+	POLICY_MODULE OPEN_PAREN STRING maybe_header_version CLOSE_PAREN {
 			if (expected_node_flavor != NODE_TE_FILE) {
 				free($3);
-				const struct location loc = { @1.first_line, @1.first_column, @6.last_line, @6.last_column };
+				const struct location loc = { @1.first_line, @1.first_column, @5.last_line, @5.last_column };
 				yyerror(&loc, NULL, "Error: Unexpected te-file parsed"); YYERROR;
 			}
 			insert_header(&cur, $3, HEADER_MACRO, @$.first_line); free($3); } // Version number isn't needed
@@ -258,6 +258,12 @@ header_version:
 	VERSION_NO { free($1); }
 	|
 	NUMBER { free($1); }
+	;
+
+maybe_header_version:
+	COMMA header_version
+	|
+	%empty
 	;
 
 body:
