@@ -1,5 +1,15 @@
 # SELint Changelog
 
+## [1.2.1] 2022-01-10
+
+### Changed
+- Checks referencing attributes now see attributes assigned to a type as part
+  of a type declaration
+
+### Fixed
+- Various parser fixes and enhancements
+- Support IVv4 address embedding
+
 ## [1.2.0] 2021-01-18
 ### Added (general features)
 - New ./configure option --enable-werror to compile treating errors as
