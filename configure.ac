@@ -16,7 +16,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([selint], [1.2.0], [Daniel.Burgener@microsoft.com])
+AC_INIT([selint], [1.2.1], [Daniel.Burgener@microsoft.com])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([config.h])
 
