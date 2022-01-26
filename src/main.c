@@ -364,7 +364,7 @@ int main(int argc, char **argv)
 
 	print_if_verbose("Severity level set to %c\n", severity);
 
-	if (optind == argc) {
+	if (optind >= argc) {
 		usage();
 		exit(EX_USAGE);
 	}
