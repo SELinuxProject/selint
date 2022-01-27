@@ -124,12 +124,29 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 	}
 
 #ifdef DEBUG_INFO
-	for (int i=0; i< ordering->order_node_len; i++) {
+	enum order_conf variant;
+	if (comp_func == compare_nodes_refpolicy) {
+		variant = ORDER_REF;
+	} else if (comp_func == compare_nodes_refpolicy_lax) {
+		variant = ORDER_LAX;
+	} else if (comp_func == compare_nodes_refpolicy_light) {
+		variant = ORDER_LIGHT;
+	} else {
+		variant = ORDER_REF; // Should never happen
+	}
+
+	for (size_t i=0; i< ordering->order_node_len; i++) {
 		if(nodes[i].node) {
-			printf("Line: %u, Section %s: LSS: %d\n",
+			const char *section = get_section(nodes[i].node);
+			printf("Line: %u, Section %s: LSS: %s in-order=%u index=%zu seq_prev=%d end_of_seq=%d avg_line=%.1f\n",
 			       nodes[i].node->lineno,
-			       get_section(nodes[i].node),
-			       get_local_subsection(ordering->mod_name, nodes[i].node));
+			       section,
+			       lss_to_string(get_local_subsection(ordering->mod_name, nodes[i].node, variant)),
+			       nodes[i].in_order,
+			       i,
+			       nodes[i].seq_prev,
+			       nodes[i].end_of_seq,
+			       get_avg_line_by_name(section, ordering->sections));
 		}
 	}
 #endif
