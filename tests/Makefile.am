@@ -184,6 +184,9 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/C-001/interleaved.expect.ref \
 			functional/policies/check_triggers/C-001/interleaved.expect.lax \
 			functional/policies/check_triggers/C-001/interleaved.te \
+			functional/policies/check_triggers/C-001/interleaved2.expect.ref \
+			functional/policies/check_triggers/C-001/interleaved2.expect.lax \
+			functional/policies/check_triggers/C-001/interleaved2.te \
 			functional/policies/check_triggers/C-001/if_in_optional.expect.ref \
 			functional/policies/check_triggers/C-001/if_in_optional.expect.lax \
 			functional/policies/check_triggers/C-001/if_in_optional.te \

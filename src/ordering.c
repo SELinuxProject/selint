@@ -630,9 +630,7 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 		if (0 != strcmp(first_section_name, SECTION_DECLARATION) &&
 		    (0 == strcmp(second_section_name, SECTION_DECLARATION) ||
 		     (get_avg_line_by_name(first_section_name, ordering_data->sections) >
-		      get_avg_line_by_name(second_section_name, ordering_data->sections))) &&
-		    // allow raw section alphabetically following another raw section
-		    (!(first_section_name[0] != '_' && second_section_name[0] != '_' && strcmp(first_section_name, second_section_name) < 0))) {
+		      get_avg_line_by_name(second_section_name, ordering_data->sections)))) {
 			return -ORDER_SECTION;
 		} else {
 			return ORDER_SECTION;
@@ -777,7 +775,7 @@ const char *lss_to_string(enum local_subsection lss)
 	}
 }
 
-char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index, enum order_conf variant)
+char *get_ordering_reason(const struct ordering_metadata *order_data, unsigned int index, enum order_conf variant)
 {
 	unsigned int distance = 1;
 	unsigned int nearest_index = 0;
