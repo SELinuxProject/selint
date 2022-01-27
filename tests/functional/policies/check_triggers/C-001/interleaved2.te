@@ -1,0 +1,25 @@
+policy_module(interleaved2, 1.0)
+
+type dom_t;
+domain_type(dom_t)
+
+type dom_helper_t;
+domain_type(dom_helper_t)
+
+type resource_t;
+files_type(resource_t)
+
+
+allow dom_t self:capability setuid;
+allow dom_t self:process getpid;
+
+manage_files_pattern(dom_t, resource_t, resource_t)
+
+
+allow dom_helper_t self:capability setuid;
+allow dom_helper_t self:process getpid;
+
+
+optional_policy(`
+        logging_send_audit_msgs(dom_t)
+')

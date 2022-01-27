@@ -129,6 +129,7 @@ test_parse_error_impl() {
 @test "C-001" {
 	test_ordering "simple"
 	test_ordering "interleaved"
+	test_ordering "interleaved2"
 	test_ordering "optional"
 	test_ordering "role_ifs"
 	test_ordering "types_in_requires"

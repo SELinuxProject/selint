@@ -207,7 +207,7 @@ const char *lss_to_string(enum local_subsection lss);
 * in order and relatively out of order with this node and checking
 * what the reason for their out of order comparison is
 **********************************/
-char *get_ordering_reason(struct ordering_metadata *order_data, unsigned int index, enum order_conf variant);
+char *get_ordering_reason(const struct ordering_metadata *order_data, unsigned int index, enum order_conf variant);
 
 void free_ordering_metadata(struct ordering_metadata *to_free);
 
