@@ -135,3 +135,6 @@ example_interface(foo_t, `s0:c0')
 example_interface(foo_t, `s15:c100.c102')
 range_transition foo_t foo_t:file s0:c0 - s15:c100.c102;
 example_interface(foo_t, `s0:c0 - s15:c100.c102')
+
+type_transition foo_t foo_t : anon_inode bar_t "[userfaultfd]";
+anoninodetrans_pattern(foo_t, bar_t, "[io_uring]")
