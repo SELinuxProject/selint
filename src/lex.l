@@ -155,7 +155,7 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 [0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = strdup(yytext); return NUM_STRING; }
 [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval->string = strdup(yytext); return IPV4; }
 ([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})?(\:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})? { yylval->string = strdup(yytext); return IPV6; }
-\"[a-zA-Z0-9_\.\-\:~\$]*\" { yylval->string = strdup(yytext); return QUOTED_STRING; }
+\"[a-zA-Z0-9_\.\-\:~\$\[\]]*\" { yylval->string = strdup(yytext); return QUOTED_STRING; }
 \-[\-ldbcsp][ \t] { return FILE_TYPE_SPECIFIER; }
 \( { return OPEN_PAREN; }
 \) { return CLOSE_PAREN; }
