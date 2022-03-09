@@ -177,6 +177,9 @@
 %type<sl> spt_content
 %type<string> sl_item
 %type<string> xperm_item
+%type<sl> arg_list
+%type<sl> arg_list_items
+%type<string> arg_list_item
 %type<sl> arg
 %type<sl> args
 %type<string> mls_range
@@ -716,8 +719,36 @@ m4_argument:
 	STRING { free($1); }
 	;
 
+arg_list:
+	OPEN_CURLY arg_list_items CLOSE_CURLY { $$ = $2; }
+	|
+	TILDA arg_list { $$ = sl_from_str("~"); $$->next = $2; }
+	|
+	arg_list_item { $$ = sl_from_str_consume($1); }
+	;
+
+arg_list_items:
+	arg_list_items arg_list_item { $$ = concat_string_lists($1, sl_from_str_consume($2)); }
+	|
+	arg_list_item { $$ = sl_from_str_consume($1); }
+	;
+
+arg_list_item:
+	DASH arg_list_item { $$ = malloc(sizeof(char) * (strlen($2) + 2));
+			$$[0] = '-';
+			$$[1] = '\0';
+			strcat($$, $2);
+			free($2); }
+	|
+	STRING
+	|
+	NUM_STRING
+	|
+	NUMBER
+	;
+
 arg:
-	xperm_list
+	arg_list
 	|
 	QUOTED_STRING { $$ = sl_from_str_consume($1); }
 	|
