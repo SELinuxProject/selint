@@ -173,6 +173,8 @@
 %type<sl> strings
 %type<sl> xperm_list
 %type<sl> xperm_items
+%type<sl> spt_contents
+%type<sl> spt_content
 %type<string> sl_item
 %type<string> xperm_item
 %type<sl> arg
@@ -970,7 +972,7 @@ spt_line:
 	;
 
 support_def:
-	DEFINE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK string_list SINGLE_QUOTE CLOSE_PAREN {
+	DEFINE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK spt_contents SINGLE_QUOTE CLOSE_PAREN {
 			if (expected_node_flavor != NODE_SPT_FILE) {
 				free($4); free_string_list($8);
 				const struct location loc = { @1.first_line, @1.first_column, @10.last_line, @10.last_column };
@@ -982,14 +984,20 @@ support_def:
 				free_string_list($8);
 			}
 			free($4); }
+	;
+
+spt_contents:
+	spt_contents spt_content { $$ = concat_string_lists($1, $2); }
 	|
-	DEFINE OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK string_list refpolicywarn SINGLE_QUOTE CLOSE_PAREN {
-			if (expected_node_flavor != NODE_SPT_FILE) {
-				free($4); free_string_list($8);
-				const struct location loc = { @1.first_line, @1.first_column, @11.last_line, @11.last_column };
-				yyerror(&loc, NULL, "Error: Unexpected spt-file parsed"); YYERROR;
-			}
-			free($4); free_string_list($8); } // do not import
+	spt_content
+	;
+
+spt_content:
+	string_list
+	|
+	COMMENT { $$ = NULL; }
+	|
+	refpolicywarn { $$ = NULL; }
 	;
 
 // access-vector file

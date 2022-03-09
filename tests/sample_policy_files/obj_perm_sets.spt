@@ -21,6 +21,7 @@ define(`mount_fs_perms', `{ mount remount unmount getattr }')
 
 # deprecated
 define(`remount_fs_perms',`
+        # deprecated
         { remount getattr }
         refpolicywarn(`remount_fs_perms is deprecated')
 ')
