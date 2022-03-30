@@ -18,12 +18,14 @@
 #define STRING_LIST_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include "selint_error.h"
 
 struct string_list {
 	char *string;
 	struct string_list *next;
-	int has_incorrect_space;
+	uint8_t has_incorrect_space;
+	uint8_t arg_start;
 };
 
 int str_in_sl(const char *str, const struct string_list *sl);

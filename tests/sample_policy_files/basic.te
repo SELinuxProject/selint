@@ -6,6 +6,11 @@ type basic_exec_t;
 
 allow basic_t basic_exec_t:file { read execute entrypoint };
 
+macro1(basic_t)
+macro2(basic_t, basic_exec_t)
+macro3(basic_t basic_exec_t)
+macro4(basic_t, basic_t basic_exec_t, { basic_t -basic_exec_t })
+
 optional_policy(`
 	allow basic_t foo_t:file *;
 	allow basic_t foo_t:dir read;
