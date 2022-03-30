@@ -186,6 +186,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/w12.te \
 			functional/policies/check_triggers/x01.if \
 			functional/policies/check_triggers/x01.te \
+			functional/policies/check_triggers/x02.te \
 			functional/policies/check_triggers/C-001/interleaved.expect.ref \
 			functional/policies/check_triggers/C-001/interleaved.expect.lax \
 			functional/policies/check_triggers/C-001/interleaved.te \

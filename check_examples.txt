@@ -1,6 +1,14 @@
 
 Here are examples of errors that will cause each possible result:
 
+Extra:
+
+X-001:
+
+	# generates av rules for each type assigned to the attribute 'domain'
+	# except 'foo_t', which might be thousands
+	allow { domain -foo_t } self:process signal;
+
 Convention:
 
 C-001:
