@@ -204,6 +204,9 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/C-001/role_ifs.expect.ref \
 			functional/policies/check_triggers/C-001/role_ifs.expect.lax \
 			functional/policies/check_triggers/C-001/role_ifs.te \
+			functional/policies/check_triggers/C-001/self_macro.expect.ref \
+			functional/policies/check_triggers/C-001/self_macro.expect.lax \
+			functional/policies/check_triggers/C-001/self_macro.te \
 			functional/policies/check_triggers/C-001/simple.expect.ref \
 			functional/policies/check_triggers/C-001/simple.expect.lax \
 			functional/policies/check_triggers/C-001/simple.te \

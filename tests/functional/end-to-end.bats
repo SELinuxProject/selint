@@ -128,6 +128,7 @@ test_parse_error_impl() {
 
 @test "C-001" {
 	test_ordering "simple"
+	test_ordering "self_macro"
 	test_ordering "interleaved"
 	test_ordering "interleaved2"
 	test_ordering "optional"

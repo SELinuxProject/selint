@@ -325,10 +325,22 @@ float get_avg_line_by_name(const char *section_name, const struct section_data *
 
 static bool is_self_rule(const struct policy_node *node)
 {
-	return (node->flavor == NODE_AV_RULE || node->flavor == NODE_XAV_RULE) &&
+	// Access vector rule with self as target
+	if ((node->flavor == NODE_AV_RULE || node->flavor == NODE_XAV_RULE) &&
 	       node->data.av_data &&
 	       node->data.av_data->targets &&
-	       0 == strcmp(node->data.av_data->targets->string, "self");
+	       0 == strcmp(node->data.av_data->targets->string, "self")) {
+		return true;
+	}
+
+	// Macro call with self as argument
+	if (node->flavor == NODE_IF_CALL &&
+	    str_in_sl("self", node->data.ic_data->args) &&
+	    !look_up_in_ifs_map(node->data.ic_data->name)) {
+		return true;
+	}
+
+	return false;
 }
 
 static bool is_own_module_rule(const struct policy_node *node, const char *current_mod_name)
