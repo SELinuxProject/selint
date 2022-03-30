@@ -1,0 +1,9 @@
+# Fake interfaces for test
+
+# Do the things
+interface(`bar_do_stuff',`
+	gen_require(`
+		type stuff_t;
+	')
+	do_things_pattern($1, stuff_t, stuff_t)
+')

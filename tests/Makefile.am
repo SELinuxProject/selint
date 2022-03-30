@@ -201,6 +201,9 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/C-001/optional.expect.ref \
 			functional/policies/check_triggers/C-001/optional.expect.lax \
 			functional/policies/check_triggers/C-001/optional.te \
+			functional/policies/check_triggers/C-001/optional_optional.expect.ref \
+			functional/policies/check_triggers/C-001/optional_optional.expect.lax \
+			functional/policies/check_triggers/C-001/optional_optional.te \
 			functional/policies/check_triggers/C-001/role_ifs.expect.ref \
 			functional/policies/check_triggers/C-001/role_ifs.expect.lax \
 			functional/policies/check_triggers/C-001/role_ifs.te \
