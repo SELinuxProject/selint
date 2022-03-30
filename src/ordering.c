@@ -492,6 +492,19 @@ static bool is_optional(const struct policy_node *node)
 	return ret;
 }
 
+static unsigned optional_depth(const struct policy_node *node)
+{
+	unsigned ret = 0;
+	while (node) {
+		if (node->flavor == NODE_OPTIONAL_POLICY ||
+		    node->flavor == NODE_OPTIONAL_ELSE) {
+			ret++;
+		}
+		node = node->parent;
+	}
+	return ret;
+}
+
 static bool is_boolean(const struct policy_node *node)
 {
 	bool ret = false;
@@ -703,8 +716,11 @@ enum order_difference_reason compare_nodes_refpolicy_generic(const struct orderi
 		    lss_first != LSS_BOOLEAN &&
 		    lss_first != LSS_TUNABLE &&
 		    (lss_first != LSS_OPTIONAL ||
-		    // sort optionals only based on first node
-		    (lss_first == lss_second && first->prev->flavor == NODE_START_BLOCK && second->prev->flavor == NODE_START_BLOCK)) &&
+		    // sort optionals only based on first node with same depth
+		     (lss_first == lss_second &&
+		     first->prev->flavor == NODE_START_BLOCK &&
+		     second->prev->flavor == NODE_START_BLOCK &&
+		     optional_depth(first) == optional_depth(second))) &&
 		    first->flavor == NODE_IF_CALL &&
 		    second->flavor == NODE_IF_CALL) {
 			const char *first_mod_name = look_up_in_ifs_map(first->data.ic_data->name);

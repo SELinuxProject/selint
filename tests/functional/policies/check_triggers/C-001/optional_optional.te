@@ -1,0 +1,18 @@
+policy_module(optional_optional, 1.0)
+
+type dom_t;
+domain_type(dom_t)
+
+kernel_read_system_state(dom_t)
+
+optional_policy(`
+	foo_do_stuff(dom_t)
+
+	optional_policy(`
+		xyz_do_stuff(dom_t)
+	')
+')
+
+optional_policy(`
+	bar_do_stuff(dom_t)
+')

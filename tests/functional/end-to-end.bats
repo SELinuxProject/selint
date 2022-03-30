@@ -132,6 +132,7 @@ test_parse_error_impl() {
 	test_ordering "interleaved"
 	test_ordering "interleaved2"
 	test_ordering "optional"
+	test_ordering "optional_optional"
 	test_ordering "role_ifs"
 	test_ordering "types_in_requires"
 	test_ordering "kernel_module_first"
