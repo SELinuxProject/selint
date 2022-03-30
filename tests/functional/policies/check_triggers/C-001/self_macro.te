@@ -1,0 +1,11 @@
+policy_module(self_macro, 1.0)
+
+type foo_t;
+domain_type(foo_t)
+
+allow foo_t self:process signal;
+allow foo_t self:tcp_socket read;
+tcp_socket_pattern(foo_t, self)
+allow foo_t self:udp_socket read;
+udp_socket_pattern(foo_t, self)
+allow foo_t self:passwd passwd;
