@@ -758,13 +758,14 @@ arg:
 	;
 
 args:
-	arg
+	arg { $1->arg_start = 1; $$ = $1;}
 	|
-	args COMMA arg { $$ = concat_string_lists($1, $3); }
+	args COMMA arg { $3->arg_start = 1; $$ = concat_string_lists($1, $3); }
 	|
 	args sl_item { struct string_list *sl = calloc(1, sizeof(struct string_list));
 			sl->string = $2;
 			sl->has_incorrect_space = 1;
+			$1->arg_start = 1;
 			$$ = concat_string_lists($1, sl); }
 	;
 

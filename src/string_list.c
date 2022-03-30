@@ -46,6 +46,7 @@ struct string_list *copy_string_list(const struct string_list *sl)
 	while (sl) {
 		cur->string = strdup(sl->string);
 		cur->has_incorrect_space = sl->has_incorrect_space;
+		cur->arg_start = sl->arg_start;
 
 		if (sl->next) {
 			cur->next = malloc(sizeof(struct string_list));
@@ -64,6 +65,7 @@ struct string_list *sl_from_str(const char *string)
 	ret->string = strdup(string);
 	ret->next = NULL;
 	ret->has_incorrect_space = 0;
+	ret->arg_start = 0;
 
 	return ret;
 }
@@ -74,6 +76,7 @@ struct string_list *sl_from_strn(const char *string, size_t len)
 	ret->string = strndup(string, len);
 	ret->next = NULL;
 	ret->has_incorrect_space = 0;
+	ret->arg_start = 0;
 
 	return ret;
 }
@@ -84,6 +87,7 @@ struct string_list *sl_from_str_consume(char *string)
 	ret->string = string;
 	ret->next = NULL;
 	ret->has_incorrect_space = 0;
+	ret->arg_start = 0;
 
 	return ret;
 }
