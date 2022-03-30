@@ -22,7 +22,8 @@
 #include "selint_config.h"
 
 enum extra_ids {
-	X_ID_UNUSED_IF = 1,
+	X_ID_UNUSED_IF  = 1,
+	X_ID_EXCL_ALLOW = 2,
 	X_END
 };
 

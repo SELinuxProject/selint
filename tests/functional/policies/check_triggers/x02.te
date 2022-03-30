@@ -1,0 +1,13 @@
+policy_module(x02, 0.1)
+
+attribute attr;
+type foo_t;
+
+allow { attr -foo_t } foo_t:process signal;
+
+allow foo_t { attr -foo_t }:process signal;
+auditallow foo_t { attr -foo_t }:process signal;
+dontaudit foo_t { attr -foo_t }:process signal;
+neverallow foo_t { attr -foo_t }:process signal;
+
+manage_files_pattern(foo_t, attr, { attr -foo_t })

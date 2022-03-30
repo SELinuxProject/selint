@@ -126,6 +126,10 @@ test_parse_error_impl() {
 	test_one_check "X-001" "x01.*"
 }
 
+@test "X-002" {
+	test_one_check_expect "X-002" "x02.te" 5
+}
+
 @test "C-001" {
 	test_ordering "simple"
 	test_ordering "self_macro"
