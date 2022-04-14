@@ -20,14 +20,14 @@
 #include "check_hooks.h"
 
 /*********************************************
- * Check for allow rule with excluded source or target.
+ * Check for access vector rules with excluded source or target.
  * Called on NODE_AV_RULE and NODE_IF_CALL nodes.
  * data - metadata about the file
  * node - the node to check
  * returns NULL if passed or check_result for issue X-002
  *********************************************/
-struct check_result *check_excluding_allow_rule(const struct check_data *data,
-                                                const struct policy_node *node);
+struct check_result *check_excluding_av_rule(const struct check_data *data,
+                                             const struct policy_node *node);
 
 /*********************************************
 * Check for violations of te file ordering conventions.
