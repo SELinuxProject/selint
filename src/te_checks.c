@@ -25,8 +25,8 @@
 #include "util.h"
 #include "perm_macro.h"
 
-struct check_result *check_excluding_allow_rule(__attribute__((unused)) const struct check_data *data,
-                                                const struct policy_node *node)
+struct check_result *check_excluding_av_rule(__attribute__((unused)) const struct check_data *data,
+                                             const struct policy_node *node)
 {
 	if (node->flavor == NODE_AV_RULE) {
 		// ignore neverallowallow rules
@@ -36,15 +36,15 @@ struct check_result *check_excluding_allow_rule(__attribute__((unused)) const st
 
 		for (const struct string_list *sources = node->data.av_data->sources; sources; sources = sources->next) {
 			if (sources->string[0] == '-') {
-				return make_check_result('X', X_ID_EXCL_ALLOW,
-							"Allow rule with excluded source");
+				return make_check_result('X', X_ID_EXCL_AV,
+							"AV rule with excluded source");
 			}
 		}
 
 		for (const struct string_list *targets = node->data.av_data->targets; targets; targets = targets->next) {
 			if (targets->string[0] == '-') {
-				return make_check_result('X', X_ID_EXCL_ALLOW,
-							"Allow rule with excluded target");
+				return make_check_result('X', X_ID_EXCL_AV,
+							"AV rule with excluded target");
 			}
 		}
 
@@ -64,7 +64,7 @@ struct check_result *check_excluding_allow_rule(__attribute__((unused)) const st
 
 			if (check_current && args->string[0] == '-' &&
 			    (look_up_in_decl_map(&args->string[1], DECL_TYPE) || look_up_in_decl_map(&args->string[1], DECL_ATTRIBUTE))) {
-				return make_check_result('X', X_ID_EXCL_ALLOW,
+				return make_check_result('X', X_ID_EXCL_AV,
 							 "Interface or macro call with excluded type");
 			}
 		}
@@ -72,7 +72,7 @@ struct check_result *check_excluding_allow_rule(__attribute__((unused)) const st
 		return NULL;
 	}
 
-	return alloc_internal_error("Invalid node type for `check_excluding_allow_rule`");
+	return alloc_internal_error("Invalid node type for `check_excluding_av_rule`");
 }
 
 struct check_result *check_te_order(const struct check_data *data,

@@ -155,7 +155,7 @@ CHECK IDS
 	The following checks may be performed:
 
 	X-001: Unused interface or template declaration
-	X-002: Allow rule with excluded source or target (can affect policy binary size)
+	X-002: AV rule with excluded source or target (can affect policy binary size)
 
 	C-001: Violation of refpolicy te file ordering conventions
 	C-004: Interface does not have documentation comment

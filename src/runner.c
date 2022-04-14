@@ -110,9 +110,9 @@ struct checks *register_checks(char level,
 	}
 	if (CHECK_ENABLED("X-002")) {
 		add_check(NODE_AV_RULE, ck, "X-002",
-			  check_excluding_allow_rule);
+			  check_excluding_av_rule);
 		add_check(NODE_IF_CALL, ck, "X-002",
-			  check_excluding_allow_rule);
+			  check_excluding_av_rule);
 	}
 
 	switch (level) {
