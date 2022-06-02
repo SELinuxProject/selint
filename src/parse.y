@@ -578,7 +578,11 @@ require_lines:
 	;
 
 require_line:
-	require_bare maybe_selint_disable { save_command(cur, $2); free($2); }
+	require_bare maybe_selint_disable {
+		// Apply command to all declarations
+		for (struct policy_node *p = cur; p && p->flavor == NODE_DECL; p = p->prev) save_command(p, $2);
+		free($2);
+		}
 	;
 
 require_bare:

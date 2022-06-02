@@ -4,3 +4,10 @@ interface(`disable_require_decl_if',`
 		type foo_t; #selint-disable:W-003,W-011
 	')
 ')
+
+#comment
+interface(`disable_require_multiple_decl_if',`
+	gen_require(`
+		type bar_t, foo_t; #selint-disable:W-003,W-011
+	')
+')
