@@ -93,6 +93,7 @@ enum file_flavor {
 
 struct check_data {
 	char *mod_name;
+	const char *filepath;
 	char *filename;
 	enum file_flavor flavor;
 	const struct config_check_data *config_check_data;
@@ -123,6 +124,8 @@ struct checks {
 extern int found_issue;
 // Whether found issues are printed individually
 extern int suppress_output;
+// Whether to print full paths
+extern int full_path;
 
 /*********************************************
 * Add an check to be called on check_flavor nodes

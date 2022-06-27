@@ -122,6 +122,22 @@ test_parse_error_impl() {
 	fi
 }
 
+test_report_format_impl() {
+	local OPTIONS=$1
+	local SOURCE_FILENAME=$2
+	local OUTPUT_FILENAME=$3
+
+	run ${SELINT_PATH} ${OPTIONS} -c configs/default.conf ./policies/report_format/${SOURCE_FILENAME}
+	echo ${output}
+	[ "$status" -eq 0 ]
+	local EXPECTED_OUTPUT=$(cat ./policies/report_format/${OUTPUT_FILENAME})
+	echo ${EXPECTED_OUTPUT}
+	# compatibility for different bison versions and ignore NOTE output
+	local NORMALIZED_OUTPUT=$(grep -vE '^Note: ' <<< "${output/ \$end/ end of file}")
+	echo ${NORMALIZED_OUTPUT}
+	[ "${NORMALIZED_OUTPUT}" == "${EXPECTED_OUTPUT}" ]
+}
+
 @test "X-001" {
 	test_one_check "X-001" "x01.*"
 }
@@ -467,4 +483,12 @@ test_parse_error_impl() {
 		skip "BATS_TIME_EXPENSIVE not set"
 	fi
 	test_parse_error_run 1
+}
+
+@test "report format" {
+	test_report_format_impl '' test1.te test1.output
+	test_report_format_impl --full-path test1.te test1.output.full
+	test_report_format_impl --summary test1.te test1.output.summary
+	test_report_format_impl '--level W' test1.te test1.output.warn
+	test_report_format_impl --summary-only test1.te test1.output.summaryonly
 }

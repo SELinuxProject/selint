@@ -1,0 +1,5 @@
+test1.te:             1: (W): Module name tet1 does not match file name test1.te (W-009)
+test1.te:             5: (S): Require block used in te file (use an interface call instead) (S-001)
+test1.te:             9: (W): Allow rule with complement or wildcard permission (W-008)
+test1.te:            10: (S): Permission macro read_perms does not match class dir (S-009)
+test1.te:            10: (W): Allow rule with complement or wildcard permission (W-008)
