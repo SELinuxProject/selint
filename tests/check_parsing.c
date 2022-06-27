@@ -31,6 +31,7 @@
 #define BAD_RA_FILENAME POLICIES_DIR "bad_role_allow.te"
 #define DISABLE_COMMENT_TE_FILENAME POLICIES_DIR "disable_comment.te"
 #define DISABLE_COMMENT_IF_FILENAME POLICIES_DIR "disable_comment.if"
+#define DISABLE_REQUIRE_IF_FILENAME POLICIES_DIR "disable_require.if"
 #define BOOL_DECLARATION_FILENAME POLICIES_DIR "bool_declarations.te"
 #define EXTENDED_TE_FILENAME POLICIES_DIR "extended_perms.te"
 #define IFDEF_BLOCK_FILENAME POLICIES_DIR "ifdef_block.te"
@@ -401,6 +402,138 @@ START_TEST (test_disable_comment_if) {
 	ck_assert_str_eq("S-012", ast->next->exceptions);
 	ck_assert_ptr_null(ast->next->next);
 
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(f);
+
+}
+END_TEST
+
+START_TEST (test_disable_require_if) {
+
+	set_current_module_name("disable_require");
+
+	FILE *f = fopen(DISABLE_REQUIRE_IF_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	struct policy_node *ast = yyparse_wrapper(f, DISABLE_REQUIRE_IF_FILENAME, NODE_IF_FILE);
+	ck_assert_ptr_nonnull(ast);
+
+	const struct policy_node *current = ast;
+
+	// top file node
+	ck_assert_ptr_nonnull(current);
+	ck_assert_int_eq(NODE_IF_FILE, current->flavor);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_nonnull(current->next);
+
+	// first interface
+	current = current->next;
+	ck_assert_int_eq(NODE_INTERFACE_DEF, current->flavor);
+	ck_assert_str_eq("foo1", current->data.str);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_nonnull(current->first_child);
+
+	// start block
+	current = current->first_child;
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	// require block
+	current = current->next;
+	ck_assert_int_eq(NODE_GEN_REQ, current->flavor);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_null(current->next);
+	ck_assert_ptr_nonnull(current->first_child);
+
+	// start block
+	current = current->first_child;
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	// first declaration
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_int_eq(DECL_CLASS, current->data.d_data->flavor);
+	ck_assert_str_eq("bar1_c", current->data.d_data->name);
+	ck_assert_ptr_nonnull(current->data.d_data->attrs);
+	ck_assert_str_eq(" W-010", current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	// second declaration
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_int_eq(DECL_ROLE, current->data.d_data->flavor);
+	ck_assert_str_eq("bar1_r", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+	ck_assert_str_eq(" W-011", current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	// third declaration
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_int_eq(DECL_BOOL, current->data.d_data->flavor);
+	ck_assert_str_eq("bar1_b", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+	ck_assert_str_eq(" W-012", current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_null(current->next);
+
+	// second interface
+	current = current->parent->parent->next;
+	ck_assert_int_eq(NODE_INTERFACE_DEF, current->flavor);
+	ck_assert_str_eq("foo2", current->data.str);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_nonnull(current->first_child);
+
+	// start block
+	current = current->first_child;
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	// require block
+	current = current->next;
+	ck_assert_int_eq(NODE_GEN_REQ, current->flavor);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_null(current->next);
+	ck_assert_ptr_nonnull(current->first_child);
+
+	// start block
+	current = current->first_child;
+	ck_assert_int_eq(NODE_START_BLOCK, current->flavor);
+	ck_assert_ptr_null(current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	// first declaration
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_int_eq(DECL_TYPE, current->data.d_data->flavor);
+	ck_assert_str_eq("bar3_t", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+	ck_assert_str_eq(" W-011", current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_nonnull(current->next);
+
+	// second declaration
+	current = current->next;
+	ck_assert_int_eq(NODE_DECL, current->flavor);
+	ck_assert_int_eq(DECL_TYPE, current->data.d_data->flavor);
+	ck_assert_str_eq("bar4_t", current->data.d_data->name);
+	ck_assert_ptr_null(current->data.d_data->attrs);
+	ck_assert_str_eq(" W-011", current->exceptions);
+	ck_assert_ptr_null(current->first_child);
+	ck_assert_ptr_null(current->next);
+
+	// cleanup
 	free_policy_node(ast);
 	cleanup_parsing();
 	fclose(f);
@@ -935,6 +1068,7 @@ static Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_bad_role_allow);
 	tcase_add_test(tc_core, test_disable_comment_te);
 	tcase_add_test(tc_core, test_disable_comment_if);
+	tcase_add_test(tc_core, test_disable_require_if);
 	tcase_add_test(tc_core, test_bool_declarations);
 	tcase_add_test(tc_core, test_file_flavor_mismatch);
 	tcase_add_test(tc_core, test_extended_perms);

@@ -104,6 +104,7 @@ SAMPLE_POLICY_FILES=sample_policy_files/access_vectors \
 			sample_policy_files/declaring_template.te \
 			sample_policy_files/disable_comment.if \
 			sample_policy_files/disable_comment.te \
+			sample_policy_files/disable_require.if \
 			sample_policy_files/empty.te \
 			sample_policy_files/extended_perms.te \
 			sample_policy_files/ifdef_block.te \

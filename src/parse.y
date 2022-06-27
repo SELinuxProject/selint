@@ -580,40 +580,57 @@ require_lines:
 	;
 
 require_line:
-	require_bare maybe_selint_disable {
-		// Apply command to all declarations
-		for (struct policy_node *p = cur; p && p->flavor == NODE_DECL; p = p->prev) save_command(p, $2);
+	TYPE comma_string_list SEMICOLON maybe_selint_disable {
+		for (const struct string_list *iter = $2; iter; iter = iter->next) {
+			insert_declaration(&cur, DECL_TYPE, iter->string, NULL, @$.first_line);
+			save_command(cur, $4);
+		}
+		free_string_list($2);
+		free($4);
+		}
+	|
+	ATTRIBUTE comma_string_list SEMICOLON maybe_selint_disable {
+		for (const struct string_list *iter = $2; iter; iter = iter->next) {
+			insert_declaration(&cur, DECL_ATTRIBUTE, iter->string, NULL, @$.first_line);
+			save_command(cur, $4);
+		}
+		free_string_list($2);
+		free($4);
+		}
+	|
+	ROLE comma_string_list SEMICOLON maybe_selint_disable {
+		for (const struct string_list *iter = $2; iter; iter = iter->next) {
+			insert_declaration(&cur, DECL_ROLE, iter->string, NULL, @$.first_line);
+			save_command(cur, $4);
+		}
+		free_string_list($2);
+		free($4);
+		}
+	|
+	ATTRIBUTE_ROLE comma_string_list SEMICOLON maybe_selint_disable {
+		for (const struct string_list *iter = $2; iter; iter = iter->next) {
+			insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, iter->string, NULL, @$.first_line);
+			save_command(cur, $4);
+		}
+		free_string_list($2);
+		free($4);
+		}
+	|
+	BOOL comma_string_list SEMICOLON maybe_selint_disable {
+		for (const struct string_list *iter = $2; iter; iter = iter->next) {
+			insert_declaration(&cur, DECL_BOOL, iter->string, NULL, @$.first_line);
+			save_command(cur, $4);
+		}
+		free_string_list($2);
+		free($4);
+		}
+	|
+	CLASS STRING string_list SEMICOLON maybe_selint_disable {
+		insert_declaration(&cur, DECL_CLASS, $2, $3, @$.first_line);
+		save_command(cur, $5);
 		free($2);
+		free($5);
 		}
-	;
-
-require_bare:
-	TYPE comma_string_list SEMICOLON {
-		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_TYPE, iter->string, NULL, @$.first_line);
-		free_string_list($2);
-		}
-	|
-	ATTRIBUTE comma_string_list SEMICOLON {
-		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE, iter->string, NULL, @$.first_line);
-		free_string_list($2);
-		}
-	|
-	ROLE comma_string_list SEMICOLON {
-		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ROLE, iter->string, NULL, @$.first_line);
-		free_string_list($2);
-		}
-	|
-	ATTRIBUTE_ROLE comma_string_list SEMICOLON {
-		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_ATTRIBUTE_ROLE, iter->string, NULL, @$.first_line);
-		free_string_list($2);
-		}
-	|
-	BOOL comma_string_list SEMICOLON {
-		for (const struct string_list *iter = $2; iter; iter = iter->next) insert_declaration(&cur, DECL_BOOL, iter->string, NULL, @$.first_line);
-		free_string_list($2);
-		}
-	|
-	CLASS STRING string_list SEMICOLON { insert_declaration(&cur, DECL_CLASS, $2, $3, @$.first_line); free($2); }
 	|
 	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK { begin_ifdef(&cur, @$.first_line); }
 	require_lines SINGLE_QUOTE CLOSE_PAREN { end_ifdef(&cur); free($4); }
