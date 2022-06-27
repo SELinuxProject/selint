@@ -1,0 +1,17 @@
+interface(`foo1', `
+	gen_require(`
+		class bar1_c { perm }; #selint-disable: W-010
+		role bar1_r; #selint-disable: W-011
+		bool bar1_b; #selint-disable: W-012
+	')
+
+	# empty
+')
+
+interface(`foo2', `
+	gen_require(`
+		type bar3_t, bar4_t; #selint-disable: W-011
+	')
+
+	#empty
+')
