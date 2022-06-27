@@ -1,4 +1,4 @@
-test7.if:             1: (F): Error: Unexpected te-file parsed (F-001)
+./policies/parse_errors/test7.if:1: (F): Error: Unexpected te-file parsed (F-001)
     6 |  ...  [truncated]
     7 |   ,
       |   ^

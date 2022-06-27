@@ -1,7 +1,7 @@
-test8.te:             3: (F): Incomplete AV rule (F-001)
+./policies/parse_errors/test8.te:3: (F): Incomplete AV rule (F-001)
     3 | dontaudit system_r auditadm_r;
       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-test8.te:             3: (F): Error: Invalid statement (F-001)
+./policies/parse_errors/test8.te:3: (F): Error: Invalid statement (F-001)
     3 | dontaudit system_r auditadm_r;
       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Error: Failed to parse files

@@ -1,4 +1,4 @@
-test4.te:             1: (F): syntax error, unexpected STRING, expecting end of file (F-001)
+./policies/parse_errors/test4.te:1: (F): syntax error, unexpected STRING, expecting end of file (F-001)
     1 | allo!
 Warning: Line in question contains unprintable character at position 5: 0x01
 Error: Failed to parse files

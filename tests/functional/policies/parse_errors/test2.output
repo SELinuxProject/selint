@@ -1,4 +1,4 @@
-test2.te:             2: (F): syntax error, unexpected ALLOW, expecting end of file (F-001)
+./policies/parse_errors/test2.te:2: (F): syntax error, unexpected ALLOW, expecting end of file (F-001)
     2 | allow allow;
       | ^~~~~
 Error: Failed to parse files

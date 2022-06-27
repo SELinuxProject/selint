@@ -1175,13 +1175,13 @@ static void yyerror(const YYLTYPE *locp, __attribute__((unused)) yyscan_t scanne
 
 		struct check_data data;
 		data.mod_name = get_current_module_name();
-		char *copy = xstrdup(parsing_filename);
-		data.filename = basename(copy);
+IGNORE_CONST_DISCARD_BEGIN
+		data.filename = parsing_filename;
+IGNORE_CONST_DISCARD_END
 		data.flavor = FILE_TE_FILE; // We don't know but it's unused by display_check_result
 
 		display_check_result(res, &data);
 
-		free(copy);
 		free_check_result(res);
 	}
 
