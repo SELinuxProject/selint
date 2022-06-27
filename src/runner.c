@@ -406,6 +406,7 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 			free(copy);
 		}
 		data.mod_name = xstrdup(data.filename);
+		data.filepath = file->file->filename;
 		data.config_check_data = ccd;
 
 		char *suffix_ptr = strrchr(data.mod_name, '.');

@@ -111,7 +111,7 @@ START_TEST(test_check_type_used_but_not_required_in_if) {
 	free(av_data->sources->string);
 	av_data->sources->string = strdup("$1");
 
-	const struct check_data cdata = { NULL, NULL, FILE_IF_FILE, NULL };
+	const struct check_data cdata = { NULL, NULL, NULL, FILE_IF_FILE, NULL };
 
 	struct check_result *res = check_name_used_but_not_required_in_if(&cdata, cur);
 
@@ -170,7 +170,7 @@ START_TEST (test_check_type_required_but_not_used_in_if) {
 
 	cur = cur->prev->first_child->next; // the declaration
 
-	const struct check_data cdata = { NULL, NULL, FILE_IF_FILE, NULL };
+	const struct check_data cdata = { NULL, NULL, NULL, FILE_IF_FILE, NULL };
 
 	ck_assert_ptr_null(check_name_required_but_not_used_in_if(&cdata, cur));
 
@@ -230,7 +230,7 @@ START_TEST (test_system_r_exception) {
 	cur->data.ra_data->from = sl_from_str("system_r");
 	cur->data.ra_data->to = sl_from_str("staff_r");
 
-	const struct check_data cdata = { NULL, NULL, FILE_IF_FILE, NULL };
+	const struct check_data cdata = { NULL, NULL, NULL, FILE_IF_FILE, NULL };
 
 	ck_assert_ptr_null(check_name_used_but_not_required_in_if(&cdata, cur));
 

@@ -38,6 +38,7 @@
 #define SUMMARY_ONLY_ID     130
 #define SCAN_HIDDEN_DIRS_ID 131
 #define DEBUG_PARSER_ID     132
+#define FULL_PATH_ID        133
 
 extern int yydebug;
 
@@ -64,6 +65,7 @@ static void usage(void)
 		"  -e, --enable=CHECKID\t\tEnable check with the given ID.\n"\
 		"  -E, --only-enabled\t\tOnly run checks that are explicitly enabled with\n"\
 		"\t\t\t\tthe --enable option.\n"\
+		"      --full-path\t\tPrint full path for files.\n"\
 		"  -F, --fail\t\t\tExit with a non-zero value if any issue was found.\n"\
 		"  -h, --help\t\t\tDisplay this menu.\n"\
 		"  -l, --level=LEVEL\t\tOnly list errors with a severity level at or\n"\
@@ -125,6 +127,7 @@ int main(int argc, char **argv)
 			{ "disable",          required_argument, NULL,          'd' },
 			{ "enable",           required_argument, NULL,          'e' },
 			{ "fail",             no_argument,       NULL,          'F' },
+			{ "full-path",        no_argument,       NULL,          FULL_PATH_ID },
 			{ "only-enabled",     no_argument,       NULL,          'E' },
 			{ "help",             no_argument,       NULL,          'h' },
 			{ "level",            required_argument, NULL,          'l' },
@@ -223,6 +226,11 @@ int main(int argc, char **argv)
 		case 'E':
 			// Only run checks enabled by the --enable flag.
 			only_enabled = 1;
+			break;
+
+		case FULL_PATH_ID:
+			// Display full paths for files
+			full_path = true;
 			break;
 
 		case 'F':

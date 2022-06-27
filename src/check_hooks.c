@@ -26,6 +26,7 @@
 
 int found_issue = 0;
 int suppress_output = 0;
+int full_path = 0;
 
 #define ALLOC_NODE(nl)  if (ck->check_nodes[nl]) { \
 		loc = ck->check_nodes[nl]; \
@@ -93,18 +94,25 @@ enum selint_error call_checks_for_node_type(struct check_node *ck_list,
 void display_check_result(const struct check_result *res, const struct check_data *data)
 {
 	static const size_t FILENAME_PADDING = 22;
-
-	const size_t len = strlen(data->filename);
+	const char *name;
 	unsigned int padding;
 
-	if (FILENAME_PADDING < len) {
+	if (full_path) {
+		name = data->filepath;
 		padding = 0;
 	} else {
-		padding = (unsigned)(FILENAME_PADDING - len);
+		name = data->filename;
+		const size_t len = strlen(name);
+
+		if (FILENAME_PADDING < len) {
+			padding = 0;
+		} else {
+			padding = (unsigned)(FILENAME_PADDING - len);
+		}
 	}
 
 	printf("%s:%*u: %s(%c)%s: %s (%c-%03u)\n",
-	       data->filename,
+	       name,
 	       padding,
 	       res->lineno,
 	       color_severity(res->severity),

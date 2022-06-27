@@ -1,0 +1,10 @@
+policy_module(tet1, 0.0.1)
+
+type test1_t;
+
+gen_require(`
+	type test2_t;
+')
+
+allow test2_t test3_t:file *;
+allow test4_t test4_t:dir ~read_perms;

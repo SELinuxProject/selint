@@ -1173,12 +1173,14 @@ static void yyerror(const YYLTYPE *locp, __attribute__((unused)) yyscan_t scanne
 		struct check_result *res = make_check_result('F', F_ID_POLICY_SYNTAX, "%s", msg);
 		res->lineno = locp->first_line;
 
-		struct check_data data;
-		data.mod_name = get_current_module_name();
 IGNORE_CONST_DISCARD_BEGIN
-		data.filename = parsing_filename;
+		struct check_data data = {
+			.mod_name = get_current_module_name(),
+			.filepath = parsing_filename,
+			.filename = parsing_filename, // Always print full path on errors
+			.flavor = FILE_TE_FILE, // We don't know but it's unused by display_check_result
+		};
 IGNORE_CONST_DISCARD_END
-		data.flavor = FILE_TE_FILE; // We don't know but it's unused by display_check_result
 
 		display_check_result(res, &data);
 
