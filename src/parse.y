@@ -277,6 +277,8 @@ maybe_header_version:
 
 body:
 	lines
+	|
+	%empty
 	;
 
 lines:
