@@ -20,6 +20,7 @@
 
 #include "parse_fc.h"
 #include "tree.h"
+#include "xalloc.h"
 
 // "gen_context("
 #define GEN_CONTEXT_LEN 12
@@ -28,11 +29,11 @@ struct fc_entry *parse_fc_line(char *line)
 {
 	const char *whitespace = " \t";
 
-	struct fc_entry *out = malloc(sizeof(struct fc_entry));
+	struct fc_entry *out = xmalloc(sizeof(struct fc_entry));
 
 	memset(out, 0, sizeof(struct fc_entry));
 
-	char *orig_line = strdup(line); // If the object class is omitted, we need to revert
+	char *orig_line = xstrdup(line); // If the object class is omitted, we need to revert
 
 	char *pos = strtok(line, whitespace);
 
@@ -40,7 +41,7 @@ struct fc_entry *parse_fc_line(char *line)
 		goto cleanup;
 	}
 
-	out->path = strdup(pos);
+	out->path = xstrdup(pos);
 
 	pos = strtok(NULL, whitespace);
 
@@ -125,12 +126,12 @@ struct fc_entry *parse_fc_line(char *line)
 		out->context->has_gen_context = 1;
 		if (maybe_c) {
 			out->context->range =
-				malloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
+				xmalloc(strlen(maybe_s) + 1 + strlen(maybe_c) + 1);
 			strcpy(out->context->range, maybe_s);
 			strcat(out->context->range, ":");
 			strcat(out->context->range, maybe_c);
 		} else if (maybe_s) {
-			out->context->range = strdup(maybe_s);
+			out->context->range = xstrdup(maybe_s);
 		} else {
 			out->context->range = NULL;
 		}
@@ -162,7 +163,7 @@ struct sel_context *parse_context(char *context_str)
 		return NULL;
 	}
 
-	struct sel_context *context = malloc(sizeof(struct sel_context));
+	struct sel_context *context = xmalloc(sizeof(struct sel_context));
 	memset(context, 0, sizeof(struct sel_context));
 	// User
 	char *pos = strtok(context_str, ":");
@@ -171,7 +172,7 @@ struct sel_context *parse_context(char *context_str)
 		goto cleanup;
 	}
 
-	context->user = strdup(pos);
+	context->user = xstrdup(pos);
 
 	// Role
 	pos = strtok(NULL, ":");
@@ -180,7 +181,7 @@ struct sel_context *parse_context(char *context_str)
 		goto cleanup;
 	}
 
-	context->role = strdup(pos);
+	context->role = xstrdup(pos);
 
 	// Type
 	pos = strtok(NULL, ":");
@@ -189,12 +190,12 @@ struct sel_context *parse_context(char *context_str)
 		goto cleanup;
 	}
 
-	context->type = strdup(pos);
+	context->type = xstrdup(pos);
 
 	pos = strtok(NULL, ":");
 
 	if (pos) {
-		context->range = strdup(pos);
+		context->range = xstrdup(pos);
 		if (strtok(NULL, ":")) {
 			goto cleanup;
 		}
@@ -236,7 +237,7 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 		return NULL;
 	}
 
-	struct policy_node *head = malloc(sizeof(struct policy_node));
+	struct policy_node *head = xmalloc(sizeof(struct policy_node));
 	memset(head, 0, sizeof(struct policy_node));
 	head->flavor = NODE_FC_FILE;
 

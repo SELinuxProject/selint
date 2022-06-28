@@ -19,6 +19,8 @@
 #include <string.h>
 
 #include "string_list.h"
+#include "xalloc.h"
+
 int str_in_sl(const char *str, const struct string_list *sl)
 {
 
@@ -40,16 +42,16 @@ struct string_list *copy_string_list(const struct string_list *sl)
 	if (!sl) {
 		return NULL;
 	}
-	struct string_list *ret = malloc(sizeof(struct string_list));
+	struct string_list *ret = xmalloc(sizeof(struct string_list));
 	struct string_list *cur = ret;
 
 	while (sl) {
-		cur->string = strdup(sl->string);
+		cur->string = xstrdup(sl->string);
 		cur->has_incorrect_space = sl->has_incorrect_space;
 		cur->arg_start = sl->arg_start;
 
 		if (sl->next) {
-			cur->next = malloc(sizeof(struct string_list));
+			cur->next = xmalloc(sizeof(struct string_list));
 		} else {
 			cur->next = NULL;
 		}
@@ -61,8 +63,8 @@ struct string_list *copy_string_list(const struct string_list *sl)
 
 struct string_list *sl_from_str(const char *string)
 {
-	struct string_list *ret = malloc(sizeof(struct string_list));
-	ret->string = strdup(string);
+	struct string_list *ret = xmalloc(sizeof(struct string_list));
+	ret->string = xstrdup(string);
 	ret->next = NULL;
 	ret->has_incorrect_space = 0;
 	ret->arg_start = 0;
@@ -72,8 +74,8 @@ struct string_list *sl_from_str(const char *string)
 
 struct string_list *sl_from_strn(const char *string, size_t len)
 {
-	struct string_list *ret = malloc(sizeof(struct string_list));
-	ret->string = strndup(string, len);
+	struct string_list *ret = xmalloc(sizeof(struct string_list));
+	ret->string = xstrndup(string, len);
 	ret->next = NULL;
 	ret->has_incorrect_space = 0;
 	ret->arg_start = 0;
@@ -83,7 +85,7 @@ struct string_list *sl_from_strn(const char *string, size_t len)
 
 struct string_list *sl_from_str_consume(char *string)
 {
-	struct string_list *ret = malloc(sizeof(struct string_list));
+	struct string_list *ret = xmalloc(sizeof(struct string_list));
 	ret->string = string;
 	ret->next = NULL;
 	ret->has_incorrect_space = 0;

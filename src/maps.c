@@ -15,6 +15,7 @@
 */
 
 #include "maps.h"
+#include "xalloc.h"
 
 #if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
 #if (__clang_major__ >= 12)
@@ -91,9 +92,9 @@ void insert_into_decl_map(const char *name, const char *module_name,
 
 	if (decl == NULL) {     // Item not in hash table already
 
-		decl = malloc(sizeof(struct hash_elem));
-		decl->key = strdup(name);
-		decl->val = strdup(module_name);
+		decl = xmalloc(sizeof(struct hash_elem));
+		decl->key = xstrdup(name);
+		decl->val = xstrdup(module_name);
 
 		switch (flavor) {
 		case DECL_TYPE:
@@ -158,9 +159,9 @@ void insert_into_mods_map(const char *mod_name, const char *status)
 	HASH_FIND(hh_mods, mods_map, mod_name, strlen(mod_name), mod);
 
 	if (!mod) {
-		mod = malloc(sizeof(struct hash_elem));
-		mod->key = strdup(mod_name);
-		mod->val = strdup(status);
+		mod = xmalloc(sizeof(struct hash_elem));
+		mod->key = xstrdup(mod_name);
+		mod->val = xstrdup(status);
 		HASH_ADD_KEYPTR(hh_mods, mods_map, mod->key, strlen(mod->key),
 		                mod);
 	}
@@ -189,9 +190,9 @@ void insert_into_mod_layers_map(const char *mod_name, const char *layer)
 	HASH_FIND(hh_mod_layers, mod_layers_map, mod_name, strlen(mod_name), mod);
 
 	if (!mod) {
-		mod = malloc(sizeof(struct hash_elem));
-		mod->key = strdup(mod_name);
-		mod->val = strdup(layer);
+		mod = xmalloc(sizeof(struct hash_elem));
+		mod->key = xstrdup(mod_name);
+		mod->val = xstrdup(layer);
 		HASH_ADD_KEYPTR(hh_mod_layers, mod_layers_map, mod->key, strlen(mod->key),
 		                mod);
 	}
@@ -221,15 +222,15 @@ void insert_into_ifs_map(const char *if_name, const char *mod_name)
 	HASH_FIND(hh_interfaces, interfaces_map, if_name, strlen(if_name), if_call);
 
 	if (!if_call) {
-		if_call = malloc(sizeof(struct if_hash_elem));
-		if_call->name = strdup(if_name);
-		if_call->module = strdup(mod_name);
+		if_call = xmalloc(sizeof(struct if_hash_elem));
+		if_call->name = xstrdup(if_name);
+		if_call->module = xstrdup(mod_name);
 		if_call->flags = 0;
 		HASH_ADD_KEYPTR(hh_interfaces, interfaces_map, if_call->name,
 				strlen(if_call->name), if_call);
 	} else {
 		free(if_call->module);
-		if_call->module = strdup(mod_name);
+		if_call->module = xstrdup(mod_name);
 	}
 }
 
@@ -280,8 +281,8 @@ void mark_transform_if(const char *if_name)
 	HASH_FIND(hh_interfaces, interfaces_map, if_name, strlen(if_name), transform_if);
 
 	if (!transform_if) {
-		transform_if = malloc(sizeof(struct if_hash_elem));
-		transform_if->name = strdup(if_name);
+		transform_if = xmalloc(sizeof(struct if_hash_elem));
+		transform_if->name = xstrdup(if_name);
 		transform_if->module = NULL;
 		transform_if->flags = TRANSFORM_IF;
 		HASH_ADD_KEYPTR(hh_interfaces, interfaces_map, transform_if->name,
@@ -311,8 +312,8 @@ void mark_filetrans_if(const char *if_name)
 	HASH_FIND(hh_interfaces, interfaces_map, if_name, strlen(if_name), filetrans_if);
 
 	if (!filetrans_if) {
-		filetrans_if = malloc(sizeof(struct if_hash_elem));
-		filetrans_if->name = strdup(if_name);
+		filetrans_if = xmalloc(sizeof(struct if_hash_elem));
+		filetrans_if->name = xstrdup(if_name);
 		filetrans_if->module = NULL;
 		filetrans_if->flags = FILETRANS_IF;
 		HASH_ADD_KEYPTR(hh_interfaces, interfaces_map, filetrans_if->name,
@@ -342,8 +343,8 @@ void mark_role_if(const char *if_name)
 	HASH_FIND(hh_interfaces, interfaces_map, if_name, strlen(if_name), role_if);
 
 	if (!role_if) {
-		role_if = malloc(sizeof(struct if_hash_elem));
-		role_if->name = strdup(if_name);
+		role_if = xmalloc(sizeof(struct if_hash_elem));
+		role_if->name = xstrdup(if_name);
 		role_if->module = NULL;
 		role_if->flags = ROLE_IF;
 		HASH_ADD_KEYPTR(hh_interfaces, interfaces_map, role_if->name,
@@ -378,8 +379,8 @@ void mark_used_if(const char *if_name)
 	HASH_FIND(hh_interfaces, interfaces_map, if_name, strlen(if_name), used_if);
 
 	if (!used_if) {
-		used_if = malloc(sizeof(struct if_hash_elem));
-		used_if->name = strdup(if_name);
+		used_if = xmalloc(sizeof(struct if_hash_elem));
+		used_if->name = xstrdup(if_name);
 		used_if->module = NULL;
 		used_if->flags = USED_IF;
 		HASH_ADD_KEYPTR(hh_interfaces, interfaces_map, used_if->name,
@@ -449,8 +450,8 @@ static void insert_into_template_map(const char *name, void *new_node,
 	HASH_FIND(hh, template_map, name, strlen(name), template);
 
 	if (template == NULL) {
-		template = malloc(sizeof(struct template_hash_elem));
-		template->name = strdup(name);
+		template = xmalloc(sizeof(struct template_hash_elem));
+		template->name = xstrdup(name);
 		template->declarations = NULL;
 		template->calls = NULL;
 
@@ -472,13 +473,13 @@ void insert_decl_into_template_map(const char *name, enum decl_flavor flavor,
 {
 
 	struct declaration_data *new_data =
-		malloc(sizeof(struct declaration_data));
+		xmalloc(sizeof(struct declaration_data));
 
 	new_data->flavor = flavor;
-	new_data->name = strdup(declaration);
+	new_data->name = xstrdup(declaration);
 	new_data->attrs = NULL; //Not needed
 
-	struct decl_list *new_node = malloc(sizeof(struct decl_list));
+	struct decl_list *new_node = xmalloc(sizeof(struct decl_list));
 	new_node->decl = new_data;
 	new_node->next = NULL;
 
@@ -488,7 +489,7 @@ void insert_decl_into_template_map(const char *name, enum decl_flavor flavor,
 void insert_call_into_template_map(const char *name, struct if_call_data *call)
 {
 
-	struct if_call_list *new_node = malloc(sizeof(struct if_call_list));
+	struct if_call_list *new_node = xmalloc(sizeof(struct if_call_list));
 
 	new_node->call = call;
 	new_node->next = NULL;
@@ -538,8 +539,8 @@ void insert_into_permmacros_map(const char *name, struct string_list *permission
 	HASH_FIND(hh_permmacros, permmacros_map, name, strlen(name), perm_macro);
 
 	if (!perm_macro) {
-		perm_macro = malloc(sizeof(struct sl_hash_elem));
-		perm_macro->key = strdup(name);
+		perm_macro = xmalloc(sizeof(struct sl_hash_elem));
+		perm_macro->key = xstrdup(name);
 		perm_macro->val = permissions;
 		HASH_ADD_KEYPTR(hh_permmacros, permmacros_map, perm_macro->key, strlen(perm_macro->key),
 		                perm_macro);

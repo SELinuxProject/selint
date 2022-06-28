@@ -22,6 +22,7 @@
 
 #include "check_hooks.h"
 #include "color.h"
+#include "xalloc.h"
 
 int found_issue = 0;
 int suppress_output = 0;
@@ -29,11 +30,11 @@ int suppress_output = 0;
 #define ALLOC_NODE(nl)  if (ck->check_nodes[nl]) { \
 		loc = ck->check_nodes[nl]; \
 		while (loc->next) { loc = loc->next; } \
-		loc->next = malloc(sizeof(struct check_node)); \
+		loc->next = xmalloc(sizeof(struct check_node)); \
 		if (!loc->next) { return SELINT_OUT_OF_MEM; } \
 		loc = loc->next; \
 } else { \
-		ck->check_nodes[nl] = malloc(sizeof(struct check_node)); \
+		ck->check_nodes[nl] = xmalloc(sizeof(struct check_node)); \
 		if (!ck->check_nodes[nl]) { return SELINT_OUT_OF_MEM; } \
 		loc = ck->check_nodes[nl]; \
 }
@@ -48,7 +49,7 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 	ALLOC_NODE(check_flavor);
 
 	loc->check_function = check_function;
-	loc->check_id = strdup(check_id);
+	loc->check_id = xstrdup(check_id);
 	loc->issues_found = 0;
 	loc->next = NULL;
 
@@ -236,7 +237,7 @@ void display_check_issue_counts(const struct checks *ck)
 	unsigned int printed_something = 0;
 
 	// Build flat array of check nodes
-	struct check_node **node_arr = calloc(num_nodes, sizeof(struct check_node *));
+	struct check_node **node_arr = xcalloc(num_nodes, sizeof(struct check_node *));
 	unsigned int node_arr_index = 0;
 	for (int i=0; i <= NODE_ERROR; i++) {
 		if (ck->check_nodes[i]) {
@@ -295,7 +296,7 @@ struct check_result *make_check_result(char severity, unsigned int check_id,
                                        const char *format, ...)
 {
 
-	struct check_result *res = malloc(sizeof(struct check_result));
+	struct check_result *res = xmalloc(sizeof(struct check_result));
 
 	res->severity = severity;
 	res->check_id = check_id;
@@ -306,7 +307,7 @@ struct check_result *make_check_result(char severity, unsigned int check_id,
 	if (vasprintf(&res->message, format, args) == -1) {
 		res->severity = 'F';
 		res->check_id = F_ID_INTERNAL;
-		res->message = strdup("Failed to generate check result message");
+		res->message = xstrdup("Failed to generate check result message");
 	}
 
 	va_end(args);

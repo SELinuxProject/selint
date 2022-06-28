@@ -22,6 +22,7 @@
 
 #include "template.h"
 #include "maps.h"
+#include "xalloc.h"
 
 char *replace_m4(const char *orig, const struct string_list *args)
 {
@@ -34,7 +35,7 @@ char *replace_m4(const char *orig, const struct string_list *args)
 	}
 	// len_to_malloc is now overestimated, because the length of the original
 	// arguments wasn't subtracted and not all args are necessarily substituted
-	char *ret = malloc(len_to_malloc);
+	char *ret = xmalloc(len_to_malloc);
 	*ret = '\0';            // If the string is only a substitution that there is no argument for, we need to be terminated
 	const char *orig_pos = orig;
 	char *ret_pos = ret;
@@ -75,7 +76,7 @@ char *replace_m4(const char *orig, const struct string_list *args)
 struct string_list *replace_m4_list(const struct string_list *replace_with,
                                     const struct string_list *replace_from)
 {
-	struct string_list *ret = calloc(1, sizeof(struct string_list));
+	struct string_list *ret = xcalloc(1, sizeof(struct string_list));
 	struct string_list *cur = ret;
 
 	cur->string = replace_m4(replace_from->string, replace_with);
@@ -83,7 +84,7 @@ struct string_list *replace_m4_list(const struct string_list *replace_with,
 	replace_from = replace_from->next;
 
 	while (replace_from) {
-		cur->next = calloc(1, sizeof(struct string_list));
+		cur->next = xcalloc(1, sizeof(struct string_list));
 		cur = cur->next;
 		cur->string = replace_m4(replace_from->string, replace_with);
 		cur->next = NULL;
@@ -108,8 +109,8 @@ enum selint_error add_template_declarations(const char *template_name,
 		cur = cur->next;
 	}
 
-	cur = calloc(1, sizeof(struct string_list));
-	cur->string = strdup(template_name);
+	cur = xcalloc(1, sizeof(struct string_list));
+	cur->string = xstrdup(template_name);
 	cur->next = parent_temp_names;
 
 	const struct if_call_list *calls =

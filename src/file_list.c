@@ -18,17 +18,18 @@
 #include <stdlib.h>
 
 #include "file_list.h"
+#include "xalloc.h"
 
 void file_list_push_back(struct policy_file_list *list,
                          struct policy_file *file)
 {
 
 	if (list->tail) {
-		list->tail->next = malloc(sizeof(struct policy_file_node));
+		list->tail->next = xmalloc(sizeof(struct policy_file_node));
 		list->tail = list->tail->next;
 	} else {
 		list->head = list->tail =
-			malloc(sizeof(struct policy_file_node));
+			xmalloc(sizeof(struct policy_file_node));
 	}
 	list->tail->file = file;
 	list->tail->next = NULL;
@@ -36,9 +37,9 @@ void file_list_push_back(struct policy_file_list *list,
 
 struct policy_file *make_policy_file(const char *filename, struct policy_node *ast)
 {
-	struct policy_file *ret = malloc(sizeof(struct policy_file));
+	struct policy_file *ret = xmalloc(sizeof(struct policy_file));
 
-	ret->filename = strdup(filename);
+	ret->filename = xstrdup(filename);
 	ret->ast = ast;
 	return ret;
 }

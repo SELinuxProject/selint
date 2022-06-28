@@ -24,6 +24,7 @@
 #include "color.h"
 #include "maps.h"
 #include "util.h"
+#include "xalloc.h"
 
 typedef uint32_t mask_t;
 
@@ -200,8 +201,8 @@ static struct string_builder *sb_create(size_t init_cap)
 		init_cap = 32;
 	}
 
-	struct string_builder *ret = malloc(sizeof(struct string_builder));
-	ret->mem = malloc(sizeof(char) * init_cap);
+	struct string_builder *ret = xmalloc(sizeof(struct string_builder));
+	ret->mem = xmalloc(sizeof(char) * init_cap);
 	ret->mem[0] = '\0';
 	ret->len = 0;
 	ret->cap = init_cap;
@@ -222,7 +223,7 @@ static void sb_destroy(struct string_builder *sb)
 static void sb_append_strn(struct string_builder *sb, const char *str, size_t len)
 {
 	while (sb->len + len + 1 > sb->cap) {
-		sb->mem = realloc(sb->mem, 2 * sb->cap);
+		sb->mem = xrealloc(sb->mem, 2 * sb->cap);
 		sb->cap = 2 * sb->cap;
 	}
 
@@ -352,8 +353,8 @@ static void load_permission_macro(const char *name, const struct string_list *pe
 		return;
 	}
 
-	struct perm_macro *tmp = malloc(sizeof(struct perm_macro));
-	tmp->name = strdup(name);
+	struct perm_macro *tmp = xmalloc(sizeof(struct perm_macro));
+	tmp->name = xstrdup(name);
 	tmp->mask_raw = mask_raw;
 
 	// first entry
@@ -495,7 +496,7 @@ char *permmacro_check(const char *class, const struct string_list *permissions)
 	char *perms_matched = permission_strings_matched_str(permissions, best_mask_raw & mask_raw);
 #define MSG_STR "Suggesting permission macro: %s (replacing %s, would add %s)"
 	size_t len = (size_t)snprintf(NULL, 0, MSG_STR, best_name, perms_matched, perms_added);
-	char *ret = malloc(len + 1);
+	char *ret = xmalloc(len + 1);
 	snprintf(ret, len + 1, MSG_STR, best_name, perms_matched, perms_added);
 #undef MSG_STR
 	free(perms_matched);

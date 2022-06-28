@@ -24,6 +24,7 @@
 #include "ordering.h"
 #include "util.h"
 #include "perm_macro.h"
+#include "xalloc.h"
 
 struct check_result *check_excluding_av_rule(__attribute__((unused)) const struct check_data *data,
                                              const struct policy_node *node)
@@ -708,7 +709,7 @@ struct check_result *check_module_file_name_mismatch(const struct check_data
 static bool starts_with_module_prefix(const char *name)
 {
 	for (const char *prefix = strchr(name, '_'); prefix; prefix = strchr(prefix + 1, '_')) {
-		char *search_mod = strndup(name, (size_t)(prefix - name));
+		char *search_mod = xstrndup(name, (size_t)(prefix - name));
 		if (look_up_in_mods_map(search_mod)) {
 			free(search_mod);
 			return true;

@@ -27,6 +27,7 @@
 #include "tree.h"
 #include "util.h"
 #include "parse.h"
+#include "xalloc.h"
 
 enum selint_error load_access_vectors_kernel(const char *av_path)
 {
@@ -235,7 +236,7 @@ IGNORE_CONST_DISCARD_END;
 			file_list_push_back(context_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
-			char *mod_name = strdup(file->fts_name);
+			char *mod_name = xstrdup(file->fts_name);
 			mod_name[file->fts_namelen - 3] = '\0';
 			insert_into_mod_layers_map(mod_name, file->fts_parent->fts_name);
 			free(mod_name);

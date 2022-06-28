@@ -18,6 +18,7 @@
 #include <string.h>
 #include "tree.h"
 #include "parse.h"
+#include "xalloc.h"
 
 
 extern void reset_current_lines(void);
@@ -92,6 +93,7 @@ void reset_current_lines(void) {
 %option reentrant
 %option bison-bridge
 %option bison-locations
+%option noyyalloc noyyfree noyyrealloc
 %%
 policy_module { return POLICY_MODULE; }
 module { return MODULE; }
@@ -149,13 +151,13 @@ typebounds { return TYPEBOUNDS; }
 interface { return INTERFACE; }
 template { return TEMPLATE; }
 userdebug_or_eng { return USERDEBUG_OR_ENG; }
-[0-9]+\.[0-9]+(\.[0-9]+)? { yylval->string = strdup(yytext); return VERSION_NO; }
-[0-9]+ { yylval->string = strdup(yytext); return NUMBER; }
-[a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = strdup(yytext); return STRING; }
-[0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = strdup(yytext); return NUM_STRING; }
-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval->string = strdup(yytext); return IPV4; }
-([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})?(\:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})? { yylval->string = strdup(yytext); return IPV6; }
-\"[a-zA-Z0-9_\.\-\:~\$\[\]]*\" { yylval->string = strdup(yytext); return QUOTED_STRING; }
+[0-9]+\.[0-9]+(\.[0-9]+)? { yylval->string = xstrdup(yytext); return VERSION_NO; }
+[0-9]+ { yylval->string = xstrdup(yytext); return NUMBER; }
+[a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = xstrdup(yytext); return STRING; }
+[0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = xstrdup(yytext); return NUM_STRING; }
+[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval->string = xstrdup(yytext); return IPV4; }
+([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})?(\:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})? { yylval->string = xstrdup(yytext); return IPV6; }
+\"[a-zA-Z0-9_\.\-\:~\$\[\]]*\" { yylval->string = xstrdup(yytext); return QUOTED_STRING; }
 \-[\-ldbcsp][ \t] { return FILE_TYPE_SPECIFIER; }
 \( { return OPEN_PAREN; }
 \) { return CLOSE_PAREN; }
@@ -176,8 +178,19 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 \!\= { return NOT_EQUAL; }
 \! { return NOT; }
 \=\= { return EQUAL; }
-\#selint\-disable\:\ ?[CSWEF]\-[0-9]+(\,\ ?[CSWEF]\-[0-9]+)*$ { yylval->string = strdup(yytext); return SELINT_COMMAND; }
+\#selint\-disable\:\ ?[CSWEF]\-[0-9]+(\,\ ?[CSWEF]\-[0-9]+)*$ { yylval->string = xstrdup(yytext); return SELINT_COMMAND; }
 \#.*$ { return COMMENT; }
 dnl(.*)?$ ; /* skip m4 comment lines */
 [ \t\n\r] ; /* normally skip whitespace */
 . { yylval->symbol = *yytext; return UNKNOWN_TOKEN; }
+%%
+
+void *yyalloc(size_t bytes, __attribute__((unused)) void *yyscanner) {
+	return xmalloc(bytes);
+}
+void *yyrealloc(void *ptr, size_t bytes, __attribute__((unused)) void *yyscanner) {
+	return xrealloc(ptr, bytes);
+}
+void yyfree(void *ptr, __attribute__((unused)) void *yyscanner) {
+	return free(ptr);
+}

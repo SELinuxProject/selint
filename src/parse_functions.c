@@ -23,13 +23,14 @@
 #include "template.h"
 #include "util.h"
 #include "perm_macro.h"
+#include "xalloc.h"
 
 char *module_name = NULL;
 
 enum selint_error insert_header(struct policy_node **cur, const char *mn,
                                 enum header_flavor flavor, unsigned int lineno)
 {
-	struct header_data *data = (struct header_data *)malloc(sizeof(struct header_data));
+	struct header_data *data = (struct header_data *)xmalloc(sizeof(struct header_data));
 	if (!data) {
 		return SELINT_OUT_OF_MEM;
 	}
@@ -37,7 +38,7 @@ enum selint_error insert_header(struct policy_node **cur, const char *mn,
 	memset(data, 0, sizeof(struct header_data));
 
 	data->flavor = flavor;
-	data->module_name = strdup(mn);
+	data->module_name = xstrdup(mn);
 	if (!data->module_name) {
 		free(data);
 		return SELINT_OUT_OF_MEM;
@@ -60,7 +61,7 @@ void set_current_module_name(const char *mn)
 	if (module_name != NULL) {
 		free(module_name);
 	}
-	module_name = strdup(mn);
+	module_name = xstrdup(mn);
 }
 
 char *get_current_module_name()
@@ -114,7 +115,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 		}
 	}
 
-	struct declaration_data *data = (struct declaration_data *)malloc(sizeof(struct declaration_data));
+	struct declaration_data *data = (struct declaration_data *)xmalloc(sizeof(struct declaration_data));
 	if (!data) {
 		return SELINT_OUT_OF_MEM;
 	}
@@ -122,7 +123,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 	memset(data, 0, sizeof(struct declaration_data));
 
 	data->flavor = flavor;
-	data->name = strdup(name);
+	data->name = xstrdup(name);
 	data->attrs = attrs;
 
 	union node_data nd;
@@ -163,7 +164,7 @@ enum selint_error insert_aliases(struct policy_node **cur,
 			insert_into_decl_map(alias->string, mn, flavor);
 		}
 		union node_data nd;
-		nd.str = strdup(alias->string);
+		nd.str = xstrdup(alias->string);
 		enum selint_error ret = insert_policy_node_child(*cur,
 		                                                 NODE_ALIAS,
 		                                                 nd,
@@ -185,7 +186,7 @@ enum selint_error insert_type_alias(struct policy_node **cur, const char *type,
 
 	union node_data nd;
 
-	nd.str = strdup(type);
+	nd.str = xstrdup(type);
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_TYPE_ALIAS,
 	                                                nd,
@@ -206,7 +207,7 @@ enum selint_error insert_av_rule(struct policy_node **cur,
                                  struct string_list *perms, unsigned int lineno)
 {
 
-	struct av_rule_data *av_data = malloc(sizeof(struct av_rule_data));
+	struct av_rule_data *av_data = xmalloc(sizeof(struct av_rule_data));
 
 	av_data->flavor = flavor;
 	av_data->sources = sources;
@@ -246,13 +247,13 @@ enum selint_error insert_xperm_av_rule(struct policy_node **cur,
                                        unsigned int lineno)
 {
 
-	struct xav_rule_data *xav_data = malloc(sizeof(struct xav_rule_data));
+	struct xav_rule_data *xav_data = xmalloc(sizeof(struct xav_rule_data));
 
 	xav_data->flavor = flavor;
 	xav_data->sources = sources;
 	xav_data->targets = targets;
 	xav_data->object_classes = object_classes;
-	xav_data->operation = strdup(operation);
+	xav_data->operation = xstrdup(operation);
 	xav_data->perms = perms;
 
 	union node_data nd;
@@ -277,7 +278,7 @@ enum selint_error insert_role_allow(struct policy_node **cur,
                                     struct string_list *from_roles,
                                     struct string_list *to_roles, unsigned int lineno)
 {
-	struct role_allow_data *ra_data = malloc(sizeof(struct role_allow_data));
+	struct role_allow_data *ra_data = xmalloc(sizeof(struct role_allow_data));
 
 	ra_data->from = from_roles;
 	ra_data->to = to_roles;
@@ -312,9 +313,9 @@ enum selint_error insert_role_types(struct policy_node **cur, const char *role,
 		}
 	}
 
-	struct role_types_data *rtyp_data = (struct role_types_data *)malloc(sizeof(struct role_types_data));
+	struct role_types_data *rtyp_data = (struct role_types_data *)xmalloc(sizeof(struct role_types_data));
 
-	rtyp_data->role = strdup(role);
+	rtyp_data->role = xstrdup(role);
 	rtyp_data->types = types;
 
 	union node_data nd;
@@ -341,14 +342,14 @@ enum selint_error insert_type_transition(struct policy_node **cur,
 {
 
 	struct type_transition_data *tt_data =
-		malloc(sizeof(struct type_transition_data));
+		xmalloc(sizeof(struct type_transition_data));
 
 	tt_data->sources = sources;
 	tt_data->targets = targets;
 	tt_data->object_classes = object_classes;
-	tt_data->default_type = strdup(default_type);
+	tt_data->default_type = xstrdup(default_type);
 	if (name) {
-		tt_data->name = strdup(name);
+		tt_data->name = xstrdup(name);
 	} else {
 		tt_data->name = NULL;
 	}
@@ -385,12 +386,12 @@ enum selint_error insert_role_transition(struct policy_node **cur,
                                          unsigned int lineno)
 {
 	struct role_transition_data *rt_data =
-	        malloc(sizeof(struct role_transition_data));
+	        xmalloc(sizeof(struct role_transition_data));
 
 	rt_data->sources = sources;
 	rt_data->targets = targets;
 	rt_data->object_classes = object_classes;
-	rt_data->default_role = strdup(default_role);
+	rt_data->default_role = xstrdup(default_role);
 
 	union node_data nd;
 	nd.rt_data = rt_data;
@@ -433,9 +434,9 @@ enum selint_error insert_interface_call(struct policy_node **cur, const char *if
                                         struct string_list *args,
                                         unsigned int lineno)
 {
-	struct if_call_data *if_data = malloc(sizeof(struct if_call_data));
+	struct if_call_data *if_data = xmalloc(sizeof(struct if_call_data));
 
-	if_data->name = strdup(if_name);
+	if_data->name = xstrdup(if_name);
 	if_data->args = args;
 
 	const char *template_name = get_name_if_in_template(*cur);
@@ -479,7 +480,7 @@ enum selint_error insert_permissive_statement(struct policy_node **cur,
 {
 	union node_data nd;
 
-	nd.str = strdup(domain);
+	nd.str = xstrdup(domain);
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_PERMISSIVE,
 	                                                nd,
@@ -611,7 +612,7 @@ enum selint_error end_optional_else(struct policy_node **cur)
 enum selint_error begin_boolean_policy(struct policy_node **cur,
                                        unsigned int lineno)
 {
-	struct cond_declaration_data *cd_data = malloc(sizeof(struct cond_declaration_data));
+	struct cond_declaration_data *cd_data = xmalloc(sizeof(struct cond_declaration_data));
 	cd_data->identifiers = NULL;;
 
 	union node_data nd;
@@ -629,7 +630,7 @@ enum selint_error end_boolean_policy(struct policy_node **cur)
 enum selint_error begin_tunable_policy(struct policy_node **cur,
                                        unsigned int lineno)
 {
-	struct cond_declaration_data *cd_data = malloc(sizeof(struct cond_declaration_data));
+	struct cond_declaration_data *cd_data = xmalloc(sizeof(struct cond_declaration_data));
 	cd_data->identifiers = NULL;;
 
 	union node_data nd;
@@ -662,7 +663,7 @@ enum selint_error begin_interface_def(struct policy_node **cur,
 	insert_into_ifs_map(name, get_current_module_name());
 
 	union node_data nd;
-	nd.str = strdup(name);
+	nd.str = xstrdup(name);
 
 	return begin_block(cur, flavor, nd, lineno);
 }
@@ -680,7 +681,7 @@ enum selint_error end_interface_def(struct policy_node **cur)
 enum selint_error begin_gen_require(struct policy_node **cur,
                                     unsigned int lineno)
 {
-	struct gen_require_data *data = (struct gen_require_data *)malloc(sizeof(struct gen_require_data));
+	struct gen_require_data *data = (struct gen_require_data *)xmalloc(sizeof(struct gen_require_data));
 	union node_data nd;
 	nd.gr_data = data;
 	return begin_block(cur, NODE_GEN_REQ, nd, lineno);
@@ -761,7 +762,7 @@ enum selint_error save_command(struct policy_node *cur, const char *comm)
 	}
 	comm += strlen("selint-");
 	if (0 == strncmp("disable:", comm, 8)) {
-		cur->exceptions = strdup(comm + strlen("disable:"));
+		cur->exceptions = xstrdup(comm + strlen("disable:"));
 	} else {
 		return SELINT_PARSE_ERROR;
 	}
@@ -801,14 +802,14 @@ static enum node_flavor attr_to_node_flavor(enum attr_flavor flavor)
 
 static enum selint_error insert_attribute(struct policy_node **cur, enum attr_flavor flavor, const char *type, struct string_list *attrs, unsigned int lineno)
 {
-	struct attribute_data *data = calloc(1, sizeof(struct attribute_data));
+	struct attribute_data *data = xcalloc(1, sizeof(struct attribute_data));
 	if (!data) {
 		return SELINT_OUT_OF_MEM;
 	}
 	union node_data nd;
 	nd.at_data = data;
 
-	data->type = strdup(type);
+	data->type = xstrdup(type);
 	data->attrs = attrs;
 	data->flavor = flavor;
 
