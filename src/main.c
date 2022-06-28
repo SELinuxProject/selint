@@ -30,6 +30,7 @@
 #include "selint_config.h"
 #include "startup.h"
 #include "color.h"
+#include "xalloc.h"
 
 // ASCII characters go up to 127
 #define CONTEXT_ID          128
@@ -195,28 +196,28 @@ int main(int argc, char **argv)
 			// Disable a given check
 			if (cl_d_cursor) {
 				cl_d_cursor->next =
-					calloc(1, sizeof(struct string_list));
+					xcalloc(1, sizeof(struct string_list));
 				cl_d_cursor = cl_d_cursor->next;
 			} else {
 				cl_d_cursor =
-					calloc(1, sizeof(struct string_list));
+					xcalloc(1, sizeof(struct string_list));
 				cl_disabled_checks = cl_d_cursor;
 			}
-			cl_d_cursor->string = strdup(optarg);
+			cl_d_cursor->string = xstrdup(optarg);
 			break;
 
 		case 'e':
 			// Enable a given check
 			if (cl_e_cursor) {
 				cl_e_cursor->next =
-					calloc(1, sizeof(struct string_list));
+					xcalloc(1, sizeof(struct string_list));
 				cl_e_cursor = cl_e_cursor->next;
 			} else {
 				cl_e_cursor =
-					calloc(1, sizeof(struct string_list));
+					xcalloc(1, sizeof(struct string_list));
 				cl_enabled_checks = cl_e_cursor;
 			}
-			cl_e_cursor->string = strdup(optarg);
+			cl_e_cursor->string = xstrdup(optarg);
 			break;
 
 		case 'E':
@@ -370,21 +371,21 @@ int main(int argc, char **argv)
 	}
 
 	struct policy_file_list *te_files =
-		calloc(1, sizeof(struct policy_file_list));
+		xcalloc(1, sizeof(struct policy_file_list));
 
 	struct policy_file_list *if_files =
-		calloc(1, sizeof(struct policy_file_list));
+		xcalloc(1, sizeof(struct policy_file_list));
 
 	struct policy_file_list *fc_files =
-		calloc(1, sizeof(struct policy_file_list));
+		xcalloc(1, sizeof(struct policy_file_list));
 
 	struct policy_file_list *context_te_files =
-		calloc(1, sizeof(struct policy_file_list));
+		xcalloc(1, sizeof(struct policy_file_list));
 
 	struct policy_file_list *context_if_files =
-		calloc(1, sizeof(struct policy_file_list));
+		xcalloc(1, sizeof(struct policy_file_list));
 
-	char **paths = malloc(sizeof(char *) * (unsigned)argc - (unsigned)optind + 2);
+	char **paths = xmalloc(sizeof(char *) * (unsigned)argc - (unsigned)optind + 2);
 
 	int i = 0;
 	while (optind < argc) {
@@ -414,7 +415,7 @@ int main(int argc, char **argv)
 			file_list_push_back(if_files,
 			                    make_policy_file(file->fts_path,
 			                                     NULL));
-			char *mod_name = strdup(file->fts_name);
+			char *mod_name = xstrdup(file->fts_name);
 			mod_name[file->fts_namelen - 3] = '\0';
 			insert_into_mod_layers_map(mod_name, file->fts_parent->fts_name);
 			free(mod_name);
@@ -425,15 +426,15 @@ int main(int argc, char **argv)
 		} else if (source_flag
 		           && !strcmp(file->fts_name, "modules.conf")) {
 			// TODO: Make modules.conf name configurable
-			modules_conf_path = strdup(file->fts_path);
+			modules_conf_path = xstrdup(file->fts_path);
 		} else if (source_flag
 		           && !strcmp(file->fts_name, "obj_perm_sets.spt")) {
 			// TODO: Make obj_perm_sets.spt name configurable
-			obj_perm_sets_path = strdup(file->fts_path);
+			obj_perm_sets_path = xstrdup(file->fts_path);
 		} else if (source_flag
 		           && !strcmp(file->fts_name, "access_vectors")) {
 			// TODO: Make access_vectors name configurable
-			access_vector_path = strdup(file->fts_path);
+			access_vector_path = xstrdup(file->fts_path);
 		} else if (source_flag
 		           && (!strcmp(file->fts_name, "global_booleans") || !strcmp(file->fts_name, "global_tunables"))) {
 			// TODO: Make names configurable
@@ -496,15 +497,15 @@ int main(int argc, char **argv)
 			} else if (source_flag
                                    && !modules_conf_path
                                    && 0 == strcmp(file->fts_name, "modules.conf")) {
-				modules_conf_path = strdup(file->fts_path);
+				modules_conf_path = xstrdup(file->fts_path);
 			} else if (source_flag
                                    && !obj_perm_sets_path
                                    && 0 == strcmp(file->fts_name, "obj_perm_sets.spt")) {
-				obj_perm_sets_path = strdup(file->fts_path);
+				obj_perm_sets_path = xstrdup(file->fts_path);
 			} else if (source_flag
                                    && !access_vector_path
                                    && 0 == strcmp(file->fts_name, "access_vectors")) {
-				access_vector_path = strdup(file->fts_path);
+				access_vector_path = xstrdup(file->fts_path);
 			} else if (source_flag
 			           && !str_in_sl(file->fts_path, global_cond_files)
 			           && (0 == strcmp(file->fts_name, "global_booleans") || 0 == strcmp(file->fts_name, "global_tunables"))) {

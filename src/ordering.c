@@ -22,6 +22,7 @@
 
 #include "ordering.h"
 #include "maps.h"
+#include "xalloc.h"
 
 #define SECTION_NON_ORDERED "_non_ordered"
 #define SECTION_DECLARATION "_declaration"
@@ -46,7 +47,7 @@ struct ordering_metadata *prepare_ordering_metadata(const struct check_data *dat
 {
 	const struct policy_node *cur = head->next; // head is file.  Order the contents
 	size_t count = 0;
-	struct section_data *sections = calloc(1, sizeof(struct section_data));
+	struct section_data *sections = xcalloc(1, sizeof(struct section_data));
 
 	while (cur) {
 		if (add_section_info(sections, get_section(cur), cur->lineno) == SELINT_BAD_ARG) {
@@ -58,7 +59,7 @@ struct ordering_metadata *prepare_ordering_metadata(const struct check_data *dat
 	}
 	calculate_average_lines(sections);
 
-	struct ordering_metadata *ret = calloc(1, sizeof(struct ordering_metadata) +
+	struct ordering_metadata *ret = xcalloc(1, sizeof(struct ordering_metadata) +
 	                                       (count * sizeof(struct order_node)));
 	ret->mod_name = data->mod_name; // Will only be needed for duration of check, so will remain allocated
 	                                // until we are done with this copy
@@ -163,7 +164,7 @@ enum selint_error add_section_info(struct section_data *sections,
 	if (sections->section_name != NULL) {
 		while (0 != strcmp(cur->section_name, section_name)) {
 			if (cur->next == NULL) {
-				cur->next = calloc(1, sizeof(struct section_data));
+				cur->next = xcalloc(1, sizeof(struct section_data));
 				cur = cur->next;
 				break;
 			}
@@ -173,7 +174,7 @@ enum selint_error add_section_info(struct section_data *sections,
 	// cur is now the appropriate section_data node.  If section_name is
 	// NULL, then this is a new node
 	if (!cur->section_name) {
-		cur->section_name = strdup(section_name);
+		cur->section_name = xstrdup(section_name);
 	}
 
 	cur->lineno_count++;
@@ -932,13 +933,13 @@ char *get_ordering_reason(const struct ordering_metadata *order_data, unsigned i
 		if (other_lss == LSS_KERNEL || other_lss == LSS_SYSTEM || other_lss == LSS_OTHER) {
 			enum local_subsection this_lss = get_local_subsection(order_data->mod_name, this_node, variant);
 			if (this_lss == LSS_KERNEL) {
-				followup_str = strdup("  (This interface is in the kernel layer.)");
+				followup_str = xstrdup("  (This interface is in the kernel layer.)");
 			} else if (this_lss == LSS_SYSTEM) {
-				followup_str = strdup("  (This interface is in the system layer.)");
+				followup_str = xstrdup("  (This interface is in the system layer.)");
 			} else if (this_lss == LSS_OTHER) {
-				followup_str = strdup("  (This interface is in a layer other than kernel or system.)");
+				followup_str = xstrdup("  (This interface is in a layer other than kernel or system.)");
 			} else if (this_lss == LSS_KERNEL_MOD) {
-				followup_str = strdup("  (This interface is in the kernel module.)");
+				followup_str = xstrdup("  (This interface is in the kernel module.)");
 			}
 			// Otherwise, it's not an interface call and is hopefully obvious to the user what layer its in
 		}
@@ -969,7 +970,7 @@ char *get_ordering_reason(const struct ordering_metadata *order_data, unsigned i
 		str_len += strlen(followup_str);
 	}
 
-	char *ret = malloc(sizeof(char) * str_len);
+	char *ret = xmalloc(sizeof(char) * str_len);
 
 	ssize_t written = snprintf(ret, str_len,
 	                           "Line out of order.  It is of type %s %s line %u %s.",

@@ -20,6 +20,7 @@
 #include "tree.h"
 #include "maps.h"
 #include "selint_error.h"
+#include "xalloc.h"
 
 enum selint_error insert_policy_node_child(struct policy_node *parent,
                                            enum node_flavor flavor,
@@ -30,7 +31,7 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 		return SELINT_BAD_ARG;
 	}
 
-	struct policy_node *to_insert = malloc(sizeof(struct policy_node));
+	struct policy_node *to_insert = xmalloc(sizeof(struct policy_node));
 	if (!to_insert) {
 		return SELINT_OUT_OF_MEM;
 	}
@@ -71,7 +72,7 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 		return SELINT_BAD_ARG;
 	}
 
-	struct policy_node *to_insert = malloc(sizeof(struct policy_node));
+	struct policy_node *to_insert = xmalloc(sizeof(struct policy_node));
 	if (!to_insert) {
 		return SELINT_OUT_OF_MEM;
 	}

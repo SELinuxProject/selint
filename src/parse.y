@@ -34,8 +34,11 @@
 	#include "check_hooks.h"
 	#include "util.h"
 	#include "color.h"
+	#include "xalloc.h"
 
 	#define YYDEBUG 1
+	#define YYMALLOC xmalloc
+	#define YYREALLOC xrealloc
 
 	struct location
 	{
@@ -479,7 +482,7 @@ strings:
 sl_item:
 	STRING
 	|
-	DASH STRING { $$ = malloc(sizeof(char) * (strlen($2) + 2));
+	DASH STRING { $$ = xmalloc(sizeof(char) * (strlen($2) + 2));
 			$$[0] = '-';
 			$$[1] = '\0';
 			strcat($$, $2);
@@ -757,7 +760,7 @@ arg_list_items:
 	;
 
 arg_list_item:
-	DASH arg_list_item { $$ = malloc(sizeof(char) * (strlen($2) + 2));
+	DASH arg_list_item { $$ = xmalloc(sizeof(char) * (strlen($2) + 2));
 			$$[0] = '-';
 			$$[1] = '\0';
 			strcat($$, $2);
@@ -785,7 +788,7 @@ args:
 	|
 	args COMMA arg { $3->arg_start = 1; $$ = concat_string_lists($1, $3); }
 	|
-	args sl_item { struct string_list *sl = calloc(1, sizeof(struct string_list));
+	args sl_item { struct string_list *sl = xcalloc(1, sizeof(struct string_list));
 			sl->string = $2;
 			sl->has_incorrect_space = 1;
 			$1->arg_start = 1;
@@ -794,7 +797,7 @@ args:
 
 mls_range:
 	mls_level DASH mls_level { size_t len = strlen($1) + strlen($3) + 1 /* DASH */ + 1 /* NT */;
-				$$ = malloc(len);
+				$$ = xmalloc(len);
 				snprintf($$, len, "%s-%s", $1, $3);
 				free($1); free($3); }
 	|
@@ -805,7 +808,7 @@ mls_level:
 	mls_component
 	|
 	mls_component COLON mls_component { size_t len = strlen($1) + strlen($3) + 1 /* COLON */ + 1 /* NT */;
-				$$ = malloc(len);
+				$$ = xmalloc(len);
 				snprintf($$, len, "%s:%s", $1, $3);
 				free($1); free($3); }
 	;
@@ -814,7 +817,7 @@ mls_component:
 	STRING
 	|
 	STRING PERIOD STRING { size_t len = strlen($1) + strlen($3) + 1 /* PERIOD */ + 1 /* NT */;
-				$$ = malloc(len);
+				$$ = xmalloc(len);
 				snprintf($$, len, "%s.%s", $1, $3);
 				free($1); free($3); }
 	;
@@ -924,7 +927,7 @@ define_expansion:
 maybe_string_comma:
 	STRING COMMA
 	|
-	COMMA { $$ = strdup(""); }
+	COMMA { $$ = xstrdup(""); }
 	;
 
 gen_user:
@@ -1172,7 +1175,7 @@ static void yyerror(const YYLTYPE *locp, __attribute__((unused)) yyscan_t scanne
 
 		struct check_data data;
 		data.mod_name = get_current_module_name();
-		char *copy = strdup(parsing_filename);
+		char *copy = xstrdup(parsing_filename);
 		data.filename = basename(copy);
 		data.flavor = FILE_TE_FILE; // We don't know but it's unused by display_check_result
 
@@ -1255,7 +1258,7 @@ static void yyerror(const YYLTYPE *locp, __attribute__((unused)) yyscan_t scanne
 }
 
 struct policy_node *yyparse_wrapper(FILE *filefd, const char *filename, enum node_flavor expected_flavor) {
-	struct policy_node *ast = calloc(1, sizeof(struct policy_node));
+	struct policy_node *ast = xcalloc(1, sizeof(struct policy_node));
 	ast->flavor = expected_node_flavor = expected_flavor;
 	yyscan_t scanner;
 	yylex_init(&scanner);

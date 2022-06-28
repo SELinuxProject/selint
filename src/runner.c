@@ -28,13 +28,14 @@
 #include "parse.h"
 #include "util.h"
 #include "startup.h"
+#include "xalloc.h"
 
 #define CHECK_ENABLED(cid) is_check_enabled(cid, config_enabled_checks, config_disabled_checks, cl_enabled_checks, cl_disabled_checks, only_enabled)
 
 struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor)
 {
 
-	char *copy = strdup(filename);
+	char *copy = xstrdup(filename);
 	char *mod_name = basename(copy);
 	mod_name[strlen(mod_name) - 3] = '\0'; // Remove suffix
 	set_current_module_name(mod_name);
@@ -98,7 +99,7 @@ struct checks *register_checks(char level,
                                int only_enabled)
 {
 
-	struct checks *ck = malloc(sizeof(struct checks));
+	struct checks *ck = xmalloc(sizeof(struct checks));
 
 	memset(ck, 0, sizeof(struct checks));
 
@@ -400,11 +401,11 @@ enum selint_error run_all_checks(struct checks *ck, enum file_flavor flavor,
 
 	while (file) {
 		{
-			char *copy = strdup(file->file->filename);
-			data.filename = strdup(basename(copy));
+			char *copy = xstrdup(file->file->filename);
+			data.filename = xstrdup(basename(copy));
 			free(copy);
 		}
-		data.mod_name = strdup(data.filename);
+		data.mod_name = xstrdup(data.filename);
 		data.config_check_data = ccd;
 
 		char *suffix_ptr = strrchr(data.mod_name, '.');
@@ -453,7 +454,7 @@ enum selint_error run_analysis(struct checks *ck,
 	}
 
 	// Make temporary joined list to mark ALL transform interfaces
-	struct policy_file_list *all_if_files = calloc(1, sizeof(struct policy_file_list));
+	struct policy_file_list *all_if_files = xcalloc(1, sizeof(struct policy_file_list));
 	if (if_files->tail) {
 		// Only concatenate if if_files contains files
 		all_if_files->head = if_files->head;
