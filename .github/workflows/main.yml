@@ -33,9 +33,9 @@ jobs:
         if [[ ${{ matrix.cc }} == 'clang' ]]
         then
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key 2>/dev/null | sudo apt-key add -
-          sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main' -y
+          sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main' -y
           sudo apt-get update -q
-          sudo apt-get install -y clang-13
+          sudo apt-get install -y clang-14
         fi
     - name: install dependencies
       run: |
@@ -67,7 +67,7 @@ jobs:
         then
           ./configure --enable-werror CFLAGS=--coverage
         else
-          ./configure --enable-werror CC=clang-13
+          ./configure --enable-werror CC=clang-14
         fi
     - name: make
       run: make
