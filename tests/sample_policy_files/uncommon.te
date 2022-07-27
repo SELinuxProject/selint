@@ -140,3 +140,7 @@ example_interface(foo_t, `s0:c0 - s15:c100.c102')
 
 type_transition foo_t foo_t : anon_inode bar_t "[userfaultfd]";
 anoninodetrans_pattern(foo_t, bar_t, "[io_uring]")
+
+gen_require(`
+	all_userspace_class_perms
+')
