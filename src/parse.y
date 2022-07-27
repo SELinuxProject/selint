@@ -641,6 +641,8 @@ require_line:
 	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, @$.first_line); }
 	require_lines CLOSE_PAREN { end_ifdef(&cur); free($4); }
 	|
+	m4_simple_macro
+	|
 	COMMENT
 	;
 
