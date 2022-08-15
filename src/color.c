@@ -28,12 +28,12 @@ static int enabled = 0;
 #define COLOR_CYAN     "\033[36;1m"
 #define EMPTY_STR      ""
 
-void color_enable()
+void color_enable(void)
 {
 	enabled = 1;
 }
 
-const char *color_reset()
+const char *color_reset(void)
 {
 	if (!enabled) {
 		return EMPTY_STR;
@@ -42,7 +42,7 @@ const char *color_reset()
 	return COLOR_RESET;
 }
 
-const char *color_error()
+const char *color_error(void)
 {
 	if (!enabled) {
 		return EMPTY_STR;
@@ -51,7 +51,7 @@ const char *color_error()
 	return COLOR_RED;
 }
 
-const char *color_warning()
+const char *color_warning(void)
 {
 	if (!enabled) {
 		return EMPTY_STR;
@@ -60,7 +60,7 @@ const char *color_warning()
 	return COLOR_YELLOW;
 }
 
-const char *color_note()
+const char *color_note(void)
 {
 	if (!enabled) {
 		return EMPTY_STR;
@@ -69,7 +69,7 @@ const char *color_note()
 	return COLOR_MAGENTA;
 }
 
-const char *color_ok()
+const char *color_ok(void)
 {
 	if (!enabled) {
 		return EMPTY_STR;

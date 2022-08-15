@@ -846,7 +846,7 @@ struct check_result *check_declaration_interface_nameclash(__attribute__((unused
 	return NULL;
 }
 
-bool check_unknown_permission_condition()
+bool check_unknown_permission_condition(void)
 {
 	// ignore if no permission or permission macro have been parsed
 	if (permmacros_map_count() == 0) {
@@ -898,7 +898,7 @@ struct check_result *check_unknown_permission(__attribute__((unused)) const stru
 	return NULL;
 }
 
-bool check_unknown_class_condition()
+bool check_unknown_class_condition(void)
 {
 	// ignore if no class has been parsed
 	if (decl_map_count(DECL_CLASS) == 0) {

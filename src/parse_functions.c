@@ -64,7 +64,7 @@ void set_current_module_name(const char *mn)
 	module_name = xstrdup(mn);
 }
 
-char *get_current_module_name()
+char *get_current_module_name(void)
 {
 	return module_name;
 }
@@ -842,7 +842,7 @@ enum selint_error insert_role_attribute(struct policy_node **cur, const char *ro
 	return insert_attribute(cur, ATTR_ROLE, role, attrs, lineno);
 }
 
-void cleanup_parsing()
+void cleanup_parsing(void)
 {
 	if (module_name) {
 		free(module_name);

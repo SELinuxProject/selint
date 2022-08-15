@@ -94,7 +94,7 @@ enum selint_error load_access_vectors_source(const char *av_path)
 	return SELINT_SUCCESS;
 }
 
-void load_modules_normal()
+void load_modules_normal(void)
 {
 
 }

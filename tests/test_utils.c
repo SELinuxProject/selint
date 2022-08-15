@@ -20,7 +20,7 @@
 
 #include "test_utils.h"
 
-struct av_rule_data * make_example_av_rule() {
+struct av_rule_data * make_example_av_rule(void) {
 
 	// allow foo_t { bar_t baz_t }:file { read write getattr };
 	struct av_rule_data *av_rule_data = malloc(sizeof(struct av_rule_data));

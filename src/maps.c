@@ -571,7 +571,7 @@ void visit_all_in_permmacros_map(void (*visitor)(const char *name, const struct 
 	}
 }
 
-unsigned int permmacros_map_count()
+unsigned int permmacros_map_count(void)
 {
 	return HASH_CNT(hh_permmacros, permmacros_map);
 }
@@ -590,7 +590,7 @@ unsigned int permmacros_map_count()
 		free(cur_if); \
 } \
 
-void free_all_maps()
+void free_all_maps(void)
 {
 
 	struct hash_elem *cur_decl, *tmp_decl;
