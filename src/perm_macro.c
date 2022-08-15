@@ -517,7 +517,7 @@ static void free_perm_macro(struct perm_macro *to_free)
 	}
 }
 
-void free_permmacros()
+void free_permmacros(void)
 {
 	initialized = false;
 
