@@ -144,3 +144,14 @@ anoninodetrans_pattern(foo_t, bar_t, "[io_uring]")
 gen_require(`
 	all_userspace_class_perms
 ')
+
+define(`my_var',`')
+
+define(`my_other_var',`
+# This is a comment
+allow foo_t self:capability sys_ptrace;
+
+optional_policy(`
+	call_some_interface(foo_t)
+')
+')
