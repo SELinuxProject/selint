@@ -687,8 +687,6 @@ arbitrary_m4_string:
 	m4_string_elem
 	|
 	m4_string_elem arbitrary_m4_string
-	|
-	BACKTICK m4_string_elem SINGLE_QUOTE
 	;
 
 m4_string_elem:
@@ -711,6 +709,18 @@ m4_string_elem:
 	SEMICOLON
 	|
 	DASH
+	|
+	av_type
+	|
+	OPTIONAL_POLICY
+	|
+	IFDEF
+	|
+	GEN_REQUIRE
+	|
+	COMMENT
+	|
+	BACKTICK arbitrary_m4_string SINGLE_QUOTE
 	;
 
 condition:
@@ -924,6 +934,8 @@ define_expansion:
 	BACKTICK arbitrary_m4_string SINGLE_QUOTE
 	|
 	STRING { free($1); }
+	|
+	BACKTICK SINGLE_QUOTE
 	;
 
 maybe_string_comma:
