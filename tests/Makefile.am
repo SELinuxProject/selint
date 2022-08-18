@@ -165,6 +165,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/w02_role.if \
 			functional/policies/check_triggers/w02_role.te \
 			functional/policies/check_triggers/w02.te \
+			functional/policies/check_triggers/w02.bad_if.if \
 			functional/policies/check_triggers/w03_alias.if \
 			functional/policies/check_triggers/w03.if \
 			functional/policies/check_triggers/w03_role.if \

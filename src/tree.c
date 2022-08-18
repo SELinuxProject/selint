@@ -339,6 +339,18 @@ int is_in_require(const struct policy_node *cur)
 	return 0;
 }
 
+// Note: Not template define
+int is_in_if_define(const struct policy_node *cur)
+{
+	while (cur->parent) {
+		cur = cur->parent;
+		if (cur->flavor == NODE_INTERFACE_DEF) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 struct policy_node *dfs_next(const struct policy_node *node)
 {
 	if (node->first_child) {

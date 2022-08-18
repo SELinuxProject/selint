@@ -253,6 +253,14 @@ const char *decl_flavor_to_string(enum decl_flavor flavor);
 **********************************/
 int is_in_require(const struct policy_node *cur);
 
+/**********************************
+* Return 1 if the node is in an interface definition block
+* and 0 otherwise
+* Note, that a template definition is *not* an interface definition
+* for the purpose of this check
+**********************************/
+int is_in_if_define(const struct policy_node *cur);
+
 //Return the next node in a depth first search of the tree
 struct policy_node *dfs_next(const struct policy_node *node);
 

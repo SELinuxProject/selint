@@ -222,7 +222,7 @@ START_TEST (test_declaring_template) {
 	// checks
 	const char *mod_name;
 
-	ck_assert_uint_eq(6, decl_map_count(DECL_TYPE));
+	ck_assert_uint_eq(4, decl_map_count(DECL_TYPE));
 	mod_name = look_up_in_decl_map("prefix_foo_suffix", DECL_TYPE);
 	ck_assert_str_eq("declaring_template_te", mod_name);
 	mod_name = look_up_in_decl_map("bar_t", DECL_TYPE);
@@ -231,20 +231,20 @@ START_TEST (test_declaring_template) {
 	ck_assert_str_eq("declaring_template_te", mod_name);
 	mod_name = look_up_in_decl_map("morning_t", DECL_TYPE);
 	ck_assert_str_eq("declaring_template_te", mod_name);
-	// these are called via an interface so the mod_name is wrong
+	// these are called via an interface so it isn't declared
 	mod_name = look_up_in_decl_map("prefix_hello_suffix", DECL_TYPE);
-	ck_assert_str_eq("declaring_template_if", mod_name);
+	ck_assert_ptr_null(mod_name);
 	mod_name = look_up_in_decl_map("world_t", DECL_TYPE);
-	ck_assert_str_eq("declaring_template_if", mod_name);
+	ck_assert_ptr_null(mod_name);
 
-	ck_assert_uint_eq(3, decl_map_count(DECL_ROLE));
+	ck_assert_uint_eq(2, decl_map_count(DECL_ROLE));
 	mod_name = look_up_in_decl_map("bar_r", DECL_ROLE);
 	ck_assert_str_eq("declaring_template_te", mod_name);
 	mod_name = look_up_in_decl_map("morning_r", DECL_ROLE);
 	ck_assert_str_eq("declaring_template_te", mod_name);
-	// this is called via an interface so the mod_name is wrong
+	// this is called via an interface so it isn't declared
 	mod_name = look_up_in_decl_map("world_t", DECL_TYPE);
-	ck_assert_str_eq("declaring_template_if", mod_name);
+	ck_assert_ptr_null(mod_name);
 
 	// cleanup
 	free_policy_node(ast_te);
