@@ -226,6 +226,7 @@ test_report_format_impl() {
 @test "W-002" {
 	test_one_check_expect "W-002" "w02.*" 2
 	test_one_check "W-002" "w02_role.*"
+	test_one_check_expect "W-002" "w02.bad_if.if" 0
 }
 
 @test "W-003" {

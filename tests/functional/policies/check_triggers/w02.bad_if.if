@@ -1,0 +1,37 @@
+## <summary>dummy.if</summary>
+
+#######################################
+## <summary>
+##      A template
+## </summary>
+## <param name="dummy_prefix">
+##      <summary>
+##      The prefix of the dummy (e.g., foo
+##      is the prefix for foo_t).
+##      </summary>
+## </param>
+#
+template(`dummy_template',`
+        gen_require(`
+                type etc_t;
+        ')
+
+        type $1_t;
+        domain_type($1_t) # Generates a W-002
+
+        allow $1_t etc_t:file read_file_perms; # Generates a W-002
+')
+
+template(`basic_template',`
+	gen_require(`
+		type basic_t;
+	')
+
+	type $1_basic_t;
+
+	allow $1_basic_t basic_t:process signal; # Does NOT generate a W-002
+')
+
+interface(`bad_if',`
+	dummy_template($1)
+')

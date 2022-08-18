@@ -443,7 +443,7 @@ enum selint_error insert_interface_call(struct policy_node **cur, const char *if
 
 	if (template_name) {
 		insert_call_into_template_map(template_name, if_data);
-	} else {
+	} else if (!is_in_if_define(*cur)) {
 		enum selint_error r = add_template_declarations(if_name, args, NULL, module_name);
 		if (r != SELINT_SUCCESS) {
 			free_if_call_data(if_data);
