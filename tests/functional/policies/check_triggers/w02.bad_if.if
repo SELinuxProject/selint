@@ -17,9 +17,9 @@ template(`dummy_template',`
         ')
 
         type $1_t;
-        domain_type($1_t) # Generates a W-002
+        domain_type($1_t)
 
-        allow $1_t etc_t:file read_file_perms; # Generates a W-002
+        allow $1_t etc_t:file read_file_perms;
 ')
 
 template(`basic_template',`
@@ -29,7 +29,7 @@ template(`basic_template',`
 
 	type $1_basic_t;
 
-	allow $1_basic_t basic_t:process signal; # Does NOT generate a W-002
+	allow $1_basic_t basic_t:process signal;
 ')
 
 interface(`bad_if',`
