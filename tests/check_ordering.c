@@ -446,7 +446,7 @@ START_TEST (test_alphabetical_optionals) {
 	ck_assert_int_eq(ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, A_call, C_call));
 	ck_assert_int_eq(-ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, C_call, A_call));
 
-	// do not sort on non-first ndoes
+	// do not sort on non-first nodes
 	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, D_call, C_call));
 	ck_assert_int_eq(ORDER_EQUAL, compare_nodes_refpolicy(o, C_call, D_call));
 
