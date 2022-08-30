@@ -53,7 +53,7 @@ bool ends_with(const char *str, size_t str_len, const char *suffix, size_t suffi
 /****************************************************
 * Remove whitespaces of the end of a string.
 * str - The string to trim.
-* Return the passed and now trimed string.
+* Return the passed and now trimmed string.
 ****************************************************/
 char* trim_right(char *str);
 
