@@ -18,6 +18,8 @@
 #define UTIL_H
 
 #include <stdbool.h>
+#include <stddef.h>
+#include <string.h>
 
 // ignore conversions discarding const specifier, e.g.
 //     const char []     ->  char *
