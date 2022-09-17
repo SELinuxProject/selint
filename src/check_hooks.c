@@ -28,18 +28,6 @@ int found_issue = 0;
 int suppress_output = 0;
 int full_path = 0;
 
-#define ALLOC_NODE(nl)  if (ck->check_nodes[nl]) { \
-		loc = ck->check_nodes[nl]; \
-		while (loc->next) { loc = loc->next; } \
-		loc->next = xmalloc(sizeof(struct check_node)); \
-		if (!loc->next) { return SELINT_OUT_OF_MEM; } \
-		loc = loc->next; \
-} else { \
-		ck->check_nodes[nl] = xmalloc(sizeof(struct check_node)); \
-		if (!ck->check_nodes[nl]) { return SELINT_OUT_OF_MEM; } \
-		loc = ck->check_nodes[nl]; \
-}
-
 enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
                             const char *check_id,
                             struct check_result *(*check_function)(const struct check_data *check_data,
@@ -47,7 +35,17 @@ enum selint_error add_check(enum node_flavor check_flavor, struct checks *ck,
 {
 	struct check_node *loc;
 
-	ALLOC_NODE(check_flavor);
+	if (ck->check_nodes[check_flavor]) {
+		loc = ck->check_nodes[check_flavor];
+		while (loc->next) {
+			loc = loc->next;
+		}
+		loc->next = xmalloc(sizeof(struct check_node));
+		loc = loc->next;
+	} else {
+		ck->check_nodes[check_flavor] = xmalloc(sizeof(struct check_node));
+		loc = ck->check_nodes[check_flavor];
+	}
 
 	loc->check_function = check_function;
 	loc->check_id = xstrdup(check_id);
