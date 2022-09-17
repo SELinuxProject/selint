@@ -231,7 +231,7 @@ bool check_for_fc_macro(const char *line, const struct string_list *custom_fc_ma
 
 struct policy_node *parse_fc_file(const char *filename, const struct string_list *custom_fc_macros)
 {
-	FILE *fd = fopen(filename, "r");
+	FILE *fd = fopen(filename, "re");
 
 	if (!fd) {
 		return NULL;

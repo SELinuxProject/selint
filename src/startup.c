@@ -77,7 +77,7 @@ enum selint_error load_access_vectors_source(const char *av_path)
 
 	set_current_module_name(av_path);
 
-	FILE *f = fopen(av_path, "r");
+	FILE *f = fopen(av_path, "re");
 	if (!f) {
 		printf("%sError%s: Failed to open %s: %s\n", color_error(), color_reset(), av_path, strerror(errno));
 		return SELINT_IO_ERROR;
@@ -193,7 +193,7 @@ static char *strip_space(char *str)
 
 enum selint_error load_modules_source(const char *modules_conf_path)
 {
-	FILE *fd = fopen(modules_conf_path, "r");
+	FILE *fd = fopen(modules_conf_path, "re");
 
 	if (!fd) {
 		return SELINT_IO_ERROR;
@@ -242,7 +242,7 @@ enum selint_error load_modules_source(const char *modules_conf_path)
 
 enum selint_error load_obj_perm_sets_source(const char *obj_perm_sets_path)
 {
-	FILE *f = fopen(obj_perm_sets_path, "r");
+	FILE *f = fopen(obj_perm_sets_path, "re");
 	if (!f) {
 		return SELINT_IO_ERROR;
 	}
@@ -321,7 +321,7 @@ static enum selint_error load_global_conditions_file(const char *path)
 
 	set_current_module_name("__global__");
 
-	FILE *f = fopen(path, "r");
+	FILE *f = fopen(path, "re");
 	if (!f) {
 		printf("%sError%s: Failed to open file %s: %s\n", color_error(), color_reset(), path, strerror(errno));
 		return SELINT_IO_ERROR;

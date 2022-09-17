@@ -41,7 +41,7 @@ struct policy_node *parse_one_file(const char *filename, enum node_flavor flavor
 	set_current_module_name(mod_name);
 	free(copy);
 
-	FILE *f = fopen(filename, "r");
+	FILE *f = fopen(filename, "re");
 	if (!f) {
 		printf("%sError%s: Failed to open %s: %s\n", color_error(), color_reset(), filename, strerror(errno));
 		return NULL;
