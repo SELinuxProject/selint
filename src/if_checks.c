@@ -262,7 +262,7 @@ struct check_result *check_name_used_but_not_required_in_if(const struct
 
 	const struct policy_node *cur = node;
 
-	struct string_list *names_in_current_node = get_names_in_node(node);
+	struct name_list *names_in_current_node = get_names_in_node(node);
 
 	if (!names_in_current_node) {
 		return NULL;
@@ -276,15 +276,15 @@ struct check_result *check_name_used_but_not_required_in_if(const struct
 	}
 
 	if (!cur) {
-		free_string_list(names_in_current_node);
+		free_name_list(names_in_current_node);
 		return NULL;
 	}
 	// In a template or interface, and cur is a pointer to the definition node
 
 	cur = cur->first_child;
 
-	struct string_list *names_required = NULL;
-	struct string_list *names_required_tail = NULL;
+	struct name_list *names_required = NULL;
+	struct name_list *names_required_tail = NULL;
 
 	while (cur && cur != node) {
 	       if (cur->flavor == NODE_GEN_REQ
@@ -305,7 +305,7 @@ struct check_result *check_name_used_but_not_required_in_if(const struct
 		                     // for example in an ifdef
 	}
 
-	const struct string_list *name_node = names_in_current_node;
+	const struct name_list *name_node = names_in_current_node;
 	/* In declarations skip the first name, which is the new declared type */
 	if (node->flavor == NODE_DECL) {
 		name_node = name_node->next;
@@ -313,27 +313,22 @@ struct check_result *check_name_used_but_not_required_in_if(const struct
 	const char *flavor = NULL;
 
 	while (name_node) {
-		if (!str_in_sl(name_node->string, names_required)) {
-			if (0 == strcmp(name_node->string, "system_r")) {
+		const struct name_data *ndata = name_node->data;
+		if (!name_list_contains_name(names_required, ndata)) {
+			if (name_is_role(ndata) && 0 == strcmp(ndata->name, "system_r")) {
 				// system_r is required by default in all modules
 				// so that is an exception that shouldn't be warned
 				// about.
 				name_node = name_node->next;
 				continue;
 			}
-			if (look_up_in_decl_map(name_node->string, DECL_TYPE)) {
+			if (name_is_type(ndata) && look_up_in_decl_map(ndata->name, DECL_TYPE)) {
 				flavor = "Type";
-			} else
-			if (look_up_in_decl_map
-			            (name_node->string, DECL_ATTRIBUTE)) {
+			} else if (name_is_typeattr(ndata) && look_up_in_decl_map(ndata->name, DECL_ATTRIBUTE)) {
 				flavor = "Attribute";
-			} else
-			if (look_up_in_decl_map
-			            (name_node->string, DECL_ATTRIBUTE_ROLE)) {
+			} else if (name_is_roleattr(ndata) && look_up_in_decl_map(ndata->name, DECL_ATTRIBUTE_ROLE)) {
 				flavor = "Role Attribute";
-			} else
-			if (look_up_in_decl_map
-			            (name_node->string, DECL_ROLE)) {
+			} else if (name_is_role(ndata) && look_up_in_decl_map(ndata->name, DECL_ROLE)) {
 				flavor = "Role";
 			} else {
 				// This is a string we don't recognize.  Other checks and/or
@@ -344,16 +339,16 @@ struct check_result *check_name_used_but_not_required_in_if(const struct
 
 			struct check_result *res =
 				make_check_result('W', W_ID_NO_REQ, NOT_REQ_MESSAGE,
-				                  flavor, name_node->string);
-			free_string_list(names_in_current_node);
-			free_string_list(names_required);
+				                  flavor, ndata->name);
+			free_name_list(names_in_current_node);
+			free_name_list(names_required);
 			return res;
 		}
 		name_node = name_node->next;
 	}
 
-	free_string_list(names_in_current_node);
-	free_string_list(names_required);
+	free_name_list(names_in_current_node);
+	free_name_list(names_required);
 
 	return NULL;
 }
@@ -405,7 +400,7 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 		return NULL;
 	}
 
-	struct string_list *names_to_check = get_names_in_node(node);
+	struct name_list *names_to_check = get_names_in_node(node);
 	if (!names_to_check) {
 		// This should never happen
 		return alloc_internal_error(
@@ -416,22 +411,22 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 
 	cur = cur->next;
 
-	struct string_list *sl_end = NULL;
-	struct string_list *sl_head = NULL;
+	struct name_list *nl_end = NULL;
+	struct name_list *nl_head = NULL;
 
 	int depth = 0;
 
 	while (cur) {
-		struct string_list *names_used = get_names_in_node(cur);
+		struct name_list *names_used = get_names_in_node(cur);
 		if (names_used) {
-			if (!sl_head) {
-				sl_head = sl_end = names_used;
+			if (!nl_head) {
+				nl_head = nl_end = names_used;
 			} else {
-				sl_end->next = names_used;
+				nl_end->next = names_used;
 			}
 
-			while (sl_end->next) {
-				sl_end = sl_end->next;
+			while (nl_end->next) {
+				nl_end = nl_end->next;
 			}
 		}
 
@@ -452,24 +447,21 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 		}
 	}
 
-	const struct string_list *name_node = names_to_check;
-
 	struct check_result *res = NULL;
 
-	while (name_node) {
-		if (!str_in_sl(name_node->string, sl_head)) {
+	for (const struct name_list *name_node = names_to_check; name_node; name_node = name_node->next) {
+		if (!name_list_contains_name(nl_head, name_node->data)) {
 			res = make_check_result('W',
 			                        W_ID_UNUSED_REQ,
 			                        "%s %s is listed in require block but not used in interface",
 			                        flavor,
-			                        name_node->string);
+			                        name_node->data->name);
 			break;
 		}
-		name_node = name_node->next;
 	}
 
-	free_string_list(sl_head);
-	free_string_list(names_to_check);
+	free_name_list(nl_head);
+	free_name_list(names_to_check);
 	return res;
 }
 

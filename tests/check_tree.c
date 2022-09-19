@@ -108,26 +108,35 @@ START_TEST (test_get_types_in_node_av) {
 
 	node->data.av_data = make_example_av_rule();
 
-	struct string_list *out = get_names_in_node(node);
+	struct name_list *out = get_names_in_node(node);
 
-	struct string_list *cur = out;
+	struct name_list *cur = out;
 
 	ck_assert_ptr_nonnull(cur);
-	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_1);
+	ck_assert_str_eq(cur->data->name, EXAMPLE_TYPE_1);
+	ck_assert_int_eq(cur->data->flavor, NAME_TYPE_OR_ATTRIBUTE);
 
 	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
-	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_2);
+	ck_assert_str_eq(cur->data->name, EXAMPLE_TYPE_2);
+	ck_assert_int_eq(cur->data->flavor, NAME_TYPE_OR_ATTRIBUTE);
 
 	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
-	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_3);
+	ck_assert_str_eq(cur->data->name, EXAMPLE_TYPE_3);
+	ck_assert_int_eq(cur->data->flavor, NAME_TYPE_OR_ATTRIBUTE);
+
+	cur = cur->next;
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_str_eq(cur->data->name, "file");
+	ck_assert_int_eq(cur->data->flavor, NAME_CLASS);
 
 	ck_assert_ptr_null(cur->next);
 
-	free_string_list(out);
+	free_name_list(out);
 	free_policy_node(node);
 }
 END_TEST
@@ -149,26 +158,29 @@ START_TEST (test_get_types_in_node_tt) {
 
 	tt_data->default_type = strdup(EXAMPLE_TYPE_1);
 
-	struct string_list *out = get_names_in_node(node);
+	struct name_list *out = get_names_in_node(node);
 
-	struct string_list *cur = out;
+	struct name_list *cur = out;
 
 	ck_assert_ptr_nonnull(cur);
-	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_3);
+	ck_assert_str_eq(cur->data->name, EXAMPLE_TYPE_3);
+	ck_assert_int_eq(cur->data->flavor, NAME_TYPE_OR_ATTRIBUTE);
 
 	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
-	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_2);
+	ck_assert_str_eq(cur->data->name, EXAMPLE_TYPE_2);
+	ck_assert_int_eq(cur->data->flavor, NAME_TYPE_OR_ATTRIBUTE);
 
 	cur = cur->next;
 
 	ck_assert_ptr_nonnull(cur);
-	ck_assert_str_eq(cur->string, EXAMPLE_TYPE_1);
+	ck_assert_str_eq(cur->data->name, EXAMPLE_TYPE_1);
+	ck_assert_int_eq(cur->data->flavor, NAME_TYPE);
 
 	ck_assert_ptr_null(cur->next);
 
-	free_string_list(out);
+	free_name_list(out);
 	free_policy_node(node);
 }
 END_TEST
@@ -184,15 +196,16 @@ START_TEST (test_get_types_in_node_dd) {
 
 	d_data->name = strdup(EXAMPLE_TYPE_2);
 
-	struct string_list *out = get_names_in_node(node);
+	struct name_list *out = get_names_in_node(node);
 
 	ck_assert_ptr_nonnull(out);
 
-	ck_assert_str_eq(out->string, EXAMPLE_TYPE_2);
+	ck_assert_str_eq(out->data->name, EXAMPLE_TYPE_2);
+	ck_assert_int_eq(out->data->flavor, NAME_TYPE);
 
 	ck_assert_ptr_null(out->next);
 
-	free_string_list(out);
+	free_name_list(out);
 	free_policy_node(node);
 }
 END_TEST
@@ -212,16 +225,18 @@ START_TEST (test_get_types_in_node_if_call) {
 	if_data->args->next = calloc(1, sizeof(struct string_list));
 	if_data->args->next->string = strdup("baz_t");
 
-	struct string_list *out = get_names_in_node(node);
+	struct name_list *out = get_names_in_node(node);
 
 	ck_assert_ptr_nonnull(out);
 
-	ck_assert_str_eq(out->string, "bar_t");
-	ck_assert_str_eq(out->next->string, "baz_t");
+	ck_assert_str_eq(out->data->name, "bar_t");
+	ck_assert_int_eq(out->data->flavor, NAME_UNKNOWN);
+	ck_assert_str_eq(out->next->data->name, "baz_t");
+	ck_assert_int_eq(out->next->data->flavor, NAME_UNKNOWN);
 
 	ck_assert_ptr_null(out->next->next);
 
-	free_string_list(out);
+	free_name_list(out);
 	free_policy_node(node);
 }
 END_TEST
@@ -247,14 +262,16 @@ START_TEST (test_get_types_in_node_exclusion) {
 	node->data.av_data->sources->next = calloc(1, sizeof(struct string_list));
 	node->data.av_data->sources->next->string = strdup("-init_t");
 
-	struct string_list *out = get_names_in_node(node);
+	struct name_list *out = get_names_in_node(node);
 	ck_assert_ptr_nonnull(out);
 
-	ck_assert_str_eq(out->string, "domain");
-	ck_assert_str_eq(out->next->string, "init_t"); // Strip "-"
+	ck_assert_str_eq(out->data->name, "domain");
+	ck_assert_int_eq(out->data->flavor, NAME_TYPE_OR_ATTRIBUTE);
+	ck_assert_str_eq(out->next->data->name, "init_t"); // Strip "-"
+	ck_assert_int_eq(out->next->data->flavor, NAME_TYPE_OR_ATTRIBUTE);
 	ck_assert_ptr_null(out->next->next);
 
-	free_string_list(out);
+	free_name_list(out);
 	free_policy_node(node);
 }
 END_TEST

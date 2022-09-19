@@ -13,7 +13,7 @@
 # limitations under the License.
 
 bin_PROGRAMS = selint
-selint_SOURCES = main.c lex.l parse.y tree.c tree.h selint_error.h parse_functions.c parse_functions.h maps.c maps.h runner.c runner.h parse_fc.c parse_fc.h template.c template.h file_list.c file_list.h check_hooks.c check_hooks.h fc_checks.c fc_checks.h util.c util.h if_checks.c if_checks.h selint_config.c selint_config.h string_list.c string_list.h startup.c startup.h te_checks.c te_checks.h ordering.c ordering.h color.c color.h perm_macro.c perm_macro.h xalloc.h
+selint_SOURCES = main.c lex.l parse.y tree.c tree.h selint_error.h parse_functions.c parse_functions.h maps.c maps.h runner.c runner.h parse_fc.c parse_fc.h template.c template.h file_list.c file_list.h check_hooks.c check_hooks.h fc_checks.c fc_checks.h util.c util.h if_checks.c if_checks.h selint_config.c selint_config.h string_list.c string_list.h startup.c startup.h te_checks.c te_checks.h ordering.c ordering.h color.c color.h perm_macro.c perm_macro.h xalloc.h name_list.c name_list.h
 BUILT_SOURCES = parse.h
 AM_YFLAGS = -d -Wno-yacc -Werror=conflicts-rr -Werror=conflicts-sr
 

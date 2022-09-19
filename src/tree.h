@@ -17,6 +17,7 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include "name_list.h"
 #include "selint_error.h"
 #include "string_list.h"
 
@@ -241,9 +242,9 @@ int is_template_call(const struct policy_node *node);
 
 const char *get_name_if_in_template(const struct policy_node *cur);
 
-struct string_list *get_names_in_node(const struct policy_node *node);
+struct name_list *get_names_in_node(const struct policy_node *node);
 
-struct string_list *get_names_required(const struct policy_node *node);
+struct name_list *get_names_required(const struct policy_node *node);
 
 const char *decl_flavor_to_string(enum decl_flavor flavor);
 

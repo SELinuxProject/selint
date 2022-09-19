@@ -358,21 +358,21 @@ static bool is_own_module_rule(const struct policy_node *node, const char *curre
 			return false;
 		}
 	}
-	struct string_list *names = get_names_in_node(node);
-	struct string_list *cur = names;
+	struct name_list *names = get_names_in_node(node);
+	const struct name_list *cur = names;
 	while (cur) {
-		const char *module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_TYPE);
+		const char *module_of_type_or_attr = look_up_in_decl_map(cur->data->name, DECL_TYPE);
 		if (!module_of_type_or_attr) {
-			module_of_type_or_attr = look_up_in_decl_map(cur->string, DECL_ATTRIBUTE);
+			module_of_type_or_attr = look_up_in_decl_map(cur->data->name, DECL_ATTRIBUTE);
 		}
 		if (module_of_type_or_attr &&
 		    0 != strcmp(module_of_type_or_attr, current_mod_name)) {
-			free_string_list(names);
+			free_name_list(names);
 			return false;
 		}
 		cur = cur->next;
 	}
-	free_string_list(names);
+	free_name_list(names);
 	// This assumes that not found strings are not types from other modules.
 	// This is probably necessary because we'll find strings like "file" or
 	// "read_file_perms" for example.  However, in normal mode without context

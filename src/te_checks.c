@@ -512,23 +512,24 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 		return NULL;
 	}
 
-	struct string_list *names = get_names_in_node(node);
+	struct name_list *names = get_names_in_node(node);
 
-	const struct string_list *name = names;
+	const struct name_list *name = names;
 	/* In declarations skip the first name, which is the new declared type */
 	if (node->flavor == NODE_DECL) {
 		name = name->next;
 	}
 
 	for (; name; name = name->next) {
+		const struct name_data *ndata = name->data;
 		const char *mod_name;
 		enum decl_flavor flavor;
 
-		if ((mod_name = look_up_in_decl_map(name->string, DECL_TYPE))) {
+		if (name_is_type(ndata) && (mod_name = look_up_in_decl_map(ndata->name, DECL_TYPE))) {
 			flavor = DECL_TYPE;
-		} else if ((mod_name = look_up_in_decl_map(name->string, DECL_ATTRIBUTE))) {
+		} else if (name_is_typeattr(ndata) && (mod_name = look_up_in_decl_map(ndata->name, DECL_ATTRIBUTE))) {
 			flavor = DECL_ATTRIBUTE;
-		} else if ((mod_name = look_up_in_decl_map(name->string, DECL_ATTRIBUTE_ROLE))) {
+		} else if (name_is_roleattr(ndata) && (mod_name = look_up_in_decl_map(ndata->name, DECL_ATTRIBUTE_ROLE))) {
 			flavor = DECL_ATTRIBUTE_ROLE;
 		// Do not check for roles: in refpolicy they are defined in the kernel module
 		// and used in role modules (like unprivuser)
@@ -539,19 +540,19 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 
 		if (0 != strcmp(data->mod_name, mod_name)) {
 			// It may be required
-			if (!has_require(node, name->string, flavor)) {
+			if (!has_require(node, ndata->name, flavor)) {
 				// We didn't find a require block with this name
 				struct check_result *to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
 										"No explicit declaration for %s from module %s.  You should access it via interface call or use a require block.",
-										name->string, mod_name);
-				free_string_list(names);
+										ndata->name, mod_name);
+				free_name_list(names);
 				return to_ret;
 			}
 			// Otherwise, keep checking other names in this node
 		}
 	}
 
-	free_string_list(names);
+	free_name_list(names);
 	return NULL;
 }
 

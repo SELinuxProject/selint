@@ -144,11 +144,11 @@ const char *decl_flavor_to_string(enum decl_flavor flavor)
 	}
 }
 
-struct string_list *get_names_in_node(const struct policy_node *node)
+struct name_list *get_names_in_node(const struct policy_node *node)
 {
 
-	struct string_list *ret = NULL;
-	struct string_list *cur = NULL;
+	struct name_list *ret = NULL;
+	struct name_list *cur = NULL;
 	struct av_rule_data *av_data;
 	struct type_transition_data *tt_data;
 	struct role_transition_data *rt_data;
@@ -164,96 +164,65 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 		// Since the common elements are ordered identically, we can just look
 		// at the common subset for the XAV rule
 		av_data = node->data.av_data;
-		cur = ret = copy_string_list(av_data->sources);
-		if (cur) {
-			while (cur->next) {
-				cur = cur->next;
-			}
-			cur->next = copy_string_list(av_data->targets);
-		} else {
-			ret = copy_string_list(av_data->targets);
-		}
+		ret = name_list_from_sl(av_data->sources, NAME_TYPE_OR_ATTRIBUTE);
+		ret = concat_name_lists(ret, name_list_from_sl(av_data->targets, NAME_TYPE_OR_ATTRIBUTE));
+		ret = concat_name_lists(ret, name_list_from_sl_with_traits(av_data->object_classes, NAME_CLASS, av_data->perms));
 		break;
 
 	case NODE_TT_RULE:
 		tt_data = node->data.tt_data;
-		cur = ret = copy_string_list(tt_data->sources);
-		if (cur) {
-			while (cur->next) {
-				cur = cur->next;
-			}
-			cur->next = copy_string_list(tt_data->targets);
-		} else {
-			cur = ret = copy_string_list(tt_data->targets);
-		}
-		if (cur) {
-			while (cur->next) {
-				cur = cur->next;
-			}
-			cur->next = sl_from_str(tt_data->default_type);
-		} else {
-			ret = sl_from_str(tt_data->default_type);
-		}
+		ret = name_list_from_sl(tt_data->sources, NAME_TYPE_OR_ATTRIBUTE);
+		ret = concat_name_lists(ret, name_list_from_sl(tt_data->targets, NAME_TYPE_OR_ATTRIBUTE));
+		ret = concat_name_lists(ret, name_list_create(tt_data->default_type, NAME_TYPE));
+		ret = concat_name_lists(ret, name_list_from_sl(tt_data->object_classes, NAME_CLASS));
 		break;
 
 	case NODE_RT_RULE:
 		rt_data = node->data.rt_data;
-		cur = ret = copy_string_list(rt_data->sources);
-		if (cur) {
-			while (cur->next) {
-				cur = cur->next;
-			}
-			cur->next = copy_string_list(rt_data->targets);
-		} else {
-			cur = ret = copy_string_list(rt_data->targets);
-		}
-		if (cur) {
-			while (cur->next) {
-				cur = cur->next;
-			}
-			cur->next = sl_from_str(rt_data->default_role);
-		} else {
-			ret = sl_from_str(rt_data->default_role);
-		}
+		ret = name_list_from_sl(rt_data->sources, NAME_ROLE_OR_ATTRIBUTE);
+		ret = concat_name_lists(ret, name_list_from_sl(rt_data->targets, NAME_TYPE_OR_ATTRIBUTE));
+		ret = concat_name_lists(ret, name_list_create(rt_data->default_role, NAME_ROLE));
+		ret = concat_name_lists(ret, name_list_from_sl(rt_data->object_classes, NAME_CLASS));
 		break;
 
 	case NODE_DECL:
 		d_data = node->data.d_data;
-		ret = sl_from_str(d_data->name);
-		ret->next = copy_string_list(d_data->attrs);
+		ret = name_list_from_decl(d_data);
 		break;
 
 	case NODE_IF_CALL:
 		ifc_data = node->data.ic_data;
-		ret = copy_string_list(ifc_data->args);
+		ret = name_list_from_sl(ifc_data->args, NAME_UNKNOWN);
 		break;
 
 	case NODE_ROLE_ALLOW:
 		ra_data = node->data.ra_data;
-		cur = ret = copy_string_list(ra_data->from);
-		while (cur->next) {
-			cur = cur->next;
-		}
-		cur->next = copy_string_list(ra_data->to);
+		ret = name_list_from_sl(ra_data->from, NAME_ROLE_OR_ATTRIBUTE);
+		ret = concat_name_lists(ret, name_list_from_sl(ra_data->to, NAME_ROLE_OR_ATTRIBUTE));
 		break;
 
 	case NODE_ROLE_TYPES:
 		rtyp_data = node->data.rtyp_data;
-		ret = sl_from_str(rtyp_data->role);
-		ret->next = copy_string_list(rtyp_data->types);
+		ret = name_list_create(rtyp_data->role, NAME_ROLE_OR_ATTRIBUTE);
+		ret->next = name_list_from_sl(rtyp_data->types, NAME_TYPE_OR_ATTRIBUTE);
 		break;
 
 	case NODE_TYPE_ATTRIBUTE:
+		at_data = node->data.at_data;
+		ret = name_list_create(at_data->type, NAME_TYPE);
+		ret->next = name_list_from_sl(at_data->attrs, NAME_TYPEATTRIBUTE);
+		break;
+
 	case NODE_ROLE_ATTRIBUTE:
 		at_data = node->data.at_data;
-		ret = sl_from_str(at_data->type);
-		ret->next = copy_string_list(at_data->attrs);
+		ret = name_list_create(at_data->type, NAME_ROLE);
+		ret->next = name_list_from_sl(at_data->attrs, NAME_ROLEATTRIBUTE);
 		break;
 
 	case NODE_ALIAS:
 	case NODE_TYPE_ALIAS:
 	case NODE_PERMISSIVE:
-		ret = sl_from_str(node->data.str);
+		ret = name_list_create(node->data.str, NAME_TYPE);
 		break;
 
 	/*
@@ -293,11 +262,12 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 	// Check if any of the types are exclusions
 	cur = ret;
 	while (cur) {
-		if (cur->string[0] == '-') {
+		char *name = cur->data->name;
+		if (name[0] == '-') {
 			// memmove is safe for overlapping strings
 			// Length is strlen exactly because it doesn't copy the first
 			// character, but does copy the null terminator
-			memmove(cur->string, cur->string + 1, strlen(cur->string));
+			memmove(name, name + 1, strlen(name));
 		}
 		cur = cur->next;
 	}
@@ -305,10 +275,10 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 	return ret;
 }
 
-struct string_list *get_names_required(const struct policy_node *node)
+struct name_list *get_names_required(const struct policy_node *node)
 {
-	struct string_list *ret = NULL;
-	struct string_list *ret_cursor = NULL;
+	struct name_list *ret = NULL;
+	struct name_list *ret_cursor = NULL;
 
 	struct policy_node *cur = node->first_child;
 
