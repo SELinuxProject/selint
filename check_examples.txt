@@ -148,6 +148,13 @@ W-011:
 		')
 	')
 
+W-012:
+
+	# in module foo
+	if (bar_cond) {
+		...
+	}
+
 Error:
 
 E-002:
