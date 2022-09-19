@@ -231,6 +231,18 @@ struct check_result *check_unknown_cond_id(const struct check_data
                                            *node);
 
 /*********************************************
+* Check for allow rule with audit_access permission
+* Called on NODE_AV_RULE nodes
+* data - metadata about the file
+* node - the node to check
+* returns NULL if passed or check_result for issue W-013
+*********************************************/
+struct check_result *check_audit_access_perm(const struct
+                                            check_data *data,
+                                            const struct
+                                            policy_node *node);
+
+/*********************************************
  * Check for clash of declaration and interface names.
  * This will cause macro expansion to enter an endless loop
  * and consume all available memory.

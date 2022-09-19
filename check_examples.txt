@@ -155,6 +155,10 @@ W-012:
 		...
 	}
 
+W-013:
+
+	allow foo_t bar_t:file audit_access;
+
 Error:
 
 E-002:

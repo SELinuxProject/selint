@@ -64,6 +64,7 @@ enum warn_ids {
 	W_ID_UNKNOWN_CALL      = 10,
 	W_ID_IF_DECL_NOT_OWN   = 11,
 	W_ID_UNKNOWN_COND_ID   = 12,
+	W_ID_AUDIT_ACCESS      = 13,
 	W_END
 };
 

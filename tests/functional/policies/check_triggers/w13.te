@@ -1,0 +1,13 @@
+policy_module(w13, 1.0)
+
+type foo_t;
+
+# do not warn about these
+allow foo_t foo_t:file *;
+allow foo_t foo_t:dir ~map;
+dontaudit foo_t foo_t:chr_file audit_access;
+neverallow foo_t foo_t:sock_file audit_access;
+
+# warn about these
+allow foo_t foo_t:file audit_access;
+auditallow foo_t foo_t:lnk_file audit_access;
