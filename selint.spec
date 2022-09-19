@@ -2,9 +2,9 @@ Summary: SELinux policy source file checker
 Name: selint
 Version: 1.1.0
 Release: 1%{?dist}
-URL: https://github.com/TresysTechnology/selint
+URL: https://github.com/SELinuxProject/selint
 License: ASL 2.0
-%global forgeurl https://github.com/TresysTechnology/selint
+%global forgeurl https://github.com/SELinuxProject/selint
 %global branch master
 # handle not having forge macros on el7
 %{!?forgesoure: %define forgesource %forgeurl/archive/%branch/selint-%branch.tar.gz}
