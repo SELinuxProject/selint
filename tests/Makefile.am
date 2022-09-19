@@ -15,7 +15,7 @@
 @VALGRIND_CHECK_RULES@
 VALGRIND_memcheck_FLAGS=--leak-check=full --show-reachable=yes --show-leak-kinds=all --errors-for-leak-kinds=all
 
-TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering check_perm_macro
+TESTS = check_tree check_parse_functions check_maps check_parsing check_parse_fc check_template check_file_list check_fc_checks check_check_hooks check_selint_config check_if_checks check_string_list check_runner check_startup check_te_checks check_ordering check_perm_macro check_name_list
 check_PROGRAMS = ${TESTS}
 
 AV_FILE_PERM_FILES=sample_av/file/index \
@@ -286,14 +286,16 @@ UTIL_OBJS=$(top_builddir)/src/util.o
 SELINT_ERROR_HEADS=$(top_builddir)/src/selint_error.h
 STRING_LIST_HEADS=$(top_builddir)/src/string_list.h ${SELINT_ERROR_HEADS}
 STRING_LIST_OBJS=$(top_builddir)/src/string_list.o
+NAME_LIST_HEADS=$(top_builddir)/src/name_list.h
+NAME_LIST_OBJS=$(top_builddir)/src/name_list.o ${STRING_LIST_OBJS}
 COLOR_HEADS=$(top_builddir)/src/color.h
 COLOR_OBJS=$(top_builddir)/src/color.o
 PERM_MACRO_HEADS=$(top_builddir)/src/perm_macro.h ${UTIL_HEADS} ${COLOR_HEADS}
 PERM_MACRO_OBJS=$(top_builddir)/src/perm_macro.o ${UTIL_OBJS} ${COLOR_OBJS}
 SELINT_CONFIG_HEADS=$(top_builddir)/src/selint_config.h ${STRING_LIST_HEADS} ${TREE_HEADS} ${MAPS_HEADS} ${ORDERING_HEADS}
 SELINT_CONFIG_OBJS=$(top_builddir)/src/selint_config.o ${STRING_LIST_OBJS} ${TREE_OBJS} ${MAPS_OBJS} ${UTIL_OBJS}
-TREE_HEADS=$(top_builddir)/src/tree.h ${STRING_LIST_HEADS}
-TREE_OBJS=$(top_builddir)/src/tree.o ${STRING_LIST_OBJS} $(top_builddir)/src/maps.o
+TREE_HEADS=$(top_builddir)/src/tree.h ${STRING_LIST_HEADS} ${NAME_LIST_HEADS}
+TREE_OBJS=$(top_builddir)/src/tree.o ${NAME_LIST_OBJS} $(top_builddir)/src/maps.o
 FILE_LIST_HEADS=$(top_builddir)/src/file_list.h ${TREE_HEADS}
 FILE_LIST_OBJS=$(top_builddir)/src/file_list.o ${TREE_OBJS}
 MAPS_HEADS=$(top_builddir)/src/maps.h ${SELINT_ERROR_HEADS} ${TREE_HEADS}
@@ -323,6 +325,9 @@ ORDERING_OBJS=$(top_builddir)/src/ordering.o ${TREE_OBJS} ${MAPS_OBJS}
 
 check_string_list_SOURCES = check_string_list.c ${STRING_LIST_HEADS}
 check_string_list_LDADD = @CHECK_LIBS@ $(sort ${STRING_LIST_OBJS})
+
+check_name_list_SOURCES = check_name_list.c ${NAME_LIST_HEADS}
+check_name_list_LDADD = @CHECK_LIBS@ $(sort ${NAME_LIST_OBJS})
 
 check_selint_config_SOURCES = check_selint_config.c ${SELINT_CONFIG_HEADS} ${STRING_LIST_HEADS}
 check_selint_config_LDADD = @CHECK_LIBS@ $(sort ${SELINT_CONFIG_OBJS} ${STRING_LIST_OBJS})
