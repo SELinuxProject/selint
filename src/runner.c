@@ -281,6 +281,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_TUNABLE_POLICY, ck, "W-012",
 				  check_unknown_cond_id);
 		}
+		if (CHECK_ENABLED("W-013")) {
+			add_check(NODE_AV_RULE, ck, "W-013",
+				  check_audit_access_perm);
+		}
 		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {

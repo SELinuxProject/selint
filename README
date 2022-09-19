@@ -187,6 +187,7 @@ CHECK IDS
 	W-010: Call to unknown interface
 	W-011: Declaration in require block not defined in own module
 	W-012: Conditional expression contains unknown identifier
+	W-013: Incorrect usage of audit_access permission
 
 	E-002: Bad file context format
 	E-003: Nonexistent user listed in fc file

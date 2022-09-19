@@ -830,6 +830,26 @@ struct check_result *check_unknown_cond_id(__attribute__((unused)) const struct 
 	return NULL;
 }
 
+struct check_result *check_audit_access_perm(__attribute__((unused)) const struct
+                                            check_data *data,
+                                            const struct
+                                            policy_node *node)
+{
+	if (node->data.av_data->flavor == AV_RULE_DONTAUDIT ||
+	    node->data.av_data->flavor == AV_RULE_NEVERALLOW) {
+		return NULL;
+	}
+
+	for (const struct string_list *perms = node->data.av_data->perms; perms; perms = perms->next) {
+		if (0 == strcmp(perms->string, "audit_access")) {
+			return make_check_result('W', W_ID_AUDIT_ACCESS,
+						 "Allow rule with audit_access permission");
+		}
+	}
+
+	return NULL;
+}
+
 struct check_result *check_declaration_interface_nameclash(__attribute__((unused)) const struct check_data
 							   *data,
 							   const struct policy_node

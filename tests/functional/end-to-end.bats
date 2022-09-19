@@ -277,6 +277,10 @@ test_report_format_impl() {
 	test_one_check "W-012" "w12.te"
 }
 
+@test "W-013" {
+	test_one_check_expect "W-013" "w13.te" 2
+}
+
 @test "E-002" {
 	test_one_check "E-002" "e02.fc"
 }
