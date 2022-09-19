@@ -319,6 +319,7 @@ struct checks *register_checks(char level,
 			add_check(NODE_M4_SIMPLE_MACRO, ck, "E-010",
 				  check_stray_word);
 		}
+		// FALLTHRU
 	case 'F':
 		break;
 	default:
