@@ -33,3 +33,33 @@ interface(`this_one_fails',`
 
 	allow $1 foo_t:file read;
 ')
+
+# Comment
+interface(`this_one_fails2',`
+	gen_require(`
+		type foo_t;
+		class file { read };
+	')
+
+	allow $1 foo_t:file read;
+')
+
+# Comment
+interface(`this_one_fails3',`
+	gen_require(`
+		type foo_t;
+		class dir { read };
+	')
+
+	allow $1 foo_t:file read;
+')
+
+# Comment
+interface(`this_one_fails4',`
+	gen_require(`
+		type foo_t;
+		class dbus { send_msg };
+	')
+
+	allow $1 foo_t:file read;
+')

@@ -175,9 +175,9 @@ CHECK IDS
 	S-009: Permission macro suffix does not match class name
 	S-010: Permission macro usage suggested
 
-	W-001: Type or attribute referenced without explicit declaration
-	W-002: Type, attribute or role used but not listed in require block in interface
-	W-003: Unused type, attribute or role listed in require block
+	W-001: Type, attribute or userspace class referenced without explicit declaration
+	W-002: Type, attribute, role or userspace class used but not listed in require block in interface
+	W-003: Unused type, attribute, role or userspace class listed in require block
 	W-004: Potentially unescaped regex character in file contexts paths
 	W-005: Interface call from module not in optional_policy block
 	W-006: Interface call with empty argument

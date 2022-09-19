@@ -1,0 +1,7 @@
+#comment
+interface(`foo_halt_systemd',`
+	gen_require(`
+		class system { halt };
+	')
+	allow $1 $1:system halt;
+')

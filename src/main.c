@@ -411,6 +411,7 @@ int main(int argc, char **argv)
 	char *obj_perm_sets_path = NULL;
 	char *access_vector_path = NULL;
 	struct string_list *global_cond_files = NULL;
+	char *security_classes_path = NULL;
 
 	while (file) {
 		const char *suffix = (file->fts_pathlen > 3) ? (file->fts_path + file->fts_pathlen - 3) : NULL;
@@ -462,6 +463,10 @@ int main(int argc, char **argv)
 		           && (!strcmp(file->fts_name, "global_booleans") || !strcmp(file->fts_name, "global_tunables"))) {
 			// TODO: Make names configurable
 			global_cond_files = concat_string_lists(global_cond_files, sl_from_str(file->fts_path));
+		} else if (source_flag
+			   && !strcmp(file->fts_name, "security_classes")) {
+			// TODO: Make security_classes name configurable
+			security_classes_path = strdup(file->fts_path);
 		} else {
 			// Directories might get traversed twice: preorder and final visit.
 			// Print only the final visit
@@ -533,6 +538,10 @@ int main(int argc, char **argv)
 			           && !str_in_sl(file->fts_path, global_cond_files)
 			           && (0 == strcmp(file->fts_name, "global_booleans") || 0 == strcmp(file->fts_name, "global_tunables"))) {
 				global_cond_files = concat_string_lists(global_cond_files, sl_from_str(file->fts_path));
+			} else if (source_flag
+			           && !security_classes_path
+			           && 0 == strcmp(file->fts_name, "security_classes")) {
+				security_classes_path = strdup(file->fts_path);
 			}
 			file = fts_read(ftsp);
 		}
@@ -555,6 +564,18 @@ int main(int argc, char **argv)
 			}
 		} else {
 			printf("%sWarning%s: Failed to locate access_vectors file.\n", color_warning(), color_reset());
+		}
+
+		if (security_classes_path) {
+			enum selint_error res = load_security_classes_source(security_classes_path);
+			if (res != SELINT_SUCCESS) {
+				printf("%sWarning%s: Failed to parse security_classes from %s: %d\n", color_warning(), color_reset(), security_classes_path, res);
+			} else {
+				print_if_verbose("Loaded security classes from %s\n", security_classes_path);
+				userspace_class_support = 1;
+			}
+		} else {
+			printf("%sWarning%s: Failed to locate security_classes file.\n", color_warning(), color_reset());
 		}
 
 		if (modules_conf_path) {
@@ -630,6 +651,7 @@ int main(int argc, char **argv)
 		free_file_list(context_if_files);
 		free(obj_perm_sets_path);
 		free(access_vector_path);
+		free(security_classes_path);
 		free(modules_conf_path);
 		free_string_list(global_cond_files);
 		return EX_CONFIG;
@@ -637,6 +659,7 @@ int main(int argc, char **argv)
 
 	free(obj_perm_sets_path);
 	free(access_vector_path);
+	free(security_classes_path);
 	free(modules_conf_path);
 	free_string_list(global_cond_files);
 

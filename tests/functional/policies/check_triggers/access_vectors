@@ -1,3 +1,7 @@
 class file { read open }
 
 class dir { read open search }
+
+class system { ipc_info halt }
+
+class dbus { send_msg }
