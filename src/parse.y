@@ -200,7 +200,12 @@
 %%
 selinux_file:
 	%empty
-	/* empty */ { cur->flavor = NODE_EMPTY; }
+	/* empty */ {
+		cur->flavor = NODE_EMPTY;
+
+		// avoid variable set but not used warning from Clang 15 in bison generated code
+		(void)yynerrs;
+	}
 	|
 	te_policy
 	|
