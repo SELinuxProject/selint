@@ -613,7 +613,7 @@ enum selint_error begin_boolean_policy(struct policy_node **cur,
                                        unsigned int lineno)
 {
 	struct cond_declaration_data *cd_data = xmalloc(sizeof(struct cond_declaration_data));
-	cd_data->identifiers = NULL;;
+	cd_data->identifiers = NULL;
 
 	union node_data nd;
 	nd.cd_data = cd_data;
@@ -631,7 +631,7 @@ enum selint_error begin_tunable_policy(struct policy_node **cur,
                                        unsigned int lineno)
 {
 	struct cond_declaration_data *cd_data = xmalloc(sizeof(struct cond_declaration_data));
-	cd_data->identifiers = NULL;;
+	cd_data->identifiers = NULL;
 
 	union node_data nd;
 	nd.cd_data = cd_data;
