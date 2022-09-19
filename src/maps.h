@@ -29,6 +29,12 @@ struct hash_elem {
 	               hh_class, hh_perm, hh_mods, hh_mod_layers;
 };
 
+struct bool_hash_elem {
+	char *key;
+	int val;
+	UT_hash_handle hh_userspace_class;
+};
+
 struct sl_hash_elem {
 	char *key;
 	struct string_list *val;
@@ -70,6 +76,12 @@ const char *look_up_in_mod_layers_map(const char *mod_name);
 void insert_into_ifs_map(const char *if_name, const char *mod_name);
 
 const char *look_up_in_ifs_map(const char *if_name);
+
+void mark_userspace_class(const char *class_name);
+
+int is_userspace_class(const char *class_name, const struct string_list *permissions);
+
+extern int userspace_class_support;
 
 void mark_transform_if(const char *if_name);
 

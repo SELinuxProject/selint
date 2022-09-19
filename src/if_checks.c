@@ -330,6 +330,9 @@ struct check_result *check_name_used_but_not_required_in_if(const struct
 				flavor = "Role Attribute";
 			} else if (name_is_role(ndata) && look_up_in_decl_map(ndata->name, DECL_ROLE)) {
 				flavor = "Role";
+			} else if (name_is_class(ndata) && look_up_in_decl_map(ndata->name, DECL_CLASS) &&
+			           userspace_class_support && is_userspace_class(ndata->name, ndata->traits)) {
+				flavor = "Class";
 			} else {
 				// This is a string we don't recognize.  Other checks and/or
 				// the compiler catch invalid bare words
@@ -374,6 +377,14 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 		flavor = "Role Attribute";
 	} else if (dd->flavor == DECL_ROLE) {
 		flavor = "Role";
+	} else if (dd->flavor == DECL_CLASS && userspace_class_support) {
+		flavor = "Class";
+		if (!is_userspace_class(dd->name, dd->attrs)) {
+			return make_check_result('W',
+			                         W_ID_UNUSED_REQ,
+			                         "Class %s is listed in require block but is not a userspace class",
+			                         dd->name);
+		}
 	} else {
 		return NULL;
 	}
@@ -400,7 +411,7 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 		return NULL;
 	}
 
-	struct name_list *names_to_check = get_names_in_node(node);
+	struct name_list *names_to_check = names_to_check = get_names_in_node(node);
 	if (!names_to_check) {
 		// This should never happen
 		return alloc_internal_error(

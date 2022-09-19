@@ -1,0 +1,4 @@
+#comment
+interface(`foo_ipc_info',`
+	allow $1 $1:system ipc_info;
+')

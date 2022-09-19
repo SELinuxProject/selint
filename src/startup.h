@@ -25,6 +25,8 @@ enum selint_error load_access_vectors_kernel(const char *av_path);
 
 enum selint_error load_access_vectors_source(const char *av_path);
 
+enum selint_error load_security_classes_source(const char *sec_class_path);
+
 void load_modules_normal(void);
 
 enum selint_error load_modules_source(const char *modules_conf_path);

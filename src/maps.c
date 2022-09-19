@@ -27,6 +27,8 @@
 #define no_sanitize_unsigned_integer_
 #endif
 
+int userspace_class_support = 0;
+
 static struct hash_elem *type_map = NULL;
 static struct hash_elem *role_map = NULL;
 static struct hash_elem *user_map = NULL;
@@ -38,6 +40,7 @@ static struct hash_elem *perm_map = NULL;
 static struct hash_elem *mods_map = NULL;
 static struct hash_elem *mod_layers_map = NULL;
 static struct if_hash_elem *interfaces_map = NULL;
+static struct bool_hash_elem *userspace_class_map = NULL;
 static struct sl_hash_elem *permmacros_map = NULL;
 static struct template_hash_elem *template_map = NULL;
 
@@ -271,6 +274,56 @@ unsigned int decl_map_count(enum decl_flavor flavor)
 	default:
 		return 0;
 	}
+}
+
+no_sanitize_unsigned_integer_
+void mark_userspace_class(const char *class_name)
+{
+	struct bool_hash_elem *userspace_class;
+
+	HASH_FIND(hh_userspace_class, userspace_class_map, class_name, strlen(class_name), userspace_class);
+
+	if (!userspace_class) {
+		userspace_class = malloc(sizeof(struct bool_hash_elem));
+		userspace_class->key = strdup(class_name);
+		userspace_class->val = 1;
+		HASH_ADD_KEYPTR(hh_userspace_class, userspace_class_map, userspace_class->key,
+				strlen(userspace_class->key), userspace_class);
+	} else {
+		userspace_class->val = 1;
+	}
+}
+
+no_sanitize_unsigned_integer_
+int is_userspace_class(const char *class_name, const struct string_list *permissions)
+{
+	struct bool_hash_elem *userspace_class;
+	HASH_FIND(hh_userspace_class, userspace_class_map, class_name, strlen(class_name), userspace_class);
+	if (userspace_class && userspace_class->val == 1) {
+		return 1;
+	}
+
+	// the system class might be used by systemd depending on the permission
+	if (0 != strcmp(class_name, "system")) {
+		return 0;
+	}
+
+	for (const struct string_list *p = permissions; p; p = p->next) {
+		// if permission is not one of the kernel ones
+		// treat system as userspace class
+		if (0 != strcmp(p->string, "ipc_info") &&
+		    0 != strcmp(p->string, "syslog_read") &&
+		    0 != strcmp(p->string, "syslog_mod") &&
+		    0 != strcmp(p->string, "syslog_console") &&
+		    0 != strcmp(p->string, "module_request") &&
+		    0 != strcmp(p->string, "module_load") &&
+		    0 != strcmp(p->string, "*") &&
+		    0 != strcmp(p->string, "~")) {
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 no_sanitize_unsigned_integer_
@@ -583,6 +636,12 @@ unsigned int permmacros_map_count(void)
 		free(cur_decl); \
 } \
 
+#define FREE_BOOL_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_bool, tmp_bool) { \
+		HASH_DELETE(hh_ ## mn, mn ## _map, cur_bool); \
+		free(cur_bool->key); \
+		free(cur_bool); \
+} \
+
 #define FREE_IF_MAP(mn) HASH_ITER(hh_ ## mn, mn ## _map, cur_if, tmp_if) { \
 		HASH_DELETE(hh_ ## mn, mn ## _map, cur_if); \
 		free(cur_if->name); \
@@ -618,6 +677,10 @@ void free_all_maps(void)
 	struct if_hash_elem *cur_if, *tmp_if;
 
 	FREE_IF_MAP(interfaces);
+
+	struct bool_hash_elem *cur_bool, *tmp_bool;
+
+	FREE_BOOL_MAP(userspace_class);
 
 	struct sl_hash_elem *cur_sl, *tmp_sl;
 

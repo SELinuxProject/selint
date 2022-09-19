@@ -150,6 +150,7 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/e10.warn.te \
 			functional/policies/check_triggers/modules.conf \
 			functional/policies/check_triggers/obj_perm_sets.spt \
+			functional/policies/check_triggers/security_classes \
 			functional/policies/check_triggers/s01.te \
 			functional/policies/check_triggers/s02.fc \
 			functional/policies/check_triggers/s02_other.te \
@@ -168,7 +169,11 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/w02_role.te \
 			functional/policies/check_triggers/w02.te \
 			functional/policies/check_triggers/w02.bad_if.if \
+			functional/policies/check_triggers/w02_system_nowarn.if \
+			functional/policies/check_triggers/w02_system_warn.if \
 			functional/policies/check_triggers/w03_alias.if \
+			functional/policies/check_triggers/w03_system_nowarn.if \
+			functional/policies/check_triggers/w03_system_warn.if \
 			functional/policies/check_triggers/w03.if \
 			functional/policies/check_triggers/w03_role.if \
 			functional/policies/check_triggers/w03_stub.if \

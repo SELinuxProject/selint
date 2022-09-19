@@ -12,3 +12,6 @@ role foo_roles types bar_t;
 typeattribute bar_t foo_domain;
 
 roleattribute bar_r foo_roles;
+
+allow bar_t bar_t:dbus send_msg;
+allow bar_t bar_t:system ipc_info;

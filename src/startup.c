@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+#include <ctype.h>
 #include <errno.h>
 #include <fts.h>
 #include <stdio.h>
@@ -91,6 +92,75 @@ enum selint_error load_access_vectors_source(const char *av_path)
 
 	free_policy_node(ast);
 	return SELINT_SUCCESS;
+}
+
+enum selint_error load_security_classes_source(const char *sec_class_path)
+{
+	FILE *fd = fopen(sec_class_path, "r");
+
+	if (!fd) {
+		return SELINT_IO_ERROR;
+	}
+
+	enum selint_error ret = SELINT_SUCCESS;
+
+	char *line = NULL;
+	ssize_t len_read = 0;
+	size_t buf_len = 0;
+	while ((len_read = getline(&line, &buf_len, fd)) != -1) {
+		if (len_read <= 1 || line[0] == '#') {
+			continue;
+		}
+
+		const char *pos = line;
+		if (0 != strncmp(pos, "class", strlen("class"))) {
+			ret = SELINT_PARSE_ERROR;
+			break;
+		}
+		pos += strlen("class");
+
+		if (*pos != ' ' && *pos != '\t') {
+			ret = SELINT_PARSE_ERROR;
+			break;
+		}
+
+		while (*pos == ' ' || *pos == '\t') {
+			pos++;
+		}
+
+		if (!isalnum((unsigned char)*pos)) {
+			ret = SELINT_PARSE_ERROR;
+			break;
+		}
+
+		const char *name_start = pos;
+
+		while (*pos == '_' || isalnum((unsigned char)*pos)) {
+			pos++;
+		}
+
+		const char *name_end = pos;
+
+		while (isspace((unsigned char)*pos)) {
+			pos++;
+		}
+
+		if (*pos != '\0' && *pos != '#') {
+			ret = SELINT_PARSE_ERROR;
+			break;
+		}
+
+		if (*pos == '#' && NULL != strstr(pos, "userspace")) {
+			char *name = strndup(name_start, (size_t)(name_end - name_start));
+			mark_userspace_class(name);
+			free(name);
+		}
+	}
+
+	free(line);
+	fclose(fd);
+
+	return ret;
 }
 
 void load_modules_normal(void)

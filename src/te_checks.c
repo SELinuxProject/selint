@@ -531,6 +531,13 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 			flavor = DECL_ATTRIBUTE;
 		} else if (name_is_roleattr(ndata) && (mod_name = look_up_in_decl_map(ndata->name, DECL_ATTRIBUTE_ROLE))) {
 			flavor = DECL_ATTRIBUTE_ROLE;
+		} else if (name_is_class(ndata) && look_up_in_decl_map(name->data->name, DECL_CLASS)) {
+			// Ignore kernel classes
+			if (!userspace_class_support || !is_userspace_class(name->data->name, name->data->traits)) {
+				continue;
+			}
+			flavor = DECL_CLASS;
+			mod_name = NULL;
 		// Do not check for roles: in refpolicy they are defined in the kernel module
 		// and used in role modules (like unprivuser)
 		} else {
@@ -538,13 +545,20 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 			continue;
 		}
 
-		if (0 != strcmp(data->mod_name, mod_name)) {
+		if (!mod_name || 0 != strcmp(data->mod_name, mod_name)) {
 			// It may be required
 			if (!has_require(node, ndata->name, flavor)) {
 				// We didn't find a require block with this name
-				struct check_result *to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
-										"No explicit declaration for %s from module %s.  You should access it via interface call or use a require block.",
-										ndata->name, mod_name);
+				struct check_result *to_ret;
+				if (flavor == DECL_CLASS) {
+					to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
+					                           "No explicit declaration for userspace class %s.  You should access it via interface call or use a require block.",
+					                           ndata->name);
+				} else {
+					to_ret = make_check_result('W', W_ID_NO_EXPLICIT_DECL,
+					                           "No explicit declaration for %s from module %s.  You should access it via interface call or use a require block.",
+					                           ndata->name, mod_name);
+				}
 				free_name_list(names);
 				return to_ret;
 			}

@@ -21,7 +21,7 @@ do_test() {
 	local FILENAME=$2
 	local EXPECT=$3
 	local ARGS=$4
-	run ${SELINT_PATH} -s -c tmp.conf ${ARGS} ./policies/check_triggers/${FILENAME} ./policies/check_triggers/modules.conf ./policies/check_triggers/obj_perm_sets.spt ./policies/check_triggers/access_vectors
+	run ${SELINT_PATH} -s -c tmp.conf ${ARGS} ./policies/check_triggers/${FILENAME} ./policies/check_triggers/modules.conf ./policies/check_triggers/obj_perm_sets.spt ./policies/check_triggers/access_vectors ./policies/check_triggers/security_classes
 	echo $output
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o ${CHECK_ID} | wc -l)
@@ -220,21 +220,25 @@ test_report_format_impl() {
 }
 
 @test "W-001" {
-	test_one_check_expect "W-001" "w01*" 5
+	test_one_check_expect "W-001" "w01*" 6
 }
 
 @test "W-002" {
 	test_one_check_expect "W-002" "w02.*" 2
 	test_one_check "W-002" "w02_role.*"
 	test_one_check_expect "W-002" "w02.bad_if.if" 0
+	test_one_check_expect "W-002" "w02_system_nowarn.if" 0
+	test_one_check_expect "W-002" "w02_system_warn.if" 1
 }
 
 @test "W-003" {
 	test_one_check "W-003" "w03.if"
-	test_one_check "W-003" "w03_role.if"
+	test_one_check_expect "W-003" "w03_role.if" 4
 	test_one_check_expect "W-003" "w03_ta.if" 0
 	test_one_check_expect "W-003" "w03_alias.if" 0
 	test_one_check_expect "W-003" "w03_stub.if" 0
+	test_one_check_expect "W-003" "w03_system_nowarn.if" 0
+	test_one_check_expect "W-003" "w03_system_warn.if" 1
 }
 
 @test "W-004" {

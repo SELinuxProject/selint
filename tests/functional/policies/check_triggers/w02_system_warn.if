@@ -1,0 +1,4 @@
+#comment
+interface(`foo_systemd_halt',`
+	allow $1 $1:system halt;
+')
