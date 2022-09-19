@@ -26,7 +26,6 @@
 #include "parse_functions.h"
 #include "tree.h"
 #include "util.h"
-#include "parse.h"
 #include "xalloc.h"
 
 enum selint_error load_access_vectors_kernel(const char *av_path)
