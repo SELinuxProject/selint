@@ -192,7 +192,7 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 			}
 			cur->next = sl_from_str(tt_data->default_type);
 		} else {
-			cur = ret = sl_from_str(tt_data->default_type);
+			ret = sl_from_str(tt_data->default_type);
 		}
 		break;
 
@@ -213,7 +213,7 @@ struct string_list *get_names_in_node(const struct policy_node *node)
 			}
 			cur->next = sl_from_str(rt_data->default_role);
 		} else {
-			cur = ret = sl_from_str(rt_data->default_role);
+			ret = sl_from_str(rt_data->default_role);
 		}
 		break;
 
