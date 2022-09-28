@@ -29,6 +29,7 @@
 #define EMPTY_TE_FILENAME POLICIES_DIR "empty.te"
 #define SYNTAX_ERROR_FILENAME POLICIES_DIR "syntax_error.te"
 #define BAD_RA_FILENAME POLICIES_DIR "bad_role_allow.te"
+#define DISABLE_BOOLTUNABLE_TE_FILENAME POLICIES_DIR "disable_booltunable.te"
 #define DISABLE_COMMENT_TE_FILENAME POLICIES_DIR "disable_comment.te"
 #define DISABLE_COMMENT_IF_FILENAME POLICIES_DIR "disable_comment.if"
 #define DISABLE_REQUIRE_IF_FILENAME POLICIES_DIR "disable_require.if"
@@ -354,6 +355,51 @@ START_TEST (test_parse_bad_role_allow) {
 	ck_assert_ptr_nonnull(f);
 	ck_assert_ptr_null(yyparse_wrapper(f, BAD_RA_FILENAME, NODE_TE_FILE));
 
+	cleanup_parsing();
+	fclose(f);
+
+}
+END_TEST
+
+START_TEST (test_disable_booltunable_te) {
+
+	set_current_module_name("disable_booltunable");
+
+	FILE *f = fopen(DISABLE_BOOLTUNABLE_TE_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	struct policy_node *ast = yyparse_wrapper(f, DISABLE_BOOLTUNABLE_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
+
+	const struct policy_node *cur = ast;
+
+	ck_assert_ptr_nonnull(cur);
+	ck_assert_int_eq(NODE_TE_FILE, cur->flavor);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+	ck_assert_int_eq(NODE_HEADER, cur->flavor);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+	ck_assert_int_eq(NODE_DECL, cur->flavor);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+	ck_assert_int_eq(NODE_TUNABLE_POLICY, cur->flavor);
+	ck_assert_str_eq("C-008", cur->exceptions);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+	ck_assert_int_eq(NODE_TUNABLE_POLICY, cur->flavor);
+	ck_assert_str_eq("C-008", cur->exceptions);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+	ck_assert_int_eq(NODE_BOOLEAN_POLICY, cur->flavor);
+	ck_assert_str_eq("C-008", cur->exceptions);
+	ck_assert_ptr_null(cur->next);
+
+	free_policy_node(ast);
 	cleanup_parsing();
 	fclose(f);
 
@@ -1066,6 +1112,7 @@ static Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_empty_file);
 	tcase_add_test(tc_core, test_syntax_error);
 	tcase_add_test(tc_core, test_parse_bad_role_allow);
+	tcase_add_test(tc_core, test_disable_booltunable_te);
 	tcase_add_test(tc_core, test_disable_comment_te);
 	tcase_add_test(tc_core, test_disable_comment_if);
 	tcase_add_test(tc_core, test_disable_require_if);
