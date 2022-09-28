@@ -846,10 +846,10 @@ cond_expr:
 	;
 
 boolean_block:
-	boolean_open condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY { end_boolean_policy(&cur); }
+	boolean_open condition CLOSE_PAREN maybe_selint_disable OPEN_CURLY lines CLOSE_CURLY { end_boolean_policy(&cur); save_command(cur, $4); free($4); }
 	|
-	boolean_open condition CLOSE_PAREN OPEN_CURLY lines CLOSE_CURLY
-	ELSE OPEN_CURLY lines CLOSE_CURLY { end_boolean_policy(&cur); }
+	boolean_open condition CLOSE_PAREN maybe_selint_disable OPEN_CURLY lines CLOSE_CURLY
+	ELSE OPEN_CURLY lines CLOSE_CURLY { end_boolean_policy(&cur); save_command(cur, $4); free($4); }
 	;
 
 boolean_open:
@@ -858,10 +858,10 @@ boolean_open:
 
 tunable_block:
 	TUNABLE_POLICY OPEN_PAREN BACKTICK { begin_tunable_policy(&cur, @$.first_line); }
-	condition SINGLE_QUOTE COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
+	condition SINGLE_QUOTE maybe_selint_disable COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); save_command(cur, $7); free($7); }
 	|
 	TUNABLE_POLICY OPEN_PAREN { begin_tunable_policy(&cur, @$.first_line); }
-	condition COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); }
+	condition maybe_selint_disable COMMA m4_args CLOSE_PAREN { end_tunable_policy(&cur); save_command(cur, $5); free($5); }
 	;
 
 genfscon:

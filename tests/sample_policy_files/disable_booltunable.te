@@ -1,0 +1,18 @@
+policy_module(booltunable, 1.0)
+
+type foo_t;
+
+tunable_policy(tunable1 #selint-disable:C-008
+,`
+	allow foo_t foo_t:cls perm;
+')
+
+tunable_policy(`tunable2 && tunable3' #selint-disable:C-008
+,`
+	allow foo_t foo_t:cls perm;
+')
+
+if (bool1) #selint-disable:C-008
+{
+	allow foo_t foo_t:cls perm;
+}

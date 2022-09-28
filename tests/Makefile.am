@@ -102,6 +102,7 @@ SAMPLE_POLICY_FILES=sample_policy_files/access_vectors \
 			sample_policy_files/bool_declarations.te \
 			sample_policy_files/declaring_template.if \
 			sample_policy_files/declaring_template.te \
+			sample_policy_files/disable_booltunable.te \
 			sample_policy_files/disable_comment.if \
 			sample_policy_files/disable_comment.te \
 			sample_policy_files/disable_require.if \
