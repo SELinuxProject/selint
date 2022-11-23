@@ -369,12 +369,8 @@ struct policy_node *dfs_next(const struct policy_node *node)
 	}
 }
 
-enum selint_error free_policy_node(struct policy_node *to_free)
+static void free_single_policy_node_data(struct policy_node *to_free)
 {
-	if (to_free == NULL) {
-		return SELINT_BAD_ARG;
-	}
-
 	switch (to_free->flavor) {
 	case NODE_HEADER:
 		free_header_data(to_free->data.h_data);
@@ -425,17 +421,25 @@ enum selint_error free_policy_node(struct policy_node *to_free)
 	}
 
 	free(to_free->exceptions);
-	to_free->exceptions = NULL;
+}
 
-	free_policy_node(to_free->first_child);
-	to_free->first_child = NULL;
+enum selint_error free_policy_node(struct policy_node *to_free)
+{
+	if (to_free == NULL) {
+		return SELINT_BAD_ARG;
+	}
 
-	free_policy_node(to_free->next);
-	to_free->next = NULL;
+	do {
+		struct policy_node *next = to_free->next;
 
-	to_free->prev = NULL;
+		free_single_policy_node_data(to_free);
 
-	free(to_free);
+		free_policy_node(to_free->first_child);
+
+		free(to_free);
+
+		to_free = next;
+	} while (to_free);
 
 	return SELINT_SUCCESS;
 }
