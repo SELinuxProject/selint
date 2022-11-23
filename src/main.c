@@ -434,15 +434,30 @@ int main(int argc, char **argv)
 		} else if (source_flag
 		           && !strcmp(file->fts_name, "modules.conf")) {
 			// TODO: Make modules.conf name configurable
-			modules_conf_path = xstrdup(file->fts_path);
+			if (modules_conf_path) {
+				printf("%sWarning%s: multiple module.conf files found (using %s, ignoring %s)\n",
+				       color_warning(), color_reset(), modules_conf_path, file->fts_path);
+			} else {
+				modules_conf_path = xstrdup(file->fts_path);
+			}
 		} else if (source_flag
 		           && !strcmp(file->fts_name, "obj_perm_sets.spt")) {
 			// TODO: Make obj_perm_sets.spt name configurable
-			obj_perm_sets_path = xstrdup(file->fts_path);
+			if (obj_perm_sets_path) {
+				printf("%sWarning%s: multiple obj_perm_sets.spt files found (using %s, ignoring %s)\n",
+				       color_warning(), color_reset(), obj_perm_sets_path, file->fts_path);
+			} else {
+				obj_perm_sets_path = xstrdup(file->fts_path);
+			}
 		} else if (source_flag
 		           && !strcmp(file->fts_name, "access_vectors")) {
 			// TODO: Make access_vectors name configurable
-			access_vector_path = xstrdup(file->fts_path);
+			if (access_vector_path) {
+				printf("%sWarning%s: multiple access_vectors files found (using %s, ignoring %s)\n",
+				       color_warning(), color_reset(), access_vector_path, file->fts_path);
+			} else {
+				access_vector_path = xstrdup(file->fts_path);
+			}
 		} else if (source_flag
 		           && (!strcmp(file->fts_name, "global_booleans") || !strcmp(file->fts_name, "global_tunables"))) {
 			// TODO: Make names configurable
