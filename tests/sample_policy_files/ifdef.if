@@ -1,0 +1,26 @@
+ifdef(`some_def',`
+
+interface(`foo',`
+	gen_require(`
+		type foo_t;
+	')
+	some_call()
+')
+
+ifndef(`some_other_def',`
+	interface(`bar',`
+		gen_require(`
+			type bar_t;
+		')
+		call_when_true()
+	')
+',`
+	interface(`bar',`
+		gen_require(`
+			type bar_t;
+		')
+		call_when_false()
+	')
+') #some_other_def
+
+') #some_def

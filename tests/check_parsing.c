@@ -25,6 +25,7 @@
 #define BASIC_TE_FILENAME POLICIES_DIR "basic.te"
 #define BASIC_IF_FILENAME POLICIES_DIR "basic.if"
 #define UNCOMMON_TE_FILENAME POLICIES_DIR "uncommon.te"
+#define IFDEF_IF_FILENAME POLICIES_DIR "ifdef.if"
 #define BLOCKS_TE_FILENAME POLICIES_DIR "blocks.te"
 #define EMPTY_TE_FILENAME POLICIES_DIR "empty.te"
 #define SYNTAX_ERROR_FILENAME POLICIES_DIR "syntax_error.te"
@@ -266,6 +267,23 @@ START_TEST (test_parse_uncommon_constructs) {
 	FILE *f = fopen(UNCOMMON_TE_FILENAME, "r");
 	ck_assert_ptr_nonnull(f);
 	struct policy_node *ast = yyparse_wrapper(f, UNCOMMON_TE_FILENAME, NODE_TE_FILE);
+	ck_assert_ptr_nonnull(ast);
+
+	ck_assert_ptr_nonnull(ast);
+
+	free_policy_node(ast);
+	cleanup_parsing();
+	fclose(f);
+}
+END_TEST
+
+START_TEST (test_parse_interface_ifdef) {
+
+	set_current_module_name("ifdef");
+
+	FILE *f = fopen(IFDEF_IF_FILENAME, "r");
+	ck_assert_ptr_nonnull(f);
+	struct policy_node *ast = yyparse_wrapper(f, IFDEF_IF_FILENAME, NODE_IF_FILE);
 	ck_assert_ptr_nonnull(ast);
 
 	ck_assert_ptr_nonnull(ast);
@@ -1108,6 +1126,7 @@ static Suite *parsing_suite(void) {
 	tcase_add_test(tc_core, test_parse_basic_te);
 	tcase_add_test(tc_core, test_parse_basic_if);
 	tcase_add_test(tc_core, test_parse_uncommon_constructs);
+	tcase_add_test(tc_core, test_parse_interface_ifdef);
 	tcase_add_test(tc_core, test_parse_blocks);
 	tcase_add_test(tc_core, test_parse_empty_file);
 	tcase_add_test(tc_core, test_syntax_error);
