@@ -66,13 +66,13 @@ AC_ARG_ENABLE([gcov],
 
 AM_CONDITIONAL([COND_GCOV],[ test "x$enable_gcov" "=" "xyes" ])
 
-AC_CHECK_PROGS([HELP2MAN], [help2man])
-if ! test -z "$HELP2MAN"
+AC_CHECK_PROGS([ASCIIDOCTOR], [asciidoctor])
+if ! test -z "$ASCIIDOCTOR"
 then
 AC_SUBST(MANPAGES, selint.1)
-HAVE_HELP2MAN=true
+HAVE_ASCIIDOCTOR=true
 fi
-AM_CONDITIONAL([HAVE_HELP2MAN], [test "x$HAVE_HELP2MAN" "=" "xtrue"])
+AM_CONDITIONAL([HAVE_ASCIIDOCTOR], [test "x$HAVE_ASCIIDOCTOR" "=" "xtrue"])
 
 AX_VALGRIND_DFLT([drd], [off])
 AX_VALGRIND_DFLT([helgrind], [off])
