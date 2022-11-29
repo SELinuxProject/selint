@@ -640,11 +640,11 @@ require_line:
 		free($5);
 		}
 	|
-	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA BACKTICK { begin_ifdef(&cur, @$.first_line); }
-	require_lines SINGLE_QUOTE CLOSE_PAREN { end_ifdef(&cur); free($4); }
+	ifdef_opener
+	BACKTICK require_lines SINGLE_QUOTE CLOSE_PAREN { end_ifdef(&cur);}
 	|
-	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, @$.first_line); }
-	require_lines CLOSE_PAREN { end_ifdef(&cur); free($4); }
+	ifdef_opener
+	require_lines CLOSE_PAREN { end_ifdef(&cur);}
 	|
 	m4_simple_macro
 	|
@@ -665,9 +665,13 @@ m4_call:
 	userdebug_or_eng
 	;
 
+ifdef_opener:
+	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, @$.first_line); free($4); }
+	;
+
 ifdef:
-	if_or_ifn OPEN_PAREN BACKTICK STRING SINGLE_QUOTE COMMA { begin_ifdef(&cur, @$.first_line); }
-	m4_args CLOSE_PAREN { end_ifdef(&cur); free($4); }
+	ifdef_opener
+	m4_args CLOSE_PAREN { end_ifdef(&cur);}
 	;
 
 if_or_ifn:
@@ -986,6 +990,10 @@ if_file:
 	interface_def if_lines
 	|
 	interface_def
+	|
+	if_file_ifdef
+	|
+	if_file_ifdef if_lines
 	//|
 	// Empty file
 	//EOF
@@ -1001,6 +1009,16 @@ if_line:
 	interface_def
 	|
 	COMMENT { insert_comment(&cur, @$.first_line); }
+	|
+	if_file_ifdef
+	;
+
+if_file_ifdef:
+	ifdef_opener
+	BACKTICK if_lines SINGLE_QUOTE CLOSE_PAREN { end_ifdef(&cur);}
+	|
+	ifdef_opener
+	BACKTICK if_lines SINGLE_QUOTE COMMA BACKTICK if_lines SINGLE_QUOTE CLOSE_PAREN { end_ifdef(&cur);}
 	;
 
 interface_def:
