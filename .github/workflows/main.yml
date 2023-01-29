@@ -28,15 +28,19 @@ jobs:
       CC: ${{ matrix.cc }}
     steps:
     - uses: actions/checkout@v3
+    # Prevent Clang from using DWARF5, not supported by the valgrind version in runners
+    - name: Set environment for Clang
+      run: |
+        echo "CC=clang-15" >> $GITHUB_ENV
+        echo "CFLAGS=-gdwarf-4 -O2" >> $GITHUB_ENV
+      if: ${{ matrix.cc == 'clang' }}
     - name: install clang repo
       run: |
-        if [[ ${{ matrix.cc }} == 'clang' ]]
-        then
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key 2>/dev/null | sudo apt-key add -
-          sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main' -y
-          sudo apt-get update -q
-          sudo apt-get install -y clang-15
-        fi
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key 2>/dev/null | sudo apt-key add -
+        sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main' -y
+        sudo apt-get update -q
+        sudo apt-get install -y clang-15
+      if: ${{ matrix.cc == 'clang' }}
     - name: install dependencies
       run: |
         sudo apt-get update -q
@@ -67,7 +71,7 @@ jobs:
         then
           ./configure --enable-werror CFLAGS=--coverage
         else
-          ./configure --enable-werror CC=clang-15
+          ./configure --enable-werror
         fi
     - name: make
       run: make
