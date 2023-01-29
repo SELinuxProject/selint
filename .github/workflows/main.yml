@@ -57,7 +57,7 @@ jobs:
       run : |
         cd check/
         autoreconf --install
-        ./configure --prefix=/usr
+        ./configure --prefix=/usr || (cat config.log; exit 1;)
         make
         sudo make install
         sudo ldconfig
@@ -69,9 +69,9 @@ jobs:
       run: |
         if [[ ${{ matrix.cc }} == 'gcc' ]]
         then
-          ./configure --enable-werror CFLAGS=--coverage
+          ./configure --enable-werror CFLAGS=--coverage || (cat config.log; exit 1;)
         else
-          ./configure --enable-werror
+          ./configure --enable-werror || (cat config.log; exit 1;)
         fi
     - name: make
       run: make
