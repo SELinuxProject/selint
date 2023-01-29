@@ -27,7 +27,7 @@ jobs:
     env:
       CC: ${{ matrix.cc }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: install clang repo
       run: |
         if [[ ${{ matrix.cc }} == 'clang' ]]
@@ -44,7 +44,7 @@ jobs:
     # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
     # ck_assert_ptr_nonnull were added in 0.11.0
     - name: checkout check
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: libcheck/check
         ref: 0.15.2
@@ -91,7 +91,7 @@ jobs:
         cd tests/functional
         BATS_TIME_EXPENSIVE=1 bats end-to-end.bats
     - name: checkout refpolicy
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: SELinuxProject/refpolicy
         path: refpolicy
@@ -141,6 +141,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: check-whitespaces
         run: git diff-tree --check $(git hash-object -t tree /dev/null) HEAD
