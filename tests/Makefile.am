@@ -372,4 +372,4 @@ check_ordering_LDADD = @CHECK_LIBS@ $(sort ${ORDERING_OBJS} ${RUNNER_OBJS} ${MAP
 check_perm_macro_SOURCES = check_perm_macro.c ${PERM_MACRO_HEADS} ${STARTUP_HEADS} ${SELINT_ERROR_HEADS} ${MAPS_HEADS}
 check_perm_macro_LDADD = @CHECK_LIBS@ $(sort ${PERM_MACRO_OBJS} ${STARTUP_OBJS} ${MAPS_OBJS})
 
-MOSTLYCLEANFILES = *.gcov *.gcda *.gcno
+MOSTLYCLEANFILES = *.gcov *.gcda *.gcno functional/policies/parse_errors/test3_tmp.if functional/policies/parse_errors/test5_tmp.te functional/policies/parse_errors/test6_tmp.if
