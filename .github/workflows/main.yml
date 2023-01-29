@@ -72,9 +72,9 @@ jobs:
     - name: make
       run: make
     - name: make check
-      run: make check
+      run: make check || (cat tests/test-suite.log; exit 1;)
     - name: make check-valgrind
-      run: make check-valgrind
+      run: make check-valgrind || (cat tests/test-suite-memcheck.log; exit 1;)
     - name: make distcheck
       run: make distcheck DISTCHECK_CONFIGURE_FLAGS=--enable-werror
     - name: functional tests
