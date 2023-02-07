@@ -371,6 +371,7 @@ test_report_format_impl() {
 }
 
 @test "valgrind" {
+	test -z $CI && (command -v valgrind >/dev/null 2>&1 || skip "valgrind not found")
 	run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 ${SELINT_PATH} -c configs/default.conf -r -s policies/check_triggers
 	[ "$status" -eq 0 ]
 }
@@ -423,6 +424,7 @@ test_report_format_impl() {
 }
 
 @test "Broken config" {
+	test -z $CI && (command -v valgrind >/dev/null 2>&1 || skip "valgrind not found")
 	run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 ${SELINT_PATH} -c configs/broken.conf -rs policies/check_triggers
 	[ "$status" -eq 78 ]
 }
