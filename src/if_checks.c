@@ -504,7 +504,7 @@ struct check_result *check_required_declaration_own(const struct
 	if (!modname_orig_decl) {
 		return make_check_result('W',
 			                 W_ID_IF_DECL_NOT_OWN,
-			                 "Definition of declared %s %s not found in any module",
+			                 "Definition of required %s %s not found in any module",
 			                 decl_flavor_to_string(flavor),
 			                 name);
 	}
@@ -520,7 +520,7 @@ struct check_result *check_required_declaration_own(const struct
 
 	return make_check_result('W',
 			         W_ID_IF_DECL_NOT_OWN,
-			         "Definition of declared %s %s not found in own module, but in module %s",
+			         "Definition of required %s %s not found in this interface's module, but in module %s",
 			         decl_flavor_to_string(flavor),
 			         name,
 			         modname_orig_decl);
