@@ -178,6 +178,7 @@
 %type<sl> xperm_items
 %type<sl> spt_contents
 %type<sl> spt_content
+%type<string> string_or_quoted_string
 %type<string> sl_item
 %type<string> xperm_item
 %type<sl> arg_list
@@ -484,16 +485,20 @@ strings:
 	sl_item { $$ = sl_from_str_consume($1); }
 	;
 
-sl_item:
+string_or_quoted_string:
 	STRING
+	|
+	QUOTED_STRING
+	;
+
+sl_item:
+	string_or_quoted_string
 	|
 	DASH STRING { $$ = xmalloc(sizeof(char) * (strlen($2) + 2));
 			$$[0] = '-';
 			$$[1] = '\0';
 			strcat($$, $2);
 			free($2);}
-	|
-	QUOTED_STRING
 	;
 
 comma_string_list:
@@ -869,9 +874,9 @@ tunable_block:
 	;
 
 genfscon:
-	GENFSCON STRING STRING genfscon_context { free($2); free($3); }
+	GENFSCON STRING string_or_quoted_string genfscon_context { free($2); free($3); }
 	|
-	GENFSCON NUM_STRING STRING genfscon_context { free($2); free($3); }
+	GENFSCON NUM_STRING string_or_quoted_string genfscon_context { free($2); free($3); }
 	;
 
 genfscon_context:
