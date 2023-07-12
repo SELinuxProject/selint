@@ -153,7 +153,7 @@ template { return TEMPLATE; }
 userdebug_or_eng { return USERDEBUG_OR_ENG; }
 [0-9]+\.[0-9]+(\.[0-9]+)? { yylval->string = xstrdup(yytext); return VERSION_NO; }
 [0-9]+ { yylval->string = xstrdup(yytext); return NUMBER; }
-[a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = xstrdup(yytext); return STRING; }
+[a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-\.]* { yylval->string = xstrdup(yytext); return STRING; }
 [0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = xstrdup(yytext); return NUM_STRING; }
 [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval->string = xstrdup(yytext); return IPV4; }
 ([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})?(\:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})? { yylval->string = xstrdup(yytext); return IPV6; }
