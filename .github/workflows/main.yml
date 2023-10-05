@@ -24,6 +24,10 @@ jobs:
       fail-fast: false
       matrix:
         cc: [ 'gcc', 'clang' ]
+        include:
+          - is_release_job: false
+          - is_release_job: true
+            cc: 'gcc'
     env:
       CC: ${{ matrix.cc }}
     steps:
@@ -107,12 +111,12 @@ jobs:
     - name: Release Info
       id: release_info
       run: |
-        if [[ '${{ github.ref }}' == refs/tags/v* && ${{ matrix.cc }} == 'gcc' ]]
+        if [[ '${{ github.ref }}' == refs/tags/v* && ${{ matrix.is_release_job }} == 'true' ]]
         then
-          echo ::set-output name=is_release::true
-          echo ::set-output name=tag::$(echo ${{ github.ref }} | cut -dv -f2)
+          echo is_release=true >> $GITHUB_OUTPUT
+          echo tag=$(echo ${{ github.ref }} | cut -dv -f2) >> $GITHUB_OUTPUT
         else
-          echo ::set-output name=is_release::false
+          echo is_release=false >> $GITHUB_OUTPUT
         fi
       shell: bash
 
