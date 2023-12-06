@@ -39,11 +39,10 @@ enum selint_error load_access_vectors_kernel(const char *av_path)
 	}
 
 	enum selint_error r = SELINT_PARSE_ERROR;
-	const char *paths[2] = { av_path, NULL };
+	char *av_path_copy = xstrdup(av_path);
+	char *const paths[2] = { av_path_copy, NULL };
 
-IGNORE_CONST_DISCARD_BEGIN;
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL, NULL);
-IGNORE_CONST_DISCARD_END;
 
 	FTSENT *file = fts_read(ftsp);
 
@@ -66,6 +65,7 @@ IGNORE_CONST_DISCARD_END;
 		file = fts_read(ftsp);
 	}
 	fts_close(ftsp);
+	free(av_path_copy);
 
 	return r;
 }
@@ -221,12 +221,10 @@ static int mark_transform_interfaces_one_file(const struct policy_node *ast) {
 
 enum selint_error load_devel_headers(struct policy_file_list *context_files)
 {
-	const char *header_loc = "/usr/share/selinux/devel";
-	const char *paths[2] = {header_loc, 0};
+	char header_loc[] = "/usr/share/selinux/devel";
+	char *const paths[2] = { header_loc, NULL };
 
-IGNORE_CONST_DISCARD_BEGIN;
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
-IGNORE_CONST_DISCARD_END;
 
 	FTSENT *file = fts_read(ftsp);
 	while (file) {
