@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SOURCES=selint.h2m
+SOURCES=selint.adoc
 
-if HAVE_HELP2MAN
+if HAVE_ASCIIDOCTOR
 man1_MANS=$(MANPAGES)
 EXTRA_DIST=$(man1_MANS) $(SOURCES)
 CLEANFILES=$(MANPAGES)
 
-selint.1: ../src/main.c $(SOURCES)
-	$(HELP2MAN) -n "Perform static source code analysis on SELinux policy source files" -N -i selint.h2m -o $@ ../src/selint
+selint.1: $(SOURCES)
+	$(ASCIIDOCTOR) --failure-level INFO --warnings --verbose --backend manpage $^ --out-file $@
 else
 EXTRA_DIST=$(SOURCES)
 endif

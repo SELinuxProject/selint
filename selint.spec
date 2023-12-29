@@ -13,7 +13,7 @@ License: ASL 2.0
 %forgemeta
 Source0: %{forgesource}
 
-BuildRequires: autoconf autoconf-archive automake bison check check-devel flex gcc help2man libconfuse libconfuse-devel uthash-devel
+BuildRequires: autoconf autoconf-archive automake bison check check-devel flex gcc asciidoctor libconfuse libconfuse-devel uthash-devel
 # pkgconfig
 Requires: libconfuse
 %if 0%{?fedora} || 0%{?rhel} >= 8
