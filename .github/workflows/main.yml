@@ -41,32 +41,14 @@ jobs:
     - name: install clang repo
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key 2>/dev/null | sudo apt-key add -
-        sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-17 main' -y
+        sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main' -y
         sudo apt-get update -q
         sudo apt-get install -y clang-17
       if: ${{ matrix.cc == 'clang' }}
     - name: install dependencies
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man bats
-    # Install libcheck from source.  Ubuntu is on version 0.10.0, and ck_assert_ptr_null and
-    # ck_assert_ptr_nonnull were added in 0.11.0
-    - name: checkout check
-      uses: actions/checkout@v3
-      with:
-        repository: libcheck/check
-        ref: 0.15.2
-        path: check
-    - name: install check
-      run : |
-        cd check/
-        autoreconf --install
-        ./configure --prefix=/usr || (cat config.log; exit 1;)
-        make
-        sudo make install
-        sudo ldconfig
-        cd ..
-        rm -rf check/
+        sudo apt-get install -y check uthash-dev libconfuse-dev autoconf-archive bison byacc flex valgrind help2man bats
     - name: autogen
       run: ./autogen.sh
     - name: configure
