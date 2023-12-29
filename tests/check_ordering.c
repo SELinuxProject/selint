@@ -436,7 +436,7 @@ START_TEST (test_alphabetical_optionals) {
 
 	// Actual tests
 
-	// sort distinct optiona blocks
+	// sort distinct optional blocks
 	ck_assert_int_eq(ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, head->next, head->next->next));
 	ck_assert_int_eq(-ORDER_ALPHABETICAL, compare_nodes_refpolicy(o, head->next->next, head->next));
 
