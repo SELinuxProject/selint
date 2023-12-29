@@ -31,7 +31,7 @@ jobs:
     env:
       CC: ${{ matrix.cc }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     # Prevent Clang from using DWARF5, not supported by the valgrind version in runners
     - name: Set environment for Clang
       run: |
@@ -99,7 +99,7 @@ jobs:
         cd tests/functional
         BATS_TIME_EXPENSIVE=1 bats end-to-end.bats
     - name: checkout refpolicy
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: SELinuxProject/refpolicy
         path: refpolicy
@@ -149,6 +149,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: check-whitespaces
         run: git diff-tree --check $(git hash-object -t tree /dev/null) HEAD
