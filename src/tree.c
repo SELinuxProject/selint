@@ -101,7 +101,7 @@ int is_template_call(const struct policy_node *node)
 		return 0;
 	}
 
-	char *call_name = node->data.ic_data->name;
+	const char *call_name = node->data.ic_data->name;
 
 	if (look_up_in_template_map(call_name)) {
 		return 1;
@@ -149,14 +149,14 @@ struct name_list *get_names_in_node(const struct policy_node *node)
 
 	struct name_list *ret = NULL;
 	struct name_list *cur = NULL;
-	struct av_rule_data *av_data;
-	struct type_transition_data *tt_data;
-	struct role_transition_data *rt_data;
-	struct declaration_data *d_data;
-	struct if_call_data *ifc_data;
-	struct role_allow_data *ra_data;
-	struct role_types_data *rtyp_data;
-	struct attribute_data *at_data;
+	const struct av_rule_data *av_data;
+	const struct type_transition_data *tt_data;
+	const struct role_transition_data *rt_data;
+	const struct declaration_data *d_data;
+	const struct if_call_data *ifc_data;
+	const struct role_allow_data *ra_data;
+	const struct role_types_data *rtyp_data;
+	const struct attribute_data *at_data;
 
 	switch (node->flavor) {
 	case NODE_AV_RULE:

@@ -197,7 +197,7 @@ struct check_result *check_no_self(__attribute__((unused)) const struct check_da
 	if (node->flavor != NODE_AV_RULE && node->flavor != NODE_XAV_RULE) {
 		return alloc_internal_error("Bad node type given to check C-007");
 	}
-	struct av_rule_data *av_data = node->data.av_data;
+	const struct av_rule_data *av_data = node->data.av_data;
 
 	if (av_data->sources->next ||
 	    av_data->targets->next ||

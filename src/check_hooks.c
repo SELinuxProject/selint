@@ -261,7 +261,7 @@ void display_check_issue_counts(const struct checks *ck)
 	qsort((void *) node_arr, num_nodes, sizeof(struct check_node *), comp_check_nodes);
 
 	unsigned int issue_count = 0;
-	char *old_issue_name = NULL;
+	const char *old_issue_name = NULL;
 	for (unsigned int i=0; i < num_nodes; i++) {
 		if (old_issue_name && 0 != strcmp(old_issue_name, node_arr[i]->check_id)) {
 			// New issue.  Print the old info
