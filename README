@@ -201,3 +201,22 @@ CHECK IDS
 
 	F-001: Policy syntax error prevents further processing
 	F-002: Internal error in SELint
+
+REFERENCE POLICY CONVENTIONS
+
+	To improve the accuracy and avoid false-positives SELint makes some assumptions about
+	naming conventions and formatting of the policy:
+
+	* Type identifiers should end with the suffix '_t'.
+	* Role identifiers should end with the suffix '_r'.
+	* Names of noop interfaces for availability checks should end with the suffix '_stub'.
+	* Permission macros should end with the suffix '_perms'.
+	* Class set macros should end with the suffix '_class_set'.
+	* Security class declarations of userspace classes in the security_classes file should be
+	  declared with a comment including the word 'userspace'.
+	* Interfaces that wrap a file based type-transition should end with the suffix '_filetrans'.
+	* Interfaces that transforms their arguments, e.g. associate an attribute with them,
+	  and thus should be handled like a declaration should have one of the following common
+	  suffixes: '_type', '_file', '_domain', '_node', '_agent', '_delivery', '_sender',
+	  '_boolean', '_content', '_constrained', '_executable', '_exemption', '_object'
+	  or '_mountpoint'.
