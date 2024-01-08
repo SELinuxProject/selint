@@ -166,7 +166,7 @@ struct sel_context *parse_context(char *context_str)
 	struct sel_context *context = xmalloc(sizeof(struct sel_context));
 	memset(context, 0, sizeof(struct sel_context));
 	// User
-	char *pos = strtok(context_str, ":");
+	const char *pos = strtok(context_str, ":");
 
 	if (pos == NULL) {
 		goto cleanup;

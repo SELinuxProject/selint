@@ -45,7 +45,7 @@ enum selint_error load_access_vectors_kernel(const char *av_path)
 
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL, NULL);
 
-	FTSENT *file = fts_read(ftsp);
+	const FTSENT *file = fts_read(ftsp);
 
 	while (file) {
 
@@ -219,14 +219,14 @@ enum selint_error load_modules_source(const char *modules_conf_path)
 			fclose(fd);
 			return SELINT_PARSE_ERROR;
 		}
-		char *mod_name = strip_space(pos);
+		const char *mod_name = strip_space(pos);
 		pos = strtok(NULL, "=");
 		if (!pos) {
 			free(line);
 			fclose(fd);
 			return SELINT_PARSE_ERROR;
 		}
-		char *status = strip_space(pos);
+		const char *status = strip_space(pos);
 		insert_into_mods_map(mod_name, status);
 		if (strtok(NULL, "=")) {
 			free(line);
@@ -296,7 +296,7 @@ enum selint_error load_devel_headers(struct policy_file_list *context_files)
 
 	FTS *ftsp = fts_open(paths, FTS_PHYSICAL | FTS_NOSTAT, NULL);
 
-	FTSENT *file = fts_read(ftsp);
+	const FTSENT *file = fts_read(ftsp);
 	while (file) {
 		const char *suffix = (file->fts_pathlen > 3) ? (file->fts_path + file->fts_pathlen - 3) : NULL;
 		if (suffix && !strcmp(suffix, ".if")) {

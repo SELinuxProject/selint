@@ -216,7 +216,7 @@ enum selint_error insert_role_transition(struct policy_node **cur,
                                          struct string_list *sources,
                                          struct string_list *targets,
                                          struct string_list *object_classes,
-                                         char *default_role,
+                                         const char *default_role,
                                          unsigned int lineno);
 
 enum selint_error insert_interface_call(struct policy_node **cur, const char *if_name,

@@ -104,7 +104,7 @@ enum selint_error insert_declaration(struct policy_node **cur,
 			// If the name starts with $ we're probably doing something like associating
 			// a role with types in interfaces
 
-			char *mn = get_current_module_name();
+			const char *mn = get_current_module_name();
 
 			if (!mn) {
 				return SELINT_NO_MOD_NAME;
@@ -155,7 +155,7 @@ enum selint_error insert_aliases(struct policy_node **cur,
 			insert_decl_into_template_map(temp_name, flavor,
 			                              alias->string);
 		} else {
-			char *mn = get_current_module_name();
+			const char *mn = get_current_module_name();
 			if (!mn) {
 				free_string_list(aliases);
 				return SELINT_NO_MOD_NAME;
@@ -382,7 +382,7 @@ enum selint_error insert_role_transition(struct policy_node **cur,
                                          struct string_list *sources,
                                          struct string_list *targets,
                                          struct string_list *object_classes,
-                                         char *default_role,
+                                         const char *default_role,
                                          unsigned int lineno)
 {
 	struct role_transition_data *rt_data =
