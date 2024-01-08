@@ -32,10 +32,6 @@ enum selint_error insert_policy_node_child(struct policy_node *parent,
 	}
 
 	struct policy_node *to_insert = xmalloc(sizeof(struct policy_node));
-	if (!to_insert) {
-		return SELINT_OUT_OF_MEM;
-	}
-
 	to_insert->parent = parent;
 	to_insert->next = NULL;
 	to_insert->first_child = NULL;
@@ -73,9 +69,6 @@ enum selint_error insert_policy_node_next(struct policy_node *prev,
 	}
 
 	struct policy_node *to_insert = xmalloc(sizeof(struct policy_node));
-	if (!to_insert) {
-		return SELINT_OUT_OF_MEM;
-	}
 
 	prev->next = to_insert;
 

@@ -803,9 +803,6 @@ static enum node_flavor attr_to_node_flavor(enum attr_flavor flavor)
 static enum selint_error insert_attribute(struct policy_node **cur, enum attr_flavor flavor, const char *type, struct string_list *attrs, unsigned int lineno)
 {
 	struct attribute_data *data = xcalloc(1, sizeof(struct attribute_data));
-	if (!data) {
-		return SELINT_OUT_OF_MEM;
-	}
 	union node_data nd;
 	nd.at_data = data;
 
