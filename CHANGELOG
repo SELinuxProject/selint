@@ -1,8 +1,9 @@
 # SELint Changelog
 
-## [1.4.1] TBD
+## [1.5] TBD
 
 ### Changed
+- Checks about requires now support userspace classperm requires
 - Various CI improvements
 - Clearer message for W-011
 
