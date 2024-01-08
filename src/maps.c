@@ -419,12 +419,7 @@ int is_role_if(const char *if_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 void mark_used_if(const char *if_name)
 {
 	struct if_hash_elem *used_if;
@@ -443,12 +438,7 @@ void mark_used_if(const char *if_name)
 	}
 }
 
-#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ >= 4)
-__attribute__((no_sanitize("unsigned-integer-overflow")))
-#if (__clang_major__ >= 12)
-__attribute__((no_sanitize("unsigned-shift-base")))
-#endif
-#endif
+no_sanitize_unsigned_integer_
 int is_used_if(const char *if_name)
 {
 	struct if_hash_elem *used_if;
