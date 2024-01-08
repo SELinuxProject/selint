@@ -93,7 +93,7 @@ void calculate_longest_increasing_subsequence(const struct policy_node *head,
 		int low = 1;
 		int high = longest_seq;
 		while (low <= high) {
-			int mid = (low + high + 1) / 2; // Ceiling
+			int mid = low + (high - low + 1) / 2; // Ceiling
 			if (comp_func(ordering, nodes[nodes[mid-1].end_of_seq].node, nodes[index].node) >= 0) {
 				low = mid + 1;
 			} else {
