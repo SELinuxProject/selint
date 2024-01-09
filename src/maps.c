@@ -284,8 +284,8 @@ void mark_userspace_class(const char *class_name)
 	HASH_FIND(hh_userspace_class, userspace_class_map, class_name, strlen(class_name), userspace_class);
 
 	if (!userspace_class) {
-		userspace_class = malloc(sizeof(struct bool_hash_elem));
-		userspace_class->key = strdup(class_name);
+		userspace_class = xmalloc(sizeof(struct bool_hash_elem));
+		userspace_class->key = xstrdup(class_name);
 		userspace_class->val = 1;
 		HASH_ADD_KEYPTR(hh_userspace_class, userspace_class_map, userspace_class->key,
 				strlen(userspace_class->key), userspace_class);
