@@ -1,6 +1,6 @@
 # SELint Changelog
 
-## [1.5] TBD
+## [1.5] 2024-01-09
 
 ### Changed
 - Checks about requires now support userspace classperm requires
