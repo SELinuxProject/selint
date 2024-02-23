@@ -87,6 +87,10 @@ S-010:
 
 	allow foo_t bar_t:file { open read };
 
+S-011:
+
+	# file context line containing only white spaces
+
 Warning:
 
 W-001:

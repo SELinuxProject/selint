@@ -55,6 +55,23 @@ START_TEST (test_parse_context_missing_field) {
 }
 END_TEST
 
+START_TEST (test_parse_fc_empty) {
+
+	char line[] = "";
+
+	struct fc_entry *out = parse_fc_line(line);
+
+	ck_assert_ptr_null(out);
+
+	char line2[] = " ";
+
+	out = parse_fc_line(line2);
+
+	ck_assert_ptr_null(out);
+
+}
+END_TEST
+
 START_TEST (test_parse_fc_line_with_gen_context) {
 	char line[] = "/usr/bin(/.*)?		gen_context(system_u:object_r:bin_t, s0)";
 
@@ -147,7 +164,17 @@ START_TEST (test_parse_basic_fc_file) {
 
 	cur = cur->next;
 
+	ck_assert_int_eq(cur->flavor, NODE_EMPTY);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+
 	ck_assert_int_eq(cur->flavor, NODE_ERROR);
+	ck_assert_ptr_nonnull(cur->next);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_EMPTY);
 	ck_assert_ptr_nonnull(cur->next);
 
 	cur = cur->next;
@@ -202,9 +229,18 @@ START_TEST (test_parse_none_context) {
 	struct policy_node *cur = ast->next;
 
 	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
-	ck_assert_ptr_null(cur->next);
+	ck_assert_ptr_nonnull(cur->next);
 
 	struct fc_entry *data = cur->data.fc_data;
+
+	ck_assert_ptr_null(data->context);
+
+	cur = cur->next;
+
+	ck_assert_int_eq(cur->flavor, NODE_FC_ENTRY);
+	ck_assert_ptr_null(cur->next);
+
+	data = cur->data.fc_data;
 
 	ck_assert_ptr_null(data->context);
 
@@ -236,6 +272,7 @@ static Suite *parse_fc_suite(void) {
 
 	tcase_add_test(tc_core, test_parse_context);
 	tcase_add_test(tc_core, test_parse_context_missing_field);
+	tcase_add_test(tc_core, test_parse_fc_empty);
 	tcase_add_test(tc_core, test_parse_fc_line_with_gen_context);
 	tcase_add_test(tc_core, test_parse_fc_line);
 	tcase_add_test(tc_core, test_parse_fc_line_with_obj);
