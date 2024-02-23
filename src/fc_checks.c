@@ -170,11 +170,15 @@ struct check_result *check_file_context_error_nodes(__attribute__((unused)) cons
                                                     *node)
 {
 
-	if (node->flavor != NODE_ERROR) {
-		return NULL;
+	if (node->flavor == NODE_ERROR) {
+		return make_check_result('E', E_ID_FC_ERROR, "Bad file context format");
 	}
 
-	return make_check_result('E', E_ID_FC_ERROR, "Bad file context format");
+	if (node->flavor == NODE_EMPTY) {
+		return make_check_result('S', S_ID_FC_SPACES, "File context line containing only white spaces");
+	}
+
+	return alloc_internal_error("Invalid node type for `check_file_context_error_nodes`");
 }
 
 struct check_result *check_file_context_users(__attribute__((unused)) const struct check_data *data,

@@ -208,6 +208,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "S-010",
 			          check_perm_macro_available);
 		}
+		if (CHECK_ENABLED("S-011")) {
+			add_check(NODE_EMPTY, ck, "S-011",
+			          check_file_context_error_nodes);
+		}
 		// FALLTHRU
 	case 'W':
 		if (CHECK_ENABLED("W-001")) {

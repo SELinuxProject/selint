@@ -1,8 +1,8 @@
 /usr/bin/basic			--		gen_context(system_u:object_r:basic_t, s0)
 /etc/basic(/.*)?				gen_context(system_u:object_r:basic_conf_t, s0)
-
+ 
 /var/www/basic					gen_this_is_an_error(system_u:obect_r:basic_conf_t, s0)
-
+	
 /var/log/basic.log		--		system_u:object_r:basic_log_t:s0
 
 /var/www/basic/basic.conf	--		gen_context(system_u:object_r:basic_conf_t, s0, c1)
