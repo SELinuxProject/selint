@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -135,8 +136,7 @@ struct fc_entry *parse_fc_line(char *line)
 		} else {
 			out->context->range = NULL;
 		}
-	} else if (strcmp("<<none>>\n", pos) == 0
-	           || strcmp("<<none>>\r\n", pos) == 0) {
+	} else if (strcmp("<<none>>", pos) == 0) {
 		out->context = NULL;
 	} else {
 		out->context = parse_context(pos);
@@ -229,6 +229,12 @@ bool check_for_fc_macro(const char *line, const struct string_list *custom_fc_ma
 	return false;
 }
 
+static void rtrim(char *line, size_t len)
+{
+	while (len > 0 && isspace((unsigned char)line[len - 1]))
+		line[--len] = '\0';
+}
+
 struct policy_node *parse_fc_file(const char *filename, const struct string_list *custom_fc_macros)
 {
 	FILE *fd = fopen(filename, "re");
@@ -253,6 +259,10 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 		if (len_read <= 1 || line[0] == '#') {
 			continue;
 		}
+
+		// Drop trailing white spaces
+		rtrim(line, (size_t)len_read);
+
 		// Skip over m4 constructs
 		if (strncmp(line, "ifdef", 5) == 0 ||
 		    strncmp(line, "ifndef", 6) == 0 ||
@@ -262,8 +272,6 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 
 			continue;
 		}
-		// TODO: Right now whitespace parses as an error
-		// We may want to detect it and report a lower severity issue
 
 		if (check_for_fc_macro(line, custom_fc_macros)) {
 			continue;
@@ -272,7 +280,11 @@ struct policy_node *parse_fc_file(const char *filename, const struct string_list
 		struct fc_entry *entry = parse_fc_line(line);
 		enum node_flavor flavor;
 		if (entry == NULL) {
-			flavor = NODE_ERROR;
+			if (*line == '\0') {
+				flavor = NODE_EMPTY;
+			} else {
+				flavor = NODE_ERROR;
+			}
 		} else {
 			flavor = NODE_FC_ENTRY;
 		}

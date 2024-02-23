@@ -250,7 +250,12 @@ START_TEST (test_check_file_context_error_nodes) {
 
 	struct check_result *res = check_file_context_error_nodes(data, node);
 
-	ck_assert_ptr_null(res);
+	ck_assert_ptr_nonnull(res);
+	ck_assert_int_eq(res->severity, 'F');
+	ck_assert_int_eq(res->check_id, F_ID_INTERNAL);
+	ck_assert_ptr_nonnull(res->message);
+
+	free_check_result(res);
 
 	node->flavor = NODE_ERROR;
 
