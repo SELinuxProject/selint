@@ -164,17 +164,7 @@ START_TEST (test_parse_basic_fc_file) {
 
 	cur = cur->next;
 
-	ck_assert_int_eq(cur->flavor, NODE_EMPTY);
-	ck_assert_ptr_nonnull(cur->next);
-
-	cur = cur->next;
-
 	ck_assert_int_eq(cur->flavor, NODE_ERROR);
-	ck_assert_ptr_nonnull(cur->next);
-
-	cur = cur->next;
-
-	ck_assert_int_eq(cur->flavor, NODE_EMPTY);
 	ck_assert_ptr_nonnull(cur->next);
 
 	cur = cur->next;
