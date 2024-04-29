@@ -411,7 +411,7 @@ struct check_result *check_name_required_but_not_used_in_if(const struct
 		return NULL;
 	}
 
-	struct name_list *names_to_check = names_to_check = get_names_in_node(node);
+	struct name_list *names_to_check = get_names_in_node(node);
 	if (!names_to_check) {
 		// This should never happen
 		return alloc_internal_error(
