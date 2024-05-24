@@ -86,7 +86,9 @@
 %token <string> STRING;
 %token <string> NUM_STRING;
 %token <string> IPV4;
+%token <string> IPV4_CIDR;
 %token <string> IPV6;
+%token <string> IPV6_CIDR;
 %token <string> NUMBER;
 %token <string> QUOTED_STRING;
 %token <string> VERSION_NO;
@@ -909,12 +911,20 @@ netifcon:
 
 nodecon:
 	NODECON two_ip_addrs context
+	|
+	NODECON cidr_addr context
 	;
 
 two_ip_addrs:
 	IPV4 IPV4 { free($1); free($2); }
 	|
 	IPV6 IPV6 { free($1); free($2); }
+	;
+
+cidr_addr:
+	IPV4_CIDR { free($1); }
+	|
+	IPV6_CIDR { free($1); }
 	;
 
 fs_use:

@@ -156,7 +156,9 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 [a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = xstrdup(yytext); return STRING; }
 [0-9a-zA-Z\$\/][a-zA-Z0-9_\$\*\/\-]* { yylval->string = xstrdup(yytext); return NUM_STRING; }
 [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} { yylval->string = xstrdup(yytext); return IPV4; }
+[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,2} { yylval->string = xstrdup(yytext); return IPV4_CIDR; }
 ([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})?(\:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})? { yylval->string = xstrdup(yytext); return IPV6; }
+([0-9A-Fa-f]{1,4})?\:([0-9A-Fa-f\:])*\:([0-9A-Fa-f]{1,4})?(\:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?\/[0-9]{1,3} { yylval->string = xstrdup(yytext); return IPV6_CIDR; }
 \"[a-zA-Z0-9_\.\-\:~\$\[\]\/]*\" { yylval->string = xstrdup(yytext); return QUOTED_STRING; }
 \-[\-ldbcsp][ \t] { return FILE_TYPE_SPECIFIER; }
 \( { return OPEN_PAREN; }
