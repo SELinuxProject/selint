@@ -46,8 +46,10 @@ optional_policy(`
 netifcon lo gen_context(system_u:object_r:lo_netif_t,s0 - mls_systemhigh) gen_context(system_u:object_r:unlabeled_t,s0 - mls_systemhigh)
 
 nodecon 127.0.0.1 255.255.255.255 gen_context(system_u:object_r:system_t:s0)
+nodecon 127.0.0.0/24 gen_context(system_u:object_r:system_t:s0)
 nodecon ::5 ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff gen_context(system_u:object_r:system_t:s0)
 nodecon ::ffff:127.0.0.1 ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff gen_context(system_u:object_r:lo_node_t,s0)
+nodecon ::1/128 gen_context(system_u:object_r:lo_node_t,s0)
 
 if (!bool_one) {
 	allow foo_t bar_t:file open;
