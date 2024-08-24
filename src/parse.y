@@ -188,6 +188,7 @@
 %type<string> arg_list_item
 %type<sl> arg
 %type<sl> args
+%type<sl> arg_m4_quoted
 %type<string> mls_range
 %type<string> mls_level
 %type<string> mls_component
@@ -801,14 +802,22 @@ arg_list_item:
 	NUMBER
 	;
 
+arg_m4_quoted:
+	QUOTED_STRING { $$ = sl_from_str_consume($1); }
+	|
+	mls_range { $$ = sl_from_str_consume($1); }
+	|
+	%empty { $$ = sl_from_str(""); }
+	|
+	BACKTICK arg_m4_quoted SINGLE_QUOTE { $$ = $2; }
+	;
+
 arg:
 	arg_list
 	|
 	QUOTED_STRING { $$ = sl_from_str_consume($1); }
 	|
-	BACKTICK mls_range SINGLE_QUOTE { $$ = sl_from_str_consume($2); }
-	|
-	BACKTICK SINGLE_QUOTE { $$ = sl_from_str(""); }
+	BACKTICK arg_m4_quoted SINGLE_QUOTE { $$ = $2; }
 	;
 
 args:
