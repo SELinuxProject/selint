@@ -158,3 +158,5 @@ optional_policy(`
 	call_some_interface(foo_t)
 ')
 ')
+
+filetrans_pattern(foo_t, bar_run_t, baz_run_t, dir, ``"interface"'')
