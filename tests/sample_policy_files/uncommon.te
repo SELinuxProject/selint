@@ -160,3 +160,5 @@ optional_policy(`
 ')
 
 filetrans_pattern(foo_t, bar_run_t, baz_run_t, dir, ``"interface"'')
+
+allowxperm src_t tgt_t: netlink_route_socket nlmsg { RTM_GETROUTE 0x44 };
