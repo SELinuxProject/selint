@@ -165,3 +165,4 @@ allowxperm src_t tgt_t: netlink_route_socket nlmsg { RTM_GETROUTE 0x44 };
 
 # RFC for new genfscon wildcard support
 genfscon sysfs "/sys/devices/*/wakeup/*/uevent" -- gen_context(u:r:some_context, s0)
+genfscon sysfs "/sys/devices/*/wakeup/?/uevent" -- gen_context(u:r:some_context, s0)
