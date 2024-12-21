@@ -146,6 +146,7 @@
 %token DEFINE;
 %token GEN_USER;
 %token GEN_CONTEXT;
+%token GEN_SYSTEM_CONTEXT;
 %token PERMISSIVE;
 %token TYPEBOUNDS;
 %token INTERFACE;
@@ -993,6 +994,12 @@ context:
 	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA mls_range CLOSE_PAREN { free($5); free($7); }
 	|
 	GEN_CONTEXT OPEN_PAREN raw_context COMMA mls_range COMMA CLOSE_PAREN { free($5); }
+	|
+	GEN_SYSTEM_CONTEXT OPEN_PAREN STRING CLOSE_PAREN { free($3); }
+	|
+	GEN_SYSTEM_CONTEXT OPEN_PAREN STRING COMMA mls_range CLOSE_PAREN { free($3); free($5); }
+	|
+	GEN_SYSTEM_CONTEXT OPEN_PAREN STRING COMMA mls_range COMMA mls_range CLOSE_PAREN { free($3); free($5); free($7); }
 	;
 
 raw_context:
