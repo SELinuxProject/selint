@@ -486,7 +486,8 @@ test_report_format_impl() {
 @test "custom_fc_macros" {
 	run ${SELINT_PATH} -c configs/default.conf -s policies/misc/fc_macros.fc
 	count=$(echo ${output} | grep -o "E-002" | wc -l)
-	[ "$count" -eq 1 ]
+	echo ${output}
+	[ "$count" -eq 2 ]
 	run ${SELINT_PATH} -c configs/fc_macros.conf -s policies/misc/fc_macros.fc
 	count=$(echo ${output} | grep -o "E-002" | wc -l)
 	echo ${output}

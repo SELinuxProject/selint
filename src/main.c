@@ -654,6 +654,7 @@ int main(int argc, char **argv)
 		free(security_classes_path);
 		free(modules_conf_path);
 		free_string_list(global_cond_files);
+		free_string_list(custom_fc_macros);
 		return EX_CONFIG;
 	}
 
@@ -698,6 +699,7 @@ int main(int argc, char **argv)
 	free_file_list(fc_files);
 	free_file_list(context_te_files);
 	free_file_list(context_if_files);
+	free_string_list(custom_fc_macros);
 	free_selint_config(&ccd);
 
 	if (fail_on_finding && found_issue && exit_code == EX_OK) {
