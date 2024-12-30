@@ -1032,10 +1032,10 @@ struct check_result *check_stray_word(const struct check_data
 
 	// ignore comparison arguments to ifelse
 	// (do not ignore last node of block, which is never a comparison argument)
-	const struct policy_node *ifelse_arument = is_ifelse_argument(node);
-	if (ifelse_arument && ifelse_arument->next) {
+	const struct policy_node *ifelse_argument = is_ifelse_argument(node);
+	if (ifelse_argument && ifelse_argument->next) {
 		int position = 0;
-		for (const struct policy_node *cur = ifelse_arument; cur->prev; cur = cur->prev) {
+		for (const struct policy_node *cur = ifelse_argument; cur->prev; cur = cur->prev) {
 			position++;
 		}
 
