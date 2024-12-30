@@ -531,9 +531,9 @@ struct check_result *check_no_explicit_declaration(const struct check_data *data
 			flavor = DECL_ATTRIBUTE;
 		} else if (name_is_roleattr(ndata) && (mod_name = look_up_in_decl_map(ndata->name, DECL_ATTRIBUTE_ROLE))) {
 			flavor = DECL_ATTRIBUTE_ROLE;
-		} else if (name_is_class(ndata) && look_up_in_decl_map(name->data->name, DECL_CLASS)) {
+		} else if (name_is_class(ndata) && look_up_in_decl_map(ndata->name, DECL_CLASS)) {
 			// Ignore kernel classes
-			if (!userspace_class_support || !is_userspace_class(name->data->name, name->data->traits)) {
+			if (!userspace_class_support || !is_userspace_class(ndata->name, ndata->traits)) {
 				continue;
 			}
 			flavor = DECL_CLASS;
