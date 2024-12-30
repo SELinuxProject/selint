@@ -171,7 +171,7 @@ userdebug_or_eng { return USERDEBUG_OR_ENG; }
 \; { return SEMICOLON; }
 \` { return BACKTICK; }
 \' { return SINGLE_QUOTE; }
-\~ { return TILDA; }
+\~ { return TILDE; }
 \* { return STAR; }
 \- { return DASH; }
 \&\& { return AND; }

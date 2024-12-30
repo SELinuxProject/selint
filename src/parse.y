@@ -162,7 +162,7 @@
 %token SEMICOLON;
 %token BACKTICK;
 %token SINGLE_QUOTE;
-%token TILDA;
+%token TILDE;
 %token STAR;
 %token DASH;
 %left AND;
@@ -451,7 +451,7 @@ xperm_av_type:
 xperm_list:
 	OPEN_CURLY xperm_items CLOSE_CURLY { $$ = $2; }
 	|
-	TILDA xperm_list { $$ = sl_from_str("~"); $$->next = $2; }
+	TILDE xperm_list { $$ = sl_from_str("~"); $$->next = $2; }
 	|
 	xperm_item { $$ = sl_from_str_consume($1); }
 	;
@@ -475,7 +475,7 @@ xperm_item:
 string_list:
 	OPEN_CURLY strings CLOSE_CURLY { $$ = $2; }
 	|
-	TILDA string_list { $$ = sl_from_str("~"); $$->next = $2; }
+	TILDE string_list { $$ = sl_from_str("~"); $$->next = $2; }
 	|
 	sl_item { $$ = sl_from_str_consume($1); }
 	|
@@ -777,7 +777,7 @@ m4_argument:
 arg_list:
 	OPEN_CURLY arg_list_items CLOSE_CURLY { $$ = $2; }
 	|
-	TILDA arg_list { $$ = sl_from_str("~"); $$->next = $2; }
+	TILDE arg_list { $$ = sl_from_str("~"); $$->next = $2; }
 	|
 	arg_list_item { $$ = sl_from_str_consume($1); }
 	;
