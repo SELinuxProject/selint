@@ -1,6 +1,6 @@
 # SELint Changelog
 
-## [1.5.1] TBD
+## [1.5.1] 2025-02-04
 
 ### Added (checks)
 - S-011 For file_context lines with only whitespace
