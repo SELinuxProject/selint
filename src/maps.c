@@ -317,6 +317,11 @@ int is_userspace_class(const char *class_name, const struct string_list *permiss
 		    0 != strcmp(p->string, "syslog_console") &&
 		    0 != strcmp(p->string, "module_request") &&
 		    0 != strcmp(p->string, "module_load") &&
+		    0 != strcmp(p->string, "firmware_load") &&
+		    0 != strcmp(p->string, "kexec_image_load") &&
+		    0 != strcmp(p->string, "kexec_initramfs_load") &&
+		    0 != strcmp(p->string, "policy_load") &&
+		    0 != strcmp(p->string, "x509_certificate_load") &&
 		    0 != strcmp(p->string, "*") &&
 		    0 != strcmp(p->string, "~")) {
 			return 1;
