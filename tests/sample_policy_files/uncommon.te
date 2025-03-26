@@ -13,6 +13,7 @@ type this_shouldnt_be_allowed_t alias other_name_t, attr_name;
 permissive foo_t;
 
 sid netmsg gen_context(system_u:object_r:netlabel_peer_t,mls_systemhigh)
+sid netmsg gen_system_context(netlabel_peer_t,mls_systemhigh)
 
 portcon udp 7007 gen_context(system_u:object_r:afs_bos_port_t,s0)
 portcon udp 7007 gen_context(system_u:object_r:afs_bos_port_t,s0:c2)

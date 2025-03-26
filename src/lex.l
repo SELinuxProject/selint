@@ -146,6 +146,7 @@ fs_use_task { return FS_USE_TASK; }
 define { return DEFINE; }
 gen_user { return GEN_USER; }
 gen_context { return GEN_CONTEXT; }
+gen_system_context { return GEN_SYSTEM_CONTEXT; }
 permissive { return PERMISSIVE; }
 typebounds { return TYPEBOUNDS; }
 interface { return INTERFACE; }

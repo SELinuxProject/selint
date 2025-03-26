@@ -219,12 +219,14 @@ bool check_for_fc_macro(const char *line, const struct string_list *custom_fc_ma
 		if (line_len <= custom_fc_len) {
 			continue;
 		}
-		if (line[custom_fc_len] != '(') {
+		const char *begin = strstr(line, custom_fc_macros->string);
+		if (!begin) {
 			continue;
 		}
-		if (0 == strncmp(line, custom_fc_macros->string, custom_fc_len)) {
-			return true;
+		if (begin[custom_fc_len] != '(') {
+			continue;
 		}
+		return true;
 	}
 	return false;
 }
