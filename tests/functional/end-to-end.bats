@@ -22,7 +22,7 @@ do_test() {
 	local EXPECT=$3
 	local ARGS=$4
 	run ${SELINT_PATH} -s -c tmp.conf ${ARGS} ./policies/check_triggers/${FILENAME} ./policies/check_triggers/modules.conf ./policies/check_triggers/obj_perm_sets.spt ./policies/check_triggers/access_vectors ./policies/check_triggers/security_classes
-	echo $output
+	echo ${output}
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o ${CHECK_ID} | wc -l)
 	echo "Status: $status, Count: $count (expected ${EXPECT})"
@@ -108,6 +108,7 @@ test_parse_error_impl() {
 
 	if [ $USE_VALGRIND -eq 1 ]; then
 		run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=23 ${SELINT_PATH} -c configs/default.conf ./policies/parse_errors/${SOURCE_FILENAME}
+		echo ${output}
 		[ "$status" -eq 70 ]
 	else
 		run ${SELINT_PATH} -c configs/default.conf ./policies/parse_errors/${SOURCE_FILENAME}
@@ -342,11 +343,13 @@ test_report_format_impl() {
 
 @test "usage" {
 	run ${SELINT_PATH} -c configs/empty.conf
+	echo ${output}
 	[ "$status" -eq 64 ]
 	usage_presence=$(echo ${output} | grep -o "^Usage" | wc -l)
 	[ "$usage_presence" -eq 1 ]
 
 	run ${SELINT_PATH} -c configs/empty.conf -Z
+	echo ${output}
 	[ "$status" -eq 64 ]
 	usage_presence=$(echo ${output} | grep -o "Usage" | wc -l)
 	[ "$usage_presence" -eq 1 ]
@@ -356,6 +359,7 @@ test_report_format_impl() {
 
 @test "Enable/disable" {
 	run ${SELINT_PATH} -c configs/empty.conf -e W-002 -e W-003 -d S-002 -d C-002 -r -s policies/check_triggers
+	echo ${output}
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o "S-002" | wc -l)
 	[ "$count" -eq 0 ]
@@ -369,6 +373,7 @@ test_report_format_impl() {
 
 @test "verbose mode" {
 	run ${SELINT_PATH} -c configs/default.conf -r -s -v policies/check_triggers
+	echo ${output}
 	[ "$status" -eq 0 ]
 	verbose_presence=$(echo ${output} | grep -o "^Verbose" | wc -l)
 	[ "$verbose_presence" -eq 1 ]
@@ -381,53 +386,58 @@ test_report_format_impl() {
 	fi
 
 	run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 ${SELINT_PATH} -c configs/default.conf -r -s policies/check_triggers
+	echo ${output}
 	[ "$status" -eq 0 ]
 }
 
 @test "nesting_gen_req" {
 	run ${SELINT_PATH} -c configs/default.conf -e W-002 -E -s policies/misc/nesting.*
+	echo ${output}
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o "W-002" | wc -l)
 	echo "Status: $status, Count: $count (expected 1)"
-	echo $output
 	[ "$count" -eq 1 ]
 	count=$(echo ${output} | grep -o "foo_data_t" | wc -l)
 	echo "Status: $status, Count: $count (expected 1)"
-	echo $output
 	[ "$count" -eq 1 ]
 	count=$(echo ${output} | grep -o "foo_log_t" | wc -l)
 	echo "Status: $status, Count: $count (expected 0)"
-	echo $output
 	[ "$count" -eq 0 ]
 }
 
 @test "disable comment" {
 	run ${SELINT_PATH} -c configs/default.conf -F -e W-002 -E -s policies/misc/disable.*
+	echo ${output}
 	[ "$status" -eq 0 ]
 	count=$(echo ${output} | grep -o "W-002" | wc -l)
 	echo "Status: $status, Count: $count (expected 0)"
-	echo $output
 	[ "$count" -eq 0 ]
 
 	echo "Part I"
 	run ${SELINT_PATH} -F -s -c configs/default.conf policies/misc/disable_multiple*
+	echo ${output}
 	[ "$status" -eq 0 ]
 
 	echo "Part II"
 	run ${SELINT_PATH} -F -s -c configs/default.conf -d S-008 policies/misc/disable_require_start.*
+	echo ${output}
 	[ "$status" -eq 0 ]
 
 	echo "Part III"
 	run ${SELINT_PATH} -F -s -c configs/default.conf policies/misc/disable_require_decl.*
+	echo ${output}
 	[ "$status" -eq 0 ]
 }
 
 @test "nonexistent file" {
 	run ${SELINT_PATH} -s -c configs/default.conf doesnt_exist.te
+	echo ${output}
 	[ "$status" -eq 70 ]
 	run ${SELINT_PATH} -s -c configs/default.conf doesnt_exist.if
+	echo ${output}
 	[ "$status" -eq 70 ]
 	run ${SELINT_PATH} -s -c configs/default.conf doesnt_exist.fc
+	echo ${output}
 	[ "$status" -eq 70 ]
 }
 
@@ -438,28 +448,34 @@ test_report_format_impl() {
 	fi
 
 	run valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 ${SELINT_PATH} -c configs/broken.conf -rs policies/check_triggers
+	echo ${output}
 	[ "$status" -eq 78 ]
 }
 
 @test "Bad check ids" {
 	run ${SELINT_PATH} -s -c configs/default.conf policies/misc/no_issues.te
 	count=$(echo ${output} | grep -o "Warning: Failed to locate modules.conf file." | wc -l)
+	echo ${output}
 	[ "$count" -eq 1 ] #"Failed to find a valid modules.conf"
 
 	run ${SELINT_PATH} -s -c configs/default.conf -e foo policies/misc/no_issues.te
 	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
+	echo ${output}
 	[ "$count" -eq 1 ]
 
 	run ${SELINT_PATH} -s -c configs/default.conf -d foo policies/misc/no_issues.te
 	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
+	echo ${output}
 	[ "$count" -eq 1 ]
 
 	run ${SELINT_PATH} -s -c configs/bad_ids.conf policies/misc/no_issues.te
 	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
+	echo ${output}
 	[ "$count" -eq 2 ]
 
 	run ${SELINT_PATH} -s -c configs/bad_ids.conf -e foo -d bar -d baz policies/misc/no_issues.te
 	count=$(echo ${output} | grep -o "not a valid check id" | wc -l)
+	echo ${output}
 	[ "$count" -eq 5 ]
 }
 
@@ -475,6 +491,7 @@ test_report_format_impl() {
 @test "run_summary" {
 	run ${SELINT_PATH} -c configs/default.conf -rsS policies/check_triggers
 	count=$(echo ${output} | grep -o "Found the following issue counts" | wc -l)
+	echo ${output}
 	[ "$count" -eq 1 ]
 	for SEV in "C" "S" "W" "E"
 	do
