@@ -1050,3 +1050,25 @@ struct check_result *check_stray_word(const struct check_data
 				 "Found stray word %s. If it is a simple m4 macro please add an selint-disable comment or ignore in the SELint configuration file.",
 				 macro_name);
 }
+
+struct check_result *check_ifelse_arg_count(__attribute__((unused)) const struct check_data
+                                            *data,
+					    const struct policy_node
+					    *node)
+{
+	// First child is the START_BLOCK_NODE, remaining children are the args, each with their own children blocks
+	int child_count = 0;
+	for(struct policy_node *cur = node->first_child->next; cur != NULL; cur = cur->next) {
+		if (cur->flavor != NODE_M4_ARG) {
+			return alloc_internal_error("ifelse contained something other than a block");
+		}
+		child_count += 1;
+	}
+
+	if ((child_count) % 3 == 2) {
+		return make_check_result('E', E_ID_WRONG_IFELSE_ARGS,
+		                         "ifelse has the wrong number of args (should be 3N or 3N + 1, found %d)",
+					 child_count);
+	}
+	return NULL;
+}

@@ -324,6 +324,11 @@ test_report_format_impl() {
 	test_one_check_expect "E-010" "e10.pass.te" 0
 }
 
+@test "E-011" {
+	test_one_check_expect "E-011" "e11.warn.te" 2
+	test_one_check_expect "E-011" "e11.pass.te" 0
+}
+
 @test "assume_user" {
 	touch tmp.conf
 	do_test "E-003" "e03e04e05.fc" 1 "-e E-003"

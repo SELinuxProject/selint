@@ -1,0 +1,9 @@
+policy_module(e11_warn, 1.0)
+
+ifelse(foo, `true', `
+	allow foo bar:file read;
+', `', `extra_arg')
+
+ifelse(bar, `true', ` 	
+	allow foo bar:file write;
+',`',`')

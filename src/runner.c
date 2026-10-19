@@ -327,6 +327,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_M4_SIMPLE_MACRO, ck, "E-010",
 				  check_stray_word);
 		}
+		if (CHECK_ENABLED("E-011")) {
+			add_check(NODE_IFELSE, ck, "E-011",
+			          check_ifelse_arg_count);
+		}
 		// FALLTHRU
 	case 'F':
 		break;

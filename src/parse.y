@@ -771,7 +771,7 @@ m4_argument:
 	|
 	BACKTICK lines SINGLE_QUOTE
 	|
-	STRING { free($1); }
+	m4_simple_macro
 	;
 
 arg_list:
