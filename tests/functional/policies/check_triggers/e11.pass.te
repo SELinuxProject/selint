@@ -4,7 +4,7 @@ ifelse(foo, `true', `
 	allow foo bar:file read;
 ', `')
 
-ifelse(bar, `true', ` 	
+ifelse(bar, `true', `
 	allow foo bar:file write;
 ',
 baz, `false', `

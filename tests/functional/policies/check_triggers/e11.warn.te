@@ -4,6 +4,6 @@ ifelse(foo, `true', `
 	allow foo bar:file read;
 ', `', `extra_arg')
 
-ifelse(bar, `true', ` 	
+ifelse(bar, `true', `
 	allow foo bar:file write;
 ',`',`')
