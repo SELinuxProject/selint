@@ -1,0 +1,12 @@
+interface(`some_interface',`
+	gen_require(`
+		type foo_t;
+	')
+
+	ifelse(`$1',`true',`
+		allow foo_t self:process signal;
+	',
+	`false', `$2',`
+		allow foo_t self:capability sys_ptrace;
+	',`')
+')

@@ -66,6 +66,7 @@ enum warn_ids {
 	W_ID_IF_DECL_NOT_OWN   = 11,
 	W_ID_UNKNOWN_COND_ID   = 12,
 	W_ID_AUDIT_ACCESS      = 13,
+	W_ID_IFELSE_NO_MATCH   = 14,
 	W_END
 };
 

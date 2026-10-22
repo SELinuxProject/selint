@@ -104,6 +104,12 @@ enum tt_flavor {
 	TT_RT
 };
 
+enum quoted {
+	QUOTE_QUOTED,
+	QUOTE_UNQUOTED,
+	QUOTE_UNKNOWN
+};
+
 struct header_data {
 	enum header_flavor flavor;
 	char *module_name;
@@ -201,6 +207,11 @@ struct cond_declaration_data {
 	struct string_list *identifiers;
 };
 
+struct m4_arg_string_data {
+	char *str;
+	enum quoted quoted;
+};
+
 union node_data {
 	struct header_data *h_data;
 	struct av_rule_data *av_data;
@@ -215,6 +226,7 @@ union node_data {
 	struct attribute_data *at_data;
 	struct gen_require_data *gr_data;
 	struct cond_declaration_data *cd_data;
+	struct m4_arg_string_data *mas_data;
 	char *str;
 };
 
@@ -301,5 +313,7 @@ void free_attribute_data(struct attribute_data *to_free);
 void free_gen_require_data(struct gen_require_data *to_free);
 
 void free_cond_declaration_data(struct cond_declaration_data *to_free);
+
+void free_m4_arg_string_data(struct m4_arg_string_data *to_free);
 
 #endif

@@ -515,7 +515,9 @@ enum selint_error insert_m4simplemacro(struct policy_node **cur, char *name, uns
 {
 
 	union node_data nd;
-	nd.str = name;
+	nd.mas_data = xmalloc(sizeof(struct m4_arg_string_data));
+	nd.mas_data->str = name;
+	nd.mas_data->quoted = QUOTE_UNKNOWN;
 
 	enum selint_error ret = insert_policy_node_next(*cur,
 	                                                NODE_M4_SIMPLE_MACRO,

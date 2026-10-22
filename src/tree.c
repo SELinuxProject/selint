@@ -376,6 +376,9 @@ static void free_single_policy_node_data(struct policy_node *to_free)
 	case NODE_TUNABLE_POLICY:
 		free_cond_declaration_data(to_free->data.cd_data);
 		break;
+	case NODE_M4_SIMPLE_MACRO:
+		free_m4_arg_string_data(to_free->data.mas_data);
+		break;
 	default:
 		if (to_free->data.str != NULL) {
 			free(to_free->data.str);
@@ -620,5 +623,10 @@ void free_gen_require_data(struct gen_require_data *to_free)
 void free_cond_declaration_data(struct cond_declaration_data *to_free)
 {
 	free_string_list(to_free->identifiers);
+	free(to_free);
+}
+
+void free_m4_arg_string_data(struct m4_arg_string_data *to_free) {
+	free(to_free->str);
 	free(to_free);
 }

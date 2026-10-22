@@ -243,6 +243,20 @@ struct check_result *check_audit_access_perm(const struct
                                             policy_node *node);
 
 /*********************************************
+ * Check if ifelse comparisons can never evaluate to true
+ * because both comparisons are quoted strings (that aren't
+ * identical).
+ * Called on NODE_IFELSE nodes.
+ * data - metadata about the file currently being scanned
+ * node - the node to check
+ * returns NULL if passed or check_result for issue W-014
+*********************************************/
+struct check_result *check_ifelse_never_match(const struct check_data
+                                            *data,
+					    const struct policy_node
+					    *node);
+
+/*********************************************
  * Check for clash of declaration and interface names.
  * This will cause macro expansion to enter an endless loop
  * and consume all available memory.

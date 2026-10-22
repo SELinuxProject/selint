@@ -1,0 +1,21 @@
+policy_module(w14, 1.0)
+
+ifelse(`foo', `bar',`
+	# This never happens
+	allow foo self:capability sys_admin;
+',`')
+
+ifelse(foo, `bar',`
+	# This might happen
+	allow foo self:capability net_admin;
+',`')
+
+ifelse(`foo', `foo',`
+	# This is always true
+	allow foo self:capability2 mac_admin;
+',`')
+
+ifelse(`foo', `',`
+	# This never happens but is a different path in the parser
+	allow foo self:capability sys_resource;
+',`')

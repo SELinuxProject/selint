@@ -769,9 +769,13 @@ m4_argument:
 	|
 	BACKTICK SINGLE_QUOTE
 	|
-	BACKTICK lines SINGLE_QUOTE
+	BACKTICK lines SINGLE_QUOTE {
+		if (cur->flavor == NODE_M4_SIMPLE_MACRO) {
+			cur->data.mas_data->quoted = QUOTE_QUOTED;
+		}
+	}
 	|
-	m4_simple_macro
+	m4_simple_macro { cur->data.mas_data->quoted = QUOTE_UNQUOTED; }
 	;
 
 arg_list:

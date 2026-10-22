@@ -932,7 +932,7 @@ START_TEST (test_parse_ifdef) {
 	current = current->next;
 
 	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
-	ck_assert_str_eq("bool1", current->data.str);
+	ck_assert_str_eq("bool1", current->data.mas_data->str);
 	ck_assert_ptr_null(current->first_child);
 	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
 	ck_assert_ptr_null(current->next);
@@ -954,7 +954,7 @@ START_TEST (test_parse_ifdef) {
 	current = current->next;
 
 	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
-	ck_assert_str_eq("true", current->data.str);
+	ck_assert_str_eq("true", current->data.mas_data->str);
 	ck_assert_ptr_null(current->first_child);
 	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
 	ck_assert_ptr_null(current->next);
@@ -1008,7 +1008,7 @@ START_TEST (test_parse_ifdef) {
 	current = current->next;
 
 	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
-	ck_assert_str_eq("bool2", current->data.str);
+	ck_assert_str_eq("bool2", current->data.mas_data->str);
 	ck_assert_ptr_null(current->first_child);
 	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
 	ck_assert_ptr_null(current->next);
@@ -1030,7 +1030,7 @@ START_TEST (test_parse_ifdef) {
 	current = current->next;
 
 	ck_assert_int_eq(NODE_M4_SIMPLE_MACRO, current->flavor);
-	ck_assert_str_eq("true", current->data.str);
+	ck_assert_str_eq("true", current->data.mas_data->str);
 	ck_assert_ptr_null(current->first_child);
 	ck_assert_ptr_eq(ifelse_block, current->parent->parent);
 	ck_assert_ptr_null(current->next);
