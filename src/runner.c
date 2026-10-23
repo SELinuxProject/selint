@@ -289,6 +289,10 @@ struct checks *register_checks(char level,
 			add_check(NODE_AV_RULE, ck, "W-013",
 				  check_audit_access_perm);
 		}
+		if (CHECK_ENABLED("W-014")) {
+			add_check(NODE_IFELSE, ck, "W-014",
+			          check_ifelse_never_match);
+		}
 		// FALLTHRU
 	case 'E':
 		if (CHECK_ENABLED("E-002")) {
@@ -326,6 +330,10 @@ struct checks *register_checks(char level,
 		if (CHECK_ENABLED("E-010")) {
 			add_check(NODE_M4_SIMPLE_MACRO, ck, "E-010",
 				  check_stray_word);
+		}
+		if (CHECK_ENABLED("E-011")) {
+			add_check(NODE_IFELSE, ck, "E-011",
+			          check_ifelse_arg_count);
 		}
 		// FALLTHRU
 	case 'F':

@@ -286,6 +286,11 @@ test_report_format_impl() {
 	test_one_check_expect "W-013" "w13.te" 2
 }
 
+@test "W-014" {
+	test_one_check_expect "W-014" "w14.te" 2
+	test_one_check_expect "W-014" "w14.if" 0
+}
+
 @test "E-002" {
 	test_one_check "E-002" "e02.fc"
 }
@@ -323,6 +328,11 @@ test_report_format_impl() {
 @test "E-010" {
 	test_one_check_expect "E-010" "e10.warn.te" 9
 	test_one_check_expect "E-010" "e10.pass.te" 0
+}
+
+@test "E-011" {
+	test_one_check_expect "E-011" "e11.warn.te" 2
+	test_one_check_expect "E-011" "e11.pass.te" 0
 }
 
 @test "assume_user" {

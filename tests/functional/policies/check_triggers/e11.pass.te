@@ -1,0 +1,19 @@
+policy_module(e11_pass, 1.0)
+
+ifelse(foo, `true', `
+	allow foo bar:file read;
+', `')
+
+ifelse(bar, `true', `
+	allow foo bar:file write;
+',
+baz, `false', `
+	allow foo bar:process signal;
+
+',`
+	allow foo bar:chr_file write;
+')
+
+ifelse(foo, `true', `
+	allow foo bar:file write;
+')

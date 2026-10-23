@@ -865,6 +865,74 @@ struct check_result *check_audit_access_perm(__attribute__((unused)) const struc
 	return NULL;
 }
 
+struct check_result *check_ifelse_never_match(__attribute__((unused)) const struct check_data
+                                              *data,
+					      const struct policy_node
+					      *node)
+{
+	struct policy_node *triple_start = node->first_child->next;
+
+	while (triple_start) {
+		if (triple_start == NULL || triple_start->next == NULL
+		    || triple_start->next->next == NULL) {
+			// We didn't find a valid triple.  That either means we're at the end
+			// of the ifelse, or it was malformed.  Either way, we're done for the
+			// sake of this check.
+			return NULL;
+		}
+
+		struct policy_node *left_cond = triple_start;
+		struct policy_node *right_cond = triple_start->next;
+
+		if (left_cond->flavor != NODE_M4_ARG || right_cond->flavor != NODE_M4_ARG) {
+			return alloc_internal_error("Invalid node type for ifelse condition");
+		}
+		const struct m4_arg_string_data *left_data;
+		const struct m4_arg_string_data *right_data;
+		char empty_str[1] = "\0";
+		const struct m4_arg_string_data empty_str_data = {
+			.str = empty_str,
+			.quoted = QUOTE_QUOTED
+		};
+		if (left_cond->first_child->next) {
+			left_data = left_cond->first_child->next->data.mas_data;
+		} else {
+			left_data = &empty_str_data;
+		}
+
+		if (right_cond->first_child->next) {
+			right_data = right_cond->first_child->next->data.mas_data;
+		} else {
+			right_data = &empty_str_data;
+		}
+
+		if (left_data->quoted == QUOTE_UNKNOWN
+		   || right_data->quoted == QUOTE_UNKNOWN) {
+			return alloc_internal_error("Unknown quote status for ifelse condition");
+		}
+
+		if (strchr(left_data->str, '$') || strchr(right_data->str, '$')) {
+			// Variables may match after expansion; still check later comparisons.
+			triple_start = triple_start->next->next->next;
+			continue;
+		}
+
+		if (left_data->quoted == QUOTE_QUOTED
+		    && right_data->quoted == QUOTE_QUOTED
+		    && strcmp(left_data->str,
+		              right_data->str)) {
+			return make_check_result('W', W_ID_IFELSE_NO_MATCH,
+			                         "ifelse statement can never be true.  (`%s' and `%s' will not be expanded because they are both quoted, and they are not equal",
+						 left_data->str,
+						 right_data->str);
+		}
+
+		triple_start = triple_start->next->next->next;
+	}
+	return NULL;
+
+}
+
 struct check_result *check_declaration_interface_nameclash(__attribute__((unused)) const struct check_data
 							   *data,
 							   const struct policy_node
@@ -1024,7 +1092,7 @@ struct check_result *check_stray_word(const struct check_data
 				      const struct policy_node
 				      *node)
 {
-	const char *macro_name = node->data.str;
+	const char *macro_name = node->data.mas_data->str;
 
 	if (str_in_sl(macro_name, data->config_check_data->custom_te_simple_macros)) {
 		return NULL;
@@ -1049,4 +1117,26 @@ struct check_result *check_stray_word(const struct check_data
 	return make_check_result('E', E_ID_STRAY_WORD,
 				 "Found stray word %s. If it is a simple m4 macro please add an selint-disable comment or ignore in the SELint configuration file.",
 				 macro_name);
+}
+
+struct check_result *check_ifelse_arg_count(__attribute__((unused)) const struct check_data
+                                            *data,
+					    const struct policy_node
+					    *node)
+{
+	// First child is the START_BLOCK_NODE, remaining children are the args, each with their own children blocks
+	int child_count = 0;
+	for (struct policy_node *cur = node->first_child->next; cur != NULL; cur = cur->next) {
+		if (cur->flavor != NODE_M4_ARG) {
+			return alloc_internal_error("ifelse contained something other than a block");
+		}
+		child_count += 1;
+	}
+
+	if ((child_count) % 3 == 2) {
+		return make_check_result('E', E_ID_WRONG_IFELSE_ARGS,
+		                         "ifelse has the wrong number of args (should be 3N or 3N + 1, found %d)",
+					 child_count);
+	}
+	return NULL;
 }

@@ -148,6 +148,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/e09.te \
 			functional/policies/check_triggers/e10.pass.te \
 			functional/policies/check_triggers/e10.warn.te \
+			functional/policies/check_triggers/e11.pass.te \
+			functional/policies/check_triggers/e11.warn.te \
 			functional/policies/check_triggers/modules.conf \
 			functional/policies/check_triggers/obj_perm_sets.spt \
 			functional/policies/check_triggers/security_classes \
@@ -194,6 +196,8 @@ FUNCTIONAL_TEST_FILES=functional/end-to-end.bats \
 			functional/policies/check_triggers/w11.if \
 			functional/policies/check_triggers/w12.te \
 			functional/policies/check_triggers/w13.te \
+			functional/policies/check_triggers/w14.te \
+			functional/policies/check_triggers/w14.if \
 			functional/policies/check_triggers/x01.if \
 			functional/policies/check_triggers/x01.te \
 			functional/policies/check_triggers/x02.te \
