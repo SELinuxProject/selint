@@ -912,8 +912,9 @@ struct check_result *check_ifelse_never_match(__attribute__((unused)) const stru
 		}
 
 		if (strchr(left_data->str, '$') || strchr(right_data->str, '$')) {
-			// Variables will be expanded, so there may be a match after expansion
-			return NULL;
+			// Variables may match after expansion; still check later comparisons.
+			triple_start = triple_start->next->next->next;
+			continue;
 		}
 
 		if (left_data->quoted == QUOTE_QUOTED
